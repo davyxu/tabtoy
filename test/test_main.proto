@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package test;
+
+import "test_import.proto";
+
+message Prop
+{
+	int32 HP = 1;
+	float AttackRate  = 2;
+}
+
+// 角色定义
+message ActorDefine
+{
+	// 唯一ID
+	int32 ID = 100; 	// @ RepeatCheck: true
+	
+	// 角色名称
+	string Name = 101;	// 
+	
+	Prop Struct  = 102;
+	
+	// 角色类型
+	ActorType Type = 103; 
+
+	repeated int32 SkillID = 104; // @ String2ListSpliter: ";"
+	
+	Prop StrStruct = 105; //@String2Struct: true
+		
+}
+
+
+message ActorFile
+{
+	repeated ActorDefine Actor = 1;
+}
