@@ -11,7 +11,9 @@ import (
 )
 
 type File struct {
-	Sheets   []*Sheet               // 多个sheet
+	*xlsx.File
+	Sheets   []*Sheet // 多个sheet
+	SheetMap map[string]*Sheet
 	descpool *pbmeta.DescriptorPool // 协议描述池
 	Name     string                 // 电子表格的名称(文件名无后缀)
 	FileName string
@@ -27,12 +29,14 @@ func NewFile(filename string, descpool *pbmeta.DescriptorPool) *File {
 
 	self := &File{
 		Sheets:   make([]*Sheet, 0),
+		SheetMap: make(map[string]*Sheet),
 		Name:     makeTableName(filename),
 		FileName: filename,
 		descpool: descpool,
 	}
 
-	file, err := xlsx.OpenFile(filename)
+	var err error
+	self.File, err = xlsx.OpenFile(filename)
 
 	if err != nil {
 		log.Errorln(err.Error())
@@ -41,7 +45,7 @@ func NewFile(filename string, descpool *pbmeta.DescriptorPool) *File {
 	}
 
 	// 这里将所有sheet表都合并导出到一个pbt
-	for _, sheet := range file.Sheets {
+	for _, sheet := range self.File.Sheets {
 
 		header := getHeader(sheet)
 
@@ -50,8 +54,13 @@ func NewFile(filename string, descpool *pbmeta.DescriptorPool) *File {
 			continue
 		}
 
+		mySheet := newSheet(self, sheet, header)
+
 		// TODO 添加命令行导出忽略
-		self.Sheets = append(self.Sheets, newSheet(self, sheet, header))
+		self.Sheets = append(self.Sheets, mySheet)
+
+		self.SheetMap[sheet.Name] = mySheet
+
 	}
 
 	return self

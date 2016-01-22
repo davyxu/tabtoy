@@ -28,38 +28,50 @@ type Sheet struct {
 
 	file *File // 指向父级
 
-	fieldHeader []string // 有效的字段行，可以做多sheet对比
+	FieldHeader []string // 有效的字段行，可以做多sheet对比
 }
 
-func (self *Sheet) getCellData(cursor, index int) string {
+// 取抽象的单元格
+func (self *Sheet) getCell(cursor, index int) *xlsx.Cell {
 
 	if self.header.Transpose {
-		return self.Cell(index, cursor).Value
+		return self.Cell(index, cursor)
 
 	} else {
 
-		return self.Cell(cursor, index).Value
+		return self.Cell(cursor, index)
 	}
+}
 
+// 获取单元格
+func (self *Sheet) GetCellData(cursor, index int) string {
+
+	return self.getCell(cursor, index).Value
+}
+
+// 设置单元格
+func (self *Sheet) SetCellData(cursor, index int, data string) {
+
+	self.getCell(cursor, index).Value = data
 }
 
 // 检查字段行的长度
-func (self *Sheet) parseProtoField() bool {
+func (self *Sheet) ParseProtoField() bool {
 
 	// proto字段导引头
 
 	for index := 0; ; index++ {
-		fieldName := strings.TrimSpace(self.getCellData(DataIndex_FieldName, index))
+		fieldName := strings.TrimSpace(self.GetCellData(DataIndex_FieldName, index))
 
 		if fieldName == "" {
 			break
 		}
 
-		self.fieldHeader = append(self.fieldHeader, fieldName)
+		self.FieldHeader = append(self.FieldHeader, fieldName)
 	}
 
 	// 没有导引头
-	return len(self.fieldHeader) > 0
+	return len(self.FieldHeader) > 0
 }
 
 func (self *Sheet) checkProtoHeader() (*data.DynamicMessage, *pbmeta.Descriptor, *pbmeta.FieldDescriptor) {
@@ -98,10 +110,10 @@ type RecordInfo struct {
 	FieldMeta *tool.FieldMeta      // 扩展字段
 }
 
-func (self *Sheet) Iterate(callback func(*RecordInfo) bool) (*data.DynamicMessage, bool) {
+func (self *Sheet) IterateData(callback func(*RecordInfo) bool) (*data.DynamicMessage, bool) {
 
 	// 检查引导头
-	if !self.parseProtoField() {
+	if !self.ParseProtoField() {
 		return nil, true
 	}
 
@@ -119,7 +131,7 @@ func (self *Sheet) Iterate(callback func(*RecordInfo) bool) (*data.DynamicMessag
 	for self.cursor = DataIndex_DataBegin; readingLine; self.cursor++ {
 
 		// 第一列是空的，结束
-		if strings.TrimSpace(self.getCellData(self.cursor, 0)) == "" {
+		if strings.TrimSpace(self.GetCellData(self.cursor, 0)) == "" {
 			break
 		}
 
@@ -130,15 +142,15 @@ func (self *Sheet) Iterate(callback func(*RecordInfo) bool) (*data.DynamicMessag
 		}
 
 		// 遍历每一列
-		for self.index = 0; self.index < len(self.fieldHeader); self.index++ {
+		for self.index = 0; self.index < len(self.FieldHeader); self.index++ {
 
 			ri := new(RecordInfo)
 
 			// Proto字段头
-			ri.FieldName = self.fieldHeader[self.index]
+			ri.FieldName = self.FieldHeader[self.index]
 
 			// 原始值
-			ri.Value = strings.TrimSpace(self.getCellData(self.cursor, self.index))
+			ri.Value = strings.TrimSpace(self.GetCellData(self.cursor, self.index))
 
 			// #开头表示注释, 跳过
 			if strings.Index(ri.FieldName, "#") == 0 {
@@ -249,7 +261,7 @@ func newSheet(file *File, sheet *xlsx.Sheet, header *tool.ExportHeader) *Sheet {
 		file:        file,
 		Sheet:       sheet,
 		header:      header,
-		fieldHeader: make([]string, 0),
+		FieldHeader: make([]string, 0),
 	}
 
 	return self
