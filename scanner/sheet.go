@@ -58,6 +58,11 @@ func (self *Sheet) SetCellData(cursor, index int, data string) {
 // 检查字段行的长度
 func (self *Sheet) ParseProtoField() bool {
 
+	// 重入检查
+	if len(self.FieldHeader) > 0 {
+		return true
+	}
+
 	// proto字段导引头
 
 	for index := 0; ; index++ {

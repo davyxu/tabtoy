@@ -5,7 +5,7 @@ import (
 	"math"
 	"strconv"
 
-	"github.com/tealeg/xlsx"
+	//	"github.com/tealeg/xlsx"
 )
 
 func str2int(s string) int {
@@ -44,32 +44,32 @@ func num2col(index int) string {
 	return string(out)
 }
 
-func testOutput() {
-	fileOut := xlsx.NewFile()
-	outSheet := fileOut.AddSheet("sync")
+//func testOutput() {
+//	fileOut := xlsx.NewFile()
+//	outSheet := fileOut.AddSheet("sync")
 
-	file, err := xlsx.OpenFile("Actor.xlsx")
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	sheet := file.Sheets[0]
+//	file, err := xlsx.OpenFile("Actor.xlsx")
+//	if err != nil {
+//		fmt.Println(err)
+//		return
+//	}
+//	sheet := file.Sheets[0]
 
-	for y := 0; y <= 2; y++ {
+//	for y := 0; y <= 2; y++ {
 
-		outRow := outSheet.AddRow()
+//		outRow := outSheet.AddRow()
 
-		row := sheet.Rows[y].Cells
+//		row := sheet.Rows[y].Cells
 
-		for x := 0; x < len(row); x++ {
-			cell := outRow.AddCell()
-			cell.Value = row[x].Value
-		}
-	}
+//		for x := 0; x < len(row); x++ {
+//			cell := outRow.AddCell()
+//			cell.Value = row[x].Value
+//		}
+//	}
 
-	fileOut.Save("copy.xlsx")
+//	fileOut.Save("copy.xlsx")
 
-}
+//}
 
 func main() {
 

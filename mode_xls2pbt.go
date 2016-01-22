@@ -143,9 +143,9 @@ func export(pool *pbmeta.DescriptorPool, inputXls, outputFile string) bool {
 	log.Infof("%s -> %s\n", filepath.Base(inputXls), filepath.Base(outputFile))
 
 	// 打开电子表格
-	xlsFile := scanner.NewFile(inputXls, pool)
+	xlsFile := scanner.NewFile(pool)
 
-	if xlsFile == nil {
+	if !xlsFile.Open(inputXls) {
 		return false
 	}
 

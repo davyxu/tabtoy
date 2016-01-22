@@ -2,9 +2,8 @@ package main
 
 import (
 	"flag"
-	"path/filepath"
-
 	"github.com/davyxu/tabtoy/scanner"
+	"strings"
 )
 
 ///////////////////////////////////////////////
@@ -14,26 +13,37 @@ var paramSrcXls = flag.String("srcxls", "", "source xls file")
 
 func runSyncHeaderMode() bool {
 
-	srcFileName := *paramSrcXls
+	headerFileName := *paramSrcXls
 
-	// 打开源文件
-	srcFile := scanner.NewFile(srcFileName, nil)
-	if srcFile == nil {
+	// 打开提供文件头的XLS
+	headerFile := scanner.NewFile(nil)
+
+	if !headerFile.Open(headerFileName) {
 		return false
 	}
 
-	for _, tgtFileName := range flag.Args() {
+	// 遍历所有提供数据体的XLS
+	for _, bodyFileName := range flag.Args() {
 
-		tgtfile := scanner.NewFile(tgtFileName, nil)
-		if tgtfile == nil {
+		// 打开数据体的XLS
+		bodyfile := scanner.NewFile(nil)
+
+		if !bodyfile.Open(bodyFileName) {
 			return false
 		}
 
-		if !syncFile(srcFile, tgtfile, srcFileName, tgtFileName) {
+		// 创建合并文件
+		outFile := scanner.NewFile(nil)
+
+		if !writeHeader(headerFile, outFile) {
 			return false
 		}
 
-		tgtfile.Save(tgtFileName + "2")
+		if !writeBody(bodyfile, outFile) {
+			return false
+		}
+
+		outFile.Raw.Save(bodyFileName + "_out")
 
 	}
 
@@ -41,42 +51,69 @@ func runSyncHeaderMode() bool {
 
 }
 
-func syncFile(src, tgt *scanner.File, srcFileName, tgtFileName string) bool {
+func getSheet(srcSheet *scanner.Sheet, out *scanner.File) *scanner.Sheet {
+	outSheet, ok := out.SheetMap[srcSheet.Name]
+	if !ok {
+		rawSheet, _ := out.Raw.AddSheet(srcSheet.Name)
 
-	log.Infof("%s -> %s\n", filepath.Base(srcFileName), filepath.Base(tgtFileName))
+		outSheet = out.Add(rawSheet)
+	}
 
-	for _, sheet := range src.Sheets {
+	return outSheet
 
-		if tgtSheet, ok := tgt.SheetMap[sheet.Name]; ok {
+}
 
-			if !syncSheet(sheet, tgtSheet, srcFileName, tgtFileName) {
-				return false
+func writeHeader(src, out *scanner.File) bool {
+
+	for _, srcSheet := range src.Sheets {
+
+		if !srcSheet.ParseProtoField() {
+			log.Errorf("src file '%s' lost proto header", src.FileName)
+			return false
+		}
+
+		outSheet := getSheet(srcSheet, out)
+
+		for cursor := 0; cursor < scanner.DataIndex_DataBegin; cursor++ {
+
+			outRow := outSheet.AddRow()
+
+			for index := 0; index < len(srcSheet.FieldHeader); index++ {
+
+				outRow.AddCell().Value = srcSheet.GetCellData(cursor, index)
+			}
+		}
+	}
+
+	return true
+}
+
+func writeBody(src, out *scanner.File) bool {
+
+	for _, srcSheet := range src.Sheets {
+
+		// 保证有头, 虽然不读
+		if !srcSheet.ParseProtoField() {
+			log.Errorf("src file '%s' lost proto header", src.FileName)
+			return false
+		}
+
+		outSheet := getSheet(srcSheet, out)
+
+		for cursor := scanner.DataIndex_DataBegin; ; cursor++ {
+
+			// 第一列是空的，结束
+			if strings.TrimSpace(srcSheet.GetCellData(cursor, 0)) == "" {
+
+				break
 			}
 
-		} else {
-			log.Errorf("target file %s lost sheet, name: '%s'\n", tgtFileName, sheet.Name)
-			return false
-		}
+			outRow := outSheet.AddRow()
 
-	}
+			for index := 0; index < len(srcSheet.FieldHeader); index++ {
 
-	return true
-}
-
-func syncSheet(src, tgt *scanner.Sheet, srcFileName, tgtFileName string) bool {
-
-	log.Infof("	%s", src.Name)
-
-	if !src.ParseProtoField() {
-		log.Errorf("src file '%s' lost proto header", srcFileName)
-		return false
-	}
-
-	for cursor := 0; cursor < scanner.DataIndex_DataBegin; cursor++ {
-
-		for index := 0; index < len(src.FieldHeader); index++ {
-			v := src.GetCellData(cursor, index)
-			tgt.SetCellData(cursor, index, v)
+				outRow.AddCell().SetString(outRow.Cells[index].String())
+			}
 		}
 	}
 
