@@ -173,8 +173,8 @@ func (self *Sheet) IterateData(callback func(*RecordInfo) bool) (*data.DynamicMe
 			ri.FieldMeta = data.GetFieldMeta(ri.FieldDesc)
 
 			if data.DebuggingLevel >= 1 {
-				x, y := self.GetPos()
-				log.Debugf("<%d,%d> %s=%s", x, y, ri.FieldName, ri.Value)
+				r, c := self.GetPos()
+				log.Debugf("(%s) %s=%s", data.ConvR1C1toA1(r, c), ri.FieldName, ri.Value)
 			}
 
 			if !callback(ri) {
@@ -191,20 +191,21 @@ func (self *Sheet) IterateData(callback func(*RecordInfo) bool) (*data.DynamicMe
 
 ErrorStop:
 
-	x, y := self.GetPos()
+	r, c := self.GetPos()
 
-	log.Errorf("%s|%s(%d,%d)", self.file.FileName, self.Name, x, y)
+	log.Errorf("%s|%s(%s)", self.file.FileName, self.Name, data.ConvR1C1toA1(r, c))
 	return nil, false
 }
 
 func (self *Sheet) GetPos() (int, int) {
 	if self.header.Transpose {
 
-		return self.cursor + 1, self.index + 1
+		return self.index + 1, self.cursor + 1
 
 	} else {
 
-		return self.index + 1, self.cursor + 1
+		return self.cursor + 1, self.index + 1
+
 	}
 }
 
