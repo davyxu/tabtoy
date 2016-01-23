@@ -90,7 +90,7 @@ message ActorFile
 ```
 
 ## 第二步: 编写电子表格字段及列头
-![电子表格](https://github.com/davyxu/tabtoy/doc/table.png)
+![电子表格](doc/table.png)
 
 
 ## 第三步: 通过 批处理/shell 填写导出目标及信息
@@ -212,3 +212,13 @@ Golang中使用github.com/golang/protobuf库
 ```
 
 
+
+# 备注
+
+感觉不错请star, 谢谢!
+
+博客: http://www.cppblog.com/sunicdavy
+
+知乎: http://www.zhihu.com/people/xu-bo-62-87
+
+邮箱: sunicdavy@qq.com
