@@ -90,7 +90,7 @@ message ActorFile
 ```
 
 ## 第二步: 编写电子表格字段及列头
-![电子表格](https://github.com/davyxu/tabtoy/doc/table.png)
+![电子表格](doc/table.png)
 
 
 ## 第三步: 通过 批处理/shell 填写导出目标及信息
