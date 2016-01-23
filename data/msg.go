@@ -41,12 +41,12 @@ func (self *DynamicMessage) addValue(fd *pbmeta.FieldDescriptor) *fieldValue {
 func (self *DynamicMessage) SetValue(fd *pbmeta.FieldDescriptor, value string) bool {
 
 	if fd == nil || !self.Desc.Contains(fd) {
-		log.Errorf("field not found: %s in %s, value: %s", fd.Name(), self.Desc.Name(), value)
+		log.Errorf("field not found: '%s' in '%s', value: '%s'", fd.Name(), self.Desc.Name(), value)
 		return false
 	}
 
 	if fd.Type() == pbprotos.FieldDescriptorProto_TYPE_MESSAGE {
-		log.Errorf("field is message not value: %s in %s, value: %s", fd.Name(), self.Desc.Name(), value)
+		log.Errorf("field is message not value: '%s' in '%s', value: '%s'", fd.Name(), self.Desc.Name(), value)
 		return false
 	}
 
@@ -94,12 +94,12 @@ func (self *DynamicMessage) SetValue(fd *pbmeta.FieldDescriptor, value string) b
 func (self *DynamicMessage) AddRepeatedValue(fd *pbmeta.FieldDescriptor, value string) bool {
 
 	if fd == nil || !self.Desc.Contains(fd) {
-		log.Errorf("field not found: %s in %s, value: %s", fd.Name(), self.Desc.Name(), value)
+		log.Errorf("field not found: '%s' in '%s', value: '%s'", fd.Name(), self.Desc.Name(), value)
 		return false
 	}
 
 	if fd.Type() == pbprotos.FieldDescriptorProto_TYPE_MESSAGE {
-		log.Errorf("field is message not value: %s in %s, value: %s", fd.Name(), self.Desc.Name(), value)
+		log.Errorf("field is message not value: '%s' in '%s', value: '%s'", fd.Name(), self.Desc.Name(), value)
 		return false
 	}
 
@@ -122,12 +122,12 @@ func (self *DynamicMessage) AddRepeatedValue(fd *pbmeta.FieldDescriptor, value s
 func (self *DynamicMessage) SetMessage(fd *pbmeta.FieldDescriptor, value *DynamicMessage) bool {
 
 	if fd == nil || !self.Desc.Contains(fd) {
-		log.Errorf("field not found: %s in '%s'", fd.Name(), self.Desc.Name())
+		log.Errorf("field not found: '%s' in '%s'", fd.Name(), self.Desc.Name())
 		return false
 	}
 
 	if fd.Type() != pbprotos.FieldDescriptorProto_TYPE_MESSAGE {
-		log.Errorf("field is not message: %s in '%s'", fd.Name(), self.Desc.Name())
+		log.Errorf("field is not message: '%s' in '%s'", fd.Name(), self.Desc.Name())
 		return false
 	}
 
@@ -140,12 +140,12 @@ func (self *DynamicMessage) SetMessage(fd *pbmeta.FieldDescriptor, value *Dynami
 func (self *DynamicMessage) AddRepeatedMessage(fd *pbmeta.FieldDescriptor, value *DynamicMessage) bool {
 
 	if fd == nil || !self.Desc.Contains(fd) {
-		log.Errorf("field not found: %s in '%s'", fd.Name(), self.Desc.Name())
+		log.Errorf("field not found: '%s' in '%s'", fd.Name(), self.Desc.Name())
 		return false
 	}
 
 	if fd.Type() != pbprotos.FieldDescriptorProto_TYPE_MESSAGE {
-		log.Errorf("field is not message: %s in '%s'", fd.Name(), self.Desc.Name())
+		log.Errorf("field is not message: '%s' in '%s'", fd.Name(), self.Desc.Name())
 		return false
 	}
 

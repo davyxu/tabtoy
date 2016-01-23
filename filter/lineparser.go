@@ -77,7 +77,7 @@ func (self *lineLexer) Next() (string, int) {
 		}
 
 		if !done {
-			log.Errorf("unfinished quoted string: %s", self.original)
+			log.Errorf("Unfinished quoted string: %s", self.original)
 			return "", lexerErr
 		}
 		self.offset(i + 1)
@@ -99,7 +99,7 @@ func (self *lineLexer) Next() (string, int) {
 	}
 
 	if i == 0 {
-		log.Errorf("unexpect char %c", self.s[0])
+		log.Errorf("Unexpect char %c, pbt format:\n  key1: value1 key2: value2", self.s[0])
 		return "", lexerErr
 	}
 

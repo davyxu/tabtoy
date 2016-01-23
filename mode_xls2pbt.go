@@ -111,12 +111,12 @@ func setFieldValue(ri *scanner.RecordInfo, fieldName, value string) bool {
 		fd := ri.FieldMsg.Desc.FieldByName(fieldName)
 
 		if fd == nil {
-			log.Errorf("field not exist: %s=%s", fieldName, value)
+			log.Errorf("field not exist, field: '%s' value: '%s'", fieldName, value)
 			return false
 		}
 
 		if data.DebuggingLevel >= 2 {
-			log.Debugf("	%s=%s", fd.Name(), afterValue)
+			log.Debugf("	'%s'='%s'", fd.Name(), afterValue)
 		}
 
 		// 多值
@@ -130,7 +130,7 @@ func setFieldValue(ri *scanner.RecordInfo, fieldName, value string) bool {
 		}
 
 	} else {
-		log.Errorf("value convert error: %s=%s", fieldName, value)
+		log.Errorf("value convert error: '%s'='%s'", fieldName, value)
 		return false
 	}
 

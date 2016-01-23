@@ -29,12 +29,12 @@ func Value2Struct(meta *tool.FieldMeta, value string, callback func(string, stri
 
 		token, state := lex.Next()
 
-		if state == lexerErr ||
-			state == lexerEOF {
-			break
-		}
-
-		if state == lexerToken {
+		switch state {
+		case lexerEOF:
+			return true
+		case lexerErr:
+			return false
+		case lexerToken:
 
 			switch parserState {
 			case stateKey:
@@ -43,7 +43,7 @@ func Value2Struct(meta *tool.FieldMeta, value string, callback func(string, stri
 			case stateComma:
 				if token != ":" {
 					log.Errorf("Unexpect symbol '%v' expect ':'", token)
-					return true
+					return false
 				}
 
 				parserState = stateValue

@@ -2,14 +2,15 @@ package main
 
 import (
 	"flag"
-	"github.com/davyxu/tabtoy/scanner"
 	"strings"
+
+	"github.com/davyxu/tabtoy/scanner"
 )
 
 ///////////////////////////////////////////////
 // mode: xls2pbt参数
 ///////////////////////////////////////////////
-var paramSrcXls = flag.String("srcxls", "", "source xls file")
+var paramSrcXls = flag.String("overide", "", "use this xls file to override some fields")
 
 func runSyncHeaderMode() bool {
 
