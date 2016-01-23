@@ -57,11 +57,11 @@ func main() {
 			return
 		}
 
-	case "syncheader":
-		if !runSyncHeaderMode() {
-			os.Exit(1)
-			return
-		}
+		//	case "syncheader":
+		//		if !runSyncHeaderMode() {
+		//			os.Exit(1)
+		//			return
+		//		}
 
 	default:
 		fmt.Println("--mode not specify")

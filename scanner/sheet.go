@@ -31,42 +31,25 @@ type Sheet struct {
 	FieldHeader []string // 有效的字段行，可以做多sheet对比
 }
 
-// 取抽象的单元格
-func (self *Sheet) getCell(cursor, index int) *xlsx.Cell {
-
-	if self.header.Transpose {
-		return self.Cell(index, cursor)
-
-	} else {
-
-		return self.Cell(cursor, index)
-	}
-}
-
 // 获取单元格
 func (self *Sheet) GetCellData(cursor, index int) string {
 
-	return self.getCell(cursor, index).Value
+	return strings.TrimSpace(self.Cell(cursor, index).Value)
 }
 
 // 设置单元格
 func (self *Sheet) SetCellData(cursor, index int, data string) {
 
-	self.getCell(cursor, index).Value = data
+	self.Cell(cursor, index).Value = data
 }
 
 // 检查字段行的长度
 func (self *Sheet) ParseProtoField() bool {
 
-	// 重入检查
-	if len(self.FieldHeader) > 0 {
-		return true
-	}
-
 	// proto字段导引头
 
 	for index := 0; ; index++ {
-		fieldName := strings.TrimSpace(self.GetCellData(DataIndex_FieldName, index))
+		fieldName := self.GetCellData(DataIndex_FieldName, index)
 
 		if fieldName == "" {
 			break
@@ -126,9 +109,9 @@ func (self *Sheet) IterateData(callback func(*RecordInfo) bool) (*data.DynamicMe
 	var readingLine bool = true
 
 	// 检查引导Proto字段
-	fileMsg, rowMsgDesc, lineFieldDesc := self.checkProtoHeader()
+	sheetMsg, rowMsgDesc, lineFieldDesc := self.checkProtoHeader()
 
-	if fileMsg == nil {
+	if sheetMsg == nil {
 		goto ErrorStop
 	}
 
@@ -136,7 +119,7 @@ func (self *Sheet) IterateData(callback func(*RecordInfo) bool) (*data.DynamicMe
 	for self.cursor = DataIndex_DataBegin; readingLine; self.cursor++ {
 
 		// 第一列是空的，结束
-		if strings.TrimSpace(self.GetCellData(self.cursor, 0)) == "" {
+		if self.GetCellData(self.cursor, 0) == "" {
 			break
 		}
 
@@ -155,7 +138,7 @@ func (self *Sheet) IterateData(callback func(*RecordInfo) bool) (*data.DynamicMe
 			ri.FieldName = self.FieldHeader[self.index]
 
 			// 原始值
-			ri.Value = strings.TrimSpace(self.GetCellData(self.cursor, self.index))
+			ri.Value = self.GetCellData(self.cursor, self.index)
 
 			// #开头表示注释, 跳过
 			if strings.Index(ri.FieldName, "#") == 0 {
@@ -173,7 +156,7 @@ func (self *Sheet) IterateData(callback func(*RecordInfo) bool) (*data.DynamicMe
 			ri.FieldMeta = data.GetFieldMeta(ri.FieldDesc)
 
 			if data.DebuggingLevel >= 1 {
-				r, c := self.GetPos()
+				r, c := self.GetRC()
 				log.Debugf("(%s) %s=%s", data.ConvR1C1toA1(r, c), ri.FieldName, ri.Value)
 			}
 
@@ -183,30 +166,25 @@ func (self *Sheet) IterateData(callback func(*RecordInfo) bool) (*data.DynamicMe
 
 		}
 
-		fileMsg.AddRepeatedMessage(lineFieldDesc, lineMsg)
+		sheetMsg.AddRepeatedMessage(lineFieldDesc, lineMsg)
 
 	}
 
-	return fileMsg, true
+	return sheetMsg, true
 
 ErrorStop:
 
-	r, c := self.GetPos()
+	r, c := self.GetRC()
 
 	log.Errorf("%s|%s(%s)", self.file.FileName, self.Name, data.ConvR1C1toA1(r, c))
 	return nil, false
 }
 
-func (self *Sheet) GetPos() (int, int) {
-	if self.header.Transpose {
+// 取行列信息
+func (self *Sheet) GetRC() (int, int) {
 
-		return self.index + 1, self.cursor + 1
+	return self.cursor + 1, self.index + 1
 
-	} else {
-
-		return self.cursor + 1, self.index + 1
-
-	}
 }
 
 // 解析a.b.c字段，由给定的msg找到这些字段病返回字段访问器

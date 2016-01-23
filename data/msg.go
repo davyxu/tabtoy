@@ -37,6 +37,26 @@ func (self *DynamicMessage) addValue(fd *pbmeta.FieldDescriptor) *fieldValue {
 	return fv
 }
 
+// 遍历所有值的描述符
+func (self *DynamicMessage) IterateFieldDesc(callback func(*pbmeta.FieldDescriptor) bool) bool {
+
+	for fd, _ := range self.fieldMap {
+		if !callback(fd) {
+			return false
+		}
+	}
+
+	return true
+}
+
+// 值的描述符是否存在
+func (self *DynamicMessage) ContainFieldDesc(fd *pbmeta.FieldDescriptor) bool {
+
+	_, ok := self.fieldMap[fd]
+
+	return ok
+}
+
 // 设置单一值
 func (self *DynamicMessage) SetValue(fd *pbmeta.FieldDescriptor, value string) bool {
 
@@ -242,6 +262,30 @@ func (self *DynamicMessage) GetRepeatedMessage(fd *pbmeta.FieldDescriptor) []*Dy
 	}
 
 	return fv.msgArray
+}
+
+// 删除值
+func (self *DynamicMessage) ClearFieldValue(fd *pbmeta.FieldDescriptor) bool {
+
+	if fd == nil || !self.Desc.Contains(fd) {
+		log.Errorf("field not found: '%s' in '%s' ", fd.Name(), self.Desc.Name())
+		return false
+	}
+
+	if fd.Type() == pbprotos.FieldDescriptorProto_TYPE_MESSAGE {
+		log.Errorf("field is message not value: '%s' in '%s'", fd.Name(), self.Desc.Name())
+		return false
+	}
+
+	fv := self.fetchValue(fd, false)
+
+	if fv == nil {
+		return true
+	}
+
+	delete(self.fieldMap, fd)
+
+	return true
 }
 
 func NewDynamicMessage(desc *pbmeta.Descriptor) *DynamicMessage {
