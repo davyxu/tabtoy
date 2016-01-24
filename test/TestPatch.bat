@@ -1,3 +1,2 @@
-..\..\..\..\..\bin\tabtoy.exe --mode syncheader --srcxls Actor.xlsx MyActor.xlsx
-del MyActor2.xlsx
-rename MyActor.xlsx_out MyActor2.xlsx
+..\proto\protoc.exe test.proto --plugin=protoc-gen-meta=..\..\..\..\..\bin\protoc-gen-meta.exe --proto_path "." --meta_out test.pb:.
+..\..\..\..\..\bin\tabtoy.exe --mode=xls2pbt --pb=test.pb --patch=Patch.xlsx --outdir=. Actor.xlsx

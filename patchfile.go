@@ -54,11 +54,6 @@ func patchMsg(input, patch *data.DynamicMessage, indent int, sheetName string) b
 
 	return patch.IterateFieldDesc(func(fd *pbmeta.FieldDescriptor) bool {
 
-		if !input.ContainFieldDesc(fd) {
-			log.Errorf("input msg field not exist: %s", fd.Name())
-			return false
-		}
-
 		if fd.Type() == pbprotos.FieldDescriptorProto_TYPE_MESSAGE {
 
 			if fd.IsRepeated() {
@@ -104,7 +99,7 @@ func patchMsg(input, patch *data.DynamicMessage, indent int, sheetName string) b
 
 			if fd.IsRepeated() {
 
-				log.Infoln("patch repeated value: '%s'", fd.Name())
+				log.Infof("patch repeated field: '%s' = '%s'", fd.Name(), patch.GetRepeatedValue(fd))
 
 				// 直接用patch的覆盖多值
 				input.ClearFieldValue(fd)
@@ -117,7 +112,7 @@ func patchMsg(input, patch *data.DynamicMessage, indent int, sheetName string) b
 
 				v, _ := patch.GetValue(fd)
 
-				log.Infoln("patch value: '%s' = '%s'", fd.Name(), v)
+				log.Infof("patch field: '%s' = '%s'", fd.Name(), v)
 
 				// 单值设置
 				input.SetValue(fd, v)
