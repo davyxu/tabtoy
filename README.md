@@ -137,7 +137,7 @@ json的字段名必须是带双引号, 且数组需要用[]圈住, 多重字段�
 	key1: value1  key2: value2
 	冒号组合key,value,  空格分隔字段
 	
-	#作为注释
+	\#作为注释
 
 # Proto文件规则
 proto文件格式范例参考test/test.proto
@@ -249,8 +249,11 @@ Golang中使用github.com/golang/protobuf库
 
 
 # TODO
+
 Golang 的读取例子
+
 支持json导出
+
 C# 版本例子
 
 
