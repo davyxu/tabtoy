@@ -68,7 +68,7 @@ func (self *Sheet) checkProtoHeader() (*data.DynamicMessage, *pbmeta.Descriptor,
 	fileDesc := self.file.descpool.MessageByFullName(self.header.ProtoTypeName)
 
 	if fileDesc == nil {
-		log.Errorf("can not found record descriptor, %s", self.header.ProtoTypeName)
+		log.Errorf("can not found record descriptor, '%s'", self.header.ProtoTypeName)
 		return nil, nil, nil
 	}
 

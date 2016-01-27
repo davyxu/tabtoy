@@ -80,7 +80,11 @@ func NewFile(descpool *pbmeta.DescriptorPool) *File {
 
 func getHeader(sheet *xlsx.Sheet) *tool.ExportHeader {
 
-	headerString := sheet.Cell(0, 0).Value
+	headerString := strings.TrimSpace(sheet.Cell(0, 0).Value)
+
+	if headerString == "" {
+		return nil
+	}
 
 	var header tool.ExportHeader
 

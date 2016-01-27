@@ -220,15 +220,22 @@ Golang中使用github.com/golang/protobuf库
 # FAQ
 * 为什么输出文本格式,而不是二进制?
 
-	文本只需要字段就可以导出, 而二进制需要复杂的二进制连接操作, 调试,查看也不是很方便
+	从设计角度: 文本只需要字段就可以导出, 而二进制需要复杂的二进制连接操作,设计复杂度较低
+	
+	从使用角度: 文本调试,查看很方便
+	
 
 * 为什么只有Protobuf Text输出没有json或者其他格式?
 
-	这套工具设计的目的就是为了让Protobuf简化配置和表格的读取. 不过现在Golang读取json也比较简单, 后面计划支持json输出
+	Protobuf 2.X时是对Protobuf Text有良好的支持, 包括Golang
+	
+	进入3.0 后, 大概由于Protobuf Text不是主流格式, 因此官方还是提供json格式支持
+	
 
 * C++和C#支持么?
 
 	C++用官方的Protobuf库可以读取导出格式, C#的protobuf-net无法读取, 需要自己根据你的消息格式转换文本到二进制才可读取
+	
 
 * 导出meta信息时, 多个proto文件写的批处理很长, 怎么办?
 
@@ -241,22 +248,18 @@ Golang中使用github.com/golang/protobuf库
 	c.proto
 	
 	注意 空格不能少
+	
 
 * 为什么并发导出时, 日志顺序是乱的?
 
 	Visual Studio并发编译C++时也是乱的, 当然它可以调顺序模式
+	
 	乱和速度不可兼得, 因为懒:)
 
 
 # TODO
 
-Golang 的读取例子
-
-支持json导出
-
-C# 版本例子
-
-
+支持proto3 map及根据id查配置的代码生成
 
 
 # 备注
