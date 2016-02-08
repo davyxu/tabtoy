@@ -3,6 +3,7 @@ package printer
 import (
 	"bytes"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/davyxu/pbmeta"
@@ -46,7 +47,7 @@ func makeValue(fd *pbmeta.FieldDescriptor, value string) string {
 func valueWrapper(fd *pbmeta.FieldDescriptor, value string) string {
 	switch fd.Type() {
 	case pbprotos.FieldDescriptorProto_TYPE_STRING:
-		return fmt.Sprintf("\"%s\"", value)
+		return strconv.Quote(value)
 	}
 
 	return value
