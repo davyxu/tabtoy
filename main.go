@@ -41,9 +41,6 @@ func main() {
 
 	flag.Parse()
 
-	// 关闭pbmeta的调试显示
-	golog.SetLevelByString("pbmeta", "info")
-
 	// 版本
 	if *paramVersion {
 		fmt.Println("tabtoy 0.1.2")
@@ -58,12 +55,6 @@ func main() {
 		if !runXls2PbtMode() {
 			goto Err
 		}
-
-		//	case "syncheader":
-		//		if !runSyncHeaderMode() {
-		//			os.Exit(1)
-		//			return
-		//		}
 
 	default:
 		fmt.Println("--mode not specify")
