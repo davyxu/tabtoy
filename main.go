@@ -27,6 +27,9 @@ var paramVersion = flag.Bool("version", false, "Show version")
 // 工作模式
 var paramMode = flag.String("mode", "", "mode: xls2pbt, syncheader")
 
+// 出现错误时暂停
+var paramHaltOnError = flag.Bool("haltonerr", false, "halt on error")
+
 func changeFileExt(filename, newExt string) string {
 
 	file := filepath.Base(filename)
@@ -43,7 +46,7 @@ func main() {
 
 	// 版本
 	if *paramVersion {
-		fmt.Println("tabtoy 0.1.1")
+		fmt.Println("tabtoy 0.1.2")
 		return
 	}
 
@@ -53,8 +56,7 @@ func main() {
 	switch *paramMode {
 	case "xls2pbt":
 		if !runXls2PbtMode() {
-			os.Exit(1)
-			return
+			goto Err
 		}
 
 		//	case "syncheader":
@@ -65,9 +67,19 @@ func main() {
 
 	default:
 		fmt.Println("--mode not specify")
-		os.Exit(1)
-		return
+		goto Err
 	}
+
+	return
+
+Err:
+
+	if *paramHaltOnError {
+		halt()
+	}
+
+	os.Exit(1)
+	return
 
 }
 
