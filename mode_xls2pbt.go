@@ -142,17 +142,23 @@ func setFieldValue(ri *scanner.RecordInfo, fieldName, value string) bool {
 		}
 
 		if data.DebuggingLevel >= 2 {
-			log.Debugf("	'%s'='%s'", fd.Name(), afterValue)
+			log.Debugf("	%s|'%s'='%s'", ri.FieldMsg.Desc.Name(), fd.Name(), afterValue)
 		}
+
+		var ret bool
 
 		// 多值
 		if fd.IsRepeated() {
-			ri.FieldMsg.AddRepeatedValue(fd, afterValue)
+			ret = ri.FieldMsg.AddRepeatedValue(fd, afterValue)
 
 		} else {
 
 			// 单值
-			ri.FieldMsg.SetValue(fd, afterValue)
+			ret = ri.FieldMsg.SetValue(fd, afterValue)
+		}
+
+		if !ret {
+			log.Errorln("set value failed ", fd.Name(), afterValue)
 		}
 
 	} else {

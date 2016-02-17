@@ -151,6 +151,10 @@ func (self *DynamicMessage) SetMessage(fd *pbmeta.FieldDescriptor, value *Dynami
 		return false
 	}
 
+	if fd.IsRepeated() {
+		return false
+	}
+
 	self.fetchValue(fd, true).msg = value
 
 	return true

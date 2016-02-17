@@ -217,10 +217,22 @@ func makeCompactAccessor(fieldName string, inputMsg *data.DynamicMessage) (*data
 			existMsg := msg.GetMessage(fd)
 
 			if existMsg == nil {
+
 				newMsg := data.NewDynamicMessage(fd.MessageDesc())
 
-				if !msg.SetMessage(fd, newMsg) {
-					return nil, nil
+				// 重复消息字段
+				if fd.IsRepeated() {
+
+					if !msg.AddRepeatedMessage(fd, newMsg) {
+						return nil, nil
+					}
+
+				} else { //普通值字段
+
+					if !msg.SetMessage(fd, newMsg) {
+						return nil, nil
+					}
+
 				}
 
 				msg = newMsg
