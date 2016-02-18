@@ -4,8 +4,8 @@ package test;
 
 enum ActorType
 {
-	Fighter = 0;	// @Alias:"格斗士"  #使用#号可在meta后方添加注释
-	Power = 21;		// @Alias: "超能"
+	Fighter = 0;	// [tabtoy]Alias:"格斗士"  #使用#号可在meta后方添加注释
+	Power = 21;		// [tabtoy]Alias: "超能"
 }
 
 
@@ -19,7 +19,7 @@ message Prop
 message ActorDefine
 {
 	// 唯一ID
-	int32 ID = 1; 	// @RepeatCheck: true #ID重复检查
+	int32 ID = 1; 	// [tabtoy] RepeatCheck: true #ID重复检查
 	
 	// 角色名称
 	string Name = 5; 
@@ -31,9 +31,9 @@ message ActorDefine
 	// 角色类型
 	ActorType Type = 30; 
 
-	repeated int32 SkillID = 40; // @String2ListSpliter: "," #使用,切割字符串
+	repeated int32 SkillID = 40; // [tabtoy] String2ListSpliter: "," #使用,切割字符串
 	
-	Prop StrStruct = 50; // @String2Struct: true
+	Prop StrStruct = 50; // [tabtoy] String2Struct: true
 		
 }
 

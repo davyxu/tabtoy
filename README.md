@@ -57,8 +57,8 @@ package test;
 
 enum ActorType
 {
-	Fighter = 0;	// @Alias:"格斗士"  #使用#号可在meta后方添加注释
-	Power = 21;		// @Alias: "超能"
+	Fighter = 0;	// [tabtoy] Alias:"格斗士"  #使用#号可在meta后方添加注释
+	Power = 21;		// [tabtoy] Alias: "超能"
 }
 
 
@@ -72,7 +72,7 @@ message Prop
 message ActorDefine
 {
 	// 唯一ID
-	int32 ID = 1; 	// @RepeatCheck: true #ID重复检查
+	int32 ID = 1; 	// [tabtoy] RepeatCheck: true #ID重复检查
 	
 	// 角色名称
 	string Name = 5; 
@@ -84,9 +84,9 @@ message ActorDefine
 	// 角色类型
 	ActorType Type = 30; 
 
-	repeated int32 SkillID = 40; // @String2ListSpliter: "," #使用,切割字符串
+	repeated int32 SkillID = 40; // [tabtoy] String2ListSpliter: "," #使用,切割字符串
 	
-	Prop StrStruct = 50; // @String2Struct: true
+	Prop StrStruct = 50; // [tabtoy] String2Struct: true
 		
 }
 
@@ -143,10 +143,10 @@ json的字段名必须是带双引号, 且数组需要用[]圈住, 多重字段�
 proto文件格式范例参考test/test.proto
 需要配合github.com/davyxu/pbmeta的protobuf插件protoc-gen-meta导出proto文件的meta信息
 
-在proto的字段后方的注释中以@开头的注释将被理解为meta信息, 用于描述字段导出功能修饰
-例如: // @RepeatCheck: true #ID重复检查
+在proto的字段后方的注释中以[tabtoy]开头的注释将被理解为meta信息, 用于描述字段导出功能修饰
+例如: // [tabtoy] RepeatCheck: true #ID重复检查
 
-@后方的格式为Protobuf Text, 使用#作为注释
+[tabtoy] 后方的格式为Protobuf Text, 使用#作为注释
 
 具体的meta功能请参考后面的小节
 

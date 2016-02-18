@@ -13,19 +13,31 @@ type IComment interface {
 	LeadingComment() string
 }
 
-const headMarker = "@"
+// 此样式无法支持多个tag, 即将被废除
+const oldStyleMarker = "@"
+
+const newStyleMarker = "[tabtoy]"
+
+func findMetaString(marker string, cm IComment) string {
+	if pos := strings.Index(cm.TrailingComment(), marker); pos == 0 {
+		return strings.TrimSpace(cm.TrailingComment()[len(marker):])
+	} else if strings.Index(cm.LeadingComment(), marker) == 0 {
+		return strings.TrimSpace(cm.LeadingComment()[len(marker):])
+	}
+
+	return ""
+}
 
 // 获取一个字段的扩展信息
 func GetFieldMeta(cm IComment) *tool.FieldMeta {
 
 	var metaStr string
 
-	if strings.Index(cm.TrailingComment(), headMarker) == 0 {
-		metaStr = strings.TrimSpace(cm.TrailingComment()[1:])
-	} else if strings.Index(cm.LeadingComment(), headMarker) == 0 {
-		metaStr = strings.TrimSpace(cm.LeadingComment()[1:])
-	} else {
-		return nil
+	// 优先找新样式, 再兼容老样式
+	if metaStr = findMetaString(newStyleMarker, cm); metaStr == "" {
+		if metaStr = findMetaString(oldStyleMarker, cm); metaStr == "" {
+			return nil
+		}
 	}
 
 	var meta tool.FieldMeta
