@@ -242,7 +242,7 @@ Proto字段列, 必须放在第二行
 	
 ```
 
-## C#
+## C# 
 
 步骤
 
@@ -252,7 +252,7 @@ Proto字段列, 必须放在第二行
 
 例如:
 
-```C#
+```csharp
 
         using (var stream = File.OpenRead(pathToPbt))
         {
