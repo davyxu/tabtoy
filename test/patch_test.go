@@ -1,11 +1,12 @@
 package test
 
 import (
-	"github.com/davyxu/tabtoy/test/test"
-	"github.com/golang/protobuf/proto"
 	"io/ioutil"
 	"os"
 	"testing"
+
+	"github.com/davyxu/tabtoy/test/test"
+	"github.com/golang/protobuf/proto"
 )
 
 func TestPatch(t *testing.T) {

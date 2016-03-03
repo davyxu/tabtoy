@@ -211,17 +211,70 @@ Proto字段列, 必须放在第二行
 * 没有导出头(单元格1,1)的格子不会被导出
 
 # 使用导出文件
-Golang中使用github.com/golang/protobuf库
+
+## Golang
+引用github.com/golang/protobuf库
 
 例子:
 
 ```golang
-	var meta tool.FieldMeta
 
-	if err := proto.UnmarshalText(metaStr, &meta); err != nil {		
-		return nil
+
+
+	func LoadPBTFile(filename string, msg proto.Message) error {
+	
+		content, err := ioutil.ReadFile(filename)
+	
+		if err != nil {
+			return err
+		}
+	
+		return proto.UnmarshalText(string(content), msg)
 	}
+
+
+	// 准备你的消息结构
+	var msg gamedef.YourMessage
+
+	// 直接读取pbt文件
+	LoadPBTFile( "Data.pbt", &msg )
+	
+	
 ```
+
+## C#
+
+步骤
+
+* 使用github.com/davyxu/mergepbt 将多个pbt合并并转为二进制
+
+* 使用protobuf-net库加载对应的二进制文件并读取
+
+例如:
+
+```C#
+
+        using (var stream = File.OpenRead(pathToPbt))
+        {
+            var yourmsg = ProtoBuf.Serializer.Deserialize<gamedef.ClientConfig>(stream);
+            stream.Close();
+        }   
+
+
+```
+
+## 其他语言
+
+* 支持protobuf文本格式的语言可以直接读取pbt文件
+
+例如: 官方包内的支持的C++, C#, Java, Golang等等
+
+* 不支持文本格式的语言需要使用github.com/davyxu/mergepbt进行合并转换, 使用二进制读取
+
+例如: Unity3D使用的protobuf-net
+
+
+
 # FAQ
 * 为什么输出文本格式,而不是二进制?
 
