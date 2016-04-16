@@ -188,10 +188,10 @@ func (self *Sheet) GetRC() (int, int) {
 }
 
 // 解析a.b.c字段，由给定的msg找到这些字段病返回字段访问器
-func makeCompactAccessor(fieldName string, inputMsg *data.DynamicMessage) (*data.DynamicMessage, *pbmeta.FieldDescriptor) {
+func makeCompactAccessor(compactFieldName string, inputMsg *data.DynamicMessage) (*data.DynamicMessage, *pbmeta.FieldDescriptor) {
 
 	// 将路径按点分割
-	fieldNameList := strings.Split(fieldName, ".")
+	fieldNameList := strings.Split(compactFieldName, ".")
 
 	msg := inputMsg
 
@@ -200,7 +200,7 @@ func makeCompactAccessor(fieldName string, inputMsg *data.DynamicMessage) (*data
 		// 这个路径对应的描述器
 		fd := msg.Desc.FieldByName(fieldName)
 		if fd == nil {
-			log.Errorf("field type name not found, %s in %s", fieldName, fieldName)
+			log.Errorf("field type name not found, %s in %s", fieldName, compactFieldName)
 			return nil, nil
 		}
 
@@ -249,7 +249,7 @@ func makeCompactAccessor(fieldName string, inputMsg *data.DynamicMessage) (*data
 	}
 
 	// 纯消息, 字段使用父级
-	return msg, inputMsg.Desc.FieldByName(fieldName)
+	return msg, inputMsg.Desc.FieldByName(compactFieldName)
 }
 
 func newSheet(file *File, sheet *xlsx.Sheet, header *tool.ExportHeader) *Sheet {

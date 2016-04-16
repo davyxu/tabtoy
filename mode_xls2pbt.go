@@ -161,12 +161,13 @@ func setFieldValue(ri *scanner.RecordInfo, fieldName, value string) bool {
 			log.Errorln("set value failed ", fd.Name(), afterValue)
 		}
 
-	} else {
-		log.Errorf("value convert error: '%s'='%s'", fieldName, value)
-		return false
+		return ret
+
 	}
 
-	return true
+	log.Errorf("value convert error: '%s'='%s' field type: %s repteated: %v", fieldName, value, ri.FieldDesc.Type(), ri.FieldDesc.IsRepeated())
+	return false
+
 }
 
 type sheetData struct {
@@ -226,18 +227,32 @@ func exportSheetMsg(pool *pbmeta.DescriptorPool, inputXls string) []*sheetData {
 			repChecker.Check(ri.FieldMeta, ri.FieldDesc, ri.Value)
 
 			// 字符串转结构体
-			if filter.Value2Struct(ri.FieldMeta, ri.Value, func(key, value string) {
+			v2sAffected, v2sHasErr := filter.Value2Struct(ri.FieldMeta, ri.Value, func(key, value string) bool {
 
-				setFieldValue(ri, key, value)
-			}) {
+				return setFieldValue(ri, key, value)
+			})
+
+			if v2sHasErr {
+				return false
+			}
+
+			if v2sAffected {
 				return true
 			}
 
+			var setFieldValueHasErr bool
+
 			// 分隔符切分值
 			if filter.Value2List(ri.FieldMeta, ri.Value, func(value string) {
-				setFieldValue(ri, ri.FieldDesc.Name(), value)
+				if !setFieldValue(ri, ri.FieldDesc.Name(), value) {
+					setFieldValueHasErr = true
+				}
 			}) {
-				return true
+				return !setFieldValueHasErr
+			}
+
+			if setFieldValueHasErr {
+				return false
 			}
 
 			return setFieldValue(ri, ri.FieldDesc.Name(), ri.Value)

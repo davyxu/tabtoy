@@ -10,14 +10,14 @@ const (
 	stateValue = 3
 )
 
-func Value2Struct(meta *tool.FieldMeta, value string, callback func(string, string)) bool {
+func Value2Struct(meta *tool.FieldMeta, value string, callback func(string, string) bool) (isValue2Struct bool, hasError bool) {
 
 	if meta == nil {
-		return false
+		return
 	}
 
 	if meta.String2Struct == false {
-		return false
+		return
 	}
 
 	lex := newLineLexer(value)
@@ -31,9 +31,11 @@ func Value2Struct(meta *tool.FieldMeta, value string, callback func(string, stri
 
 		switch state {
 		case lexerEOF:
-			return true
+			isValue2Struct = true
+			return
 		case lexerErr:
-			return false
+			hasError = true
+			return
 		case lexerToken:
 
 			switch parserState {
@@ -42,15 +44,19 @@ func Value2Struct(meta *tool.FieldMeta, value string, callback func(string, stri
 				parserState = stateComma
 			case stateComma:
 				if token != ":" {
+					hasError = true
 					log.Errorf("Unexpect symbol '%v' expect ':'", token)
-					return false
+					return
 				}
 
 				parserState = stateValue
 
 			case stateValue:
 
-				callback(key, token)
+				if !callback(key, token) {
+					hasError = true
+					return
+				}
 
 				parserState = stateKey
 			}
@@ -59,6 +65,7 @@ func Value2Struct(meta *tool.FieldMeta, value string, callback func(string, stri
 
 	}
 
-	return true
+	isValue2Struct = true
+	return
 
 }

@@ -74,6 +74,8 @@ func (self *DynamicMessage) SetValue(fd *pbmeta.FieldDescriptor, value string) b
 
 	if fd.IsRepeated() {
 
+		log.Errorf("field is repeated by used like non-repeated value", fd.Name())
+
 		return false
 
 	}
@@ -126,6 +128,9 @@ func (self *DynamicMessage) AddRepeatedValue(fd *pbmeta.FieldDescriptor, value s
 	fv := self.fetchValue(fd, true)
 
 	if !fd.IsRepeated() {
+
+		log.Errorf("field is non-repeated by used like repeated value", fd.Name())
+
 		return false
 	}
 
@@ -152,6 +157,8 @@ func (self *DynamicMessage) SetMessage(fd *pbmeta.FieldDescriptor, value *Dynami
 	}
 
 	if fd.IsRepeated() {
+		log.Errorf("field is repeated by used like non-repeated value", fd.Name())
+
 		return false
 	}
 
@@ -176,6 +183,9 @@ func (self *DynamicMessage) AddRepeatedMessage(fd *pbmeta.FieldDescriptor, value
 	fv := self.fetchValue(fd, true)
 
 	if !fd.IsRepeated() {
+
+		log.Errorf("field is non-repeated by used like repeated value", fd.Name())
+
 		return false
 	}
 
