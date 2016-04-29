@@ -224,10 +224,10 @@ func exportSheetMsg(pool *pbmeta.DescriptorPool, inputXls string) []*sheetData {
 		sheetMsg, ok := sheet.IterateData(func(ri *scanner.RecordInfo) bool {
 
 			// 重复值检查
-			repChecker.Check(ri.FieldMeta, ri.FieldDesc, ri.Value)
+			repChecker.Check(ri.FieldMeta, ri.FieldDesc, ri.Value())
 
 			// 字符串转结构体
-			v2sAffected, v2sHasErr := filter.Value2Struct(ri.FieldMeta, ri.Value, func(key, value string) bool {
+			v2sAffected, v2sHasErr := filter.Value2Struct(ri.FieldMeta, ri.Value(), func(key, value string) bool {
 
 				return setFieldValue(ri, key, value)
 			})
@@ -243,7 +243,7 @@ func exportSheetMsg(pool *pbmeta.DescriptorPool, inputXls string) []*sheetData {
 			var setFieldValueHasErr bool
 
 			// 分隔符切分值
-			if filter.Value2List(ri.FieldMeta, ri.Value, func(value string) {
+			if filter.Value2List(ri.FieldMeta, ri.Value(), func(value string) {
 				if !setFieldValue(ri, ri.FieldDesc.Name(), value) {
 					setFieldValueHasErr = true
 				}
@@ -255,7 +255,7 @@ func exportSheetMsg(pool *pbmeta.DescriptorPool, inputXls string) []*sheetData {
 				return false
 			}
 
-			return setFieldValue(ri, ri.FieldDesc.Name(), ri.Value)
+			return setFieldValue(ri, ri.FieldDesc.Name(), ri.Value())
 
 		})
 

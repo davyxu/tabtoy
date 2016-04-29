@@ -23,4 +23,6 @@ message FieldMeta
 	string Alias = 4;				// 枚举名称转换, 写在枚举值注释内
 	
 	bool String2Struct = 5;			// 字符串转为结构体
+	
+	string DefaultValue = 6;		// 默认值, 比pb2的默认值有更高的优先度
 }

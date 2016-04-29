@@ -92,10 +92,19 @@ func (self *Sheet) checkProtoHeader() (*data.DynamicMessage, *pbmeta.Descriptor,
 
 type RecordInfo struct {
 	FieldName string // 表格中的字段描述,可能是a.b.c
-	Value     string // 表格中的值
+	CellValue string // 表格中的值
 	FieldDesc *pbmeta.FieldDescriptor
 	FieldMsg  *data.DynamicMessage // 这个字段所在的Message
 	FieldMeta *tool.FieldMeta      // 扩展字段
+}
+
+func (self *RecordInfo) Value() string {
+
+	if self.CellValue == "" && self.FieldMeta != nil {
+		return self.FieldMeta.DefaultValue
+	}
+
+	return self.CellValue
 }
 
 func (self *Sheet) IterateData(callback func(*RecordInfo) bool) (*data.DynamicMessage, bool) {
@@ -138,7 +147,7 @@ func (self *Sheet) IterateData(callback func(*RecordInfo) bool) (*data.DynamicMe
 			ri.FieldName = self.FieldHeader[self.index]
 
 			// 原始值
-			ri.Value = self.GetCellData(self.cursor, self.index)
+			ri.CellValue = self.GetCellData(self.cursor, self.index)
 
 			// #开头表示注释, 跳过
 			if strings.Index(ri.FieldName, "#") == 0 {

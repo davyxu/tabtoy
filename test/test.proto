@@ -11,7 +11,7 @@ enum ActorType
 
 message Prop
 {
-	int32 HP = 1;
+	int32 HP = 1;			// [tabtoy]DefaultValue: "10"
 	float AttackRate  = 2;
 }
 

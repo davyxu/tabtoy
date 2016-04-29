@@ -43,7 +43,7 @@ func main() {
 
 	// 版本
 	if *paramVersion {
-		fmt.Println("tabtoy 0.1.5")
+		fmt.Println("tabtoy 0.1.6")
 		return
 	}
 
