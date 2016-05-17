@@ -155,6 +155,10 @@ proto文件格式范例参考test/test.proto
 
 具体的meta功能请参考后面的小节
 
+详细例子参考:
+https://github.com/davyxu/tabtoy/blob/master/test/test.proto
+
+
 
 # 电子表格文件头格式
 
@@ -198,6 +202,7 @@ Proto字段列, 必须放在第二行
 # 电子表格Proto字段行meta扩展功能
 
 ## 枚举别名
+格式: Alias: "别名"
 
 当枚举值字段meta信息中填写Alias: "别名"时
 
@@ -226,8 +231,6 @@ Proto字段列, 必须放在第二行
 字段值会用"分隔字符串"切割并存储到repeated字段中
 
 P.S. 建议分割字符串不要使用逗号. 电子表格中, 数字中带逗号表示数位分隔符, 会导致无法切割的问题
-
-
 
 
 ## 默认值功能
