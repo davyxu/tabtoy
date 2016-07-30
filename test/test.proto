@@ -19,7 +19,7 @@ message Prop
 message ActorDefine
 {
 	// 唯一ID
-	int32 ID = 1; 	// [tabtoy] RepeatCheck: true #ID重复检查
+	int64 ID = 1; 	// [tabtoy] RepeatCheck: true #ID重复检查
 	
 	// 角色名称
 	string Name = 5; 

@@ -12,12 +12,12 @@ type pbtWriter struct {
 	printer *bytes.Buffer
 }
 
-func (self *pbtWriter) RepeatedMessageBegin(fd *pbmeta.FieldDescriptor, msg *data.DynamicMessage, indent int) {
+func (self *pbtWriter) RepeatedMessageBegin(fd *pbmeta.FieldDescriptor, msg *data.DynamicMessage, msgCount int, indent int) {
 
 }
 
 // Value是消息的字段
-func (self *pbtWriter) WriteMessageField(fd *pbmeta.FieldDescriptor, msg *data.DynamicMessage, indent int) {
+func (self *pbtWriter) WriteMessage(fd *pbmeta.FieldDescriptor, msg *data.DynamicMessage, indent int) {
 
 	pos := self.printer.Len()
 
@@ -33,22 +33,30 @@ func (self *pbtWriter) WriteMessageField(fd *pbmeta.FieldDescriptor, msg *data.D
 	}
 }
 
-func (self *pbtWriter) RepeatedMessageEnd(fd *pbmeta.FieldDescriptor, msg *data.DynamicMessage, indent int) {
+func (self *pbtWriter) RepeatedMessageEnd(fd *pbmeta.FieldDescriptor, msg *data.DynamicMessage, msgCount int, indent int) {
+
+}
+
+func (self *pbtWriter) RepeatedValueBegin(fd *pbmeta.FieldDescriptor) {
 
 }
 
 // 普通值
-func (self *pbtWriter) WriteValueField(fd *pbmeta.FieldDescriptor, value string, indent int) {
+func (self *pbtWriter) WriteValue(fd *pbmeta.FieldDescriptor, value string, indent int) {
 
 	self.printer.WriteString(fmt.Sprintf("%s: %s", fd.Name(), valueWrapper(fd, value)))
 }
 
-func (self *pbtWriter) WriteValueSpliter() {
+func (self *pbtWriter) RepeatedValueEnd(fd *pbmeta.FieldDescriptor) {
+
+}
+
+func (self *pbtWriter) WriteFieldSpliter() {
 
 	self.printer.WriteString(" ")
 }
 
-func (self *pbtWriter) WriteMessage(msg *data.DynamicMessage) {
+func (self *pbtWriter) PrintMessage(msg *data.DynamicMessage) {
 
 	rawWriteMessage(self.printer, self, msg, 0)
 }

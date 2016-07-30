@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/davyxu/pbmeta"
+	pbprotos "github.com/davyxu/pbmeta/proto"
 	"github.com/davyxu/tabtoy/data"
 )
 
@@ -12,13 +13,13 @@ type luaWriter struct {
 	printer *bytes.Buffer
 }
 
-func (self *luaWriter) RepeatedMessageBegin(fd *pbmeta.FieldDescriptor, msg *data.DynamicMessage, indent int) {
+func (self *luaWriter) RepeatedMessageBegin(fd *pbmeta.FieldDescriptor, msg *data.DynamicMessage, msgCount int, indent int) {
 
 	self.printer.WriteString(fmt.Sprintf("%s = {\n", fd.Name()))
 }
 
 // Value是消息的字段
-func (self *luaWriter) WriteMessageField(fd *pbmeta.FieldDescriptor, msg *data.DynamicMessage, indent int) {
+func (self *luaWriter) WriteMessage(fd *pbmeta.FieldDescriptor, msg *data.DynamicMessage, indent int) {
 
 	if indent == 1 {
 		self.printer.WriteString("{")
@@ -33,22 +34,42 @@ func (self *luaWriter) WriteMessageField(fd *pbmeta.FieldDescriptor, msg *data.D
 
 }
 
-func (self *luaWriter) RepeatedMessageEnd(fd *pbmeta.FieldDescriptor, msg *data.DynamicMessage, indent int) {
+func (self *luaWriter) RepeatedMessageEnd(fd *pbmeta.FieldDescriptor, msg *data.DynamicMessage, msgCount int, indent int) {
 	self.printer.WriteString("}")
 }
 
-// 普通值
-func (self *luaWriter) WriteValueField(fd *pbmeta.FieldDescriptor, value string, indent int) {
+func (self *luaWriter) RepeatedValueBegin(fd *pbmeta.FieldDescriptor) {
 
-	self.printer.WriteString(fmt.Sprintf("%s = %s", fd.Name(), valueWrapper(fd, value)))
 }
 
-func (self *luaWriter) WriteValueSpliter() {
+// 普通值
+func (self *luaWriter) WriteValue(fd *pbmeta.FieldDescriptor, value string, indent int) {
+
+	var finalValue string
+	switch fd.Type() {
+	case pbprotos.FieldDescriptorProto_TYPE_STRING,
+		pbprotos.FieldDescriptorProto_TYPE_ENUM:
+		finalValue = strEscape(value)
+	case pbprotos.FieldDescriptorProto_TYPE_INT64,
+		pbprotos.FieldDescriptorProto_TYPE_UINT64:
+		finalValue = fmt.Sprintf("\"%s\"", value)
+	default:
+		finalValue = value
+	}
+
+	self.printer.WriteString(fmt.Sprintf("%s = %s", fd.Name(), finalValue))
+}
+
+func (self *luaWriter) RepeatedValueEnd(fd *pbmeta.FieldDescriptor) {
+
+}
+
+func (self *luaWriter) WriteFieldSpliter() {
 
 	self.printer.WriteString(", ")
 }
 
-func (self *luaWriter) WriteMessage(msg *data.DynamicMessage) {
+func (self *luaWriter) PrintMessage(msg *data.DynamicMessage) {
 
 	self.printer.WriteString("return {\n\n")
 	rawWriteMessage(self.printer, self, msg, 0)

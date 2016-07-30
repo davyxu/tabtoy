@@ -10,19 +10,23 @@ import (
 )
 
 type IWriter interface {
-	WriteMessage(msg *data.DynamicMessage)
+	PrintMessage(msg *data.DynamicMessage)
 }
 
 type dataWriter interface {
-	WriteMessageField(fd *pbmeta.FieldDescriptor, msg *data.DynamicMessage, indent int)
+	RepeatedMessageBegin(fd *pbmeta.FieldDescriptor, msg *data.DynamicMessage, msgCount int, indent int)
 
-	WriteValueField(fd *pbmeta.FieldDescriptor, value string, indent int)
+	WriteMessage(fd *pbmeta.FieldDescriptor, msg *data.DynamicMessage, indent int)
 
-	WriteValueSpliter()
+	RepeatedMessageEnd(fd *pbmeta.FieldDescriptor, msg *data.DynamicMessage, msgCount int, indent int)
 
-	RepeatedMessageBegin(fd *pbmeta.FieldDescriptor, msg *data.DynamicMessage, indent int)
+	RepeatedValueBegin(fd *pbmeta.FieldDescriptor)
 
-	RepeatedMessageEnd(fd *pbmeta.FieldDescriptor, msg *data.DynamicMessage, indent int)
+	WriteValue(fd *pbmeta.FieldDescriptor, value string, indent int)
+
+	RepeatedValueEnd(fd *pbmeta.FieldDescriptor)
+
+	WriteFieldSpliter()
 }
 
 func rawWriteMessage(printer *bytes.Buffer, writer dataWriter, msg *data.DynamicMessage, indent int) (valueWrite int) {
@@ -35,7 +39,7 @@ func rawWriteMessage(printer *bytes.Buffer, writer dataWriter, msg *data.Dynamic
 		pos := printer.Len()
 
 		if i > 0 {
-			writer.WriteValueSpliter()
+			writer.WriteFieldSpliter()
 		}
 
 		if fd.Type() == pbprotos.FieldDescriptorProto_TYPE_MESSAGE {
@@ -45,14 +49,23 @@ func rawWriteMessage(printer *bytes.Buffer, writer dataWriter, msg *data.Dynamic
 				// 多结构
 				if msgList := msg.GetRepeatedMessage(fd); msgList != nil {
 
-					writer.RepeatedMessageBegin(fd, msg, indent+1)
+					writer.RepeatedMessageBegin(fd, msg, len(msgList), indent+1)
 
-					for _, msg := range msgList {
+					for msgIndex, msg := range msgList {
 
-						writer.WriteMessageField(fd, msg, indent+1)
-						valueWrite++
+						beginPos := printer.Len()
+						writer.WriteMessage(fd, msg, indent+1)
+						endPos := printer.Len()
 
-						writer.WriteValueSpliter()
+						// 是否有数据写入
+						if endPos > beginPos {
+							valueWrite++
+
+							// 最后一个不要加
+							if msgIndex < len(msgList)-1 {
+								writer.WriteFieldSpliter()
+							}
+						}
 
 						if indent == 0 {
 							printer.WriteString("\n")
@@ -60,7 +73,7 @@ func rawWriteMessage(printer *bytes.Buffer, writer dataWriter, msg *data.Dynamic
 
 					}
 
-					writer.RepeatedMessageEnd(fd, msg, indent+1)
+					writer.RepeatedMessageEnd(fd, msg, len(msgList), indent+1)
 
 					needSpliter = true
 
@@ -71,10 +84,16 @@ func rawWriteMessage(printer *bytes.Buffer, writer dataWriter, msg *data.Dynamic
 				// 单结构
 				if msg := msg.GetMessage(fd); msg != nil {
 
-					writer.WriteMessageField(fd, msg, indent+1)
-					valueWrite++
+					beginPos := printer.Len()
+					writer.WriteMessage(fd, msg, indent+1)
+					endPos := printer.Len()
 
-					needSpliter = true
+					// 是否有数据写入
+					if endPos > beginPos {
+						valueWrite++
+
+						needSpliter = true
+					}
 
 				}
 			}
@@ -85,16 +104,21 @@ func rawWriteMessage(printer *bytes.Buffer, writer dataWriter, msg *data.Dynamic
 			if fd.IsRepeated() {
 
 				if valuelist := msg.GetRepeatedValue(fd); valuelist != nil {
+
+					writer.RepeatedValueBegin(fd)
+
 					for vIndex, value := range valuelist {
 
-						writer.WriteValueField(fd, value, indent)
+						writer.WriteValue(fd, value, indent)
 						valueWrite++
 
 						if vIndex < len(valuelist)-1 {
-							writer.WriteValueSpliter()
+							writer.WriteFieldSpliter()
 
 						}
 					}
+
+					writer.RepeatedValueEnd(fd)
 
 					needSpliter = true
 				}
@@ -103,7 +127,7 @@ func rawWriteMessage(printer *bytes.Buffer, writer dataWriter, msg *data.Dynamic
 
 				// 单值
 				if value, ok := msg.GetValue(fd); ok {
-					writer.WriteValueField(fd, value, indent)
+					writer.WriteValue(fd, value, indent)
 					valueWrite++
 
 					needSpliter = true

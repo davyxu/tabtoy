@@ -90,17 +90,6 @@ func task(input, output string, callback func(string, string) bool, signal chan 
 	return result
 }
 
-func getOutputExt() string {
-	switch *paramFormat {
-	case "pbt":
-		return ".pbt"
-	case "lua":
-		return ".lua"
-	}
-
-	return ""
-}
-
 func parallelWorker(fileList []string, para bool, outDir string, callback func(string, string) bool) bool {
 
 	// 处理多个导出文件情况
@@ -189,8 +178,23 @@ type sheetData struct {
 	msg  *data.DynamicMessage
 }
 
+func getOutputExt() string {
+	switch *paramFormat {
+	case "json":
+		return ".json"
+	case "pbt":
+		return ".pbt"
+	case "lua":
+		return ".lua"
+	}
+
+	return ""
+}
+
 func newWriter(buf *bytes.Buffer) printer.IWriter {
 	switch *paramFormat {
+	case "json":
+		return printer.NewJsonWriter(buf)
 	case "pbt":
 		return printer.NewPBTWriter(buf)
 	case "lua":
@@ -215,7 +219,7 @@ func printFile(sheetData []*sheetData, outputFile string) bool {
 
 	for _, sd := range sheetData {
 
-		writer.WriteMessage(sd.msg)
+		writer.PrintMessage(sd.msg)
 	}
 
 	// 创建输出文件

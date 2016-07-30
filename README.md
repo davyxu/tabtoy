@@ -12,6 +12,8 @@
 
 直接输出基于Protobuf文本的格式化数据, 直接读取
 
+支持lua, json格式输出, 无需解析,转换,直接读取
+
 字段位置随意调整, 自动检查错误, 精确报错位置
 
 充分利用CPU多核进行导出, 是已知的现有导出器中最快的
@@ -109,15 +111,16 @@ message ActorFile
 
 ## 第三步: 通过 批处理/shell 填写导出目标及信息
 
-# 通过protobuf的编译器protoc, 配合protoc-gen-meta插件导出带有meta信息的pb文件
+* 通过protobuf的编译器protoc, 配合protoc-gen-meta插件导出带有meta信息的pb文件
+	protoc-gen-meta的获取: https://github.com/davyxu/pbmeta
 
 ```BAT
 ..\proto\protoc.exe test.proto --plugin=protoc-gen-meta=..\..\..\..\..\bin\protoc-gen-meta.exe --proto_path "." --meta_out test.pb:.
 ```
 
-# 通过tabtoy读取meta信息及电子表格,指定输出文件夹,输出同名的pbt文件
+* 通过tabtoy读取meta信息及电子表格,指定输出文件夹,输出同名的pbt文件
 ```BAT
-..\..\..\..\..\bin\tabtoy.exe --mode=xls2pbt --pb=test.pb --outdir=. Actor.xlsx
+..\..\..\..\..\bin\tabtoy.exe --mode=xls2pbt --pb=test.pb --outdir=. --fmt=pbt Actor.xlsx
 
 ```
 
@@ -132,6 +135,16 @@ Actor {ID: 104 Name: "邋遢大王" Struct {AttackRate: 1} BuffID: 0 BuffID: 0  
 
 
 ```
+
+# 导出格式
+默认导出pbt, 通过参数可以导出lua, json格式
+* --fmt=pbt
+	默认导出pbt
+* --fmt=lua
+	导出以return开头的lua文件, 通过require的返回值回去表格table
+	兼容pbc格式, 枚举值以值名字字符串导出, 64位以字符串方式导出
+* --fmt=json
+	标准json, 与proto定义的结构导出json相同
 
 # Protobuf Text格式(pbt)
 Google Protobuf 官方支持的格式
@@ -314,7 +327,7 @@ protobuf v3版本中去掉了DefaultValue支持, 在meta信息中添加DefaultVa
 
 例如: 官方包内的支持的C++, C#, Java, Golang等等
 
-* 不支持文本格式的语言需要使用github.com/davyxu/mergepbt进行合并转换, 使用二进制读取
+* 不支持文本格式的语言需要使用https://github.com/davyxu/mergepbt进行合并转换, 使用二进制读取
 
 例如: Unity3D使用的protobuf-net
 
@@ -327,13 +340,7 @@ protobuf v3版本中去掉了DefaultValue支持, 在meta信息中添加DefaultVa
 	
 	从使用角度: 文本调试,查看很方便
 	
-
-* 为什么只有Protobuf Text输出没有json或者其他格式?
-
-	Protobuf 2.X时是对Protobuf Text有良好的支持, 包括Golang
-	
-	进入3.0 后, 大概由于Protobuf Text不是主流格式, 因此官方还是提供json格式支持
-	
+	需要二进制导出请参见https://github.com/davyxu/mergepbt
 
 * C++和C#支持么?
 
@@ -366,8 +373,13 @@ https://github.com/davyxu/tabtoy/releases
 
 想获取最新版请取最新代码编译
 
-# TODO
+# 版本历史
 
+* 1.1
+支持lua, json导出
+
+* 1.0
+基本功能
 
 
 
