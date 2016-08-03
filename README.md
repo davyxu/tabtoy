@@ -329,6 +329,12 @@ protobuf v3版本中去掉了DefaultValue支持, 在meta信息中添加DefaultVa
 
 ```
 
+直接读取pbt格式
+
+使用https://github.com/davyxu/ProtobufTextSerializer库直接加载
+
+
+
 ## 其他语言
 
 * 支持protobuf文本格式的语言可以直接读取pbt文件
