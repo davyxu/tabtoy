@@ -18,6 +18,14 @@
 
 充分利用CPU多核进行导出, 是已知的现有导出器中最快的
 
+# 商用项目
+
+* Fairy in Wonderland
+	https://itunes.apple.com/us/app/fairy-in-wonderland-parkour/id1128656892?l=zh&ls=1&mt=8
+	
+另2款使用tabtoy的游戏, 待发布
+
+如果你的项目在使用tabtoy, 请联系我添加链接, 互相宣传
 
 # 迭代历程
 
