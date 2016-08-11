@@ -33,7 +33,7 @@ message ActorDefine
 
 	repeated int32 SkillID = 40; // [tabtoy] String2ListSpliter: "," #使用,切割字符串
 	
-	Prop StrStruct = 50; // [tabtoy] String2Struct: true
+	repeated Prop StrStruct = 50; // [tabtoy] String2Struct: true
 		
 }
 

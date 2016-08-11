@@ -16,7 +16,11 @@ type jsonWriter struct {
 
 func (self *jsonWriter) RepeatedMessageBegin(fd *pbmeta.FieldDescriptor, msg *data.DynamicMessage, msgCount int, indent int) {
 
-	self.printer.WriteString(fmt.Sprintf("\"%s\" : [\n", fd.Name()))
+	if indent == 1 {
+		self.printer.WriteString(fmt.Sprintf("\"%s\" : [\n", fd.Name()))
+	} else {
+		self.printer.WriteString(fmt.Sprintf("\"%s\" : [", fd.Name()))
+	}
 
 }
 
@@ -25,7 +29,7 @@ func (self *jsonWriter) WriteMessage(fd *pbmeta.FieldDescriptor, msg *data.Dynam
 
 	pos := self.printer.Len()
 
-	if indent == 1 {
+	if indent == 1 || fd.IsRepeated() {
 		self.printer.WriteString("{")
 
 	} else {

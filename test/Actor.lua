@@ -2,11 +2,11 @@
 return {
 
 Actor = {
-{ID = "100", Name = "黑猫警长", Struct = {HP = 100, AttackRate = 0.6}, BuffID = 0, BuffID = 0, SkillID = 4, SkillID = 6, SkillID = 7, StrStruct = {}}, 
-{ID = "101", Name = "葫芦\n娃", Struct = {HP = 10, AttackRate = 0.8}, BuffID = 3, BuffID = 1, Type = "Power", SkillID = 1, StrStruct = {}}, 
-{ID = "102", Name = "舒\"克\"", Struct = {HP = 10, AttackRate = 0.7}, BuffID = 0, BuffID = 0, SkillID = 0, StrStruct = {HP = 2, AttackRate = 0.5}}, 
-{ID = "103", Name = "贝\n塔", Struct = {HP = 205}, BuffID = 0, BuffID = 0, SkillID = 0, StrStruct = {}}, 
-{ID = "104", Name = "邋遢大王", Struct = {HP = 10, AttackRate = 1}, BuffID = 0, BuffID = 0, SkillID = 0, StrStruct = {}}
+{ID = "100", Name = "黑猫警长", Struct = {HP = 100, AttackRate = 0.6}, BuffID = 0, BuffID = 0, SkillID = 4, SkillID = 6, SkillID = 7, StrStruct = {{}, {}, {}}}, 
+{ID = "101", Name = "葫芦\n娃", Struct = {HP = 10, AttackRate = 0.8}, BuffID = 3, BuffID = 1, Type = "Power", SkillID = 1, StrStruct = {{}, {}, {}}}, 
+{ID = "102", Name = "舒\"克\"", Struct = {HP = 10, AttackRate = 0.7}, BuffID = 0, BuffID = 0, SkillID = 0, StrStruct = {{HP = 2}, {AttackRate = 0.5}, {HP = 3, AttackRate = 1}}}, 
+{ID = "103", Name = "贝\n塔", Struct = {HP = 205}, BuffID = 0, BuffID = 0, SkillID = 0, StrStruct = {{}, {}, {}}}, 
+{ID = "104", Name = "邋遢大王", Struct = {HP = 10, AttackRate = 1}, BuffID = 0, BuffID = 0, SkillID = 0, StrStruct = {{}, {}, {}}}
 }
 
 }

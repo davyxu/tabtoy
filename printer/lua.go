@@ -15,13 +15,17 @@ type luaWriter struct {
 
 func (self *luaWriter) RepeatedMessageBegin(fd *pbmeta.FieldDescriptor, msg *data.DynamicMessage, msgCount int, indent int) {
 
-	self.printer.WriteString(fmt.Sprintf("%s = {\n", fd.Name()))
+	if indent == 1 {
+		self.printer.WriteString(fmt.Sprintf("%s = {\n", fd.Name()))
+	} else {
+		self.printer.WriteString(fmt.Sprintf("%s = {", fd.Name()))
+	}
 }
 
 // Value是消息的字段
 func (self *luaWriter) WriteMessage(fd *pbmeta.FieldDescriptor, msg *data.DynamicMessage, indent int) {
 
-	if indent == 1 {
+	if indent == 1 || fd.IsRepeated() {
 		self.printer.WriteString("{")
 
 	} else {
