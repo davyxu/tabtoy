@@ -1,117 +1,63 @@
 package filter
 
-type lineLexer struct {
-	original string
-	s        string
-}
-
-const (
-	lexerEOF   = 0
-	lexerToken = 1
-	lexerErr   = 2
+import (
+	"github.com/davyxu/golexer"
+	"github.com/davyxu/pbmeta"
 )
 
-// Numbers and identifiers are matched by [-+._A-Za-z0-9]
-func isIdentOrNumberChar(c byte) bool {
-	switch {
-	case 'A' <= c && c <= 'Z', 'a' <= c && c <= 'z':
-		return true
-	case '0' <= c && c <= '9':
-		return true
-	}
-	switch c {
-	case '-', '+', '.', '_':
-		return true
-	}
-	return false
+type lineParser struct {
+	lexer *golexer.Lexer
+	fd    *pbmeta.FieldDescriptor
+
+	curr *golexer.Token
 }
 
-func isWhitespace(c byte) bool {
-	switch c {
-	case ' ', '\t', '\n', '\r':
-		return true
+func (self *lineParser) NextToken() {
+
+	token, err := self.lexer.Read()
+
+	if err != nil {
+		panic(err)
 	}
-	return false
+
+	if token == nil {
+		panic("EOF")
+		return
+	}
+
+	self.curr = token
 }
 
-func (self *lineLexer) skipWhiteSpace() {
-
-	i := 0
-	for ; i < len(self.s); i++ {
-
-		c := self.s[i]
-		if isWhitespace(c) {
-			continue
-		}
-
-		break
-	}
-
-	self.offset(i)
+func (self *lineParser) TokenID() int {
+	return self.curr.MatcherID()
 }
 
-func (self *lineLexer) offset(p int) {
-	self.s = self.s[p:len(self.s)]
+func (self *lineParser) TokenValue() string {
+	return self.curr.Value()
 }
 
-func (self *lineLexer) Next() (string, int) {
-	self.skipWhiteSpace()
+func newLineParser(fd *pbmeta.FieldDescriptor, value string) *lineParser {
+	l := golexer.NewLexer()
 
-	if len(self.s) == 0 {
-		return "", lexerEOF
-	}
+	l.AddMatcher(golexer.NewNumeralMatcher(Token_Numeral))
+	l.AddMatcher(golexer.NewStringMatcher(Token_String))
 
-	switch self.s[0] {
-	case '"':
+	l.AddIgnoreMatcher(golexer.NewWhiteSpaceMatcher(Token_WhiteSpace))
+	l.AddIgnoreMatcher(golexer.NewLineEndMatcher(Token_LineEnd))
+	l.AddIgnoreMatcher(golexer.NewUnixStyleCommentMatcher(Token_UnixStyleComment))
 
-		var quotedString string
-		var done bool
+	l.AddMatcher(golexer.NewSignMatcher(Token_True, "true"))
+	l.AddMatcher(golexer.NewSignMatcher(Token_False, "false"))
+	l.AddMatcher(golexer.NewSignMatcher(Token_Comma, ":"))
 
-		i := 1
-		for ; i < len(self.s); i++ {
-			if self.s[i] == '"' {
-				quotedString = self.s[1:i]
-				done = true
-				break
-			}
-		}
+	l.AddMatcher(golexer.NewIdentifierMatcher(Token_Identifier))
 
-		if !done {
-			log.Errorf("Unfinished quoted string: %s", self.original)
-			return "", lexerErr
-		}
-		self.offset(i + 1)
+	l.AddMatcher(golexer.NewUnknownMatcher(Token_Unknown))
 
-		return quotedString, lexerToken
+	l.Start(value)
 
-	case ':':
-		self.offset(1)
-
-		return ":", lexerToken
-	case '#':
-		return "", lexerEOF
-
-	}
-
-	i := 0
-	for i < len(self.s) && isIdentOrNumberChar(self.s[i]) {
-		i++
-	}
-
-	if i == 0 {
-		log.Errorf("Unexpect char %c, pbt format:\n  key1: value1 key2: value2", self.s[0])
-		return "", lexerErr
-	}
-
-	ret := self.s[0:i]
-
-	self.offset(i)
-
-	return ret, lexerToken
-}
-
-func newLineLexer(src string) *lineLexer {
-	return &lineLexer{original: src,
-		s: src,
+	return &lineParser{
+		lexer: l,
+		fd:    fd,
 	}
 }

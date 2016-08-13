@@ -263,7 +263,7 @@ func exportSheetMsg(pool *pbmeta.DescriptorPool, inputXls string) []*sheetData {
 			repChecker.Check(ri.FieldMeta, ri.FieldDesc, ri.Value())
 
 			// 字符串转结构体
-			v2sAffected, v2sHasErr := filter.Value2Struct(ri.FieldMeta, ri.Value(), func(key, value string) bool {
+			v2sAffected, v2sHasErr := filter.Value2Struct(ri.FieldMeta, ri.Value(), ri.FieldDesc, func(key, value string) bool {
 
 				return setFieldValue(ri, key, value)
 			})

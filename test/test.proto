@@ -11,8 +11,9 @@ enum ActorType
 
 message Prop
 {
-	int32 HP = 1;			// [tabtoy]DefaultValue: "10"
-	float AttackRate  = 2;
+	int32 HP = 1;			// [tabtoy] DefaultValue: "10" Alias:"血量"
+	float AttackRate  = 2;  // [tabtoy] Alias:"攻击速率"
+	ActorType ExType = 3;	// [tabtoy] Alias:"额外类型"
 }
 
 // 代表每一行对应的整个字段描述

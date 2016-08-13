@@ -1,16 +1,54 @@
 package filter
 
 import (
+	"github.com/davyxu/pbmeta"
+	pbprotos "github.com/davyxu/pbmeta/proto"
+	"github.com/davyxu/tabtoy/data"
 	"github.com/davyxu/tabtoy/proto/tool"
 )
 
+// 自定义的token id
 const (
-	stateKey   = 1
-	stateComma = 2
-	stateValue = 3
+	Token_Unknown = iota
+	Token_Numeral
+	Token_String
+	Token_WhiteSpace
+	Token_LineEnd
+	Token_UnixStyleComment
+	Token_Identifier
+	Token_True
+	Token_False
+	Token_Comma
 )
 
-func Value2Struct(meta *tool.FieldMeta, value string, callback func(string, string) bool) (isValue2Struct bool, hasError bool) {
+func findFieldDesc(msgD *pbmeta.Descriptor, name string) *pbmeta.FieldDescriptor {
+
+	log.Debugln("begin find", msgD.Name(), name)
+
+	for i := 0; i < msgD.FieldCount(); i++ {
+		fd := msgD.Field(i)
+
+		log.Debugln("x", fd.Name())
+
+		if fd.Name() == name {
+			return fd
+		}
+
+		meta := data.GetFieldMeta(fd)
+
+		log.Debugln("meta", meta, fd.Name())
+
+		if meta != nil && meta.Alias == name {
+			return fd
+		}
+
+	}
+
+	return nil
+
+}
+
+func Value2Struct(meta *tool.FieldMeta, structValue string, fd *pbmeta.FieldDescriptor, callback func(string, string) bool) (isValue2Struct bool, hasError bool) {
 
 	if meta == nil {
 		return
@@ -20,52 +58,113 @@ func Value2Struct(meta *tool.FieldMeta, value string, callback func(string, stri
 		return
 	}
 
-	lex := newLineLexer(value)
+	if !fd.IsMessageType() {
+		hasError = true
+		log.Errorf("%s is not message type", fd.Name())
+		return
+	}
 
-	parserState := stateKey
-	var key string
+	msgD := fd.MessageDesc()
+
+	if msgD == nil {
+		hasError = true
+		log.Errorf("%s message not found", fd.Name())
+		return
+	}
+
+	p := newLineParser(fd, structValue)
+
+	// 匹配顺序从高到低
+
+	defer func() {
+
+		err := recover()
+
+		switch err.(type) {
+		case error:
+			hasError = true
+			log.Errorf("field: %s parse error, %v", fd.Name(), err)
+		default:
+			isValue2Struct = true
+		}
+
+	}()
+
+	p.NextToken()
 
 	for {
 
-		token, state := lex.Next()
-
-		switch state {
-		case lexerEOF:
-			isValue2Struct = true
-			return
-		case lexerErr:
+		if p.TokenID() != Token_Identifier {
 			hasError = true
+			log.Errorf("expect key in field: %s", fd.Name())
 			return
-		case lexerToken:
+		}
 
-			switch parserState {
-			case stateKey:
-				key = token
-				parserState = stateComma
-			case stateComma:
-				if token != ":" {
-					hasError = true
-					log.Errorf("Unexpect symbol '%v' expect ':'", token)
-					return
-				}
+		key := p.TokenValue()
 
-				parserState = stateValue
+		structFD := findFieldDesc(msgD, key)
 
-			case stateValue:
+		// 尝试查找字段定义
+		if structFD == nil {
 
-				if !callback(key, token) {
-					hasError = true
-					return
-				}
+			hasError = true
+			log.Errorf("%s field not found ", key)
+			return
+		}
 
-				parserState = stateKey
+		p.NextToken()
+
+		if p.TokenID() != Token_Comma {
+			hasError = true
+			log.Errorf("%s need ':' split value", key)
+			return
+		}
+
+		p.NextToken()
+
+		value := p.TokenValue()
+
+		// 按照正常流程转换值
+		if afterValue, ok := ValueConvetor(structFD, value); ok {
+
+			if !callback(key, afterValue) {
+				hasError = true
+				return
 			}
 
+		} else {
+			hasError = true
+			log.Errorf("%s convert failed", key)
+			return
 		}
+
+		p.NextToken()
+
+		log.Debugln("end of term")
+	}
+
+	return
+}
+
+func isNumeral(t pbprotos.FieldDescriptorProto_Type) bool {
+
+	switch t {
+	case pbprotos.FieldDescriptorProto_TYPE_DOUBLE,
+		pbprotos.FieldDescriptorProto_TYPE_FLOAT,
+		pbprotos.FieldDescriptorProto_TYPE_INT64,
+		pbprotos.FieldDescriptorProto_TYPE_UINT64,
+		pbprotos.FieldDescriptorProto_TYPE_INT32,
+		pbprotos.FieldDescriptorProto_TYPE_UINT32,
+		pbprotos.FieldDescriptorProto_TYPE_FIXED64,
+		pbprotos.FieldDescriptorProto_TYPE_FIXED32,
+		pbprotos.FieldDescriptorProto_TYPE_SFIXED32,
+		pbprotos.FieldDescriptorProto_TYPE_SFIXED64,
+		pbprotos.FieldDescriptorProto_TYPE_SINT32,
+		pbprotos.FieldDescriptorProto_TYPE_SINT64:
+		return true
 
 	}
 
-	isValue2Struct = true
-	return
+	return false
 
 }
