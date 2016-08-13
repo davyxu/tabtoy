@@ -30,7 +30,7 @@ message ActorDefine
 	repeated int32 BuffID = 20;	// 重复字段可以用多列进行读取
 	
 	// 角色类型
-	ActorType Type = 30; 
+	ActorType Type = 30; // [tabtoy] Alias:"类型"
 
 	repeated int32 SkillID = 40; // [tabtoy] String2ListSpliter: "," #使用,切割字符串
 	

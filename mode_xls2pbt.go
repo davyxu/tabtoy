@@ -137,7 +137,7 @@ func setFieldValue(ri *scanner.RecordInfo, fieldName, value string) bool {
 	// 转换电子表格的原始值到msg可接受的值
 	if afterValue, ok := filter.ValueConvetor(ri.FieldDesc, value); ok {
 
-		fd := ri.FieldMsg.Desc.FieldByName(fieldName)
+		fd := filter.FieldByNameWithMeta(ri.FieldMsg.Desc, fieldName)
 
 		if fd == nil {
 			log.Errorf("field not exist, field: '%s' value: '%s'", fieldName, value)

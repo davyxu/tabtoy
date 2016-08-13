@@ -21,14 +21,10 @@ const (
 	Token_Comma
 )
 
-func findFieldDesc(msgD *pbmeta.Descriptor, name string) *pbmeta.FieldDescriptor {
-
-	log.Debugln("begin find", msgD.Name(), name)
+func FieldByNameWithMeta(msgD *pbmeta.Descriptor, name string) *pbmeta.FieldDescriptor {
 
 	for i := 0; i < msgD.FieldCount(); i++ {
 		fd := msgD.Field(i)
-
-		log.Debugln("x", fd.Name())
 
 		if fd.Name() == name {
 			return fd
@@ -36,9 +32,8 @@ func findFieldDesc(msgD *pbmeta.Descriptor, name string) *pbmeta.FieldDescriptor
 
 		meta := data.GetFieldMeta(fd)
 
-		log.Debugln("meta", meta, fd.Name())
-
 		if meta != nil && meta.Alias == name {
+
 			return fd
 		}
 
@@ -81,9 +76,16 @@ func Value2Struct(meta *tool.FieldMeta, structValue string, fd *pbmeta.FieldDesc
 		err := recover()
 
 		switch err.(type) {
+		// 运行时错误
+		case interface {
+			RuntimeError()
+		}:
+			// 继续外抛， 方便调试
+			panic(err)
 		case error:
 			hasError = true
 			log.Errorf("field: %s parse error, %v", fd.Name(), err)
+
 		default:
 			isValue2Struct = true
 		}
@@ -102,7 +104,7 @@ func Value2Struct(meta *tool.FieldMeta, structValue string, fd *pbmeta.FieldDesc
 
 		key := p.TokenValue()
 
-		structFD := findFieldDesc(msgD, key)
+		structFD := FieldByNameWithMeta(msgD, key)
 
 		// 尝试查找字段定义
 		if structFD == nil {
