@@ -142,7 +142,6 @@ func Value2Struct(meta *tool.FieldMeta, structValue string, fd *pbmeta.FieldDesc
 
 		p.NextToken()
 
-		log.Debugln("end of term")
 	}
 
 	return

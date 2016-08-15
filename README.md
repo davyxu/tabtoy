@@ -148,29 +148,9 @@ Actor {ID: 104 Name: "邋遢大王" Struct {HP: 10 AttackRate: 1} BuffID: 0 Buff
 
 ```
 
-# 导出格式
-默认导出pbt, 通过参数可以导出lua, json格式
-* --fmt=pbt
-	默认导出pbt
-* --fmt=lua
-	导出以return开头的lua文件, 通过require的返回值回去表格table
-	兼容pbc格式, 枚举值以值名字字符串导出, 64位以字符串方式导出
-* --fmt=json
-	标准json, 与proto定义的结构导出json相同
-
-# Protobuf Text格式(pbt)
-Google Protobuf 官方支持的格式
-可通过官方protobuf库读取,写入这种格式
-与json区别在于: 
-json的字段名必须是带双引号, 且数组需要用[]圈住, 多重字段尾部必须加逗号
-* 格式
-	key1: value1  key2: value2
-	冒号组合key,value,  空格分隔字段
-	
-	\#作为注释
-
 # Proto文件规则
 proto文件格式范例参考test/test.proto
+
 需要配合github.com/davyxu/pbmeta的protobuf插件protoc-gen-meta导出proto文件的meta信息
 
 在proto的字段后方的注释中以[tabtoy]开头的注释将被理解为meta信息, 用于描述字段导出功能修饰
@@ -184,8 +164,49 @@ proto文件格式范例参考test/test.proto
 https://github.com/davyxu/tabtoy/blob/master/test/test.proto
 
 
+# 导出格式
+默认导出pbt, 通过参数可以导出lua, json格式
 
-# 电子表格文件头格式
+## Protobuf 文本格式(*.pbt)
+	参数: --fmt=pbt
+	
+	Google Protobuf 官方支持的格式
+	
+	可通过官方protobuf库读取,写入这种格式
+	
+	与json区别在于: 
+	
+	json的字段名必须是带双引号, 且数组需要用[]圈住, 多重字段尾部必须加逗号
+	
+	* 格式
+		key1: value1  key2: value2
+		冒号组合key,value,  空格分隔字段
+	
+	\#作为注释
+	
+	默认导出pbt
+	
+
+## Lua格式(*.lua)
+	参数: --fmt=lua
+	导出以return开头的lua文件, 通过require的返回值回去表格table
+	兼容pbc格式, 枚举值以值名字字符串导出, 64位以字符串方式导出
+	
+### lua导出字段的索引
+	
+	为了方便lua导出文件的使用, 可以创建字段索引, 步骤如下, 参考test/test.proto:
+	
+	* 为ActorDefine消息的ID字段和Name字段增加描述LuaMapper: true
+	
+## json格式(*.json)
+	参数: --fmt=json
+	标准json, 与proto定义的结构导出json相同
+
+
+
+
+
+# 电子表格格式及写法
 
 ## 导出头
 
@@ -241,6 +262,17 @@ Proto字段列, 必须放在第二行
 当字段meta信息中填写String2Struct: true时, 将把单元格的值理解为Protobuf Text格式并检查输出
 
 支持在Struct中的字段添加Alias别名以使用别名方式的字段或中文字段描述单元格
+
+范例步骤: 请参考test/test.proto
+
+* 为Prop消息的需要的字段增加描述 AttackRate 为Alias:"攻击速率"  ExType为Alias:"额外类型" 等
+
+* 确认StrStruct字段拥有描述String2Struct: true
+
+* 在StrStruct的单元格里填写 血量: 3 攻击速率: 1 额外类型:超能
+
+* 导出测试
+
 
 ## 字段重复性检查
 

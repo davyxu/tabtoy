@@ -25,4 +25,6 @@ message FieldMeta
 	bool String2Struct = 5;			// 字符串转为结构体
 	
 	string DefaultValue = 6;		// 默认值, 比pb2的默认值有更高的优先度
+	
+	bool LuaMapper = 7;				// 为字段创建lua记录索引
 }

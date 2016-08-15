@@ -73,12 +73,73 @@ func (self *luaWriter) WriteFieldSpliter() {
 	self.printer.WriteString(", ")
 }
 
+// msg类型=XXFile
 func (self *luaWriter) PrintMessage(msg *data.DynamicMessage) {
 
-	self.printer.WriteString("return {\n\n")
+	self.printer.WriteString("local data = {\n\n")
+
 	rawWriteMessage(self.printer, self, msg, 0)
 
-	self.printer.WriteString("\n\n}")
+	self.printer.WriteString("\n\n}\n")
+
+	/*
+
+		data.ActorByID = {}
+		for _, rec in pairs( data.Actor ) do
+
+			data.ActorByID[rec.ID] = rec
+
+		end
+
+	*/
+
+	// 输出lua索引
+	fdset, lineFieldName := findMapperField(msg)
+
+	for _, fd := range fdset {
+
+		mapperVarName := fmt.Sprintf("data.%sBy%s", lineFieldName, fd.Name())
+
+		self.printer.WriteString("\n-- " + fd.Name() + "\n")
+		self.printer.WriteString(mapperVarName + " = {}\n")
+		self.printer.WriteString("for _, rec in pairs(data." + lineFieldName + ") do\n")
+		self.printer.WriteString("\t" + mapperVarName + "[rec." + fd.Name() + "] = rec\n")
+		self.printer.WriteString("end\n")
+	}
+
+	self.printer.WriteString("\nreturn data")
+}
+
+func findMapperField(msg *data.DynamicMessage) (fdset []*pbmeta.FieldDescriptor, lineFieldName string) {
+
+	var lineMsgDesc *pbmeta.Descriptor
+	// 找到行描述符
+	for i := 0; i < msg.Desc.FieldCount(); i++ {
+		fd := msg.Desc.Field(i)
+
+		if fd.IsRepeated() {
+			lineMsgDesc = fd.MessageDesc()
+			lineFieldName = fd.Name()
+			break
+		}
+	}
+
+	// 在结构中寻找需要导出的lua字段
+	for i := 0; i < lineMsgDesc.FieldCount(); i++ {
+		fd := lineMsgDesc.Field(i)
+		meta := data.GetFieldMeta(fd)
+		if meta == nil {
+			continue
+		}
+
+		if !meta.LuaMapper {
+			continue
+		}
+
+		fdset = append(fdset, fd)
+	}
+
+	return
 }
 
 func NewLuaWriter(printer *bytes.Buffer) IWriter {

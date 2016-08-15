@@ -175,7 +175,7 @@ func setFieldValue(ri *scanner.RecordInfo, fieldName, value string) bool {
 
 type sheetData struct {
 	name string
-	msg  *data.DynamicMessage
+	msg  *data.DynamicMessage // 对应XXFile
 }
 
 func getOutputExt() string {
