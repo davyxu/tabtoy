@@ -74,7 +74,6 @@ func runXls2PbtMode() bool {
 
 	})
 
-	return true
 }
 
 // 封装signal返回, 因为go关键字会忽略函数返回值, 所以用channel来传递结果

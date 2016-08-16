@@ -36,14 +36,21 @@ func (self *File) Open(filename string) bool {
 	// 这里将所有sheet表都合并导出到一个pbt
 	for _, sheet := range self.Raw.Sheets {
 
-		self.Add(sheet)
+		if err := self.Add(sheet); err != nil {
+			return false
+		}
 	}
 
 	return true
 }
 
-func (self *File) Add(sheet *xlsx.Sheet) *Sheet {
-	header := getHeader(sheet)
+func (self *File) Add(sheet *xlsx.Sheet) error {
+	header, err := getHeader(sheet)
+
+	if err != nil {
+		log.Errorf("invalid proto header in file %s: %s", self.FileName, err)
+		return err
+	}
 
 	// 没有找到导出头,忽略
 	if header == nil {
@@ -57,7 +64,7 @@ func (self *File) Add(sheet *xlsx.Sheet) *Sheet {
 
 	self.SheetMap[sheet.Name] = mySheet
 
-	return mySheet
+	return nil
 }
 
 // 制作表名
@@ -78,19 +85,28 @@ func NewFile(descpool *pbmeta.DescriptorPool) *File {
 	return self
 }
 
-func getHeader(sheet *xlsx.Sheet) *tool.ExportHeader {
+func getHeader(sheet *xlsx.Sheet) (*tool.ExportHeader, error) {
 
 	headerString := strings.TrimSpace(sheet.Cell(0, 0).Value)
 
+	// 可能是空的sheet
 	if headerString == "" {
-		return nil
+		return nil, nil
 	}
 
 	var header tool.ExportHeader
 
-	if err := proto.UnmarshalText(headerString, &header); err != nil {
-		return nil
+	// 有可能的字符,一定是头
+	if strings.Contains(headerString, "ProtoTypeName") ||
+		strings.Contains(headerString, "RowFieldName") {
+		if err := proto.UnmarshalText(headerString, &header); err != nil {
+
+			return nil, err
+		}
+	} else {
+		// 有字符, 但并不是头
+		return nil, nil
 	}
 
-	return &header
+	return &header, nil
 }
