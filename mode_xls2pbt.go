@@ -5,7 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"path"
+
 	"path/filepath"
 
 	"github.com/davyxu/pbmeta"
@@ -74,61 +74,6 @@ func runXls2PbtMode() bool {
 
 	})
 
-}
-
-// 封装signal返回, 因为go关键字会忽略函数返回值, 所以用channel来传递结果
-func task(input, output string, callback func(string, string) bool, signal chan bool) bool {
-
-	result := callback(input, output)
-
-	if signal != nil {
-		signal <- result
-		return result
-	}
-
-	return result
-}
-
-func parallelWorker(fileList []string, para bool, outDir string, callback func(string, string) bool) bool {
-
-	// 处理多个导出文件情况
-
-	var signal chan bool
-
-	if para {
-		signal = make(chan bool)
-	}
-
-	for _, v := range fileList {
-		inputFile := v
-
-		// 使用指定的导出文件夹,并更换电子表格输入文件的后缀名为pbt作为输出文件
-		outputFile := path.Join(outDir, changeFileExt(inputFile, getOutputExt()))
-
-		if signal != nil {
-			go task(inputFile, outputFile, callback, signal)
-		} else {
-
-			if !task(inputFile, outputFile, callback, signal) {
-
-				return false
-			}
-		}
-
-	}
-
-	// 并发导出同步
-	if signal != nil {
-		for i := 0; i < len(fileList); i++ {
-			result := <-signal
-			if !result {
-
-				return false
-			}
-		}
-	}
-
-	return true
 }
 
 func setFieldValue(ri *scanner.RecordInfo, fieldName, value string) bool {
@@ -239,6 +184,7 @@ func printFile(sheetData []*sheetData, outputFile string) bool {
 
 func exportSheetMsg(pool *pbmeta.DescriptorPool, inputXls string) []*sheetData {
 
+	// 显示要输出的文件
 	log.Infof("%s\n", filepath.Base(inputXls))
 
 	// 打开电子表格
@@ -250,16 +196,18 @@ func exportSheetMsg(pool *pbmeta.DescriptorPool, inputXls string) []*sheetData {
 
 	sheetDataArray := make([]*sheetData, 0)
 
+	repChecker := filter.NewRepeatValueChecker()
+
 	// 遍历所有表格sheet
 	for _, sheet := range xlsFile.Sheets {
-
-		repChecker := filter.NewRepeatValueChecker()
 
 		// 遍历表格的所有行/列
 		sheetMsg, ok := sheet.IterateData(func(ri *scanner.RecordInfo) bool {
 
 			// 重复值检查
-			repChecker.Check(ri.FieldMeta, ri.FieldDesc, ri.Value())
+			if !repChecker.Check(ri.FieldMeta, ri.FieldDesc, ri.Value()) {
+				return false
+			}
 
 			// 字符串转结构体
 			v2sAffected, v2sHasErr := filter.Value2Struct(ri.FieldMeta, ri.Value(), ri.FieldDesc, func(key, value string) bool {

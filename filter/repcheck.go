@@ -8,19 +8,20 @@ import (
 type RepeatValueChecker map[string]bool
 
 // 重复值检查， 如果meta中描述有开启则开启
-func (self RepeatValueChecker) Check(meta *tool.FieldMeta, fd *pbmeta.FieldDescriptor, value string) {
+func (self RepeatValueChecker) Check(meta *tool.FieldMeta, fd *pbmeta.FieldDescriptor, value string) bool {
 
 	if meta == nil || meta.RepeatCheck == false {
-		return
+		return true
 	}
 
 	if self.contain(value) {
 		log.Errorf("detected duplicate value %s=%s", fd.Name(), value)
-		return
+		return false
 	}
 
 	self[value] = true
 
+	return true
 }
 
 func (self RepeatValueChecker) contain(value string) bool {

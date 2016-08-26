@@ -196,7 +196,7 @@ https://github.com/davyxu/tabtoy/blob/master/test/test.proto
 	
 	为了方便lua导出文件的使用, 可以创建字段索引, 步骤如下, 参考test/test.proto:
 	
-	* 为ActorDefine消息的ID字段和Name字段增加描述LuaMapper: true
+	为ActorDefine消息的ID字段和Name字段增加描述LuaMapper: true
 	
 ## json格式(*.json)
 	参数: --fmt=json
