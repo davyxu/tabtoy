@@ -30,7 +30,11 @@ func FieldByNameWithMeta(msgD *pbmeta.Descriptor, name string) *pbmeta.FieldDesc
 			return fd
 		}
 
-		meta := data.GetFieldMeta(fd)
+		meta, ok := data.GetFieldMeta(fd)
+
+		if !ok {
+			return nil
+		}
 
 		if meta != nil && meta.Alias == name {
 

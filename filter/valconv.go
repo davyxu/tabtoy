@@ -101,7 +101,11 @@ func ValueConvetor(fd *pbmeta.FieldDescriptor, value string) (string, bool) {
 			evd := ed.Value(i)
 
 			// 取出每个字段的meta
-			meta := data.GetFieldMeta(evd)
+			meta, ok := data.GetFieldMeta(evd)
+
+			if !ok {
+				return "", false
+			}
 
 			if meta == nil {
 				continue

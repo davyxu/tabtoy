@@ -56,9 +56,11 @@ func (self *pbtWriter) WriteFieldSpliter() {
 	self.printer.WriteString(" ")
 }
 
-func (self *pbtWriter) PrintMessage(msg *data.DynamicMessage) {
+func (self *pbtWriter) PrintMessage(msg *data.DynamicMessage) bool {
 
 	rawWriteMessage(self.printer, self, msg, 0)
+
+	return true
 }
 
 func NewPBTWriter(printer *bytes.Buffer) IWriter {

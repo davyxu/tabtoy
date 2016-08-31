@@ -9,7 +9,7 @@ import (
 )
 
 type IWriter interface {
-	PrintMessage(msg *data.DynamicMessage)
+	PrintMessage(msg *data.DynamicMessage) bool
 }
 
 type dataWriter interface {

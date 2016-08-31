@@ -161,8 +161,13 @@ func (self *Sheet) IterateData(callback func(*RecordInfo) bool) (*data.DynamicMe
 				goto ErrorStop
 			}
 
+			var ok bool
 			// 取扩展元信息
-			ri.FieldMeta = data.GetFieldMeta(ri.FieldDesc)
+			ri.FieldMeta, ok = data.GetFieldMeta(ri.FieldDesc)
+
+			if !ok {
+				goto ErrorStop
+			}
 
 			if data.DebuggingLevel >= 1 {
 				r, c := self.GetRC()
@@ -217,7 +222,11 @@ func makeCompactAccessor(compactFieldName string, inputMsg *data.DynamicMessage)
 		if fd.Type() == pbprotos.FieldDescriptorProto_TYPE_MESSAGE {
 
 			// 字段中带repeated message的不支持, 使用string2struct解析字段
-			fdmeta := data.GetFieldMeta(fd)
+			fdmeta, ok := data.GetFieldMeta(fd)
+			if !ok {
+				return nil, nil
+			}
+
 			if fd.IsRepeated() && fdmeta != nil && !fdmeta.String2Struct {
 				log.Errorf("DO NOT support repeated message field, use 'string2struct' instead")
 				return nil, nil

@@ -74,7 +74,7 @@ func (self *luaWriter) WriteFieldSpliter() {
 }
 
 // msg类型=XXFile
-func (self *luaWriter) PrintMessage(msg *data.DynamicMessage) {
+func (self *luaWriter) PrintMessage(msg *data.DynamicMessage) bool {
 
 	self.printer.WriteString("local data = {\n\n")
 
@@ -96,6 +96,10 @@ func (self *luaWriter) PrintMessage(msg *data.DynamicMessage) {
 	// 输出lua索引
 	fdset, lineFieldName := findMapperField(msg)
 
+	if fdset == nil {
+		return false
+	}
+
 	for _, fd := range fdset {
 
 		mapperVarName := fmt.Sprintf("data.%sBy%s", lineFieldName, fd.Name())
@@ -108,6 +112,8 @@ func (self *luaWriter) PrintMessage(msg *data.DynamicMessage) {
 	}
 
 	self.printer.WriteString("\nreturn data")
+
+	return true
 }
 
 func findMapperField(msg *data.DynamicMessage) (fdset []*pbmeta.FieldDescriptor, lineFieldName string) {
@@ -127,7 +133,13 @@ func findMapperField(msg *data.DynamicMessage) (fdset []*pbmeta.FieldDescriptor,
 	// 在结构中寻找需要导出的lua字段
 	for i := 0; i < lineMsgDesc.FieldCount(); i++ {
 		fd := lineMsgDesc.Field(i)
-		meta := data.GetFieldMeta(fd)
+
+		meta, ok := data.GetFieldMeta(fd)
+
+		if !ok {
+			return nil, ""
+		}
+
 		if meta == nil {
 			continue
 		}

@@ -163,7 +163,9 @@ func printFile(sheetData []*sheetData, outputFile string) bool {
 
 	for _, sd := range sheetData {
 
-		writer.PrintMessage(sd.msg)
+		if !writer.PrintMessage(sd.msg) {
+			return false
+		}
 	}
 
 	// 创建输出文件

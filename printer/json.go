@@ -101,12 +101,14 @@ func (self *jsonWriter) WriteFieldSpliter() {
 	self.printer.WriteString(", ")
 }
 
-func (self *jsonWriter) PrintMessage(msg *data.DynamicMessage) {
+func (self *jsonWriter) PrintMessage(msg *data.DynamicMessage) bool {
 
 	self.printer.WriteString("{\n\n")
 	rawWriteMessage(self.printer, self, msg, 0)
 
 	self.printer.WriteString("\n\n}")
+
+	return true
 }
 
 func NewJsonWriter(printer *bytes.Buffer) IWriter {
