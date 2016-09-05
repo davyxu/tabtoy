@@ -1,43 +1,30 @@
-package main
+package exportor
 
 import (
-	"bytes"
-	"flag"
 	"fmt"
-	"os"
-
+	"path"
 	"path/filepath"
 
 	"github.com/davyxu/pbmeta"
 	"github.com/davyxu/tabtoy/data"
 	"github.com/davyxu/tabtoy/filter"
 	"github.com/davyxu/tabtoy/printer"
-	"github.com/davyxu/tabtoy/scanner"
+	"github.com/davyxu/tabtoy/util"
 )
 
-///////////////////////////////////////////////
-// mode: xls2pbt参数
-///////////////////////////////////////////////
+type Parameter struct {
+	InputFileList []string
+	PBFile        string
+	PatchFile     string
+	ParaMode      bool
+	OutDir        string
+	Format        string
+}
 
-// 输入协议二进制描述文件,通过protoc配合github.com/davyxu/pbmeta/protoc-gen-meta插件导出
-var paramPbFile = flag.String("pb", "PB", "input protobuf binary descript file, export by protoc-gen-meta plugins")
-
-// 输入电子表格文件
-var paramXlsFile = flag.String("xls", "XLS", "input excel file, use ',' splited file list by multipy files")
-
-// 输出文件夹
-var paramOutDir = flag.String("outdir", "OUT_DIR", "output directory")
-
-// 补丁文件
-var paramPatch = flag.String("patch", "", "patch input files then output")
-
-// 输出文件格式
-var paramFormat = flag.String("fmt", "pbt", "output file format, support 'pbt', 'lua' ")
-
-func runXls2PbtMode() bool {
+func Run(param Parameter) bool {
 	// 输入协议二进制描述文件,通过protoc配合github.com/davyxu/pbmeta/protoc-gen-meta插件导出
 	// 创建描述文件池
-	pool, err := pbmeta.CreatePoolByFile(*paramPbFile)
+	pool, err := pbmeta.CreatePoolByFile(param.PBFile)
 	if err != nil {
 		fmt.Println(err)
 		return false
@@ -45,18 +32,41 @@ func runXls2PbtMode() bool {
 
 	var patchFile *PatchFile
 
-	if *paramPatch != "" {
+	if param.PatchFile != "" {
 
 		patchFile = NewPatchFile(pool)
 
-		if !patchFile.Load(*paramPatch) {
+		if !patchFile.Load(param.PatchFile) {
 			return false
 		}
 
-		log.Infof("patch file loaded: %s", *paramPatch)
+		log.Infof("patch file loaded: %s", param.PatchFile)
 	}
 
-	return parallelWorker(flag.Args(), *paramPara, *paramOutDir, func(input, output string) bool {
+	return util.ParallelWorker(param.InputFileList, param.ParaMode, param.OutDir, func(input string) bool {
+
+		var ext string
+		var writer printer.IPrinter
+
+		switch param.Format {
+		case "pbt":
+			ext = ".pbt"
+			writer = printer.NewPBTWriter()
+		case "json":
+			ext = ".json"
+			writer = printer.NewJsonWriter()
+
+		case "lua":
+			ext = ".lua"
+			writer = printer.NewLuaWriter()
+
+		default:
+			log.Errorf("unknown format '%s'", param.Format)
+			return false
+		}
+
+		// 使用指定的导出文件夹,并更换电子表格输入文件的后缀名为pbt作为输出文件
+		outputFile := path.Join(param.OutDir, util.ChangeExtension(input, ext))
 
 		// 显示电子表格到导出文件
 
@@ -70,13 +80,13 @@ func runXls2PbtMode() bool {
 			patchFile.Patch(sheetDataArray)
 		}
 
-		return printFile(sheetDataArray, output)
+		return printFile(sheetDataArray, outputFile, writer)
 
 	})
 
 }
 
-func setFieldValue(ri *scanner.RecordInfo, fieldName, value string) bool {
+func setFieldValue(ri *RecordInfo, fieldName, value string) bool {
 
 	// 转换电子表格的原始值到msg可接受的值
 	if afterValue, ok := filter.ValueConvetor(ri.FieldDesc, value); ok {
@@ -122,66 +132,19 @@ type sheetData struct {
 	msg  *data.DynamicMessage // 对应XXFile
 }
 
-func getOutputExt() string {
-	switch *paramFormat {
-	case "json":
-		return ".json"
-	case "pbt":
-		return ".pbt"
-	case "lua":
-		return ".lua"
-	}
-
-	return ""
-}
-
-func newWriter(buf *bytes.Buffer) printer.IWriter {
-	switch *paramFormat {
-	case "json":
-		return printer.NewJsonWriter(buf)
-	case "pbt":
-		return printer.NewPBTWriter(buf)
-	case "lua":
-		return printer.NewLuaWriter(buf)
-	}
-
-	return nil
-}
-
-func printFile(sheetData []*sheetData, outputFile string) bool {
+func printFile(sheetData []*sheetData, outputFile string, printer printer.IPrinter) bool {
 
 	log.Infof("		%s\n", filepath.Base(outputFile))
 
-	var outBuff bytes.Buffer
-
-	writer := newWriter(&outBuff)
-
-	if writer == nil {
-		log.Errorf("unknown output writer: %s\n", *paramFormat)
-		return false
-	}
-
 	for _, sd := range sheetData {
 
-		if !writer.PrintMessage(sd.msg) {
+		if !printer.PrintMessage(sd.msg) {
 			return false
 		}
 	}
 
-	// 创建输出文件
-	file, err := os.Create(outputFile)
-	if err != nil {
-		log.Errorln(err.Error())
-		return false
-	}
+	return printer.WriteToFile(outputFile)
 
-	// 写入文件头
-
-	file.WriteString(outBuff.String())
-
-	file.Close()
-
-	return true
 }
 
 func exportSheetMsg(pool *pbmeta.DescriptorPool, inputXls string) []*sheetData {
@@ -190,7 +153,7 @@ func exportSheetMsg(pool *pbmeta.DescriptorPool, inputXls string) []*sheetData {
 	log.Infof("%s\n", filepath.Base(inputXls))
 
 	// 打开电子表格
-	xlsFile := scanner.NewFile(pool)
+	xlsFile := NewFile(pool)
 
 	if !xlsFile.Open(inputXls) {
 		return nil
@@ -204,7 +167,7 @@ func exportSheetMsg(pool *pbmeta.DescriptorPool, inputXls string) []*sheetData {
 	for _, sheet := range xlsFile.Sheets {
 
 		// 遍历表格的所有行/列
-		sheetMsg, ok := sheet.IterateData(func(ri *scanner.RecordInfo) bool {
+		sheetMsg, ok := sheet.IterateData(func(ri *RecordInfo) bool {
 
 			// 重复值检查
 			if !repChecker.Check(ri.FieldMeta, ri.FieldDesc, ri.Value()) {

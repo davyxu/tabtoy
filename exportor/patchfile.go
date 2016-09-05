@@ -1,4 +1,4 @@
-package main
+package exportor
 
 import (
 	"github.com/davyxu/pbmeta"

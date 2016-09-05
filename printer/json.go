@@ -1,7 +1,6 @@
 package printer
 
 import (
-	"bytes"
 	"fmt"
 	"strconv"
 
@@ -11,7 +10,7 @@ import (
 )
 
 type jsonWriter struct {
-	printer *bytes.Buffer
+	printerfile
 }
 
 func (self *jsonWriter) RepeatedMessageBegin(fd *pbmeta.FieldDescriptor, msg *data.DynamicMessage, msgCount int, indent int) {
@@ -36,7 +35,7 @@ func (self *jsonWriter) WriteMessage(fd *pbmeta.FieldDescriptor, msg *data.Dynam
 		self.printer.WriteString(fmt.Sprintf("\"%s\" : {", fd.Name()))
 	}
 
-	valueWrite := rawWriteMessage(self.printer, self, msg, indent)
+	valueWrite := rawWriteMessage(&self.printer, self, msg, indent)
 
 	self.printer.WriteString("}")
 
@@ -104,16 +103,14 @@ func (self *jsonWriter) WriteFieldSpliter() {
 func (self *jsonWriter) PrintMessage(msg *data.DynamicMessage) bool {
 
 	self.printer.WriteString("{\n\n")
-	rawWriteMessage(self.printer, self, msg, 0)
+	rawWriteMessage(&self.printer, self, msg, 0)
 
 	self.printer.WriteString("\n\n}")
 
 	return true
 }
 
-func NewJsonWriter(printer *bytes.Buffer) IWriter {
+func NewJsonWriter() IPrinter {
 
-	return &jsonWriter{
-		printer: printer,
-	}
+	return &jsonWriter{}
 }

@@ -2,14 +2,38 @@ package printer
 
 import (
 	"bytes"
+	"os"
 
 	"github.com/davyxu/pbmeta"
 	pbprotos "github.com/davyxu/pbmeta/proto"
 	"github.com/davyxu/tabtoy/data"
 )
 
-type IWriter interface {
+type IPrinter interface {
 	PrintMessage(msg *data.DynamicMessage) bool
+	WriteToFile(filename string) bool
+}
+
+type printerfile struct {
+	printer bytes.Buffer
+}
+
+func (self *printerfile) WriteToFile(filename string) bool {
+
+	// 创建输出文件
+	file, err := os.Create(filename)
+	if err != nil {
+		log.Errorln(err.Error())
+		return false
+	}
+
+	// 写入文件头
+
+	file.WriteString(self.printer.String())
+
+	file.Close()
+
+	return true
 }
 
 type dataWriter interface {

@@ -5,12 +5,10 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"path"
-	"path/filepath"
-	"strings"
 
 	"github.com/davyxu/golog"
 	"github.com/davyxu/tabtoy/data"
+	"github.com/davyxu/tabtoy/exportor"
 )
 
 var log *golog.Logger = golog.New("main")
@@ -25,17 +23,25 @@ var paramPara = flag.Bool("para", false, "parallel export by your cpu count")
 var paramVersion = flag.Bool("version", false, "Show version")
 
 // 工作模式
-var paramMode = flag.String("mode", "", "mode: xls2pbt, syncheader")
+var paramMode = flag.String("mode", "", "mode: xls2pbt")
 
 // 出现错误时暂停
 var paramHaltOnError = flag.Bool("haltonerr", false, "halt on error")
 
-func changeFileExt(filename, newExt string) string {
+// 输入协议二进制描述文件,通过protoc配合github.com/davyxu/pbmeta/protoc-gen-meta插件导出
+var paramPbFile = flag.String("pb", "PB", "input protobuf binary descript file, export by protoc-gen-meta plugins")
 
-	file := filepath.Base(filename)
+// 输入电子表格文件
+var paramXlsFile = flag.String("xls", "XLS", "input excel file, use ',' splited file list by multipy files")
 
-	return strings.TrimSuffix(file, path.Ext(file)) + newExt
-}
+// 输出文件夹
+var paramOutDir = flag.String("outdir", "OUT_DIR", "output directory")
+
+// 补丁文件
+var paramPatch = flag.String("patch", "", "patch input files then output")
+
+// 输出文件格式
+var paramFormat = flag.String("fmt", "pbt", "output file format, support 'pbt', 'lua' ")
 
 func main() {
 
@@ -52,7 +58,14 @@ func main() {
 
 	switch *paramMode {
 	case "xls2pbt":
-		if !runXls2PbtMode() {
+		if !exportor.Run(exportor.Parameter{
+			InputFileList: flag.Args(),
+			PBFile:        *paramPbFile,
+			PatchFile:     *paramPatch,
+			Format:        *paramFormat,
+			ParaMode:      *paramPara,
+			OutDir:        *paramOutDir,
+		}) {
 			goto Err
 		}
 

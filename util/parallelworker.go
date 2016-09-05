@@ -1,13 +1,9 @@
-package main
-
-import (
-	"path"
-)
+package util
 
 // 封装signal返回, 因为go关键字会忽略函数返回值, 所以用channel来传递结果
-func task(input, output string, callback func(string, string) bool, signal chan bool) bool {
+func task(input string, callback func(string) bool, signal chan bool) bool {
 
-	result := callback(input, output)
+	result := callback(input)
 
 	if signal != nil {
 		signal <- result
@@ -17,7 +13,7 @@ func task(input, output string, callback func(string, string) bool, signal chan 
 	return result
 }
 
-func parallelWorker(fileList []string, para bool, outDir string, callback func(string, string) bool) bool {
+func ParallelWorker(fileList []string, para bool, outDir string, callback func(string) bool) bool {
 
 	// 处理多个导出文件情况
 
@@ -30,14 +26,11 @@ func parallelWorker(fileList []string, para bool, outDir string, callback func(s
 	for _, v := range fileList {
 		inputFile := v
 
-		// 使用指定的导出文件夹,并更换电子表格输入文件的后缀名为pbt作为输出文件
-		outputFile := path.Join(outDir, changeFileExt(inputFile, getOutputExt()))
-
 		if signal != nil {
-			go task(inputFile, outputFile, callback, signal)
+			go task(inputFile, callback, signal)
 		} else {
 
-			if !task(inputFile, outputFile, callback, signal) {
+			if !task(inputFile, callback, signal) {
 
 				return false
 			}
