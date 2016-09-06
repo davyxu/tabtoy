@@ -7,6 +7,7 @@ import (
 	pbprotos "github.com/davyxu/pbmeta/proto"
 	"github.com/davyxu/tabtoy/data"
 	"github.com/davyxu/tabtoy/proto/tool"
+	"github.com/davyxu/tabtoy/util"
 	"github.com/tealeg/xlsx"
 )
 
@@ -171,7 +172,7 @@ func (self *Sheet) IterateData(callback func(*RecordInfo) bool) (*data.DynamicMe
 
 			if data.DebuggingLevel >= 1 {
 				r, c := self.GetRC()
-				log.Debugf("(%s) %s=%s", data.ConvR1C1toA1(r, c), ri.FieldName, ri.Value)
+				log.Debugf("(%s) %s=%s", util.ConvR1C1toA1(r, c), ri.FieldName, ri.Value)
 			}
 
 			if !callback(ri) {
@@ -190,7 +191,7 @@ ErrorStop:
 
 	r, c := self.GetRC()
 
-	log.Errorf("%s|%s(%s)", self.file.FileName, self.Name, data.ConvR1C1toA1(r, c))
+	log.Errorf("%s|%s(%s)", self.file.FileName, self.Name, util.ConvR1C1toA1(r, c))
 	return nil, false
 }
 

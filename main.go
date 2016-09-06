@@ -9,6 +9,7 @@ import (
 	"github.com/davyxu/golog"
 	"github.com/davyxu/tabtoy/data"
 	"github.com/davyxu/tabtoy/exportor"
+	"github.com/davyxu/tabtoy/exportorv2"
 )
 
 var log *golog.Logger = golog.New("main")
@@ -57,7 +58,7 @@ func main() {
 	data.DebuggingLevel = *paramDebugLevel
 
 	switch *paramMode {
-	case "xls2pbt":
+	case "xls2pbt", "exportorv1":
 		if !exportor.Run(exportor.Parameter{
 			InputFileList: flag.Args(),
 			PBFile:        *paramPbFile,
@@ -68,7 +69,15 @@ func main() {
 		}) {
 			goto Err
 		}
-
+	case "exporortv2":
+		if !exportorv2.Run(exportorv2.Parameter{
+			InputFileList: flag.Args(),
+			Format:        *paramFormat,
+			ParaMode:      *paramPara,
+			OutDir:        *paramOutDir,
+		}) {
+			goto Err
+		}
 	default:
 		fmt.Println("--mode not specify")
 		goto Err

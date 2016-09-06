@@ -28,3 +28,18 @@ message FieldMeta
 	
 	bool LuaMapper = 7;				// 为字段创建lua记录索引
 }
+
+
+
+message FieldMetaV2
+{
+	string ListSpliter = 2;			// 将单元格字符串拆分为列表放入repeated字段
+	
+	bool RepeatCheck = 3;			// 重复检查
+	
+	string Alias = 4;				// 枚举名称转换, 写在枚举值注释内
+	
+	string Default = 6;				// 默认值
+	
+	bool LuaIndex = 7;				// 为字段创建lua记录索引
+}

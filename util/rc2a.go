@@ -1,4 +1,4 @@
-package data
+package util
 
 import (
 	"bytes"
@@ -66,6 +66,7 @@ func index2Alphabet(number int) string {
 	return out.String()
 }
 
+// r,c都是base1
 func ConvR1C1toA1(r, c int) string {
 	return fmt.Sprintf("%s%d", index2Alphabet(c), r)
 }

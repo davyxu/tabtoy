@@ -6,6 +6,7 @@ import (
 	"github.com/davyxu/pbmeta"
 	pbprotos "github.com/davyxu/pbmeta/proto"
 	"github.com/davyxu/tabtoy/data"
+	"github.com/davyxu/tabtoy/util"
 )
 
 type luaWriter struct {
@@ -52,7 +53,7 @@ func (self *luaWriter) WriteValue(fd *pbmeta.FieldDescriptor, value string, inde
 	switch fd.Type() {
 	case pbprotos.FieldDescriptorProto_TYPE_STRING,
 		pbprotos.FieldDescriptorProto_TYPE_ENUM:
-		finalValue = strEscape(value)
+		finalValue = util.StringEscape(value)
 	case pbprotos.FieldDescriptorProto_TYPE_INT64,
 		pbprotos.FieldDescriptorProto_TYPE_UINT64:
 		finalValue = fmt.Sprintf("\"%s\"", value)

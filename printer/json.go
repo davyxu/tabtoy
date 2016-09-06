@@ -7,6 +7,7 @@ import (
 	"github.com/davyxu/pbmeta"
 	pbprotos "github.com/davyxu/pbmeta/proto"
 	"github.com/davyxu/tabtoy/data"
+	"github.com/davyxu/tabtoy/util"
 )
 
 type jsonWriter struct {
@@ -59,7 +60,7 @@ func jsonvalueWrapper(fd *pbmeta.FieldDescriptor, value string) string {
 
 	switch fd.Type() {
 	case pbprotos.FieldDescriptorProto_TYPE_STRING:
-		return strEscape(value)
+		return util.StringEscape(value)
 	case pbprotos.FieldDescriptorProto_TYPE_ENUM:
 		ed := fd.EnumDesc()
 
