@@ -3,6 +3,7 @@ package exportorv2
 import (
 	"strconv"
 
+	"github.com/davyxu/tabtoy/exportorv2/model"
 	"github.com/davyxu/tabtoy/util"
 	"github.com/golang/protobuf/proto"
 )
@@ -24,7 +25,7 @@ const (
 type TypeSheet struct {
 	*Sheet
 
-	*BuildInTypeSet
+	*model.BuildInTypeSet
 }
 
 func (self *TypeSheet) Parse() bool {
@@ -32,7 +33,7 @@ func (self *TypeSheet) Parse() bool {
 	// 是否继续读行
 	var readingLine bool = true
 
-	var td *BuildInType
+	var td *model.BuildInType
 
 	// 遍历每一行
 	for self.Row = TypeSheetRow_DataBegin; readingLine; self.Row++ {
@@ -42,7 +43,7 @@ func (self *TypeSheet) Parse() bool {
 			break
 		}
 
-		var fd BuildInTypeField
+		var fd model.BuildInTypeField
 
 		// 解析枚举类型
 		rawTypeName := self.GetCellData(self.Row, TypeSheetCol_Type)
@@ -55,7 +56,7 @@ func (self *TypeSheet) Parse() bool {
 
 		} else {
 
-			td = newBuildInType()
+			td = model.NewBuildInType()
 			td.Name = rawTypeName
 			self.BuildInTypeSet.Add(td)
 		}
@@ -65,7 +66,7 @@ func (self *TypeSheet) Parse() bool {
 
 		rawValue := self.GetCellData(self.Row, TypeSheetCol_Value)
 
-		var kind BuildInTypeKind
+		var kind model.BuildInTypeKind
 
 		// 非空值是枚举
 		if rawValue != "" {
@@ -78,12 +79,12 @@ func (self *TypeSheet) Parse() bool {
 				log.Errorln("parse type value failed:", err)
 				goto ErrorStop
 			}
-			kind = BuildInTypeKind_Enum
+			kind = model.BuildInTypeKind_Enum
 		} else {
-			kind = BuildInTypeKind_Struct
+			kind = model.BuildInTypeKind_Struct
 		}
 
-		if td.Kind == BuildInTypeKind_None {
+		if td.Kind == model.BuildInTypeKind_None {
 			td.Kind = kind
 			// 一些字段有填值, 一些没填值
 		} else if td.Kind != kind {
@@ -117,6 +118,6 @@ ErrorStop:
 func newTypeSheet(sheet *Sheet) *TypeSheet {
 	return &TypeSheet{
 		Sheet:          sheet,
-		BuildInTypeSet: newTableTypeSet(),
+		BuildInTypeSet: model.NewBuildInTypeSet(),
 	}
 }

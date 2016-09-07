@@ -5,23 +5,24 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/davyxu/tabtoy/exportorv2/model"
 	"github.com/tealeg/xlsx"
 )
 
 type valueRepeatData struct {
-	fd    *FieldDefine
+	fd    *model.FieldDefine
 	value string
 }
 
 type File struct {
-	TypeSet  *BuildInTypeSet // 1个类型描述表
-	Name     string          // 电子表格的名称(文件名无后缀)
+	TypeSet  *model.BuildInTypeSet // 1个类型描述表
+	Name     string                // 电子表格的名称(文件名无后缀)
 	FileName string
 
 	valueRepByKey map[valueRepeatData]bool
 }
 
-func (self *File) Export(filename string) *Table {
+func (self *File) Export(filename string) *model.Table {
 
 	self.Name = makeTableName(filename)
 	self.FileName = filename
@@ -57,16 +58,16 @@ func (self *File) Export(filename string) *Table {
 
 	// 没有这个类型, 默认填一个
 	if self.TypeSet == nil {
-		self.TypeSet = newTableTypeSet()
+		self.TypeSet = model.NewBuildInTypeSet()
 	}
 
-	var tab Table
+	var tab model.Table
 
 	for _, rawSheet := range file.Sheets {
 
 		if !isTypeSheet(rawSheet.Name) {
 
-			log.Infof("%s%s", printIndent(1), rawSheet.Name)
+			log.Infof("            %s", rawSheet.Name)
 			dSheet := newDataSheet(NewSheet(self, rawSheet))
 			if !dSheet.Export(self, &tab) {
 				return nil
@@ -78,7 +79,7 @@ func (self *File) Export(filename string) *Table {
 	return &tab
 }
 
-func (self *File) checkValueRepeat(fd *FieldDefine, value string) bool {
+func (self *File) checkValueRepeat(fd *model.FieldDefine, value string) bool {
 
 	key := valueRepeatData{
 		fd:    fd,

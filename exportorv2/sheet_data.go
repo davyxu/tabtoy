@@ -3,6 +3,7 @@ package exportorv2
 import (
 	"strings"
 
+	"github.com/davyxu/tabtoy/exportorv2/model"
 	"github.com/davyxu/tabtoy/util"
 	"github.com/golang/protobuf/proto"
 )
@@ -20,13 +21,13 @@ type DataSheet struct {
 	*Sheet
 
 	// 按排列的, 合并repeated描述字段
-	headerFields []*FieldDefine
+	headerFields []*model.FieldDefine
 
 	// 按字段名分组索引字段
-	headerByName map[string]*FieldDefine
+	headerByName map[string]*model.FieldDefine
 }
 
-func (self *DataSheet) FetchFieldDefine(index int) *FieldDefine {
+func (self *DataSheet) FetchFieldDefine(index int) *model.FieldDefine {
 	if index >= len(self.headerFields) {
 		return nil
 	}
@@ -35,14 +36,14 @@ func (self *DataSheet) FetchFieldDefine(index int) *FieldDefine {
 }
 
 // 检查字段行的长度
-func (self *DataSheet) ParseProtoField(tts *BuildInTypeSet) bool {
+func (self *DataSheet) ParseProtoField(tts *model.BuildInTypeSet) bool {
 
-	var def *FieldDefine
+	var def *model.FieldDefine
 
 	// 遍历列
 	for self.Column = 0; ; self.Column++ {
 
-		def = new(FieldDefine)
+		def = new(model.FieldDefine)
 
 		def.Name = self.GetCellData(DataSheetRow_FieldName, self.Column)
 		if def.Name == "" {
@@ -58,9 +59,9 @@ func (self *DataSheet) ParseProtoField(tts *BuildInTypeSet) bool {
 		def.ParseType(tts, self.GetCellData(DataSheetRow_FieldType, self.Column))
 
 		// 依然找不到, 报错
-		if !colIgnore && def.Type == FieldType_None {
+		if !colIgnore && def.Type == model.FieldType_None {
 			self.Row = DataSheetRow_FieldType
-			log.Errorf("field header type not found: %s  %s", def.Name, FieldTypeToString(def.Type))
+			log.Errorf("field header type not found: %s  %s", def.Name, model.FieldTypeToString(def.Type))
 			goto ErrorStop
 		}
 
@@ -89,8 +90,8 @@ func (self *DataSheet) ParseProtoField(tts *BuildInTypeSet) bool {
 				self.Row = DataSheetRow_FieldType
 				log.Errorf("repeated field type diff in multi column: %s, prev: %s, found: %s",
 					def.Name,
-					FieldTypeToString(exist.Type),
-					FieldTypeToString(def.Type))
+					model.FieldTypeToString(exist.Type),
+					model.FieldTypeToString(def.Type))
 
 				goto ErrorStop
 			}
@@ -132,40 +133,45 @@ ErrorStop:
 	return false
 }
 
-func dataProcessor(file *File, context *CellContext, rawValue string) bool {
+func dataProcessor(file *File, fieldDef *model.FieldDefine, rawValue string, node *model.Node) bool {
 
-	//	if v, ok := context.findRefCell(5-1, 3); ok {
-	//		log.Debugln("here", v)
+	//	if node.Define.Name == "Type" {
+	//		a := 1
+	//		a++
 	//	}
 
 	// 列表
-	if context.IsRepeated {
+	if fieldDef.IsRepeated {
 
-		spliter := context.ListSpliter()
+		spliter := fieldDef.ListSpliter()
 
+		// 使用多格子实现的repeated
 		if spliter == "" {
 
-			v, ok := convertValue(context.FieldDefine, rawValue, file.TypeSet)
+			cv, ok := convertValue(fieldDef, rawValue, file.TypeSet)
 
 			if !ok {
-				log.Errorf("value convert error, %s raw: %s", context.String(), rawValue)
+				log.Errorf("value convert error, %s raw: %s", fieldDef.String(), rawValue)
 				return false
 			}
 
-			context.ValueList = append(context.ValueList, v)
+			node.AddValue(cv)
 
 		} else {
+			// 一个格子切割的repeated
+
 			valueList := strings.Split(rawValue, spliter)
 
 			for _, v := range valueList {
 
-				eachValue, ok := convertValue(context.FieldDefine, v, file.TypeSet)
+				cv, ok := convertValue(fieldDef, v, file.TypeSet)
 				if !ok {
-					log.Errorf("value convert error, %s raw: %s", context.String(), rawValue)
+					log.Errorf("value convert error, %s raw: %s", fieldDef.String(), rawValue)
 					return false
 				}
 
-				context.ValueList = append(context.ValueList, eachValue)
+				node.AddValue(cv)
+
 			}
 
 		}
@@ -174,26 +180,27 @@ func dataProcessor(file *File, context *CellContext, rawValue string) bool {
 
 		// 单值
 
-		var ok bool
-		context.Value, ok = convertValue(context.FieldDefine, rawValue, file.TypeSet)
+		cv, ok := convertValue(fieldDef, rawValue, file.TypeSet)
 
 		if !ok {
-			log.Errorf("value convert error, %s raw: %s", context.String(), rawValue)
+			log.Errorf("value convert error, %s raw: %s", fieldDef.String(), rawValue)
 			return false
 		}
 
 		// 值重复检查
-		if context.RepeatCheck() && !file.checkValueRepeat(context.FieldDefine, context.Value) {
-			log.Errorf("repeat value failed, %s raw: %s", context.String(), rawValue)
+		if fieldDef.Meta.RepeatCheck && !file.checkValueRepeat(fieldDef, cv) {
+			log.Errorf("repeat value failed, %s raw: %s", fieldDef.String(), cv)
 			return false
 		}
+
+		node.AddValue(cv)
 
 	}
 
 	return true
 }
 
-func (self *DataSheet) Export(file *File, tab *Table) bool {
+func (self *DataSheet) Export(file *File, tab *model.Table) bool {
 
 	// 检查引导头
 	if !self.ParseProtoField(file.TypeSet) {
@@ -211,7 +218,7 @@ func (self *DataSheet) Export(file *File, tab *Table) bool {
 			break
 		}
 
-		record := newRecord()
+		record := model.NewRecord()
 
 		// 遍历每一列
 		for self.Column = 0; self.Column < len(self.headerFields); self.Column++ {
@@ -228,15 +235,11 @@ func (self *DataSheet) Export(file *File, tab *Table) bool {
 				continue
 			}
 
-			context := record.NewContextByDefine(fieldDef)
+			node := record.NewNodeByDefine(fieldDef)
 
 			rawValue := self.GetCellData(self.Row, self.Column)
 
-			context.addRefCell(self.Row, self.Column, rawValue)
-
-			//log.Debugln(fieldDef.Name, rawValue)
-
-			if !dataProcessor(file, context, rawValue) {
+			if !dataProcessor(file, fieldDef, rawValue, node) {
 				goto ErrorStop
 			}
 
@@ -260,6 +263,6 @@ func newDataSheet(sheet *Sheet) *DataSheet {
 
 	return &DataSheet{
 		Sheet:        sheet,
-		headerByName: make(map[string]*FieldDefine),
+		headerByName: make(map[string]*model.FieldDefine),
 	}
 }

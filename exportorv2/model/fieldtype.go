@@ -1,6 +1,7 @@
-package exportorv2
+package model
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/davyxu/tabtoy/proto/tool"
@@ -32,6 +33,21 @@ type FieldDefine struct {
 	IsRepeated bool
 
 	Meta tool.FieldMetaV2 // 扩展字段
+}
+
+func (self FieldDefine) String() string {
+
+	var buildInType string
+	if self.BuildInType != nil {
+		buildInType = fmt.Sprintf("(%s)", self.BuildInType.Name)
+	}
+
+	var repString string
+	if self.IsRepeated {
+		repString = "repeated"
+	}
+
+	return fmt.Sprintf("name: %s type: %s%s %s", self.Name, FieldTypeToString(self.Type), buildInType, repString)
 }
 
 func (self *FieldDefine) DefaultValue() string {
@@ -124,9 +140,9 @@ func (self *FieldDefine) ParseType(tts *BuildInTypeSet, rawstr string) bool {
 		// 根据内建类型转成字段类型
 		switch buildinType.Kind {
 		case BuildInTypeKind_Struct:
-			self.Type = FieldType_Enum
-		case BuildInTypeKind_Enum:
 			self.Type = FieldType_Struct
+		case BuildInTypeKind_Enum:
+			self.Type = FieldType_Enum
 		}
 
 	} else {

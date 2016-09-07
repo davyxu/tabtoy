@@ -1,4 +1,4 @@
-package exportorv2
+package model
 
 import (
 	"github.com/davyxu/tabtoy/proto/tool"
@@ -51,7 +51,7 @@ func (self *BuildInType) FieldByValueAndMeta(value string) *BuildInTypeField {
 	return nil
 }
 
-func newBuildInType() *BuildInType {
+func NewBuildInType() *BuildInType {
 	return &BuildInType{
 		FieldByName:   make(map[string]*BuildInTypeField),
 		FieldByNumber: make(map[int32]*BuildInTypeField),
@@ -67,7 +67,7 @@ func (self *BuildInTypeSet) Add(def *BuildInType) {
 	self.TypeByName[def.Name] = def
 }
 
-func newTableTypeSet() *BuildInTypeSet {
+func NewBuildInTypeSet() *BuildInTypeSet {
 	return &BuildInTypeSet{
 		TypeByName: make(map[string]*BuildInType),
 	}

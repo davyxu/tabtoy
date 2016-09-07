@@ -3,6 +3,7 @@ package exportorv2
 import (
 	"strings"
 
+	"github.com/davyxu/tabtoy/exportorv2/model"
 	"github.com/tealeg/xlsx"
 )
 
@@ -15,7 +16,7 @@ type Sheet struct {
 
 	file *File // 指向父级
 
-	FieldHeader []*FieldDefine // 有效的字段行，可以做多sheet对比
+	FieldHeader []*model.FieldDefine // 有效的字段行，可以做多sheet对比
 }
 
 // 取行列信息

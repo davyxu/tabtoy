@@ -2,10 +2,12 @@ package exportorv2
 
 import (
 	"strconv"
+
+	"github.com/davyxu/tabtoy/exportorv2/model"
 )
 
 // 从单元格原始数据到最终输出的数值, 检查并转换, 处理默认值及根据meta转换情况
-func convertValue(fd *FieldDefine, value string, typeset *BuildInTypeSet) (ret string, ok bool) {
+func convertValue(fd *model.FieldDefine, value string, typeset *model.BuildInTypeSet) (ret string, ok bool) {
 
 	// 空格, 且有默认值时, 使用默认值
 	if value == "" {
@@ -13,22 +15,22 @@ func convertValue(fd *FieldDefine, value string, typeset *BuildInTypeSet) (ret s
 	}
 
 	switch fd.Type {
-	case FieldType_Int32:
+	case model.FieldType_Int32:
 		_, err := strconv.ParseInt(value, 10, 32)
 		return value, err == nil
-	case FieldType_Int64:
+	case model.FieldType_Int64:
 		_, err := strconv.ParseInt(value, 10, 64)
 		return value, err == nil
-	case FieldType_UInt32:
+	case model.FieldType_UInt32:
 		_, err := strconv.ParseUint(value, 10, 32)
 		return value, err == nil
-	case FieldType_UInt64:
+	case model.FieldType_UInt64:
 		_, err := strconv.ParseUint(value, 10, 64)
 		return value, err == nil
-	case FieldType_Float:
+	case model.FieldType_Float:
 		_, err := strconv.ParseFloat(value, 32)
 		return value, err == nil
-	case FieldType_Bool:
+	case model.FieldType_Bool:
 
 		for {
 			if value == "是" {
@@ -56,9 +58,9 @@ func convertValue(fd *FieldDefine, value string, typeset *BuildInTypeSet) (ret s
 		}
 
 		return ret, true
-	case FieldType_String:
+	case model.FieldType_String:
 		return value, true
-	case FieldType_Enum:
+	case model.FieldType_Enum:
 		if fd.BuildInType == nil {
 			log.Errorln("enum type nil", fd.Name)
 			return "", false
@@ -74,7 +76,7 @@ func convertValue(fd *FieldDefine, value string, typeset *BuildInTypeSet) (ret s
 		ret = evd.Name
 
 		return ret, true
-	case FieldType_Struct:
+	case model.FieldType_Struct:
 		return "", true
 
 	default:
