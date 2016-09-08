@@ -237,6 +237,13 @@ func (self *DataSheet) Export(file *File, tab *model.Table) bool {
 				continue
 			}
 
+			rawValue := self.GetCellData(self.Row, self.Column)
+
+			// repeated的, 没有填充的, 直接跳过, 不生成数据
+			if rawValue == "" && fieldDef.IsRepeated {
+				continue
+			}
+
 			node := record.NewNodeByDefine(fieldDef)
 
 			// 结构体要多添加一个节点, 处理repeated 结构体情况
@@ -246,8 +253,6 @@ func (self *DataSheet) Export(file *File, tab *model.Table) bool {
 				node = node.AddKey(fieldDef)
 
 			}
-
-			rawValue := self.GetCellData(self.Row, self.Column)
 
 			if !dataProcessor(file, fieldDef, rawValue, node) {
 				goto ErrorStop

@@ -6,28 +6,66 @@ syntax = "proto3";
 package gamedef;
 
 enum ActorType
-{
+{	
  
+	// 
 	Fighter = 0;
 
+	// 
 	Power = 21;
 
 }
 
 message Prop
-{
-	
+{	
+		
+	// 
 	int32 HP = 1;
-
+	
+	// 
 	float AttackRate = 2;
-
+	
+	// 
 	ActorType ExType = 3;
  
 }
 
-message ActorFile
-{
+message ActorDefine
+{	
+		
+	// 唯一ID
+	int64 ID = 1;
 	
+	// 名称
+	string Name = 2;
+	
+	// 攻击率
+	float NumericalRate = 3;
+	
+	// BuffID
+	repeated int32 BuffID = 4;
+	
+	// BuffID
+	repeated int32 BuffID = 5;
+	
+	// 类型
+	ActorType Type = 6;
+	
+	// 技能ID列表
+	repeated int32 SkillID = 7;
+	
+	// 字符串结构
+	repeated Prop StrStruct = 8;
+	
+	// 字符串结构
+	repeated Prop StrStruct = 9;
+ 
+}
+
+message ActorFile
+{	
+		
+	// Table row field
 	repeated ActorDefine Actor = 1;
  
 }

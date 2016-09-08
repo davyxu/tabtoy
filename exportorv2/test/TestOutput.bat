@@ -1,5 +1,5 @@
 ..\..\..\..\..\..\bin\tabtoy.exe ^
---mode=exporortv2 ^
+--mode=exportorv2 ^
 --pbt_outdir=. ^
 --proto3_outdir=. ^
 --proto2_outdir=. ^
