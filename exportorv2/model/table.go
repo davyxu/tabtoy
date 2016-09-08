@@ -19,44 +19,7 @@ func (self *Table) Add(r *Record) {
 	self.list = append(self.list, r)
 }
 
-// StrStruct: [ {  HP: 1}, {  HP: 1}]
-func (self *Table) printNode(node *Node, def *FieldDefine) {
-
-	if def != nil && def.IsRepeated {
-		self.PrintSpliter(", ")
-	} else {
-		self.PrintSpliter(" ")
-	}
-
-	// 值
-	if node.Define == nil {
-
-		self.Printf("%s", valueWrapper(def.Type, node.Value))
-		self.needSpliter = true
-
-		for _, child := range node.Child {
-			self.printNode(child, def)
-		}
-
-	} else {
-		// 定义
-
-		if node.Define.IsRepeated {
-			self.Printf("%s:[ ", node.Define.Name)
-		} else {
-			self.Printf("%s: ", node.Define.Name)
-		}
-
-		for _, child := range node.Child {
-			self.printNode(child, node.Define)
-		}
-
-		if node.Define.IsRepeated {
-			self.Printf(" ]")
-		}
-	}
-
-}
+// StrStruct: [ {  HP: 1 }, {  HP: 1 } ]
 
 func (self *Table) Print(rootName string) bool {
 
@@ -68,14 +31,81 @@ func (self *Table) Print(rootName string) bool {
 		self.Printf("%s { ", rootName)
 
 		// 遍历每一列
-		for _, node := range r.nodes {
+		for rootFieldIndex, node := range r.nodes {
 
-			if node.Define.Name == "Type" {
-				a := 1
-				a++
+			if node.Define.IsRepeated {
+				self.Printf("%s:[ ", node.Define.Name)
+			} else {
+				self.Printf("%s: ", node.Define.Name)
 			}
 
-			self.printNode(node, node.Define)
+			// 普通值
+			if node.Define.Type != FieldType_Struct {
+
+				if node.Define.IsRepeated {
+
+					// repeated 值序列
+					for arrIndex, valueNode := range node.Child {
+
+						self.Printf("%s", valueWrapper(node.Define.Type, valueNode.Value))
+
+						// 多个值分割
+						if arrIndex < len(node.Child)-1 {
+							self.Printf(", ")
+						}
+
+					}
+				} else {
+					// 单值
+					valueNode := node.Child[0]
+
+					self.Printf("%s", valueWrapper(node.Define.Type, valueNode.Value))
+
+				}
+
+			} else {
+
+				// 遍历repeated的结构体
+				for structIndex, structNode := range node.Child {
+
+					// 结构体开始
+					self.Printf("{ ")
+
+					// 遍历一个结构体的字段
+					for structFieldIndex, fieldNode := range structNode.Child {
+
+						// 值节点总是在第一个
+						valueNode := fieldNode.Child[0]
+
+						self.Printf("%s: %s", fieldNode.Define.Name, valueWrapper(fieldNode.Define.Type, valueNode.Value))
+
+						// 结构体字段分割
+						if structFieldIndex < len(structNode.Child)-1 {
+							self.Printf(", ")
+						}
+
+					}
+
+					// 结构体结束
+					self.Printf(" }")
+
+					// 多个结构体分割
+					if structIndex < len(node.Child)-1 {
+						self.Printf(", ")
+					}
+
+				}
+
+			}
+
+			if node.Define.IsRepeated {
+				self.Printf(" ]")
+			}
+
+			// 根字段分割
+			if rootFieldIndex < len(r.nodes)-1 {
+				self.Printf(", ")
+			}
 
 		}
 

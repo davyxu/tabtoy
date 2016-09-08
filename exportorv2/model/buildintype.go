@@ -1,9 +1,5 @@
 package model
 
-import (
-	"github.com/davyxu/tabtoy/proto/tool"
-)
-
 type BuildInTypeKind int
 
 const (
@@ -12,29 +8,23 @@ const (
 	BuildInTypeKind_Struct
 )
 
-type BuildInTypeField struct {
-	Name  string
-	Value int32
-	Meta  tool.FieldMetaV2 // 扩展字段
-}
-
 type BuildInType struct {
 	Name string
 	Kind BuildInTypeKind
 
-	FieldByName   map[string]*BuildInTypeField
-	FieldByNumber map[int32]*BuildInTypeField
-	Fields        []*BuildInTypeField
+	FieldByName   map[string]*FieldDefine
+	FieldByNumber map[int32]*FieldDefine
+	Fields        []*FieldDefine
 }
 
-func (self *BuildInType) Add(def *BuildInTypeField) {
+func (self *BuildInType) Add(def *FieldDefine) {
 
 	self.FieldByName[def.Name] = def
-	self.FieldByNumber[def.Value] = def
+	self.FieldByNumber[def.EnumValue] = def
 	self.Fields = append(self.Fields, def)
 }
 
-func (self *BuildInType) FieldByValueAndMeta(value string) *BuildInTypeField {
+func (self *BuildInType) FieldByValueAndMeta(value string) *FieldDefine {
 
 	for _, v := range self.FieldByName {
 
@@ -53,8 +43,8 @@ func (self *BuildInType) FieldByValueAndMeta(value string) *BuildInTypeField {
 
 func NewBuildInType() *BuildInType {
 	return &BuildInType{
-		FieldByName:   make(map[string]*BuildInTypeField),
-		FieldByNumber: make(map[int32]*BuildInTypeField),
+		FieldByName:   make(map[string]*FieldDefine),
+		FieldByNumber: make(map[int32]*FieldDefine),
 	}
 }
 

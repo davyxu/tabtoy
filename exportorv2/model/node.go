@@ -4,6 +4,8 @@ type Node struct {
 	Define *FieldDefine
 	Value  string
 
+	StructRoot bool
+
 	Child []*Node // 优先遍历值, 再key
 }
 
@@ -24,7 +26,6 @@ func (self *Node) AddKey(def *FieldDefine) *Node {
 	self.Child = append(self.Child, n)
 
 	return n
-
 }
 
 type Record struct {

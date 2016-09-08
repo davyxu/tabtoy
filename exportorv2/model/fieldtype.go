@@ -30,24 +30,26 @@ type FieldDefine struct {
 
 	BuildInType *BuildInType // 复杂类型: 枚举或者结构体
 
+	Meta tool.FieldMetaV2 // 扩展字段
+
 	IsRepeated bool
 
-	Meta tool.FieldMetaV2 // 扩展字段
+	EnumValue int32 // 枚举值
 }
 
 func (self FieldDefine) String() string {
 
 	var buildInType string
 	if self.BuildInType != nil {
-		buildInType = fmt.Sprintf("(%s)", self.BuildInType.Name)
+		buildInType = self.BuildInType.Name
 	}
 
 	var repString string
 	if self.IsRepeated {
-		repString = "repeated"
+		repString = "repeated "
 	}
 
-	return fmt.Sprintf("name: %s type: %s%s %s", self.Name, FieldTypeToString(self.Type), buildInType, repString)
+	return fmt.Sprintf("name: '%s' %stype: '%s'(%s)", self.Name, repString, buildInType, FieldTypeToString(self.Type))
 }
 
 func (self *FieldDefine) DefaultValue() string {
@@ -107,12 +109,19 @@ var strByFieldType = map[FieldType]string{
 	FieldType_Struct: "struct",
 }
 
+var fieldTypeByString = make(map[string]FieldType)
+
 func FieldTypeToString(t FieldType) string {
 	if v, ok := strByFieldType[t]; ok {
 		return v
 	}
 
 	return "unknown"
+}
+
+func ParseFieldType(str string) (t FieldType, ok bool) {
+	v, ok := fieldTypeByString[str]
+	return v, ok
 }
 
 const repeatedKeyword = "repeated"
@@ -127,11 +136,9 @@ func (self *FieldDefine) ParseType(tts *BuildInTypeSet, rawstr string) bool {
 		self.IsRepeated = true
 	}
 
-	for ft, s := range strByFieldType {
-		if rawstr == s {
-			self.Type = ft
-			return true
-		}
+	if ft, ok := ParseFieldType(rawstr); ok {
+		self.Type = ft
+		return true
 	}
 
 	if buildinType, ok := tts.TypeByName[rawstr]; ok {
@@ -150,4 +157,12 @@ func (self *FieldDefine) ParseType(tts *BuildInTypeSet, rawstr string) bool {
 	}
 
 	return true
+}
+
+func init() {
+
+	for k, v := range strByFieldType {
+		fieldTypeByString[v] = k
+	}
+
 }

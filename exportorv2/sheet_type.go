@@ -16,10 +16,11 @@ const (
 
 const (
 	// 信息所在列
-	TypeSheetCol_Type      = 0 // 类型
-	TypeSheetCol_FieldName = 1 // 字段名
-	TypeSheetCol_Value     = 2 // 值
-	TypeSheetCol_Meta      = 3 // 特性
+	TypeSheetCol_ObjectType = 0 // 对象类型
+	TypeSheetCol_FieldName  = 1 // 字段名
+	TypeSheetCol_FieldType  = 2 // 字段名
+	TypeSheetCol_Value      = 3 // 值
+	TypeSheetCol_Meta       = 4 // 特性
 )
 
 type TypeSheet struct {
@@ -38,15 +39,15 @@ func (self *TypeSheet) Parse() bool {
 	// 遍历每一行
 	for self.Row = TypeSheetRow_DataBegin; readingLine; self.Row++ {
 
+		// ====================解析对象类型====================
 		// 第一列是空的，结束
-		if self.GetCellData(self.Row, TypeSheetCol_Type) == "" {
+		if self.GetCellData(self.Row, TypeSheetCol_ObjectType) == "" {
 			break
 		}
 
-		var fd model.BuildInTypeField
+		var fd model.FieldDefine
 
-		// 解析枚举类型
-		rawTypeName := self.GetCellData(self.Row, TypeSheetCol_Type)
+		rawTypeName := self.GetCellData(self.Row, TypeSheetCol_ObjectType)
 
 		existType, ok := self.BuildInTypeSet.TypeByName[rawTypeName]
 
@@ -61,9 +62,40 @@ func (self *TypeSheet) Parse() bool {
 			self.BuildInTypeSet.Add(td)
 		}
 
-		// 解析字段名
+		// ====================解析字段名====================
 		fd.Name = self.GetCellData(self.Row, TypeSheetCol_FieldName)
 
+		// ====================解析字段名====================
+		rawFieldType := self.GetCellData(self.Row, TypeSheetCol_FieldType)
+
+		// 解析普通类型
+		if ft, ok := model.ParseFieldType(rawFieldType); ok {
+			fd.Type = ft
+		} else {
+
+			// 解析内建类型
+			if buildinType, ok := self.BuildInTypeSet.TypeByName[rawFieldType]; ok {
+
+				// 只有枚举( 结构体不允许再次嵌套, 增加理解复杂度 )
+				if buildinType.Kind != model.BuildInTypeKind_Enum {
+					self.Column = TypeSheetCol_FieldType
+					log.Errorln("struct field can only be normal type and enum", rawFieldType)
+					goto ErrorStop
+				}
+
+				fd.Type = model.FieldType_Enum
+				fd.BuildInType = buildinType
+
+			} else {
+
+				self.Column = TypeSheetCol_FieldType
+				log.Errorln("unknown field type: ", rawFieldType)
+				goto ErrorStop
+			}
+
+		}
+
+		// ====================解析值====================
 		rawValue := self.GetCellData(self.Row, TypeSheetCol_Value)
 
 		var kind model.BuildInTypeKind
@@ -73,7 +105,7 @@ func (self *TypeSheet) Parse() bool {
 
 			// 解析枚举值
 			if v, err := strconv.Atoi(rawValue); err == nil {
-				fd.Value = int32(v)
+				fd.EnumValue = int32(v)
 			} else {
 				self.Column = TypeSheetCol_Value
 				log.Errorln("parse type value failed:", err)
@@ -93,7 +125,7 @@ func (self *TypeSheet) Parse() bool {
 			goto ErrorStop
 		}
 
-		// 解析特性
+		// ====================解析特性====================
 		metaString := self.GetCellData(self.Row, TypeSheetCol_Meta)
 
 		if err := proto.UnmarshalText(metaString, &fd.Meta); err != nil {

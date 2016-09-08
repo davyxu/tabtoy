@@ -148,14 +148,9 @@ func dataProcessor(file *File, fieldDef *model.FieldDefine, rawValue string, nod
 		// 使用多格子实现的repeated
 		if spliter == "" {
 
-			cv, ok := convertValue(fieldDef, rawValue, file.TypeSet)
-
-			if !ok {
-				log.Errorf("value convert error, %s raw: %s", fieldDef.String(), rawValue)
-				return false
+			if _, ok := convertValue(fieldDef, rawValue, file.TypeSet, node); !ok {
+				goto ConvertError
 			}
-
-			node.AddValue(cv)
 
 		} else {
 			// 一个格子切割的repeated
@@ -164,14 +159,9 @@ func dataProcessor(file *File, fieldDef *model.FieldDefine, rawValue string, nod
 
 			for _, v := range valueList {
 
-				cv, ok := convertValue(fieldDef, v, file.TypeSet)
-				if !ok {
-					log.Errorf("value convert error, %s raw: %s", fieldDef.String(), rawValue)
-					return false
+				if _, ok := convertValue(fieldDef, v, file.TypeSet, node); !ok {
+					goto ConvertError
 				}
-
-				node.AddValue(cv)
-
 			}
 
 		}
@@ -179,25 +169,27 @@ func dataProcessor(file *File, fieldDef *model.FieldDefine, rawValue string, nod
 	} else {
 
 		// 单值
+		if cv, ok := convertValue(fieldDef, rawValue, file.TypeSet, node); !ok {
+			goto ConvertError
 
-		cv, ok := convertValue(fieldDef, rawValue, file.TypeSet)
+		} else {
 
-		if !ok {
-			log.Errorf("value convert error, %s raw: %s", fieldDef.String(), rawValue)
-			return false
+			// 值重复检查
+			if fieldDef.Meta.RepeatCheck && !file.checkValueRepeat(fieldDef, cv) {
+				log.Errorf("repeat value failed, %s raw: %s", fieldDef.String(), cv)
+				return false
+			}
 		}
-
-		// 值重复检查
-		if fieldDef.Meta.RepeatCheck && !file.checkValueRepeat(fieldDef, cv) {
-			log.Errorf("repeat value failed, %s raw: %s", fieldDef.String(), cv)
-			return false
-		}
-
-		node.AddValue(cv)
 
 	}
 
 	return true
+
+ConvertError:
+
+	log.Errorf("value convert error, %s raw: '%s'", fieldDef.String(), rawValue)
+
+	return false
 }
 
 func (self *DataSheet) Export(file *File, tab *model.Table) bool {
@@ -236,6 +228,14 @@ func (self *DataSheet) Export(file *File, tab *model.Table) bool {
 			}
 
 			node := record.NewNodeByDefine(fieldDef)
+
+			// 结构体要多添加一个节点, 处理repeated 结构体情况
+			if fieldDef.Type == model.FieldType_Struct {
+
+				node.StructRoot = true
+				node = node.AddKey(fieldDef)
+
+			}
 
 			rawValue := self.GetCellData(self.Row, self.Column)
 
