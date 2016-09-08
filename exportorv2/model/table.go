@@ -3,7 +3,7 @@ package model
 import (
 	"bytes"
 	"fmt"
-	"os"
+	"io/ioutil"
 
 	"github.com/davyxu/tabtoy/util"
 )
@@ -11,8 +11,6 @@ import (
 type Table struct {
 	list []*Record
 	buf  bytes.Buffer
-
-	needSpliter bool
 }
 
 func (self *Table) Add(r *Record) {
@@ -111,20 +109,10 @@ func (self *Table) Print(rootName string) bool {
 
 		self.Printf(" }\n")
 
-		self.needSpliter = false
 	}
 
 	return true
 
-}
-
-func (self *Table) PrintSpliter(spliter string) {
-	if self.needSpliter {
-
-		self.Printf("%s", spliter)
-
-		self.needSpliter = false
-	}
 }
 
 func valueWrapper(t FieldType, v string) string {
@@ -144,17 +132,12 @@ func (self *Table) Printf(format string, args ...interface{}) {
 func (self *Table) WriteToFile(filename string) bool {
 
 	// 创建输出文件
-	file, err := os.Create(filename)
+
+	err := ioutil.WriteFile(filename, self.buf.Bytes(), 0666)
 	if err != nil {
 		log.Errorln(err.Error())
 		return false
 	}
-
-	// 写入文件头
-
-	file.WriteString(self.buf.String())
-
-	file.Close()
 
 	return true
 }

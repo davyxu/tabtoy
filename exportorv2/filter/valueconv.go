@@ -1,4 +1,4 @@
-package exportorv2
+package filter
 
 import (
 	"strconv"
@@ -7,7 +7,7 @@ import (
 )
 
 // 从单元格原始数据到最终输出的数值, 检查并转换, 处理默认值及根据meta转换情况
-func convertValue(fd *model.FieldDefine, value string, typeset *model.BuildInTypeSet, node *model.Node) (ret string, ok bool) {
+func ConvertValue(fd *model.FieldDefine, value string, typeset *model.BuildInTypeSet, node *model.Node) (ret string, ok bool) {
 
 	// 空格, 且有默认值时, 使用默认值
 	if value == "" {

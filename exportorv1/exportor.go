@@ -6,9 +6,9 @@ import (
 	"path/filepath"
 
 	"github.com/davyxu/pbmeta"
-	"github.com/davyxu/tabtoy/data"
-	"github.com/davyxu/tabtoy/filter"
-	"github.com/davyxu/tabtoy/printer"
+	"github.com/davyxu/tabtoy/exportorv1/data"
+	"github.com/davyxu/tabtoy/exportorv1/filter"
+	"github.com/davyxu/tabtoy/exportorv1/printer"
 	"github.com/davyxu/tabtoy/util"
 )
 
@@ -43,7 +43,7 @@ func Run(param Parameter) bool {
 		log.Infof("patch file loaded: %s", param.PatchFile)
 	}
 
-	return util.ParallelWorker(param.InputFileList, param.ParaMode, param.OutDir, func(input string) bool {
+	return util.ParallelWorker(param.InputFileList, param.ParaMode, func(input string) bool {
 
 		var ext string
 		var writer printer.IPrinter

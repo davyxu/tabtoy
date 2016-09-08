@@ -1,6 +1,7 @@
 package exportorv2
 
 import (
+	"fmt"
 	"path"
 	"path/filepath"
 	"strings"
@@ -47,6 +48,8 @@ func (self *File) Export(filename string) *model.Table {
 			}
 
 			typeSheet := newTypeSheet(NewSheet(self, rawSheet))
+
+			// 从cell添加类型
 			if !typeSheet.Parse() {
 				return nil
 			}
@@ -58,25 +61,65 @@ func (self *File) Export(filename string) *model.Table {
 
 	// 没有这个类型, 默认填一个
 	if self.TypeSet == nil {
-		self.TypeSet = model.NewBuildInTypeSet()
+		log.Errorln("'@Types' sheet not found in ", filename)
+		return nil
 	}
 
 	var tab model.Table
+
+	var needAddRowType bool = true
 
 	for _, rawSheet := range file.Sheets {
 
 		if !isTypeSheet(rawSheet.Name) {
 
-			log.Infof("            %s", rawSheet.Name)
 			dSheet := newDataSheet(NewSheet(self, rawSheet))
+
+			if !dSheet.Valid() {
+				continue
+			}
+
+			log.Infof("            %s", rawSheet.Name)
+
 			if !dSheet.Export(self, &tab) {
 				return nil
+			}
+
+			if needAddRowType {
+				self.makeRowBuildInType(self.TypeSet, dSheet.headerFields)
+				needAddRowType = false
 			}
 
 		}
 	}
 
 	return &tab
+}
+
+func (self *File) makeRowBuildInType(ts *model.BuildInTypeSet, rootField []*model.FieldDefine) {
+
+	rowType := model.NewBuildInType()
+	rowType.Name = fmt.Sprintf("%sDefine", ts.Pragma.TableName)
+	rowType.Kind = model.BuildInTypeKind_Struct
+	self.TypeSet.Add(rowType)
+
+	for _, field := range rootField {
+		rowType.Add(field)
+	}
+
+	fileType := model.NewBuildInType()
+	// 文件类型名: Sheet名+
+	fileType.Name = fmt.Sprintf("%sFile", ts.Pragma.TableName)
+	fileType.Kind = model.BuildInTypeKind_Struct
+
+	var rowTypeField model.FieldDefine
+	rowTypeField.Name = ts.Pragma.TableName
+	rowTypeField.IsRepeated = true
+	rowTypeField.BuildInType = rowType
+	rowTypeField.Comment = "Table row field"
+	fileType.Add(&rowTypeField)
+
+	self.TypeSet.Add(fileType)
 }
 
 func (self *File) checkValueRepeat(fd *model.FieldDefine, value string) bool {

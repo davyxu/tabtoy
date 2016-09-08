@@ -5,7 +5,7 @@ import (
 
 	"github.com/davyxu/pbmeta"
 	pbprotos "github.com/davyxu/pbmeta/proto"
-	"github.com/davyxu/tabtoy/data"
+	"github.com/davyxu/tabtoy/exportorv1/data"
 	"github.com/davyxu/tabtoy/proto/tool"
 	"github.com/davyxu/tabtoy/util"
 	"github.com/tealeg/xlsx"
@@ -21,7 +21,7 @@ const (
 
 type Sheet struct {
 	*xlsx.Sheet
-	header *tool.ExportHeader
+	header *tool.ExportHeaderV1
 
 	cursor int // 当前行
 
@@ -96,7 +96,7 @@ type RecordInfo struct {
 	CellValue string // 表格中的值
 	FieldDesc *pbmeta.FieldDescriptor
 	FieldMsg  *data.DynamicMessage // 这个字段所在的Message
-	FieldMeta *tool.FieldMeta      // 扩展字段
+	FieldMeta *tool.FieldMetaV1    // 扩展字段
 }
 
 func (self *RecordInfo) Value() string {
@@ -271,7 +271,7 @@ func makeCompactAccessor(compactFieldName string, inputMsg *data.DynamicMessage)
 	return msg, inputMsg.Desc.FieldByName(compactFieldName)
 }
 
-func newSheet(file *File, sheet *xlsx.Sheet, header *tool.ExportHeader) *Sheet {
+func newSheet(file *File, sheet *xlsx.Sheet, header *tool.ExportHeaderV1) *Sheet {
 	self := &Sheet{
 		file:        file,
 		Sheet:       sheet,

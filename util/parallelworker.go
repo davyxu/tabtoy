@@ -13,7 +13,7 @@ func task(input string, callback func(string) bool, signal chan bool) bool {
 	return result
 }
 
-func ParallelWorker(fileList []string, para bool, outDir string, callback func(string) bool) bool {
+func ParallelWorker(fileList []string, para bool, callback func(string) bool) bool {
 
 	// 处理多个导出文件情况
 

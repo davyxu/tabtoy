@@ -7,7 +7,7 @@ import (
 )
 
 // 获取一个字段的扩展信息
-func GetFieldMeta(field interface{}) (*tool.FieldMeta, bool) {
+func GetFieldMeta(field interface{}) (*tool.FieldMetaV1, bool) {
 
 	var metaStr string
 
@@ -26,7 +26,7 @@ func GetFieldMeta(field interface{}) (*tool.FieldMeta, bool) {
 
 	}
 
-	var meta tool.FieldMeta
+	var meta tool.FieldMetaV1
 
 	if err := proto.UnmarshalText(metaStr, &meta); err != nil {
 		log.Errorf("parse field meta failed, [%s] %s", metaStr, err.Error())

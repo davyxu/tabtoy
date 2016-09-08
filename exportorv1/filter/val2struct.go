@@ -3,7 +3,7 @@ package filter
 import (
 	"github.com/davyxu/pbmeta"
 	pbprotos "github.com/davyxu/pbmeta/proto"
-	"github.com/davyxu/tabtoy/data"
+	"github.com/davyxu/tabtoy/exportorv1/data"
 	"github.com/davyxu/tabtoy/proto/tool"
 )
 
@@ -47,7 +47,7 @@ func FieldByNameWithMeta(msgD *pbmeta.Descriptor, name string) *pbmeta.FieldDesc
 
 }
 
-func Value2Struct(meta *tool.FieldMeta, structValue string, fd *pbmeta.FieldDescriptor, callback func(string, string) bool) (isValue2Struct bool, hasError bool) {
+func Value2Struct(meta *tool.FieldMetaV1, structValue string, fd *pbmeta.FieldDescriptor, callback func(string, string) bool) (isValue2Struct bool, hasError bool) {
 
 	if meta == nil {
 		return

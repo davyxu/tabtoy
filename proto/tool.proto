@@ -3,7 +3,7 @@ syntax = "proto3";
 package tool;
 
 // 电子表格1,1单元格的表头格式描述
-message ExportHeader
+message ExportHeaderV1
 {
 	string ProtoTypeName = 1;		// 导出文件protobuf 类型名
 	
@@ -14,7 +14,7 @@ message ExportHeader
 
 
 // proto字段后部注释中的meta扩展描述
-message FieldMeta
+message FieldMetaV1
 {	
 	string String2ListSpliter = 2;	// 将单元格字符串拆分为列表放入repeated字段
 	
@@ -42,4 +42,15 @@ message FieldMetaV2
 	string Default = 6;				// 默认值
 	
 	bool LuaIndex = 7;				// 为字段创建lua记录索引
+}
+
+message BuildInTypePragmaV2
+{
+	string Package = 1;				// 输出proto时的包名
+	
+	string TableName = 2;			// 表名, 文件类型=表名File  行类型=表名Define	
+	
+	string Proto3OutFileName = 3;		// 指定proto3输出文件名
+	
+	string Proto2OutFileName = 4;		// 指定proto2输出文件名
 }

@@ -10,8 +10,9 @@ import (
 
 const (
 	// 信息所在的行
-	TypeSheetRow_Comment   = 0 // 字段名(对应proto)
-	TypeSheetRow_DataBegin = 1 // 数据开始
+	TypeSheetRow_Pragma    = 0 // 配置
+	TypeSheetRow_Comment   = 1 // 字段名(对应proto)
+	TypeSheetRow_DataBegin = 2 // 数据开始
 )
 
 const (
@@ -35,6 +36,15 @@ func (self *TypeSheet) Parse() bool {
 	var readingLine bool = true
 
 	var td *model.BuildInType
+
+	rawPragma := self.GetCellData(TypeSheetRow_Pragma, 0)
+
+	if err := proto.UnmarshalText(rawPragma, &self.BuildInTypeSet.Pragma); err != nil {
+		self.Row = TypeSheetRow_Pragma
+		self.Column = 0
+		log.Errorf("parse pragma failed: %s", rawPragma)
+		goto ErrorStop
+	}
 
 	// 遍历每一行
 	for self.Row = TypeSheetRow_DataBegin; readingLine; self.Row++ {
@@ -137,7 +147,7 @@ func (self *TypeSheet) Parse() bool {
 
 	}
 
-	return true
+	return self.checkProtobufCompatibility()
 
 ErrorStop:
 
@@ -145,6 +155,23 @@ ErrorStop:
 
 	log.Errorf("%s|%s(%s)", self.file.FileName, self.Name, util.ConvR1C1toA1(r, c))
 	return false
+}
+
+// 检查protobuf兼容性
+func (self *TypeSheet) checkProtobufCompatibility() bool {
+
+	for _, bt := range self.BuildInTypeSet.Types {
+		if bt.Kind == model.BuildInTypeKind_Enum {
+
+			// proto3 需要枚举有0值
+			if _, ok := bt.FieldByNumber[0]; !ok {
+				log.Errorf("proto3 require enum has value 0 in '%s'", bt.Name)
+				return false
+			}
+		}
+	}
+
+	return true
 }
 
 func newTypeSheet(sheet *Sheet) *TypeSheet {

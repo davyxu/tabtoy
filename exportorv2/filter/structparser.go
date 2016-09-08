@@ -1,4 +1,4 @@
-package exportorv2
+package filter
 
 import (
 	"github.com/davyxu/golexer"
@@ -144,7 +144,7 @@ func parseStruct(fd *model.FieldDefine, value string, typeset *model.BuildInType
 		fieldNode := node.AddKey(bnField)
 
 		// 在类型节点下添加值节点
-		_, ok := convertValue(bnField, value, typeset, fieldNode)
+		_, ok := ConvertValue(bnField, value, typeset, fieldNode)
 
 		return ok
 	})

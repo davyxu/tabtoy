@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/davyxu/pbmeta"
-	"github.com/davyxu/tabtoy/data"
+	"github.com/davyxu/tabtoy/exportorv1/data"
 )
 
 type pbtWriter struct {

@@ -85,7 +85,7 @@ func NewFile(descpool *pbmeta.DescriptorPool) *File {
 	return self
 }
 
-func getHeader(sheet *xlsx.Sheet) (*tool.ExportHeader, error) {
+func getHeader(sheet *xlsx.Sheet) (*tool.ExportHeaderV1, error) {
 
 	headerString := strings.TrimSpace(sheet.Cell(0, 0).Value)
 
@@ -94,7 +94,7 @@ func getHeader(sheet *xlsx.Sheet) (*tool.ExportHeader, error) {
 		return nil, nil
 	}
 
-	var header tool.ExportHeader
+	var header tool.ExportHeaderV1
 
 	// 有可能的字符,一定是头
 	if strings.Contains(headerString, "ProtoTypeName") ||

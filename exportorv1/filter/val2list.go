@@ -7,7 +7,7 @@ import (
 )
 
 // 分割字符串并调用回调
-func Value2List(meta *tool.FieldMeta, value string, callback func(string)) bool {
+func Value2List(meta *tool.FieldMetaV1, value string, callback func(string)) bool {
 
 	if meta == nil {
 		return false

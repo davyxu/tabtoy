@@ -3,7 +3,7 @@ package printer
 import (
 	"github.com/davyxu/pbmeta"
 	pbprotos "github.com/davyxu/pbmeta/proto"
-	"github.com/davyxu/tabtoy/data"
+	"github.com/davyxu/tabtoy/exportorv1/data"
 	"github.com/davyxu/tabtoy/util"
 )
 

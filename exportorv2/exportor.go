@@ -3,16 +3,19 @@ package exportorv2
 import (
 	"bytes"
 	"path"
-	"path/filepath"
 
+	"github.com/davyxu/tabtoy/exportorv2/printer"
 	"github.com/davyxu/tabtoy/util"
 )
 
 type Parameter struct {
 	InputFileList []string
 	ParaMode      bool
-	OutDir        string
-	Format        string
+	PbtOutDir     string
+	LuaOutDir     string
+	JsonOutDir    string
+	Proto3OutDir  string
+	Proto2OutDir  string
 }
 
 func printIndent(indent int) string {
@@ -26,42 +29,67 @@ func printIndent(indent int) string {
 }
 
 func Run(param Parameter) bool {
-	return util.ParallelWorker(param.InputFileList, param.ParaMode, param.OutDir, func(input string) bool {
+	return util.ParallelWorker(param.InputFileList, param.ParaMode, func(inputFile string) bool {
 
 		//	 显示电子表格到导出文件
 
 		file := NewFile()
 
-		tab := file.Export(input)
+		tab := file.Export(inputFile)
 		if tab == nil {
 			return false
 		}
 
-		if !tab.Print(file.Name) {
+		if !tab.Print(file.TypeSet.Pragma.TableName) {
 			return false
 		}
 
-		var ext string
+		if param.PbtOutDir != "" {
 
-		switch param.Format {
-		case "pbt":
-			ext = ".pbt"
-		case "json":
-			ext = ".json"
+			filebase := util.ChangeExtension(inputFile, ".pbt")
+			outputFile := path.Join(param.PbtOutDir, filebase)
 
-		case "lua":
-			ext = ".lua"
+			log.Infof("%s%s\n", printIndent(2), filebase)
 
-		default:
-			log.Errorf("unknown format '%s'", param.Format)
-			return false
+			if !tab.WriteToFile(outputFile) {
+				return false
+			}
 		}
 
-		// 使用指定的导出文件夹,并更换电子表格输入文件的后缀名为pbt作为输出文件
-		outputFile := path.Join(param.OutDir, util.ChangeExtension(input, ext))
+		if param.Proto3OutDir != "" {
 
-		log.Infof("%s%s\n", printIndent(2), filepath.Base(outputFile))
-		return tab.WriteToFile(outputFile)
+			filebase := util.ChangeExtension(inputFile, ".proto")
+
+			if file.TypeSet.Pragma.Proto3OutFileName != "" {
+				filebase = file.TypeSet.Pragma.Proto3OutFileName
+			}
+
+			outputFile := path.Join(param.Proto3OutDir, filebase)
+
+			log.Infof("%s%s\n", printIndent(2), filebase)
+
+			if !printer.PrintProto(file.TypeSet, 3, outputFile) {
+				return false
+			}
+		}
+
+		if param.Proto2OutDir != "" {
+			filebase := util.ChangeExtension(inputFile, ".proto")
+
+			if file.TypeSet.Pragma.Proto2OutFileName != "" {
+				filebase = file.TypeSet.Pragma.Proto2OutFileName
+			}
+
+			outputFile := path.Join(param.Proto2OutDir, filebase)
+
+			log.Infof("%s%s\n", printIndent(2), filebase)
+
+			if !printer.PrintProto(file.TypeSet, 2, outputFile) {
+				return false
+			}
+		}
+
+		return true
 
 	})
 

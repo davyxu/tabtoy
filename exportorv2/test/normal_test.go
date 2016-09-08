@@ -4,7 +4,7 @@ import (
 	"io/ioutil"
 	"testing"
 
-	"github.com/davyxu/tabtoy/testv2/test"
+	"github.com/davyxu/tabtoy/exportorv2/test/test"
 	"github.com/golang/protobuf/proto"
 )
 

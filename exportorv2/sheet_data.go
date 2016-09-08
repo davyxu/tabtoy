@@ -3,6 +3,7 @@ package exportorv2
 import (
 	"strings"
 
+	"github.com/davyxu/tabtoy/exportorv2/filter"
 	"github.com/davyxu/tabtoy/exportorv2/model"
 	"github.com/davyxu/tabtoy/util"
 	"github.com/golang/protobuf/proto"
@@ -11,7 +12,7 @@ import (
 const (
 	// 信息所在的行
 	DataSheetRow_FieldName = 0 // 字段名(对应proto)
-	DataSheetRow_FieldType = 1 // 字段描述
+	DataSheetRow_FieldType = 1 // 字段类型
 	DataSheetRow_FieldMeta = 2 // 字段特性
 	DataSheetRow_Comment   = 3 // 用户注释
 	DataSheetRow_DataBegin = 4 // 数据开始
@@ -35,6 +36,10 @@ func (self *DataSheet) FetchFieldDefine(index int) *model.FieldDefine {
 	return self.headerFields[index]
 }
 
+func (self *DataSheet) Valid() bool {
+	return self.GetCellData(0, 0) != ""
+}
+
 // 检查字段行的长度
 func (self *DataSheet) ParseProtoField(tts *model.BuildInTypeSet) bool {
 
@@ -45,6 +50,7 @@ func (self *DataSheet) ParseProtoField(tts *model.BuildInTypeSet) bool {
 
 		def = new(model.FieldDefine)
 
+		// ====================解析字段====================
 		def.Name = self.GetCellData(DataSheetRow_FieldName, self.Column)
 		if def.Name == "" {
 			break
@@ -56,6 +62,7 @@ func (self *DataSheet) ParseProtoField(tts *model.BuildInTypeSet) bool {
 			colIgnore = true
 		}
 
+		// ====================解析类型====================
 		def.ParseType(tts, self.GetCellData(DataSheetRow_FieldType, self.Column))
 
 		// 依然找不到, 报错
@@ -65,6 +72,7 @@ func (self *DataSheet) ParseProtoField(tts *model.BuildInTypeSet) bool {
 			goto ErrorStop
 		}
 
+		// ====================解析特性====================
 		metaString := self.GetCellData(DataSheetRow_FieldMeta, self.Column)
 
 		if err := proto.UnmarshalText(metaString, &def.Meta); err != nil {
@@ -72,6 +80,8 @@ func (self *DataSheet) ParseProtoField(tts *model.BuildInTypeSet) bool {
 			log.Errorln("parse field header failed", err)
 			goto ErrorStop
 		}
+
+		def.Comment = self.GetCellData(DataSheetRow_Comment, self.Column)
 
 		// 根据字段名查找, 处理repeated字段case
 		exist, ok := self.headerByName[def.Name]
@@ -148,7 +158,7 @@ func dataProcessor(file *File, fieldDef *model.FieldDefine, rawValue string, nod
 		// 使用多格子实现的repeated
 		if spliter == "" {
 
-			if _, ok := convertValue(fieldDef, rawValue, file.TypeSet, node); !ok {
+			if _, ok := filter.ConvertValue(fieldDef, rawValue, file.TypeSet, node); !ok {
 				goto ConvertError
 			}
 
@@ -159,7 +169,7 @@ func dataProcessor(file *File, fieldDef *model.FieldDefine, rawValue string, nod
 
 			for _, v := range valueList {
 
-				if _, ok := convertValue(fieldDef, v, file.TypeSet, node); !ok {
+				if _, ok := filter.ConvertValue(fieldDef, v, file.TypeSet, node); !ok {
 					goto ConvertError
 				}
 			}
@@ -169,14 +179,14 @@ func dataProcessor(file *File, fieldDef *model.FieldDefine, rawValue string, nod
 	} else {
 
 		// 单值
-		if cv, ok := convertValue(fieldDef, rawValue, file.TypeSet, node); !ok {
+		if cv, ok := filter.ConvertValue(fieldDef, rawValue, file.TypeSet, node); !ok {
 			goto ConvertError
 
 		} else {
 
 			// 值重复检查
 			if fieldDef.Meta.RepeatCheck && !file.checkValueRepeat(fieldDef, cv) {
-				log.Errorf("repeat value failed, %s raw: %s", fieldDef.String(), cv)
+				log.Errorf("found repeat value, %s raw: '%s'", fieldDef.String(), cv)
 				return false
 			}
 		}

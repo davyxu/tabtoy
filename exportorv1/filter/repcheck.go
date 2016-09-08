@@ -8,7 +8,7 @@ import (
 type RepeatValueChecker map[string]bool
 
 // 重复值检查， 如果meta中描述有开启则开启
-func (self RepeatValueChecker) Check(meta *tool.FieldMeta, fd *pbmeta.FieldDescriptor, value string) bool {
+func (self RepeatValueChecker) Check(meta *tool.FieldMetaV1, fd *pbmeta.FieldDescriptor, value string) bool {
 
 	if meta == nil || meta.RepeatCheck == false {
 		return true

@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/davyxu/tabtoy/proto/tool"
+	"github.com/golang/protobuf/proto"
 )
 
 type FieldType int
@@ -35,13 +36,22 @@ type FieldDefine struct {
 	IsRepeated bool
 
 	EnumValue int32 // 枚举值
+
+	Comment string // 注释
+}
+
+func (self FieldDefine) MetaString() string {
+
+	return proto.MarshalTextString(&self.Meta)
 }
 
 func (self FieldDefine) String() string {
 
-	var buildInType string
+	var typestr string
 	if self.BuildInType != nil {
-		buildInType = self.BuildInType.Name
+		typestr = fmt.Sprintf("%s|%s", self.BuildInType.Name, FieldTypeToString(self.Type))
+	} else {
+		typestr = FieldTypeToString(self.Type)
 	}
 
 	var repString string
@@ -49,7 +59,7 @@ func (self FieldDefine) String() string {
 		repString = "repeated "
 	}
 
-	return fmt.Sprintf("name: '%s' %stype: '%s'(%s)", self.Name, repString, buildInType, FieldTypeToString(self.Type))
+	return fmt.Sprintf("name: '%s' %stype: '%s'", self.Name, repString, typestr)
 }
 
 func (self *FieldDefine) DefaultValue() string {

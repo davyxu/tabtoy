@@ -1,5 +1,9 @@
 package model
 
+import (
+	"github.com/davyxu/tabtoy/proto/tool"
+)
+
 type BuildInTypeKind int
 
 const (
@@ -50,10 +54,14 @@ func NewBuildInType() *BuildInType {
 
 type BuildInTypeSet struct {
 	TypeByName map[string]*BuildInType
+	Types      []*BuildInType
+
+	Pragma tool.BuildInTypePragmaV2
 }
 
 func (self *BuildInTypeSet) Add(def *BuildInType) {
 
+	self.Types = append(self.Types, def)
 	self.TypeByName[def.Name] = def
 }
 
