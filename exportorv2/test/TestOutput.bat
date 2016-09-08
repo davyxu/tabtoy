@@ -3,6 +3,6 @@
 --pbt_outdir=. ^
 --proto3_outdir=. ^
 --proto2_outdir=. ^
-Actor.xlsx
+Sample.xlsx
 
 @IF %ERRORLEVEL% NEQ 0 pause

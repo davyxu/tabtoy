@@ -30,7 +30,7 @@ message Prop
  
 }
 
-message ActorDefine
+message SampleDefine
 {	
 		
 	// 唯一ID
@@ -42,31 +42,34 @@ message ActorDefine
 	// 攻击率
 	float NumericalRate = 3;
 	
-	// BuffID
-	repeated int32 BuffID = 4;
+	// 物品id
+	int32 ItemID = 4;
 	
 	// BuffID
 	repeated int32 BuffID = 5;
 	
+	// BuffID
+	repeated int32 BuffID = 6;
+	
 	// 类型
-	ActorType Type = 6;
+	ActorType Type = 7;
 	
 	// 技能ID列表
-	repeated int32 SkillID = 7;
-	
-	// 字符串结构
-	repeated Prop StrStruct = 8;
+	repeated int32 SkillID = 8;
 	
 	// 字符串结构
 	repeated Prop StrStruct = 9;
+	
+	// 字符串结构
+	repeated Prop StrStruct = 10;
  
 }
 
-message ActorFile
+message SampleFile
 {	
 		
 	// Table row field
-	repeated ActorDefine Actor = 1;
+	repeated SampleDefine Sample = 1;
  
 }
 
