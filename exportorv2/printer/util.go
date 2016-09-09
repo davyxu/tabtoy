@@ -10,6 +10,10 @@ type FilePrinter struct {
 	buf bytes.Buffer
 }
 
+func (self *FilePrinter) Data() []byte {
+	return self.buf.Bytes()
+}
+
 func (self *FilePrinter) Printf(format string, args ...interface{}) {
 	self.buf.WriteString(fmt.Sprintf(format, args...))
 }

@@ -107,7 +107,7 @@ func (self *DataSheet) Export(file *File, tab *model.Table) bool {
 		record := model.NewRecord()
 
 		// 遍历每一列
-		for self.Column = 0; self.Column < len(self.headerFields); self.Column++ {
+		for self.Column = 0; self.Column < len(self.rawHeaderFields); self.Column++ {
 
 			fieldDef := self.FetchFieldDefine(self.Column)
 

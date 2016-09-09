@@ -52,6 +52,8 @@ var paramProto2OutDir = flag.String("proto2_outdir", "", "[v2] output protobuf d
 var paramPbtOutDir = flag.String("pbt_outdir", "", "[v2] output proto text format (*.pbt)")
 var paramLuaOutDir = flag.String("lua_outdir", "", "[v2] output lua code (*.lua)")
 var paramJsonOutDir = flag.String("json_outdir", "", "[v2] output json format (*.json)")
+var paramCSharpOutDir = flag.String("csharp_outdir", "", "[v2] output c# class and deserialize code (*.cs)")
+var paramBinaryOutDir = flag.String("binary_outdir", "", "[v2] output binary format (*.bin)")
 
 const Version = "2.0.0"
 
@@ -90,6 +92,8 @@ func main() {
 			PbtOutDir:     *paramPbtOutDir,
 			JsonOutDir:    *paramJsonOutDir,
 			LuaOutDir:     *paramLuaOutDir,
+			CSharpOutDir:  *paramCSharpOutDir,
+			BinaryOutDir:  *paramBinaryOutDir,
 		}) {
 			goto Err
 		}

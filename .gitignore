@@ -4,3 +4,6 @@
 /tabtoy.exe
 test/Actor_std.json
 exportorv2/test/~$Actor.xlsx
+*.suo
+exportorv2/test/csharptest/csharptest/bin/
+exportorv2/test/csharptest/csharptest/obj/

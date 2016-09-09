@@ -47,24 +47,18 @@ message SampleDefine
 	// BuffID
 	repeated int32 BuffID = 5;
 	
-	// BuffID
-	repeated int32 BuffID = 6;
-	
 	// 类型
-	optional ActorType Type = 7;
+	optional ActorType Type = 6;
 	
 	// 技能ID列表
-	repeated int32 SkillID = 8;
+	repeated int32 SkillID = 7;
 	
 	// 字符串结构
-	repeated Prop StrStruct = 9;
-	
-	// 字符串结构
-	repeated Prop StrStruct = 10;
+	repeated Prop StrStruct = 8;
  
 }
 
-message SampleFile
+message SampleCombineFile
 {	
 		
 	// Table row field

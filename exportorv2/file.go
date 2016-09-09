@@ -81,6 +81,8 @@ func (self *File) Export(filename string) *model.Table {
 
 			log.Infof("            %s", rawSheet.Name)
 
+			// TODO 只使用第一个sheet中的protoheader定义
+			// TODO 其他Sheet可以在顶部定义一个标记@RefProtoHeader, 引用前面的protoheader
 			if !dSheet.Export(self, &tab) {
 				return nil
 			}
@@ -104,20 +106,31 @@ func (self *File) makeRowBuildInType(ts *model.BuildInTypeSet, rootField []*mode
 	self.TypeSet.Add(rowType)
 
 	for _, field := range rootField {
+
 		rowType.Add(field)
 	}
 
 	fileType := model.NewBuildInType()
-	// 文件类型名: Sheet名+
-	fileType.Name = fmt.Sprintf("%sFile", ts.Pragma.TableName)
+
+	// 强制命名文件类型名
+	if ts.Pragma.FileTypeName != "" {
+		fileType.Name = ts.Pragma.FileTypeName
+	} else {
+		// 文件类型名: Table名+File
+		fileType.Name = fmt.Sprintf("%sFile", ts.Pragma.TableName)
+	}
+
 	fileType.Kind = model.BuildInTypeKind_Struct
 
 	var rowTypeField model.FieldDefine
 	rowTypeField.Name = ts.Pragma.TableName
+	rowTypeField.Type = model.FieldType_Struct
 	rowTypeField.IsRepeated = true
 	rowTypeField.BuildInType = rowType
 	rowTypeField.Comment = "Table row field"
 	fileType.Add(&rowTypeField)
+
+	self.TypeSet.FileTypes = append(self.TypeSet.FileTypes, fileType)
 
 	self.TypeSet.Add(fileType)
 }

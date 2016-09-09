@@ -48,9 +48,11 @@ message BuildInTypePragmaV2
 {
 	string Package = 1;				// 输出proto时的包名
 	
-	string TableName = 2;			// 表名, 文件类型=表名File  行类型=表名Define	
+	string TableName = 2;			// 表名, 文件类型名=表名File  行类型=表名Define	
 	
-	string Proto3OutFileName = 3;		// 指定proto3输出文件名
+	string FileTypeName = 3;		// 强制设定, 文件类型名, 用于C#合并所有XXFile于1个类
 	
-	string Proto2OutFileName = 4;		// 指定proto2输出文件名
+	string Proto3OutFileName = 11;		// 指定proto3输出文件名
+	
+	string Proto2OutFileName = 12;		// 指定proto2输出文件名
 }

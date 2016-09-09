@@ -10,19 +10,22 @@ import (
 
 type DataHeader struct {
 
-	// 按排列的, 合并repeated描述字段
+	// 按排列的, 保留有注释掉的字段和重复的repeated列
+	rawHeaderFields []*model.FieldDefine
+
+	// 按排列的, 字段不重复
 	headerFields []*model.FieldDefine
 
-	// 按字段名分组索引字段
+	// 按字段名分组索引字段, 字段不重复
 	HeaderByName map[string]*model.FieldDefine
 }
 
 func (self *DataHeader) FetchFieldDefine(index int) *model.FieldDefine {
-	if index >= len(self.headerFields) {
+	if index >= len(self.rawHeaderFields) {
 		return nil
 	}
 
-	return self.headerFields[index]
+	return self.rawHeaderFields[index]
 }
 
 // 检查字段行的长度
@@ -113,12 +116,13 @@ func (self *DataHeader) ParseProtoField(sheet *Sheet, tts *model.BuildInTypeSet)
 
 		} else {
 			self.HeaderByName[def.Name] = def
+			self.headerFields = append(self.headerFields, def)
 		}
 
-		self.headerFields = append(self.headerFields, def)
+		self.rawHeaderFields = append(self.rawHeaderFields, def)
 	}
 
-	return len(self.headerFields) > 0
+	return len(self.rawHeaderFields) > 0
 
 ErrorStop:
 
