@@ -9,6 +9,7 @@ import (
 )
 
 type Parameter struct {
+	Version       string
 	InputFileList []string
 	ParaMode      bool
 	PbtOutDir     string
@@ -40,10 +41,6 @@ func Run(param Parameter) bool {
 			return false
 		}
 
-		if !tab.Print(file.TypeSet.Pragma.TableName) {
-			return false
-		}
-
 		if param.PbtOutDir != "" {
 
 			filebase := util.ChangeExtension(inputFile, ".pbt")
@@ -51,7 +48,31 @@ func Run(param Parameter) bool {
 
 			log.Infof("%s%s\n", printIndent(2), filebase)
 
-			if !tab.WriteToFile(outputFile) {
+			if !printer.PrintPBT(tab, file.TypeSet.Pragma.TableName, param.Version, outputFile) {
+				return false
+			}
+		}
+
+		if param.JsonOutDir != "" {
+
+			filebase := util.ChangeExtension(inputFile, ".json")
+			outputFile := path.Join(param.PbtOutDir, filebase)
+
+			log.Infof("%s%s\n", printIndent(2), filebase)
+
+			if !printer.PrintJson(tab, file.TypeSet.Pragma.TableName, param.Version, outputFile) {
+				return false
+			}
+		}
+
+		if param.LuaOutDir != "" {
+
+			filebase := util.ChangeExtension(inputFile, ".lua")
+			outputFile := path.Join(param.PbtOutDir, filebase)
+
+			log.Infof("%s%s\n", printIndent(2), filebase)
+
+			if !printer.PrintLua(tab, file.TypeSet.Pragma.TableName, param.Version, outputFile) {
 				return false
 			}
 		}
@@ -68,7 +89,7 @@ func Run(param Parameter) bool {
 
 			log.Infof("%s%s\n", printIndent(2), filebase)
 
-			if !printer.PrintProto(file.TypeSet, 3, outputFile) {
+			if !printer.PrintProto(file.TypeSet, 3, param.Version, outputFile) {
 				return false
 			}
 		}
@@ -84,7 +105,7 @@ func Run(param Parameter) bool {
 
 			log.Infof("%s%s\n", printIndent(2), filebase)
 
-			if !printer.PrintProto(file.TypeSet, 2, outputFile) {
+			if !printer.PrintProto(file.TypeSet, 2, param.Version, outputFile) {
 				return false
 			}
 		}

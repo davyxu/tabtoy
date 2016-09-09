@@ -53,13 +53,15 @@ var paramPbtOutDir = flag.String("pbt_outdir", "", "[v2] output proto text forma
 var paramLuaOutDir = flag.String("lua_outdir", "", "[v2] output lua code (*.lua)")
 var paramJsonOutDir = flag.String("json_outdir", "", "[v2] output json format (*.json)")
 
+const Version = "2.0.0"
+
 func main() {
 
 	flag.Parse()
 
 	// 版本
 	if *paramVersion {
-		fmt.Println("tabtoy 2.0.0")
+		fmt.Println(Version)
 		return
 	}
 
@@ -80,11 +82,14 @@ func main() {
 	case "exportorv2":
 
 		if !exportorv2.Run(exportorv2.Parameter{
+			Version:       Version,
 			InputFileList: flag.Args(),
 			ParaMode:      *paramPara,
 			Proto3OutDir:  *paramProto3OutDir,
 			Proto2OutDir:  *paramProto2OutDir,
 			PbtOutDir:     *paramPbtOutDir,
+			JsonOutDir:    *paramJsonOutDir,
+			LuaOutDir:     *paramLuaOutDir,
 		}) {
 			goto Err
 		}

@@ -1,8 +1,9 @@
 package model
 
 type Node struct {
-	Define *FieldDefine
-	Value  string
+	*FieldDefine
+	Value     string
+	EnumValue int32
 
 	StructRoot bool
 
@@ -21,7 +22,7 @@ func (self *Node) AddValue(value string) *Node {
 
 func (self *Node) AddKey(def *FieldDefine) *Node {
 	n := &Node{
-		Define: def,
+		FieldDefine: def,
 	}
 	self.Child = append(self.Child, n)
 
@@ -30,7 +31,7 @@ func (self *Node) AddKey(def *FieldDefine) *Node {
 
 type Record struct {
 	nodeByFD map[*FieldDefine]*Node
-	nodes    []*Node
+	Nodes    []*Node
 }
 
 func (self *Record) NewNodeByDefine(def *FieldDefine) *Node {
@@ -42,9 +43,9 @@ func (self *Record) NewNodeByDefine(def *FieldDefine) *Node {
 	}
 
 	node := new(Node)
-	node.Define = def
+	node.FieldDefine = def
 	self.nodeByFD[def] = node
-	self.nodes = append(self.nodes, node)
+	self.Nodes = append(self.Nodes, node)
 
 	return node
 }

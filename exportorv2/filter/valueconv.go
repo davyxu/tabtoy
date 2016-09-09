@@ -107,7 +107,7 @@ func ConvertValue(fd *model.FieldDefine, value string, typeset *model.BuildInTyp
 
 		// 使用枚举的英文字段名输出
 		ret = evd.Name
-		node.AddValue(ret)
+		node.AddValue(ret).EnumValue = evd.EnumValue
 
 	case model.FieldType_Struct:
 
