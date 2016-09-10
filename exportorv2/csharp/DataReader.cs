@@ -35,7 +35,6 @@ namespace tabtoy
         }
 
        
-
         const int CombineFileVersion = 1;
 
         public bool ReadHeader()

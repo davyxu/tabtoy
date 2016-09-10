@@ -7,6 +7,7 @@ using System.IO;
 namespace gamedef
 {
 	
+	
 	public enum ActorType
 	{
 		
@@ -31,6 +32,7 @@ namespace gamedef
 		// 扩展类型
 		public ActorType ExType = ActorType.Fighter;
 	
+	
 		public void Deserialize( tabtoy.DataReader reader )
 		{
 			
@@ -51,6 +53,26 @@ namespace gamedef
 			{
 				this.ExType = reader.ReadEnum<ActorType>( );
 			}
+			
+
+			
+            for( int i = 0;i< this.HP.Count;i++)
+            {
+                var element = this.HP[i];
+				
+            }
+			
+            for( int i = 0;i< this.AttackRate.Count;i++)
+            {
+                var element = this.AttackRate[i];
+				
+            }
+			
+            for( int i = 0;i< this.ExType.Count;i++)
+            {
+                var element = this.ExType[i];
+				
+            }
 			
 		}
 	}
@@ -81,6 +103,7 @@ namespace gamedef
 		
 		// 字符串结构
 		public List<Prop> StrStruct = new List<Prop>();
+	
 	
 		public void Deserialize( tabtoy.DataReader reader )
 		{
@@ -132,6 +155,56 @@ namespace gamedef
 			{
 				reader.ReadList_Struct<Prop>( this.StrStruct );
 			}
+			
+
+			
+            for( int i = 0;i< this.ID.Count;i++)
+            {
+                var element = this.ID[i];
+				
+            }
+			
+            for( int i = 0;i< this.Name.Count;i++)
+            {
+                var element = this.Name[i];
+				
+            }
+			
+            for( int i = 0;i< this.NumericalRate.Count;i++)
+            {
+                var element = this.NumericalRate[i];
+				
+            }
+			
+            for( int i = 0;i< this.ItemID.Count;i++)
+            {
+                var element = this.ItemID[i];
+				
+            }
+			
+            for( int i = 0;i< this.BuffID.Count;i++)
+            {
+                var element = this.BuffID[i];
+				
+            }
+			
+            for( int i = 0;i< this.Type.Count;i++)
+            {
+                var element = this.Type[i];
+				
+            }
+			
+            for( int i = 0;i< this.SkillID.Count;i++)
+            {
+                var element = this.SkillID[i];
+				
+            }
+			
+            for( int i = 0;i< this.StrStruct.Count;i++)
+            {
+                var element = this.StrStruct[i];
+				
+            }
 			
 		}
 	}

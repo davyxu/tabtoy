@@ -19,16 +19,16 @@ func valueWrapperJson(t model.FieldType, node *model.Node) string {
 	return node.Value
 }
 
-func PrintJson(tab *model.Table, rootName string, version string, outfile string) bool {
+func PrintJson(tab *model.Table, version string, outfile string) bool {
 
-	bf := NewBinaryFile(rootName)
+	bf := NewBinaryFile(tab.Name)
 
 	bf.Printf("{\n")
 
 	bf.Printf("	\"Tool\": \"github.com/davyxu/tabtoy\",\n")
 	bf.Printf("	\"Version\": \"%s\",\n", version)
 
-	bf.Printf("	\"%s\":[\n", rootName)
+	bf.Printf("	\"%s\":[\n", tab.Name)
 
 	// 遍历每一行
 	for rIndex, r := range tab.Recs {

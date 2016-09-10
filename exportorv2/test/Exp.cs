@@ -8,6 +8,7 @@ namespace gamedef
 {
 	
 	
+	
 	public partial class ExpDefine : tabtoy.DataObject
 	{	
 		
@@ -16,6 +17,7 @@ namespace gamedef
 		
 		// 名称
 		public int Exp = 0;
+	
 	
 		public void Deserialize( tabtoy.DataReader reader )
 		{
@@ -31,6 +33,20 @@ namespace gamedef
 			{
 				this.Exp = reader.ReadInt32( );
 			}
+			
+
+			
+            for( int i = 0;i< this.Level.Count;i++)
+            {
+                var element = this.Level[i];
+				
+            }
+			
+            for( int i = 0;i< this.Exp.Count;i++)
+            {
+                var element = this.Exp[i];
+				
+            }
 			
 		}
 	}

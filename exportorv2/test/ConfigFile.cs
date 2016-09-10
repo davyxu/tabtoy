@@ -8,6 +8,7 @@ namespace gamedef
 {
 	
 	
+	
 	public partial class ConfigFile : tabtoy.DataObject
 	{	
 		
@@ -16,6 +17,31 @@ namespace gamedef
 		
 		// Exp
 		public List<ExpDefine> Exp = new List<ExpDefine>();
+	
+	
+	 	Dictionary<long, SampleDefine> _SampleByID = new Dictionary<long, SampleDefine>();
+        public SampleDefine GetSampleByID(long ID)
+        {
+            SampleDefine ret;
+            if ( _SampleByID.TryGetValue( ID, out ret ) )
+            {
+                return ret;
+            }
+
+            return null;
+        }
+	
+	 	Dictionary<string, SampleDefine> _SampleByName = new Dictionary<string, SampleDefine>();
+        public SampleDefine GetSampleByName(string Name)
+        {
+            SampleDefine ret;
+            if ( _SampleByName.TryGetValue( Name, out ret ) )
+            {
+                return ret;
+            }
+
+            return null;
+        }
 	
 		public void Deserialize( tabtoy.DataReader reader )
 		{
@@ -31,6 +57,28 @@ namespace gamedef
 			{
 				reader.ReadList_Struct<ExpDefine>( this.Exp );
 			}
+			
+
+			
+            for( int i = 0;i< this.Sample.Count;i++)
+            {
+                var element = this.Sample[i];
+				
+                _SampleByID.Add(element.ID, element);                
+				
+                _SampleByName.Add(element.Name, element);                
+				
+            }
+			
+            for( int i = 0;i< this.Exp.Count;i++)
+            {
+                var element = this.Exp[i];
+				
+                _SampleByID.Add(element.ID, element);                
+				
+                _SampleByName.Add(element.Name, element);                
+				
+            }
 			
 		}
 	}

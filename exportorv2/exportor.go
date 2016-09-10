@@ -5,7 +5,6 @@ import (
 	"path"
 	"path/filepath"
 
-	"github.com/davyxu/tabtoy/exportorv2/model"
 	"github.com/davyxu/tabtoy/exportorv2/printer"
 	"github.com/davyxu/tabtoy/util"
 )
@@ -35,9 +34,7 @@ func printIndent(indent int) string {
 
 func Run(param Parameter) bool {
 
-	combineBinaryFile := printer.NewCombineBinaryFile()
-	var combineFileTypes []*model.FieldDefine
-	var combineFileNamespace string
+	combineFile := printer.NewCombineFile()
 
 	if !util.ParallelWorker(param.InputFileList, param.ParaMode, func(inputFile string) bool {
 
@@ -53,27 +50,13 @@ func Run(param Parameter) bool {
 		// 单个和合并二进制输出
 		if param.BinaryFileOut != "" {
 
-			rootName := file.TypeSet.Pragma.TableName
-
-			bf := printer.PrintBinary(tab, rootName, param.Version)
-			if bf == nil {
+			if !combineFile.CombineType(inputFile, file.TypeSet) {
 				return false
 			}
 
-			// 模块名字重复, 是无法输出的
-			if !combineBinaryFile.Add(bf) {
+			if !combineFile.WriteBinary(tab) {
 				return false
 			}
-
-			// 有表格里描述的包名不一致, 无法合成最终的文件
-			if combineFileNamespace != "" && combineFileNamespace != file.TypeSet.Pragma.Package {
-				log.Errorf("combine file 'Package' in @Types diff: %s", inputFile)
-				return false
-			}
-
-			combineFileNamespace = file.TypeSet.Pragma.Package
-
-			combineFileTypes = append(combineFileTypes, file.TypeSet.FileType.Fields[0])
 
 		}
 
@@ -84,7 +67,7 @@ func Run(param Parameter) bool {
 
 			log.Infof("%s%s\n", printIndent(2), filebase)
 
-			if !printer.PrintPBT(tab, file.TypeSet.Pragma.TableName, param.Version, outputFile) {
+			if !printer.PrintPBT(tab, param.Version, outputFile) {
 				return false
 			}
 		}
@@ -96,7 +79,7 @@ func Run(param Parameter) bool {
 
 			log.Infof("%s%s\n", printIndent(2), filebase)
 
-			if !printer.PrintJson(tab, file.TypeSet.Pragma.TableName, param.Version, outputFile) {
+			if !printer.PrintJson(tab, param.Version, outputFile) {
 				return false
 			}
 		}
@@ -108,7 +91,7 @@ func Run(param Parameter) bool {
 
 			log.Infof("%s%s\n", printIndent(2), filebase)
 
-			if !printer.PrintLua(tab, file.TypeSet.Pragma.TableName, param.Version, outputFile) {
+			if !printer.PrintLua(tab, param.Version, outputFile) {
 				return false
 			}
 		}
@@ -121,7 +104,7 @@ func Run(param Parameter) bool {
 
 			log.Infof("%s%s\n", printIndent(2), filebase)
 
-			bf := printer.PrintCSharp(file.TypeSet, param.Version)
+			bf := printer.PrintCSharp(file.TypeSet, nil, param.Version)
 			if bf == nil {
 				return false
 			}
@@ -180,7 +163,7 @@ func Run(param Parameter) bool {
 		// 输出合并后的C# XXFile结构
 		if param.CSharpOutDir != "" {
 
-			bf := printer.PrintCombineCSharp(combineFileTypes, param.Version, combineName, combineFileNamespace)
+			bf := combineFile.PrintCombineCSharp(param.Version, combineName)
 			if bf == nil {
 				return false
 			}
@@ -199,7 +182,7 @@ func Run(param Parameter) bool {
 
 		log.Infof("Combine Binary: %s\n", filebase)
 
-		if !combineBinaryFile.Write(param.BinaryFileOut) {
+		if !combineFile.Write(param.BinaryFileOut) {
 			return false
 		}
 

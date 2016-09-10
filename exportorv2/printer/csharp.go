@@ -16,6 +16,7 @@ using System.IO;
 
 namespace {{.Namespace}}
 {
+	{{ $fileIndexList := .Indexes }}
 	{{range .Enums}}
 	public enum {{.Name}}
 	{
@@ -25,12 +26,25 @@ namespace {{.Namespace}}
 	{{end}}
 	}
 	{{end}}
-	{{range .Classes}}
+	{{range .Classes}}{{ $structIndexList := .Indexes }}
 	public partial class {{.Name}} : tabtoy.DataObject
 	{	
 	{{range .Fields}}	
 		// {{.Comment}}
 		{{.TypeCode}}
+	{{end}}
+	{{range $fileIndexList}}
+	 	Dictionary<{{.IndexType}}, {{.RawType}}> _{{.RawName}}By{{.IndexName}} = new Dictionary<{{.IndexType}}, {{.RawType}}>();
+        public {{.RawType}} Get{{.RawName}}By{{.IndexName}}({{.IndexType}} {{.IndexName}})
+        {
+            {{.RawType}} ret;
+            if ( _{{.RawName}}By{{.IndexName}}.TryGetValue( {{.IndexName}}, out ret ) )
+            {
+                return ret;
+            }
+
+            return null;
+        }
 	{{end}}
 		public void Deserialize( tabtoy.DataReader reader )
 		{
@@ -41,6 +55,16 @@ namespace {{.Namespace}}
 				{{.ReadCode}}
 			}
 			{{end}}
+
+			{{range .Fields}}
+            for( int i = 0;i< this.{{.FieldDefine.Name}}.Count;i++)
+            {
+                var element = this.{{.FieldDefine.Name}}[i];
+				{{range $structIndexList}}
+                _{{.RawName}}By{{.IndexName}}.Add(element.{{.IndexName}}, element);                
+				{{end}}
+            }
+			{{end}}
 		}
 	}
 	{{end}}
@@ -48,28 +72,52 @@ namespace {{.Namespace}}
 }
 `
 
-const repeatedStructDeserializeCode = `{
-				var c = reader.ReadInt32();
-                for( int i = 0; i< c ; i++ )
-				{
-			    	var element = new %s();
-			    	element.Deserialize(reader);
-			
-			    	this.%s.Add(element);
-				}
-			}
-`
+type indexField struct {
+	tableIndex
+}
 
-const repeatedPrimitiveDeserializeCode = `{
-				var c = reader.ReadInt32();
-                for( int i = 0; i< c ; i++ )
-				{
-			    	var element = %s;			    	
-			
-			    	this.%s.Add(element);
-				}
-			}
-`
+func (self indexField) IndexName() string {
+	return self.Index.Name
+}
+
+func (self indexField) RawType() string {
+	return self.Raw.BuildInType.Name
+}
+
+func (self indexField) RawName() string {
+	return self.Raw.Name
+}
+
+func (self indexField) IndexType() string {
+
+	switch self.Index.Type {
+	case model.FieldType_Int32:
+		return "int"
+	case model.FieldType_UInt32:
+		return "uint"
+	case model.FieldType_Int64:
+		return "long"
+	case model.FieldType_UInt64:
+		return "ulong"
+	case model.FieldType_String:
+		return "string"
+	case model.FieldType_Float:
+		return "float"
+	case model.FieldType_Bool:
+		return "bool"
+	case model.FieldType_Enum:
+		if self.Index.BuildInType == nil {
+			log.Errorln("unknown enum type ", self.Type)
+			return "unknown"
+		}
+
+		return self.Index.BuildInType.Name
+	default:
+		log.Errorf("%s can not be index ", self.Index.String())
+	}
+
+	return "unknown"
+}
 
 type csharpField struct {
 	*model.FieldDefine
@@ -186,8 +234,9 @@ func wrapCSharpDefaultValue(fd *model.FieldDefine) string {
 }
 
 type structModel struct {
-	Name   string
-	Fields []csharpField
+	Name    string
+	Fields  []csharpField
+	Indexes []indexField // 归属这个结构的索引
 }
 
 type csharpFileModel struct {
@@ -195,9 +244,10 @@ type csharpFileModel struct {
 	ToolVersion string
 	Classes     []*structModel
 	Enums       []*structModel
+	Indexes     []indexField // 全局的索引
 }
 
-func PrintCSharp(ts *model.BuildInTypeSet, toolVersion string) *BinaryFile {
+func PrintCSharp(ts *model.BuildInTypeSet, globalIndex []tableIndex, toolVersion string) *BinaryFile {
 
 	tpl, err := template.New("csharp").Parse(csharpTemplate)
 	if err != nil {
@@ -210,10 +260,17 @@ func PrintCSharp(ts *model.BuildInTypeSet, toolVersion string) *BinaryFile {
 	m.Namespace = ts.Pragma.Package
 	m.ToolVersion = toolVersion
 
+	if globalIndex != nil {
+		for _, ti := range globalIndex {
+
+			m.Indexes = append(m.Indexes, indexField{tableIndex: ti})
+		}
+	}
+
 	// 遍历所有类型
 	for _, bt := range ts.Types {
 
-		if bt.RootFile {
+		if bt.Usage == model.BuildIntTypeUsage_RootFileType {
 			continue
 		}
 
@@ -231,6 +288,14 @@ func PrintCSharp(ts *model.BuildInTypeSet, toolVersion string) *BinaryFile {
 		for _, fd := range bt.Fields {
 
 			sm.Fields = append(sm.Fields, csharpField{FieldDefine: fd})
+
+			for _, ti := range m.Indexes {
+
+				if globalIndex != nil && ti.Raw == fd {
+					sm.Indexes = append(sm.Indexes, ti)
+				}
+
+			}
 
 		}
 

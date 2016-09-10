@@ -12,10 +12,18 @@ const (
 	BuildInTypeKind_Struct
 )
 
+type BuildInTypeUsage int
+
+const (
+	BuildIntTypeUsage_None         BuildInTypeUsage = iota
+	BuildIntTypeUsage_RootFileType                  // 每个表的根文件类型(XXFile)
+	BuildIntTypeUsage_RowType                       // 每个表的行类型
+)
+
 type BuildInType struct {
-	Name     string
-	Kind     BuildInTypeKind
-	RootFile bool // 是否为每个表的根文件类型(XXFile)
+	Name  string
+	Kind  BuildInTypeKind
+	Usage BuildInTypeUsage
 
 	FieldByName   map[string]*FieldDefine
 	FieldByNumber map[int32]*FieldDefine

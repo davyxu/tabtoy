@@ -65,7 +65,7 @@ func (self *File) Export(filename string) *model.Table {
 		return nil
 	}
 
-	var tab model.Table
+	tab := model.NewTable(self.TypeSet.Pragma.TableName)
 
 	var needAddRowType bool = true
 
@@ -83,7 +83,7 @@ func (self *File) Export(filename string) *model.Table {
 
 			// TODO 只使用第一个sheet中的protoheader定义
 			// TODO 其他Sheet可以在顶部定义一个标记@RefProtoHeader, 引用前面的protoheader
-			if !dSheet.Export(self, &tab) {
+			if !dSheet.Export(self, tab) {
 				return nil
 			}
 
@@ -95,12 +95,13 @@ func (self *File) Export(filename string) *model.Table {
 		}
 	}
 
-	return &tab
+	return tab
 }
 
 func (self *File) makeRowBuildInType(ts *model.BuildInTypeSet, rootField []*model.FieldDefine) {
 
 	rowType := model.NewBuildInType()
+	rowType.Usage = model.BuildIntTypeUsage_RowType
 	rowType.Name = fmt.Sprintf("%sDefine", ts.Pragma.TableName)
 	rowType.Kind = model.BuildInTypeKind_Struct
 	self.TypeSet.Add(rowType)
@@ -112,7 +113,7 @@ func (self *File) makeRowBuildInType(ts *model.BuildInTypeSet, rootField []*mode
 	}
 
 	fileType := model.NewBuildInType()
-	fileType.RootFile = true
+	fileType.Usage = model.BuildIntTypeUsage_RootFileType
 
 	// 强制命名文件类型名
 	if ts.Pragma.FileTypeName != "" {
