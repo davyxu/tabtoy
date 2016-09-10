@@ -3,7 +3,6 @@ package printer
 import (
 	"bytes"
 	"io/ioutil"
-	"strings"
 	"text/template"
 
 	"github.com/davyxu/tabtoy/exportorv2/model"
@@ -83,10 +82,6 @@ func PrintProto(ts *model.BuildInTypeSet, protoVersion int, toolVersion string, 
 
 		// 遍历字段
 		for index, fd := range bt.Fields {
-
-			if strings.Index(fd.Name, "#") == 0 {
-				continue
-			}
 
 			var field fieldModel
 			field.Name = fd.Name

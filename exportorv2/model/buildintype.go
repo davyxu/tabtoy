@@ -13,8 +13,9 @@ const (
 )
 
 type BuildInType struct {
-	Name string
-	Kind BuildInTypeKind
+	Name     string
+	Kind     BuildInTypeKind
+	RootFile bool // 是否为每个表的根文件类型(XXFile)
 
 	FieldByName   map[string]*FieldDefine
 	FieldByNumber map[int32]*FieldDefine
@@ -27,6 +28,8 @@ func (self *BuildInType) Add(def *FieldDefine) {
 		panic("duplicate build in type")
 		return
 	}
+
+	def.Order = int32(len(self.Fields))
 
 	self.FieldByName[def.Name] = def
 	self.FieldByNumber[def.EnumValue] = def
@@ -61,7 +64,7 @@ type BuildInTypeSet struct {
 	TypeByName map[string]*BuildInType
 	Types      []*BuildInType
 
-	FileTypes []*BuildInType // 自动创建的XXFile类型集合
+	FileType *BuildInType // 自动创建的XXFile类型, 一个BuildInTypeSet 一次只有1个这样的对象
 
 	Pragma tool.BuildInTypePragmaV2
 }

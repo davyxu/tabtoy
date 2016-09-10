@@ -2,10 +2,13 @@ package model
 
 type Node struct {
 	*FieldDefine
+
+	StructRoot bool // 结构体标记的dummy node
+
+	// 各种类型的值
 	Value     string
 	EnumValue int32
-
-	StructRoot bool
+	Raw       []byte
 
 	Child []*Node // 优先遍历值, 再key
 }

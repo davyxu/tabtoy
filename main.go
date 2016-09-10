@@ -53,7 +53,7 @@ var paramPbtOutDir = flag.String("pbt_outdir", "", "[v2] output proto text forma
 var paramLuaOutDir = flag.String("lua_outdir", "", "[v2] output lua code (*.lua)")
 var paramJsonOutDir = flag.String("json_outdir", "", "[v2] output json format (*.json)")
 var paramCSharpOutDir = flag.String("csharp_outdir", "", "[v2] output c# class and deserialize code (*.cs)")
-var paramBinaryOutDir = flag.String("binary_outdir", "", "[v2] output binary format (*.bin)")
+var paramBinaryOut = flag.String("binary_out", "", "[v2] input filename , output binary format(*.bin)")
 
 const Version = "2.0.0"
 
@@ -93,7 +93,7 @@ func main() {
 			JsonOutDir:    *paramJsonOutDir,
 			LuaOutDir:     *paramLuaOutDir,
 			CSharpOutDir:  *paramCSharpOutDir,
-			BinaryOutDir:  *paramBinaryOutDir,
+			BinaryFileOut: *paramBinaryOut,
 		}) {
 			goto Err
 		}

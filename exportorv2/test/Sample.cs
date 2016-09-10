@@ -3,7 +3,6 @@
 // DO NOT EDIT!!
 using System.Collections.Generic;
 using System.IO;
-using tabtoy;
 
 namespace gamedef
 {
@@ -20,53 +19,62 @@ namespace gamedef
 	}
 	
 	
-	public partial class Prop
+	public partial class Prop : tabtoy.DataObject
 	{	
 		
 		// 
-		public int HP;
+		public int HP = 10;
 		
 		// 
-		public float AttackRate;
+		public float AttackRate = 0;
 		
 		// 
-		public ActorType ExType;
+		public ActorType ExType = ActorType.Fighter;
 	
-		public void Deserialize( DataReader reader )
+		public void Deserialize( tabtoy.DataReader reader )
 		{
-				
+			
 			// 
-			this.HP = reader.ReadInt32();
-				
+			if ( reader.MatchTag(0x10000))
+			{
+				this.HP = reader.ReadInt32( );
+			}
+			
 			// 
-			this.AttackRate = reader.ReadSingle();
-				
+			if ( reader.MatchTag(0x50001))
+			{
+				this.AttackRate = reader.ReadFloat( );
+			}
+			
 			// 
-			this.ExType = (ActorType)reader.ReadInt32();
+			if ( reader.MatchTag(0x80002))
+			{
+				this.ExType = reader.ReadEnum<ActorType>( );
+			}
 			
 		}
 	}
 	
-	public partial class SampleDefine
+	public partial class SampleDefine : tabtoy.DataObject
 	{	
 		
 		// 唯一ID
-		public long ID;
+		public long ID = 0;
 		
 		// 名称
-		public string Name;
+		public string Name = "";
 		
 		// 攻击率
-		public float NumericalRate;
+		public float NumericalRate = 0;
 		
 		// 物品id
-		public int ItemID;
+		public int ItemID = 100;
 		
 		// BuffID
 		public List<int> BuffID = new List<int>();
 		
 		// 类型
-		public ActorType Type;
+		public ActorType Type = ActorType.Fighter;
 		
 		// 技能ID列表
 		public List<int> SkillID = new List<int>();
@@ -74,59 +82,56 @@ namespace gamedef
 		// 字符串结构
 		public List<Prop> StrStruct = new List<Prop>();
 	
-		public void Deserialize( DataReader reader )
+		public void Deserialize( tabtoy.DataReader reader )
 		{
-				
+			
 			// 唯一ID
-			this.ID = reader.ReadInt64();
-				
+			if ( reader.MatchTag(0x20000))
+			{
+				this.ID = reader.ReadInt64( );
+			}
+			
 			// 名称
-			this.Name = reader.ReadUTF8String();
-				
+			if ( reader.MatchTag(0x60001))
+			{
+				this.Name = reader.ReadString( );
+			}
+			
 			// 攻击率
-			this.NumericalRate = reader.ReadSingle();
-				
+			if ( reader.MatchTag(0x50002))
+			{
+				this.NumericalRate = reader.ReadFloat( );
+			}
+			
 			// 物品id
-			this.ItemID = reader.ReadInt32();
-				
+			if ( reader.MatchTag(0x10003))
+			{
+				this.ItemID = reader.ReadInt32( );
+			}
+			
 			// BuffID
-			this.BuffID.Add( reader.ReadInt32() );
-				
+			if ( reader.MatchTag(0x10004))
+			{
+				reader.ReadList_Int32( this.BuffID );
+			}
+			
 			// 类型
-			this.Type = (ActorType)reader.ReadInt32();
-				
+			if ( reader.MatchTag(0x80005))
+			{
+				this.Type = reader.ReadEnum<ActorType>( );
+			}
+			
 			// 技能ID列表
-			this.SkillID.Add( reader.ReadInt32() );
-				
+			if ( reader.MatchTag(0x10006))
+			{
+				reader.ReadList_Int32( this.SkillID );
+			}
+			
 			// 字符串结构
+			if ( reader.MatchTag(0x90007))
 			{
-			    var element = new Prop();
-			    element.Deserialize(reader);
-			
-			    this.StrStruct.Add(element);
+				reader.ReadList_Struct<Prop>( this.StrStruct );
 			}
-
-			
-		}
-	}
-	
-	public partial class SampleCombineFile
-	{	
-		
-		// Table row field
-		public List<SampleDefine> Sample = new List<SampleDefine>();
-
-        public void DeserializeSample(DataReader reader)
-		{
-				
-			// Table row field
-			{
-			    var element = new SampleDefine();
-			    element.Deserialize(reader);
-			
-			    this.Sample.Add(element);
-			}
-
 			
 		}
 	}

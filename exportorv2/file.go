@@ -111,6 +111,7 @@ func (self *File) makeRowBuildInType(ts *model.BuildInTypeSet, rootField []*mode
 	}
 
 	fileType := model.NewBuildInType()
+	fileType.RootFile = true
 
 	// 强制命名文件类型名
 	if ts.Pragma.FileTypeName != "" {
@@ -127,10 +128,10 @@ func (self *File) makeRowBuildInType(ts *model.BuildInTypeSet, rootField []*mode
 	rowTypeField.Type = model.FieldType_Struct
 	rowTypeField.IsRepeated = true
 	rowTypeField.BuildInType = rowType
-	rowTypeField.Comment = "Table row field"
+	rowTypeField.Comment = ts.Pragma.TableName
 	fileType.Add(&rowTypeField)
 
-	self.TypeSet.FileTypes = append(self.TypeSet.FileTypes, fileType)
+	self.TypeSet.FileType = fileType
 
 	self.TypeSet.Add(fileType)
 }

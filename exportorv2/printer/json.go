@@ -21,27 +21,27 @@ func valueWrapperJson(t model.FieldType, node *model.Node) string {
 
 func PrintJson(tab *model.Table, rootName string, version string, outfile string) bool {
 
-	var fp FilePrinter
+	bf := NewBinaryFile(rootName)
 
-	fp.Printf("{\n")
+	bf.Printf("{\n")
 
-	fp.Printf("	\"Tool\": \"github.com/davyxu/tabtoy\",\n")
-	fp.Printf("	\"Version\": \"%s\",\n", version)
+	bf.Printf("	\"Tool\": \"github.com/davyxu/tabtoy\",\n")
+	bf.Printf("	\"Version\": \"%s\",\n", version)
 
-	fp.Printf("	\"%s\":[\n", rootName)
+	bf.Printf("	\"%s\":[\n", rootName)
 
 	// 遍历每一行
 	for rIndex, r := range tab.Recs {
 
-		fp.Printf("		{ ")
+		bf.Printf("		{ ")
 
 		// 遍历每一列
 		for rootFieldIndex, node := range r.Nodes {
 
 			if node.IsRepeated {
-				fp.Printf("\"%s\":[ ", node.Name)
+				bf.Printf("\"%s\":[ ", node.Name)
 			} else {
-				fp.Printf("\"%s\": ", node.Name)
+				bf.Printf("\"%s\": ", node.Name)
 			}
 
 			// 普通值
@@ -52,11 +52,11 @@ func PrintJson(tab *model.Table, rootName string, version string, outfile string
 					// repeated 值序列
 					for arrIndex, valueNode := range node.Child {
 
-						fp.Printf("%s", valueWrapperJson(node.Type, valueNode))
+						bf.Printf("%s", valueWrapperJson(node.Type, valueNode))
 
 						// 多个值分割
 						if arrIndex < len(node.Child)-1 {
-							fp.Printf(", ")
+							bf.Printf(", ")
 						}
 
 					}
@@ -64,7 +64,7 @@ func PrintJson(tab *model.Table, rootName string, version string, outfile string
 					// 单值
 					valueNode := node.Child[0]
 
-					fp.Printf("%s", valueWrapperJson(node.Type, valueNode))
+					bf.Printf("%s", valueWrapperJson(node.Type, valueNode))
 
 				}
 
@@ -74,7 +74,7 @@ func PrintJson(tab *model.Table, rootName string, version string, outfile string
 				for structIndex, structNode := range node.Child {
 
 					// 结构体开始
-					fp.Printf("{ ")
+					bf.Printf("{ ")
 
 					// 遍历一个结构体的字段
 					for structFieldIndex, fieldNode := range structNode.Child {
@@ -82,21 +82,21 @@ func PrintJson(tab *model.Table, rootName string, version string, outfile string
 						// 值节点总是在第一个
 						valueNode := fieldNode.Child[0]
 
-						fp.Printf("\"%s\": %s", fieldNode.Name, valueWrapperJson(fieldNode.Type, valueNode))
+						bf.Printf("\"%s\": %s", fieldNode.Name, valueWrapperJson(fieldNode.Type, valueNode))
 
 						// 结构体字段分割
 						if structFieldIndex < len(structNode.Child)-1 {
-							fp.Printf(", ")
+							bf.Printf(", ")
 						}
 
 					}
 
 					// 结构体结束
-					fp.Printf(" }")
+					bf.Printf(" }")
 
 					// 多个结构体分割
 					if structIndex < len(node.Child)-1 {
-						fp.Printf(", ")
+						bf.Printf(", ")
 					}
 
 				}
@@ -104,29 +104,29 @@ func PrintJson(tab *model.Table, rootName string, version string, outfile string
 			}
 
 			if node.IsRepeated {
-				fp.Printf(" ]")
+				bf.Printf(" ]")
 			}
 
 			// 根字段分割
 			if rootFieldIndex < len(r.Nodes)-1 {
-				fp.Printf(", ")
+				bf.Printf(", ")
 			}
 
 		}
 
-		fp.Printf(" }")
+		bf.Printf(" }")
 
 		if rIndex < len(tab.Recs)-1 {
-			fp.Printf(",")
+			bf.Printf(",")
 		}
 
-		fp.Printf("\n")
+		bf.Printf("\n")
 
 	}
 
-	fp.Printf("	]\n")
-	fp.Printf("}")
+	bf.Printf("	]\n")
+	bf.Printf("}")
 
-	return fp.Write(outfile)
+	return bf.Write(outfile)
 
 }

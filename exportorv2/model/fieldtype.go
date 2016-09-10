@@ -11,16 +11,17 @@ import (
 type FieldType int
 
 const (
-	FieldType_None FieldType = iota
-	FieldType_Int32
-	FieldType_Int64
-	FieldType_UInt32
-	FieldType_UInt64
-	FieldType_Float
-	FieldType_String
-	FieldType_Bool
-	FieldType_Enum
-	FieldType_Struct
+	FieldType_None   FieldType = 0
+	FieldType_Int32  FieldType = 1
+	FieldType_Int64  FieldType = 2
+	FieldType_UInt32 FieldType = 3
+	FieldType_UInt64 FieldType = 4
+	FieldType_Float  FieldType = 5
+	FieldType_String FieldType = 6
+	FieldType_Bool   FieldType = 7
+	FieldType_Enum   FieldType = 8
+	FieldType_Struct FieldType = 9
+	FieldType_Bytes  FieldType = 10 // 暂时为binaryfile输出使用
 )
 
 // 一列的描述
@@ -31,6 +32,8 @@ type FieldDefine struct {
 
 	BuildInType *BuildInType // 复杂类型: 枚举或者结构体
 
+	Order int32 // 在BuildInTypes中的顺序
+
 	Meta tool.FieldMetaV2 // 扩展字段
 
 	IsRepeated bool
@@ -40,12 +43,20 @@ type FieldDefine struct {
 	Comment string // 注释
 }
 
-func (self FieldDefine) MetaString() string {
+func (self *FieldDefine) Tag() int32 {
+	return MakeTag(self.Type, self.Order)
+}
+
+func MakeTag(t FieldType, order int32) int32 {
+	return int32(t)<<16 | order
+}
+
+func (self *FieldDefine) MetaString() string {
 
 	return proto.MarshalTextString(&self.Meta)
 }
 
-func (self FieldDefine) String() string {
+func (self *FieldDefine) String() string {
 
 	var typestr string
 	if self.BuildInType != nil {

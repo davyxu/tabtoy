@@ -60,10 +60,10 @@ message SampleDefine
  
 }
 
-message SampleCombineFile
+message SampleFile
 {	
 		
-	// Table row field
+	// Sample
 	repeated SampleDefine Sample = 1;
  
 }

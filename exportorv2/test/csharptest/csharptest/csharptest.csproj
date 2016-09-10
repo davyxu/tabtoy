@@ -44,6 +44,9 @@
     <Compile Include="..\..\..\csharp\DataReader.cs">
       <Link>DataReader.cs</Link>
     </Compile>
+    <Compile Include="..\..\ConfigFile.cs">
+      <Link>ConfigFile.cs</Link>
+    </Compile>
     <Compile Include="..\..\Exp.cs">
       <Link>Exp.cs</Link>
     </Compile>

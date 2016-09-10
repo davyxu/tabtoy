@@ -3,50 +3,34 @@
 // DO NOT EDIT!!
 using System.Collections.Generic;
 using System.IO;
-using tabtoy;
 
 namespace gamedef
 {
 	
 	
-	public partial class ExpDefine
+	public partial class ExpDefine : tabtoy.DataObject
 	{	
 		
 		// 唯一ID
-		public int Level;
+		public int Level = 0;
 		
 		// 名称
-		public int Exp;
+		public int Exp = 0;
 	
-		public void Deserialize( DataReader reader )
+		public void Deserialize( tabtoy.DataReader reader )
 		{
-				
+			
 			// 唯一ID
-			this.Level = reader.ReadInt32();
-				
-			// 名称
-			this.Exp = reader.ReadInt32();
-			
-		}
-	}
-	
-	public partial class SampleCombineFile
-	{	
-		
-		// Table row field
-		public List<ExpDefine> Exp = new List<ExpDefine>();
-
-        public void DeserializeExp(DataReader reader)
-		{
-				
-			// Table row field
+			if ( reader.MatchTag(0x10000))
 			{
-			    var element = new ExpDefine();
-			    element.Deserialize(reader);
-			
-			    this.Exp.Add(element);
+				this.Level = reader.ReadInt32( );
 			}
-
+			
+			// 名称
+			if ( reader.MatchTag(0x10001))
+			{
+				this.Exp = reader.ReadInt32( );
+			}
 			
 		}
 	}

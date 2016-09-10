@@ -5,23 +5,22 @@ import (
 	"path"
 	"path/filepath"
 
+	"github.com/davyxu/tabtoy/exportorv2/model"
 	"github.com/davyxu/tabtoy/exportorv2/printer"
 	"github.com/davyxu/tabtoy/util"
 )
 
 type Parameter struct {
-	Version              string
-	InputFileList        []string
-	ParaMode             bool
-	PbtOutDir            string
-	LuaOutDir            string
-	JsonOutDir           string
-	Proto3OutDir         string
-	Proto2OutDir         string
-	CSharpOutDir         string
-	BinaryOutDir         string
-	CombineBinaryFileOut string
-	CombineFileType      string
+	Version       string
+	InputFileList []string
+	ParaMode      bool
+	PbtOutDir     string
+	LuaOutDir     string
+	JsonOutDir    string
+	Proto3OutDir  string
+	Proto2OutDir  string
+	CSharpOutDir  string
+	BinaryFileOut string
 }
 
 func printIndent(indent int) string {
@@ -36,7 +35,9 @@ func printIndent(indent int) string {
 
 func Run(param Parameter) bool {
 
-	var binaryByName = make(map[string][]byte)
+	combineBinaryFile := printer.NewCombineBinaryFile()
+	var combineFileTypes []*model.FieldDefine
+	var combineFileNamespace string
 
 	if !util.ParallelWorker(param.InputFileList, param.ParaMode, func(inputFile string) bool {
 
@@ -49,35 +50,30 @@ func Run(param Parameter) bool {
 			return false
 		}
 
-		if param.BinaryOutDir != "" || param.CombineBinaryFileOut != "" {
-
-			filebase := util.ChangeExtension(inputFile, ".bin")
-			outputFile := path.Join(param.BinaryOutDir, filebase)
-
-			log.Infof("%s%s\n", printIndent(2), filebase)
+		// 单个和合并二进制输出
+		if param.BinaryFileOut != "" {
 
 			rootName := file.TypeSet.Pragma.TableName
 
-			fp := printer.PrintBinary(tab, rootName, param.Version)
-			if fp == nil {
+			bf := printer.PrintBinary(tab, rootName, param.Version)
+			if bf == nil {
 				return false
 			}
 
-			if param.CombineBinaryFileOut != "" {
-
-				// 模块名字重复, 是无法输出的
-				if _, ok := binaryByName[rootName]; ok {
-					log.Errorln("duplicate table name in combine binary output:", rootName)
-					return false
-				}
-
-				binaryByName[rootName] = fp.Data()
-
-			} else {
-				if !fp.Write(outputFile) {
-					return false
-				}
+			// 模块名字重复, 是无法输出的
+			if !combineBinaryFile.Add(bf) {
+				return false
 			}
+
+			// 有表格里描述的包名不一致, 无法合成最终的文件
+			if combineFileNamespace != "" && combineFileNamespace != file.TypeSet.Pragma.Package {
+				log.Errorf("combine file 'Package' in @Types diff: %s", inputFile)
+				return false
+			}
+
+			combineFileNamespace = file.TypeSet.Pragma.Package
+
+			combineFileTypes = append(combineFileTypes, file.TypeSet.FileType.Fields[0])
 
 		}
 
@@ -125,7 +121,12 @@ func Run(param Parameter) bool {
 
 			log.Infof("%s%s\n", printIndent(2), filebase)
 
-			if !printer.PrintCSharp(file.TypeSet, param.Version, outputFile) {
+			bf := printer.PrintCSharp(file.TypeSet, param.Version)
+			if bf == nil {
+				return false
+			}
+
+			if !bf.Write(outputFile) {
 				return false
 			}
 		}
@@ -170,15 +171,38 @@ func Run(param Parameter) bool {
 	}
 
 	// 合并最终文件
-	if param.CombineBinaryFileOut != "" {
+	if param.BinaryFileOut != "" {
 
-		filebase := filepath.Base(param.CombineBinaryFileOut)
+		filebase := filepath.Base(param.BinaryFileOut)
 
-		log.Infof("%s%s\n", printIndent(2), filebase)
+		combineName := util.ChangeExtension(param.BinaryFileOut, "File")
 
-		//		if !printer.PrintBinary(tab, file.TypeSet.Pragma.TableName, param.Version, outputFile) {
-		//			return false
-		//		}
+		// 输出合并后的C# XXFile结构
+		if param.CSharpOutDir != "" {
+
+			bf := printer.PrintCombineCSharp(combineFileTypes, param.Version, combineName, combineFileNamespace)
+			if bf == nil {
+				return false
+			}
+
+			csharpFileBase := util.ChangeExtension(param.BinaryFileOut, "File.cs")
+
+			outputFile := path.Join(param.CSharpOutDir, csharpFileBase)
+
+			log.Infof("Combine C# Source: %s\n", outputFile)
+
+			if !bf.Write(outputFile) {
+				return false
+			}
+
+		}
+
+		log.Infof("Combine Binary: %s\n", filebase)
+
+		if !combineBinaryFile.Write(param.BinaryFileOut) {
+			return false
+		}
+
 	}
 
 	return true

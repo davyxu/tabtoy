@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using tabtoy;
 
 namespace csharptest
@@ -8,14 +9,19 @@ namespace csharptest
 
         static void Main(string[] args)
         {
-            using (var stream = new FileStream("../../../../Sample.bin", FileMode.Open))
+            using (var stream = new FileStream("../../../../Config.bin", FileMode.Open))
             {
                 stream.Position = 0;
 
                 var reader = new DataReader(stream);
                 
+                if ( !reader.ReadHeader( ) )
+                {
+                    Console.WriteLine("combine file crack!");
+                    return;
+                }
 
-                var file = new gamedef.SampleFile();
+                var file = new gamedef.ConfigFile();
                 file.Deserialize(reader);
 
             }
