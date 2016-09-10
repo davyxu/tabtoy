@@ -10,10 +10,10 @@ namespace gamedef
 	public enum ActorType
 	{
 		
-		// 
+		// 战士
 		Fighter = 0,
 		
-		// 
+		// 超能
 		Power = 21,
 	
 	}
@@ -22,31 +22,31 @@ namespace gamedef
 	public partial class Prop : tabtoy.DataObject
 	{	
 		
-		// 
+		// 血量
 		public int HP = 10;
 		
-		// 
+		// 攻击速率
 		public float AttackRate = 0;
 		
-		// 
+		// 扩展类型
 		public ActorType ExType = ActorType.Fighter;
 	
 		public void Deserialize( tabtoy.DataReader reader )
 		{
 			
-			// 
+			// 血量
 			if ( reader.MatchTag(0x10000))
 			{
 				this.HP = reader.ReadInt32( );
 			}
 			
-			// 
+			// 攻击速率
 			if ( reader.MatchTag(0x50001))
 			{
 				this.AttackRate = reader.ReadFloat( );
 			}
 			
-			// 
+			// 扩展类型
 			if ( reader.MatchTag(0x80002))
 			{
 				this.ExType = reader.ReadEnum<ActorType>( );

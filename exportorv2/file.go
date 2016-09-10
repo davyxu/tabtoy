@@ -105,6 +105,7 @@ func (self *File) makeRowBuildInType(ts *model.BuildInTypeSet, rootField []*mode
 	rowType.Kind = model.BuildInTypeKind_Struct
 	self.TypeSet.Add(rowType)
 
+	// 将表格中的列添加到类型中, 方便导出
 	for _, field := range rootField {
 
 		rowType.Add(field)

@@ -19,9 +19,10 @@ const (
 	// 信息所在列
 	TypeSheetCol_ObjectType = 0 // 对象类型
 	TypeSheetCol_FieldName  = 1 // 字段名
-	TypeSheetCol_FieldType  = 2 // 字段名
+	TypeSheetCol_FieldType  = 2 // 字段类型
 	TypeSheetCol_Value      = 3 // 值
-	TypeSheetCol_Meta       = 4 // 特性
+	TypeSheetCol_Comment    = 4 // 注释
+	TypeSheetCol_Meta       = 5 // 特性
 )
 
 type TypeSheet struct {
@@ -75,7 +76,7 @@ func (self *TypeSheet) Parse() bool {
 		// ====================解析字段名====================
 		fd.Name = self.GetCellData(self.Row, TypeSheetCol_FieldName)
 
-		// ====================解析字段名====================
+		// ====================解析字段类型====================
 		rawFieldType := self.GetCellData(self.Row, TypeSheetCol_FieldType)
 
 		// 解析普通类型
@@ -134,6 +135,8 @@ func (self *TypeSheet) Parse() bool {
 			log.Errorln("buildin kind shold be same", td.Kind, kind)
 			goto ErrorStop
 		}
+		// ====================解析注释====================
+		fd.Comment = self.GetCellData(self.Row, TypeSheetCol_Comment)
 
 		// ====================解析特性====================
 		metaString := self.GetCellData(self.Row, TypeSheetCol_Meta)

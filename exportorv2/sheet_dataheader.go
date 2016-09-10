@@ -44,81 +44,80 @@ func (self *DataHeader) ParseProtoField(sheet *Sheet, tts *model.BuildInTypeSet)
 			break
 		}
 
-		var colIgnore bool
 		// #开头表示注释, 跳过
-		if strings.Index(def.Name, "#") == 0 {
-			colIgnore = true
-		}
+		if strings.Index(def.Name, "#") != 0 {
 
-		// ====================解析类型====================
-		def.ParseType(tts, sheet.GetCellData(DataSheetRow_FieldType, sheet.Column))
+			// ====================解析类型====================
+			def.ParseType(tts, sheet.GetCellData(DataSheetRow_FieldType, sheet.Column))
 
-		// 依然找不到, 报错
-		if !colIgnore && def.Type == model.FieldType_None {
-			sheet.Row = DataSheetRow_FieldType
-			log.Errorf("field header type not found: %s  %s", def.Name, model.FieldTypeToString(def.Type))
-			goto ErrorStop
-		}
-
-		// ====================解析特性====================
-		metaString := sheet.GetCellData(DataSheetRow_FieldMeta, sheet.Column)
-
-		if err := proto.UnmarshalText(metaString, &def.Meta); err != nil {
-			sheet.Row = DataSheetRow_FieldMeta
-			log.Errorln("parse field header failed", err)
-			goto ErrorStop
-		}
-
-		def.Comment = sheet.GetCellData(DataSheetRow_Comment, sheet.Column)
-
-		// 根据字段名查找, 处理repeated字段case
-		exist, ok := self.HeaderByName[def.Name]
-
-		if ok {
-
-			// 多个同名字段只允许repeated方式的字段
-			if !exist.IsRepeated {
-				sheet.Row = DataSheetRow_FieldName
-				log.Errorf("duplicate field header: %s", def.Name)
-				goto ErrorStop
-			}
-
-			// 多个repeated描述类型不一致
-			if exist.Type != def.Type {
+			// 依然找不到, 报错
+			if def.Type == model.FieldType_None {
 				sheet.Row = DataSheetRow_FieldType
-				log.Errorf("repeated field type diff in multi column: %s, prev: %s, found: %s",
-					def.Name,
-					model.FieldTypeToString(exist.Type),
-					model.FieldTypeToString(def.Type))
-
+				log.Errorf("field header type not found: %s  %s", def.Name, model.FieldTypeToString(def.Type))
 				goto ErrorStop
 			}
 
-			// 多个repeated描述内建类型不一致
-			if exist.BuildInType != def.BuildInType {
-				sheet.Row = DataSheetRow_FieldType
-				log.Errorf("repeated field build type diff in multi column: %s",
-					def.Name)
+			// ====================解析特性====================
+			metaString := sheet.GetCellData(DataSheetRow_FieldMeta, sheet.Column)
 
-				goto ErrorStop
-			}
-
-			// 多个repeated描述的meta不一致
-			if proto.CompactTextString(&exist.Meta) != proto.CompactTextString(&def.Meta) {
+			if err := proto.UnmarshalText(metaString, &def.Meta); err != nil {
 				sheet.Row = DataSheetRow_FieldMeta
-				log.Errorf("repeated field meta diff in multi column: %s",
-					def.Name)
-
+				log.Errorln("parse field header failed", err)
 				goto ErrorStop
 			}
 
-			def = exist
+			def.Comment = sheet.GetCellData(DataSheetRow_Comment, sheet.Column)
 
-		} else {
-			self.HeaderByName[def.Name] = def
-			self.headerFields = append(self.headerFields, def)
+			// 根据字段名查找, 处理repeated字段case
+			exist, ok := self.HeaderByName[def.Name]
+
+			if ok {
+
+				// 多个同名字段只允许repeated方式的字段
+				if !exist.IsRepeated {
+					sheet.Row = DataSheetRow_FieldName
+					log.Errorf("duplicate field header: %s", def.Name)
+					goto ErrorStop
+				}
+
+				// 多个repeated描述类型不一致
+				if exist.Type != def.Type {
+					sheet.Row = DataSheetRow_FieldType
+					log.Errorf("repeated field type diff in multi column: %s, prev: %s, found: %s",
+						def.Name,
+						model.FieldTypeToString(exist.Type),
+						model.FieldTypeToString(def.Type))
+
+					goto ErrorStop
+				}
+
+				// 多个repeated描述内建类型不一致
+				if exist.BuildInType != def.BuildInType {
+					sheet.Row = DataSheetRow_FieldType
+					log.Errorf("repeated field build type diff in multi column: %s",
+						def.Name)
+
+					goto ErrorStop
+				}
+
+				// 多个repeated描述的meta不一致
+				if proto.CompactTextString(&exist.Meta) != proto.CompactTextString(&def.Meta) {
+					sheet.Row = DataSheetRow_FieldMeta
+					log.Errorf("repeated field meta diff in multi column: %s",
+						def.Name)
+
+					goto ErrorStop
+				}
+
+				def = exist
+
+			} else {
+				self.HeaderByName[def.Name] = def
+				self.headerFields = append(self.headerFields, def)
+			}
 		}
 
+		// 有注释字段, 但是依然要放到这里来进行索引
 		self.rawHeaderFields = append(self.rawHeaderFields, def)
 	}
 

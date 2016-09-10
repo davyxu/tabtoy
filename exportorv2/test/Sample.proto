@@ -9,10 +9,10 @@ package gamedef;
 enum ActorType
 {	
  
-	// 
+	// 战士
 	Fighter = 0;
 
-	// 
+	// 超能
 	Power = 21;
 
 }
@@ -20,13 +20,13 @@ enum ActorType
 message Prop
 {	
 		
-	// 
+	// 血量
 	int32 HP = 1;
 	
-	// 
+	// 攻击速率
 	float AttackRate = 2;
 	
-	// 
+	// 扩展类型
 	ActorType ExType = 3;
  
 }
