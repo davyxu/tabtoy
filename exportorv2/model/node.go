@@ -1,7 +1,7 @@
 package model
 
 type Node struct {
-	*FieldDefine
+	*FieldDescriptor
 
 	StructRoot bool // 结构体标记的dummy node
 
@@ -23,9 +23,9 @@ func (self *Node) AddValue(value string) *Node {
 	return n
 }
 
-func (self *Node) AddKey(def *FieldDefine) *Node {
+func (self *Node) AddKey(def *FieldDescriptor) *Node {
 	n := &Node{
-		FieldDefine: def,
+		FieldDescriptor: def,
 	}
 	self.Child = append(self.Child, n)
 

@@ -1,6 +1,7 @@
 package exportorv2
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/davyxu/tabtoy/exportorv2/model"
@@ -11,16 +12,16 @@ import (
 type DataHeader struct {
 
 	// 按排列的, 保留有注释掉的字段和重复的repeated列
-	rawHeaderFields []*model.FieldDefine
+	rawHeaderFields []*model.FieldDescriptor
 
 	// 按排列的, 字段不重复
-	headerFields []*model.FieldDefine
+	headerFields []*model.FieldDescriptor
 
 	// 按字段名分组索引字段, 字段不重复
-	HeaderByName map[string]*model.FieldDefine
+	HeaderByName map[string]*model.FieldDescriptor
 }
 
-func (self *DataHeader) FetchFieldDefine(index int) *model.FieldDefine {
+func (self *DataHeader) RawField(index int) *model.FieldDescriptor {
 	if index >= len(self.rawHeaderFields) {
 		return nil
 	}
@@ -28,15 +29,19 @@ func (self *DataHeader) FetchFieldDefine(index int) *model.FieldDefine {
 	return self.rawHeaderFields[index]
 }
 
-// 检查字段行的长度
-func (self *DataHeader) ParseProtoField(sheet *Sheet, tts *model.BuildInTypeSet) bool {
+func (self *DataHeader) RawFieldCount() int {
+	return len(self.rawHeaderFields)
+}
 
-	var def *model.FieldDefine
+// 检查字段行的长度
+func (self *DataHeader) ParseProtoField(sheet *Sheet, fileD *model.FileDescriptor) bool {
+
+	var def *model.FieldDescriptor
 
 	// 遍历列
 	for sheet.Column = 0; ; sheet.Column++ {
 
-		def = new(model.FieldDefine)
+		def = new(model.FieldDescriptor)
 
 		// ====================解析字段====================
 		def.Name = sheet.GetCellData(DataSheetRow_FieldName, sheet.Column)
@@ -48,7 +53,7 @@ func (self *DataHeader) ParseProtoField(sheet *Sheet, tts *model.BuildInTypeSet)
 		if strings.Index(def.Name, "#") != 0 {
 
 			// ====================解析类型====================
-			def.ParseType(tts, sheet.GetCellData(DataSheetRow_FieldType, sheet.Column))
+			def.ParseType(fileD, sheet.GetCellData(DataSheetRow_FieldType, sheet.Column))
 
 			// 依然找不到, 报错
 			if def.Type == model.FieldType_None {
@@ -92,7 +97,7 @@ func (self *DataHeader) ParseProtoField(sheet *Sheet, tts *model.BuildInTypeSet)
 				}
 
 				// 多个repeated描述内建类型不一致
-				if exist.BuildInType != def.BuildInType {
+				if exist.Complex != def.Complex {
 					sheet.Row = DataSheetRow_FieldType
 					log.Errorf("repeated field build type diff in multi column: %s",
 						def.Name)
@@ -121,7 +126,14 @@ func (self *DataHeader) ParseProtoField(sheet *Sheet, tts *model.BuildInTypeSet)
 		self.rawHeaderFields = append(self.rawHeaderFields, def)
 	}
 
-	return len(self.rawHeaderFields) > 0
+	if len(self.rawHeaderFields) == 0 {
+		return false
+	}
+
+	// 添加一次行结构
+	self.makeRowDescriptor(fileD, self.headerFields)
+
+	return true
 
 ErrorStop:
 
@@ -131,9 +143,31 @@ ErrorStop:
 	return false
 }
 
+func (self *DataHeader) makeRowDescriptor(fileD *model.FileDescriptor, rootField []*model.FieldDescriptor) {
+
+	rowType := model.NewDescriptor()
+	rowType.Usage = model.DescriptorUsage_RowType
+	rowType.Name = fmt.Sprintf("%sDefine", fileD.Pragma.TableName)
+	rowType.Kind = model.DescriptorKind_Struct
+
+	// 有就不添加
+	if _, ok := fileD.DescriptorByName[rowType.Name]; ok {
+		return
+	}
+
+	fileD.Add(rowType)
+
+	// 将表格中的列添加到类型中, 方便导出
+	for _, field := range rootField {
+
+		rowType.Add(field)
+	}
+
+}
+
 func newDataHeadSheet() *DataHeader {
 
 	return &DataHeader{
-		HeaderByName: make(map[string]*model.FieldDefine),
+		HeaderByName: make(map[string]*model.FieldDescriptor),
 	}
 }

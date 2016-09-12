@@ -1,11 +1,11 @@
 package model
 
 type Record struct {
-	nodeByFD map[*FieldDefine]*Node
+	nodeByFD map[*FieldDescriptor]*Node
 	Nodes    []*Node
 }
 
-func (self *Record) NewNodeByDefine(def *FieldDefine) *Node {
+func (self *Record) NewNodeByDefine(def *FieldDescriptor) *Node {
 
 	// 如果这个单元格数据有, 使用已经有的定义, 因为字段不会重复
 	// 主要处理repeated散开的case
@@ -14,7 +14,7 @@ func (self *Record) NewNodeByDefine(def *FieldDefine) *Node {
 	}
 
 	node := new(Node)
-	node.FieldDefine = def
+	node.FieldDescriptor = def
 	self.nodeByFD[def] = node
 	self.Nodes = append(self.Nodes, node)
 
@@ -23,7 +23,7 @@ func (self *Record) NewNodeByDefine(def *FieldDefine) *Node {
 
 func NewRecord() *Record {
 	return &Record{
-		nodeByFD: make(map[*FieldDefine]*Node),
+		nodeByFD: make(map[*FieldDescriptor]*Node),
 	}
 }
 

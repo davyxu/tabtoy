@@ -27,20 +27,18 @@ const (
 
 type TypeSheet struct {
 	*Sheet
-
-	*model.BuildInTypeSet
 }
 
-func (self *TypeSheet) Parse() bool {
+func (self *TypeSheet) Parse(fileD *model.FileDescriptor) bool {
 
 	// 是否继续读行
 	var readingLine bool = true
 
-	var td *model.BuildInType
+	var td *model.Descriptor
 
 	rawPragma := self.GetCellData(TypeSheetRow_Pragma, 0)
 
-	if err := proto.UnmarshalText(rawPragma, &self.BuildInTypeSet.Pragma); err != nil {
+	if err := proto.UnmarshalText(rawPragma, &fileD.Pragma); err != nil {
 		self.Row = TypeSheetRow_Pragma
 		self.Column = 0
 		log.Errorf("parse pragma failed: %s", rawPragma)
@@ -56,11 +54,11 @@ func (self *TypeSheet) Parse() bool {
 			break
 		}
 
-		var fd model.FieldDefine
+		var fd model.FieldDescriptor
 
 		rawTypeName := self.GetCellData(self.Row, TypeSheetCol_ObjectType)
 
-		existType, ok := self.BuildInTypeSet.TypeByName[rawTypeName]
+		existType, ok := fileD.DescriptorByName[rawTypeName]
 
 		if ok {
 
@@ -68,9 +66,9 @@ func (self *TypeSheet) Parse() bool {
 
 		} else {
 
-			td = model.NewBuildInType()
+			td = model.NewDescriptor()
 			td.Name = rawTypeName
-			self.BuildInTypeSet.Add(td)
+			fileD.Add(td)
 		}
 
 		// ====================解析字段名====================
@@ -85,17 +83,17 @@ func (self *TypeSheet) Parse() bool {
 		} else {
 
 			// 解析内建类型
-			if buildinType, ok := self.BuildInTypeSet.TypeByName[rawFieldType]; ok {
+			if desc, ok := fileD.DescriptorByName[rawFieldType]; ok {
 
 				// 只有枚举( 结构体不允许再次嵌套, 增加理解复杂度 )
-				if buildinType.Kind != model.BuildInTypeKind_Enum {
+				if desc.Kind != model.DescriptorKind_Enum {
 					self.Column = TypeSheetCol_FieldType
 					log.Errorln("struct field can only be normal type and enum", rawFieldType)
 					goto ErrorStop
 				}
 
 				fd.Type = model.FieldType_Enum
-				fd.BuildInType = buildinType
+				fd.Complex = desc
 
 			} else {
 
@@ -109,7 +107,7 @@ func (self *TypeSheet) Parse() bool {
 		// ====================解析值====================
 		rawValue := self.GetCellData(self.Row, TypeSheetCol_Value)
 
-		var kind model.BuildInTypeKind
+		var kind model.DescriptorKind
 
 		// 非空值是枚举
 		if rawValue != "" {
@@ -122,12 +120,12 @@ func (self *TypeSheet) Parse() bool {
 				log.Errorln("parse type value failed:", err)
 				goto ErrorStop
 			}
-			kind = model.BuildInTypeKind_Enum
+			kind = model.DescriptorKind_Enum
 		} else {
-			kind = model.BuildInTypeKind_Struct
+			kind = model.DescriptorKind_Struct
 		}
 
-		if td.Kind == model.BuildInTypeKind_None {
+		if td.Kind == model.DescriptorKind_None {
 			td.Kind = kind
 			// 一些字段有填值, 一些没填值
 		} else if td.Kind != kind {
@@ -150,7 +148,7 @@ func (self *TypeSheet) Parse() bool {
 
 	}
 
-	return self.checkProtobufCompatibility()
+	return self.checkProtobufCompatibility(fileD)
 
 ErrorStop:
 
@@ -161,10 +159,10 @@ ErrorStop:
 }
 
 // 检查protobuf兼容性
-func (self *TypeSheet) checkProtobufCompatibility() bool {
+func (self *TypeSheet) checkProtobufCompatibility(fileD *model.FileDescriptor) bool {
 
-	for _, bt := range self.BuildInTypeSet.Types {
-		if bt.Kind == model.BuildInTypeKind_Enum {
+	for _, bt := range fileD.Descriptors {
+		if bt.Kind == model.DescriptorKind_Enum {
 
 			// proto3 需要枚举有0值
 			if _, ok := bt.FieldByNumber[0]; !ok {
@@ -179,7 +177,6 @@ func (self *TypeSheet) checkProtobufCompatibility() bool {
 
 func newTypeSheet(sheet *Sheet) *TypeSheet {
 	return &TypeSheet{
-		Sheet:          sheet,
-		BuildInTypeSet: model.NewBuildInTypeSet(),
+		Sheet: sheet,
 	}
 }

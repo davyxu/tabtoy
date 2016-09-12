@@ -52,7 +52,7 @@ type fileModel struct {
 	Messages     []messageModel
 }
 
-func PrintProto(ts *model.BuildInTypeSet, protoVersion int, toolVersion string, outfile string) bool {
+func PrintProto(fileD *model.FileDescriptor, protoVersion int, toolVersion string, outfile string) bool {
 
 	tpl, err := template.New("proto").Parse(protoTemplate)
 	if err != nil {
@@ -62,19 +62,19 @@ func PrintProto(ts *model.BuildInTypeSet, protoVersion int, toolVersion string, 
 
 	var m fileModel
 
-	m.Package = ts.Pragma.Package
+	m.Package = fileD.Pragma.Package
 	m.ProtoVersion = protoVersion
 	m.ToolVersion = toolVersion
 
 	// 遍历所有类型
-	for _, bt := range ts.Types {
+	for _, bt := range fileD.Descriptors {
 
 		var msg messageModel
 		msg.Name = bt.Name
 		switch bt.Kind {
-		case model.BuildInTypeKind_Struct:
+		case model.DescriptorKind_Struct:
 			msg.Kind = "message"
-		case model.BuildInTypeKind_Enum:
+		case model.DescriptorKind_Enum:
 			msg.Kind = "enum"
 		default:
 			msg.Kind = "unknown"
@@ -87,9 +87,9 @@ func PrintProto(ts *model.BuildInTypeSet, protoVersion int, toolVersion string, 
 			field.Name = fd.Name
 
 			switch bt.Kind {
-			case model.BuildInTypeKind_Struct:
+			case model.DescriptorKind_Struct:
 				field.Number = index + 1
-			case model.BuildInTypeKind_Enum:
+			case model.DescriptorKind_Enum:
 				field.Number = int(fd.EnumValue)
 			}
 
@@ -99,8 +99,8 @@ func PrintProto(ts *model.BuildInTypeSet, protoVersion int, toolVersion string, 
 				field.Label = "optional "
 			}
 
-			if fd.BuildInType != nil {
-				field.Type = fd.BuildInType.Name
+			if fd.Complex != nil {
+				field.Type = fd.Complex.Name
 			} else {
 				field.Type = model.FieldTypeToString(fd.Type)
 			}

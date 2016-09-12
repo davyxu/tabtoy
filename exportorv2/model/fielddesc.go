@@ -25,14 +25,14 @@ const (
 )
 
 // 一列的描述
-type FieldDefine struct {
+type FieldDescriptor struct {
 	Name string
 
 	Type FieldType
 
-	BuildInType *BuildInType // 复杂类型: 枚举或者结构体
+	Complex *Descriptor // 复杂类型: 枚举或者结构体
 
-	Order int32 // 在BuildInTypes中的顺序
+	Order int32 // 在Descriptor中的顺序
 
 	Meta tool.FieldMetaV2 // 扩展字段
 
@@ -41,9 +41,11 @@ type FieldDefine struct {
 	EnumValue int32 // 枚举值
 
 	Comment string // 注释
+
+	Parent *Descriptor
 }
 
-func (self *FieldDefine) Tag() int32 {
+func (self *FieldDescriptor) Tag() int32 {
 	return MakeTag(self.Type, self.Order)
 }
 
@@ -51,16 +53,16 @@ func MakeTag(t FieldType, order int32) int32 {
 	return int32(t)<<16 | order
 }
 
-func (self *FieldDefine) MetaString() string {
+func (self *FieldDescriptor) MetaString() string {
 
 	return proto.MarshalTextString(&self.Meta)
 }
 
-func (self *FieldDefine) String() string {
+func (self *FieldDescriptor) String() string {
 
 	var typestr string
-	if self.BuildInType != nil {
-		typestr = fmt.Sprintf("%s|%s", self.BuildInType.Name, FieldTypeToString(self.Type))
+	if self.Complex != nil {
+		typestr = fmt.Sprintf("%s|%s", self.Complex.Name, FieldTypeToString(self.Type))
 	} else {
 		typestr = FieldTypeToString(self.Type)
 	}
@@ -73,7 +75,7 @@ func (self *FieldDefine) String() string {
 	return fmt.Sprintf("name: '%s' %stype: '%s'", self.Name, repString, typestr)
 }
 
-func (self *FieldDefine) DefaultValue() string {
+func (self *FieldDescriptor) DefaultValue() string {
 
 	if self.Meta.Default != "" {
 		return self.Meta.Default
@@ -90,33 +92,33 @@ func (self *FieldDefine) DefaultValue() string {
 		return "false"
 	case FieldType_Enum:
 
-		if self.BuildInType == nil {
+		if self.Complex == nil {
 			log.Debugln("build type null while get default value", self.Name)
 			return ""
 		}
 
-		if len(self.BuildInType.Fields) == 0 {
+		if len(self.Complex.Fields) == 0 {
 			return ""
 		}
 
-		return self.BuildInType.Fields[0].Name
+		return self.Complex.Fields[0].Name
 
 	}
 
 	return ""
 }
 
-func (self *FieldDefine) ListSpliter() string {
+func (self *FieldDescriptor) ListSpliter() string {
 
 	return self.Meta.ListSpliter
 }
 
-func (self *FieldDefine) RepeatCheck() bool {
+func (self *FieldDescriptor) RepeatCheck() bool {
 
 	return self.Meta.RepeatCheck
 }
 
-var strByFieldType = map[FieldType]string{
+var strByFieldDescriptor = map[FieldType]string{
 	FieldType_None:   "none",
 	FieldType_Int32:  "int32",
 	FieldType_Int64:  "int64",
@@ -133,7 +135,7 @@ var strByFieldType = map[FieldType]string{
 var fieldTypeByString = make(map[string]FieldType)
 
 func FieldTypeToString(t FieldType) string {
-	if v, ok := strByFieldType[t]; ok {
+	if v, ok := strByFieldDescriptor[t]; ok {
 		return v
 	}
 
@@ -148,7 +150,7 @@ func ParseFieldType(str string) (t FieldType, ok bool) {
 const repeatedKeyword = "repeated"
 const repeatedKeywordLen = len(repeatedKeyword)
 
-func (self *FieldDefine) ParseType(tts *BuildInTypeSet, rawstr string) bool {
+func (self *FieldDescriptor) ParseType(fileD *FileDescriptor, rawstr string) bool {
 
 	if strings.HasPrefix(rawstr, repeatedKeyword) {
 
@@ -162,14 +164,14 @@ func (self *FieldDefine) ParseType(tts *BuildInTypeSet, rawstr string) bool {
 		return true
 	}
 
-	if buildinType, ok := tts.TypeByName[rawstr]; ok {
-		self.BuildInType = buildinType
+	if desc, ok := fileD.DescriptorByName[rawstr]; ok {
+		self.Complex = desc
 
 		// 根据内建类型转成字段类型
-		switch buildinType.Kind {
-		case BuildInTypeKind_Struct:
+		switch desc.Kind {
+		case DescriptorKind_Struct:
 			self.Type = FieldType_Struct
-		case BuildInTypeKind_Enum:
+		case DescriptorKind_Enum:
 			self.Type = FieldType_Enum
 		}
 
@@ -182,7 +184,7 @@ func (self *FieldDefine) ParseType(tts *BuildInTypeSet, rawstr string) bool {
 
 func init() {
 
-	for k, v := range strByFieldType {
+	for k, v := range strByFieldDescriptor {
 		fieldTypeByString[v] = k
 	}
 

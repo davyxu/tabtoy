@@ -35,7 +35,7 @@ func (self *structParser) TokenValue() string {
 	return self.curr.Value()
 }
 
-func (self *structParser) Run(fd *model.FieldDefine, callback func(string, string) bool) (ok bool) {
+func (self *structParser) Run(fd *model.FieldDescriptor, callback func(string, string) bool) (ok bool) {
 
 	defer func() {
 
@@ -128,13 +128,13 @@ func newStructParser(value string) *structParser {
 
 }
 
-func parseStruct(fd *model.FieldDefine, value string, typeset *model.BuildInTypeSet, node *model.Node) bool {
+func parseStruct(fd *model.FieldDescriptor, value string, fileD *model.FileDescriptor, node *model.Node) bool {
 
 	p := newStructParser(value)
 
 	return p.Run(fd, func(key, value string) bool {
 
-		bnField := fd.BuildInType.FieldByValueAndMeta(key)
+		bnField := fd.Complex.FieldByValueAndMeta(key)
 		if bnField == nil {
 			log.Errorf("struct field not found: '%s'", key)
 			return false
@@ -144,7 +144,7 @@ func parseStruct(fd *model.FieldDefine, value string, typeset *model.BuildInType
 		fieldNode := node.AddKey(bnField)
 
 		// 在类型节点下添加值节点
-		_, ok := ConvertValue(bnField, value, typeset, fieldNode)
+		_, ok := ConvertValue(bnField, value, fileD, fieldNode)
 
 		return ok
 	})

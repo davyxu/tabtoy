@@ -53,7 +53,8 @@ var paramPbtOutDir = flag.String("pbt_outdir", "", "[v2] output proto text forma
 var paramLuaOutDir = flag.String("lua_outdir", "", "[v2] output lua code (*.lua)")
 var paramJsonOutDir = flag.String("json_outdir", "", "[v2] output json format (*.json)")
 var paramCSharpOutDir = flag.String("csharp_outdir", "", "[v2] output c# class and deserialize code (*.cs)")
-var paramBinaryOut = flag.String("binary_out", "", "[v2] input filename , output binary format(*.bin)")
+var paramBinaryOutDir = flag.String("binary_outdir", "", "[v2] input filename , output binary format(*.bin)")
+var paramCombineStructName = flag.String("combinename", "", "[v2] combine struct name, affect binary filename and code struct name")
 
 const Version = "2.0.0"
 
@@ -84,16 +85,17 @@ func main() {
 	case "exportorv2":
 
 		if !exportorv2.Run(exportorv2.Parameter{
-			Version:       Version,
-			InputFileList: flag.Args(),
-			ParaMode:      *paramPara,
-			Proto3OutDir:  *paramProto3OutDir,
-			Proto2OutDir:  *paramProto2OutDir,
-			PbtOutDir:     *paramPbtOutDir,
-			JsonOutDir:    *paramJsonOutDir,
-			LuaOutDir:     *paramLuaOutDir,
-			CSharpOutDir:  *paramCSharpOutDir,
-			BinaryFileOut: *paramBinaryOut,
+			Version:           Version,
+			InputFileList:     flag.Args(),
+			ParaMode:          *paramPara,
+			Proto3OutDir:      *paramProto3OutDir,
+			Proto2OutDir:      *paramProto2OutDir,
+			PbtOutDir:         *paramPbtOutDir,
+			JsonOutDir:        *paramJsonOutDir,
+			LuaOutDir:         *paramLuaOutDir,
+			CSharpOutDir:      *paramCSharpOutDir,
+			BinaryOutDir:      *paramBinaryOutDir,
+			CombineStructName: *paramCombineStructName,
 		}) {
 			goto Err
 		}

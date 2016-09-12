@@ -25,7 +25,9 @@
 * Fairy in Wonderland
 	https://itunes.apple.com/us/app/fairy-in-wonderland-parkour/id1128656892?l=zh&ls=1&mt=8
 	
-另2款使用tabtoy的游戏, 待发布
+* Mad Magic
+	https://itunes.apple.com/app/id1146098397
+
 
 如果你的项目在使用tabtoy, 请联系我添加链接, 互相宣传
 

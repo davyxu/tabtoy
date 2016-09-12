@@ -7,7 +7,7 @@ import (
 )
 
 // 从单元格原始数据到最终输出的数值, 检查并转换, 处理默认值及根据meta转换情况
-func ConvertValue(fd *model.FieldDefine, value string, typeset *model.BuildInTypeSet, node *model.Node) (ret string, ok bool) {
+func ConvertValue(fd *model.FieldDescriptor, value string, fileD *model.FileDescriptor, node *model.Node) (ret string, ok bool) {
 
 	// 空格, 且有默认值时, 使用默认值
 	if value == "" {
@@ -94,14 +94,14 @@ func ConvertValue(fd *model.FieldDefine, value string, typeset *model.BuildInTyp
 		ret = value
 		node.AddValue(ret)
 	case model.FieldType_Enum:
-		if fd.BuildInType == nil {
+		if fd.Complex == nil {
 			log.Errorln("enum buildin type nil", fd.Name)
 			return "", false
 		}
 
-		evd := fd.BuildInType.FieldByValueAndMeta(value)
+		evd := fd.Complex.FieldByValueAndMeta(value)
 		if evd == nil {
-			log.Errorf("enum value not found, '%s' enum type: %s", value, fd.BuildInType.Name)
+			log.Errorf("enum value not found, '%s' enum type: %s", value, fd.Complex.Name)
 			return "", false
 		}
 
@@ -111,12 +111,12 @@ func ConvertValue(fd *model.FieldDefine, value string, typeset *model.BuildInTyp
 
 	case model.FieldType_Struct:
 
-		if fd.BuildInType == nil {
+		if fd.Complex == nil {
 			log.Errorln("struct build type nil", fd.Name)
 			return "", false
 		}
 
-		if !parseStruct(fd, value, typeset, node) {
+		if !parseStruct(fd, value, fileD, node) {
 			return "", false
 		}
 

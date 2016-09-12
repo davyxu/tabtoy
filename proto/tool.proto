@@ -41,18 +41,15 @@ message FieldMetaV2
 	
 	string Default = 6;				// 默认值
 	
-	bool LuaIndex = 7;				// 为字段创建lua记录索引
-	
-	bool CSharpIndex = 8;			// 为字段创建c#记录索引
+	bool MakeIndex = 7;				// 为字段创建索引	
 }
 
-message BuildInTypePragmaV2
-{
+message FilePragmaV2
+{	
 	string Package = 1;				// 输出proto时的包名
 	
 	string TableName = 2;			// 表名, 文件类型名=表名File  行类型=表名Define	
 	
-	string FileTypeName = 3;		// 强制设定, 文件类型名, 用于C#合并所有XXFile于1个类
 	
 	string Proto3OutFileName = 11;		// 指定proto3输出文件名
 	

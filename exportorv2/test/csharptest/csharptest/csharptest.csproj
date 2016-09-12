@@ -44,14 +44,8 @@
     <Compile Include="..\..\..\csharp\DataReader.cs">
       <Link>DataReader.cs</Link>
     </Compile>
-    <Compile Include="..\..\ConfigFile.cs">
-      <Link>ConfigFile.cs</Link>
-    </Compile>
-    <Compile Include="..\..\Exp.cs">
-      <Link>Exp.cs</Link>
-    </Compile>
-    <Compile Include="..\..\Sample.cs">
-      <Link>Sample.cs</Link>
+    <Compile Include="..\..\Config.cs">
+      <Link>Config.cs</Link>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

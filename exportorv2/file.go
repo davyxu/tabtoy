@@ -1,8 +1,6 @@
 package exportorv2
 
 import (
-	"fmt"
-	"path"
 	"path/filepath"
 	"strings"
 
@@ -10,22 +8,49 @@ import (
 	"github.com/tealeg/xlsx"
 )
 
+// 检查单元格值重复结构
 type valueRepeatData struct {
-	fd    *model.FieldDefine
+	fd    *model.FieldDescriptor
 	value string
 }
 
+// 1个电子表格文件
 type File struct {
-	TypeSet  *model.BuildInTypeSet // 1个类型描述表
-	Name     string                // 电子表格的名称(文件名无后缀)
-	FileName string
+	*model.FileDescriptor // 1个类型描述表
+	FileName              string
 
-	valueRepByKey map[valueRepeatData]bool
+	valueRepByKey map[valueRepeatData]bool // 检查单元格值重复map
+}
+
+func (self *File) readTypeSheet(file *xlsx.File) bool {
+
+	var sheetCount int
+	// 解析类型表
+	for _, rawSheet := range file.Sheets {
+
+		if isTypeSheet(rawSheet.Name) {
+			if sheetCount > 0 {
+				log.Errorf("%s sheet should keep one!", model.TypeSheetName)
+				return false
+			}
+
+			typeSheet := newTypeSheet(NewSheet(self, rawSheet))
+
+			// 从cell添加类型
+			if !typeSheet.Parse(self.FileDescriptor) {
+				return false
+			}
+
+			sheetCount++
+
+		}
+	}
+
+	return true
 }
 
 func (self *File) Export(filename string) *model.Table {
 
-	self.Name = makeTableName(filename)
 	self.FileName = filename
 
 	log.Infof("%s\n", filepath.Base(filename))
@@ -38,37 +63,16 @@ func (self *File) Export(filename string) *model.Table {
 		return nil
 	}
 
-	// 解析类型表
-	for _, rawSheet := range file.Sheets {
-
-		if isTypeSheet(rawSheet.Name) {
-			if self.TypeSet != nil {
-				log.Errorln("@Types sheet should keep one!")
-				return nil
-			}
-
-			typeSheet := newTypeSheet(NewSheet(self, rawSheet))
-
-			// 从cell添加类型
-			if !typeSheet.Parse() {
-				return nil
-			}
-
-			self.TypeSet = typeSheet.BuildInTypeSet
-
-		}
-	}
-
-	// 没有这个类型, 默认填一个
-	if self.TypeSet == nil {
-		log.Errorln("'@Types' sheet not found in ", filename)
+	// 读取类型表
+	if !self.readTypeSheet(file) {
 		return nil
 	}
 
-	tab := model.NewTable(self.TypeSet.Pragma.TableName)
+	self.Name = self.Pragma.TableName
 
-	var needAddRowType bool = true
+	tab := model.NewTable(self.Pragma.TableName)
 
+	// 遍历数据表
 	for _, rawSheet := range file.Sheets {
 
 		if !isTypeSheet(rawSheet.Name) {
@@ -81,15 +85,17 @@ func (self *File) Export(filename string) *model.Table {
 
 			log.Infof("            %s", rawSheet.Name)
 
-			// TODO 只使用第一个sheet中的protoheader定义
-			// TODO 其他Sheet可以在顶部定义一个标记@RefProtoHeader, 引用前面的protoheader
-			if !dSheet.Export(self, tab) {
+			dataHeader := newDataHeadSheet()
+
+			// 检查引导头
+			if !dataHeader.ParseProtoField(dSheet.Sheet, self.FileDescriptor) {
 				return nil
 			}
 
-			if needAddRowType {
-				self.makeRowBuildInType(self.TypeSet, dSheet.headerFields)
-				needAddRowType = false
+			// TODO 只使用第一个sheet中的protoheader定义
+			// TODO 其他Sheet可以在顶部定义一个标记@RefProtoHeader, 引用前面的protoheader
+			if !dSheet.Export(self, tab, dataHeader) {
+				return nil
 			}
 
 		}
@@ -98,47 +104,7 @@ func (self *File) Export(filename string) *model.Table {
 	return tab
 }
 
-func (self *File) makeRowBuildInType(ts *model.BuildInTypeSet, rootField []*model.FieldDefine) {
-
-	rowType := model.NewBuildInType()
-	rowType.Usage = model.BuildIntTypeUsage_RowType
-	rowType.Name = fmt.Sprintf("%sDefine", ts.Pragma.TableName)
-	rowType.Kind = model.BuildInTypeKind_Struct
-	self.TypeSet.Add(rowType)
-
-	// 将表格中的列添加到类型中, 方便导出
-	for _, field := range rootField {
-
-		rowType.Add(field)
-	}
-
-	fileType := model.NewBuildInType()
-	fileType.Usage = model.BuildIntTypeUsage_RootFileType
-
-	// 强制命名文件类型名
-	if ts.Pragma.FileTypeName != "" {
-		fileType.Name = ts.Pragma.FileTypeName
-	} else {
-		// 文件类型名: Table名+File
-		fileType.Name = fmt.Sprintf("%sFile", ts.Pragma.TableName)
-	}
-
-	fileType.Kind = model.BuildInTypeKind_Struct
-
-	var rowTypeField model.FieldDefine
-	rowTypeField.Name = ts.Pragma.TableName
-	rowTypeField.Type = model.FieldType_Struct
-	rowTypeField.IsRepeated = true
-	rowTypeField.BuildInType = rowType
-	rowTypeField.Comment = ts.Pragma.TableName
-	fileType.Add(&rowTypeField)
-
-	self.TypeSet.FileType = fileType
-
-	self.TypeSet.Add(fileType)
-}
-
-func (self *File) checkValueRepeat(fd *model.FieldDefine, value string) bool {
+func (self *File) checkValueRepeat(fd *model.FieldDescriptor, value string) bool {
 
 	key := valueRepeatData{
 		fd:    fd,
@@ -155,19 +121,14 @@ func (self *File) checkValueRepeat(fd *model.FieldDefine, value string) bool {
 }
 
 func isTypeSheet(name string) bool {
-	return strings.TrimSpace(name) == "@Types"
-}
-
-// 制作表名
-func makeTableName(filename string) string {
-	baseName := path.Base(filename)
-	return strings.TrimSuffix(baseName, path.Ext(baseName))
+	return strings.TrimSpace(name) == model.TypeSheetName
 }
 
 func NewFile() *File {
 
 	self := &File{
-		valueRepByKey: make(map[valueRepeatData]bool),
+		valueRepByKey:  make(map[valueRepeatData]bool),
+		FileDescriptor: model.NewFileDescriptor(),
 	}
 
 	return self

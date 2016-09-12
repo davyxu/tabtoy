@@ -21,7 +21,7 @@ namespace csharptest
                     return;
                 }
 
-                var file = new gamedef.ConfigFile();
+                var file = new gamedef.Config();
                 file.Deserialize(reader);
 
             }

@@ -156,26 +156,26 @@ func PrintLua(tab *model.Table, version string, outfile string) bool {
 }
 
 // 收集需要构建的索引的类型
-func collectLuaIndex(tab *model.Table) (ret []*model.FieldDefine, ok bool) {
+func collectLuaIndex(tab *model.Table) (ret []*model.FieldDescriptor, ok bool) {
 
 	if len(tab.Recs) == 0 {
 		return
 	}
 
 	// 遍历每一列
-	for _, node := range tab.Recs[0].Nodes {
+	//	for _, node := range tab.Recs[0].Nodes {
 
-		if node.Meta.LuaIndex {
+	//		if node.Meta.LuaIndex {
 
-			if node.BuildInType != nil {
-				log.Errorf("lua can only support primitive type as index, ", node.String())
-				return
-			}
+	//			if node.Complex != nil {
+	//				log.Errorf("lua can only support primitive type as index, ", node.String())
+	//				return
+	//			}
 
-			ret = append(ret, node.FieldDefine)
+	//			ret = append(ret, node.FieldDescriptor)
 
-		}
-	}
+	//		}
+	//	}
 
 	ok = true
 	return

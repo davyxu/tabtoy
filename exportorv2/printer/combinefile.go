@@ -5,70 +5,64 @@ import (
 )
 
 type CombineFile struct {
-	*BinaryFile                         // 最终输出文件
+	*BinaryFile // 最终输出文件
+
+	fd *model.FileDescriptor
+
 	nameChecker map[string]*model.Table //  防止table重名
 	tableCount  int32                   // 添加了多少表
 
-	rootTypes   []*model.FieldDefine // 根类型, XXDefine
-	packageName string               // 最终的包
-
-	indexes      []tableIndex
-	indexChecker map[tableIndex]bool
+	indexes       []tableIndex
+	combineStruct *model.Descriptor
 }
 
-type tableIndexType int
-
-const (
-	tableIndexType_None tableIndexType = iota
-	tableIndexType_Lua
-	tableIndexType_Sharp
-)
-
 type tableIndex struct {
-	Raw   *model.FieldDefine
-	Index *model.FieldDefine
-	Type  tableIndexType
+	Index *model.FieldDescriptor // 表头里的索引
+	Row   *model.FieldDescriptor // 索引的数据
 }
 
 // 合并每个表带的类型
-func (self *CombineFile) CombineType(inputFile string, tts *model.BuildInTypeSet) bool {
+func (self *CombineFile) CombineType(inputFile string, fileD *model.FileDescriptor) bool {
 	// 有表格里描述的包名不一致, 无法合成最终的文件
-	if self.packageName != "" && self.packageName != tts.Pragma.Package {
-		log.Errorf("combine file 'Package' in @Types diff: %s", inputFile)
+
+	if self.fd.Pragma.Package == "" {
+		self.fd.Pragma.Package = fileD.Pragma.Package
+	} else if self.fd.Pragma.Package != fileD.Pragma.Package {
+		log.Errorf("keep all type in same package! %s, %s", self.fd.Pragma.Package, fileD.Pragma.Package)
 		return false
 	}
 
-	self.packageName = tts.Pragma.Package
+	// 每个表在结构体里的字段
+	var rowFD model.FieldDescriptor
+	rowFD.Name = fileD.Name
+	rowFD.Type = model.FieldType_Struct
+	rowFD.Complex = fileD.RowDescriptor()
+	rowFD.IsRepeated = true
+	rowFD.Order = int32(len(self.combineStruct.Fields) + 1)
+	rowFD.Comment = fileD.Name
+	self.combineStruct.Add(&rowFD)
 
-	fileType := tts.FileType.Fields[0]
-	// 收集根文件类型, 以做最终合并时生成
-	self.rootTypes = append(self.rootTypes, fileType)
+	// 将行定义结构也添加到文件中
 
-	for _, bt := range tts.Types {
+	for _, d := range fileD.Descriptors {
+		self.fd.Add(d)
+	}
+
+	for _, d := range fileD.Descriptors {
 
 		// 非行类型的, 全部忽略
-		if bt.Usage != model.BuildIntTypeUsage_RowType {
+		if d.Usage != model.DescriptorUsage_RowType {
 			continue
 		}
 
-		for _, field := range bt.Fields {
+		for _, indexFD := range d.Indexes {
 
 			key := tableIndex{
-				Raw:   fileType,
-				Index: field,
+				Row:   &rowFD,
+				Index: indexFD,
 			}
 
-			if field.Meta.CSharpIndex {
-				key.Type = tableIndexType_Sharp
-
-				if _, ok := self.indexChecker[key]; ok {
-					log.Errorf("duplicate CSharpIndex field: %s", field.String())
-					return false
-				}
-
-				self.indexChecker[key] = true
-				self.indexes = append(self.indexes, key)
-			}
+			self.indexes = append(self.indexes, key)
 
 		}
 
@@ -78,25 +72,9 @@ func (self *CombineFile) CombineType(inputFile string, tts *model.BuildInTypeSet
 }
 
 // 输出带有合并类型的C#文件
-func (self *CombineFile) PrintCombineCSharp(toolVersion string, name string) *BinaryFile {
+func (self *CombineFile) PrintCombineCSharp(toolVersion string) *BinaryFile {
 
-	combineFileTypeSet := model.NewBuildInTypeSet()
-	combineFileTypeSet.Pragma.Package = self.packageName
-	fileStruct := model.NewBuildInType()
-	fileStruct.Name = name
-	fileStruct.Kind = model.BuildInTypeKind_Struct
-
-	combineFileTypeSet.Add(fileStruct)
-
-	// 遍历所有导出root类型, 添加到XXFile的字段上
-	for index, ft := range self.rootTypes {
-
-		ft.Order = int32(index)
-
-		fileStruct.Add(ft)
-	}
-
-	return PrintCSharp(combineFileTypeSet, self.indexes, toolVersion)
+	return PrintCSharp(self.fd, self.indexes, toolVersion)
 }
 
 func (self *CombineFile) WriteBinary(tab *model.Table) bool {
@@ -168,12 +146,19 @@ func (self *CombineFile) WriteBinary(tab *model.Table) bool {
 
 const combineFileVersion = 1
 
-func NewCombineFile() *CombineFile {
+func NewCombineFile(stuctname string) *CombineFile {
 	self := &CombineFile{
-		nameChecker:  make(map[string]*model.Table),
-		indexChecker: make(map[tableIndex]bool),
-		BinaryFile:   NewBinaryFile("Combine"),
+		nameChecker:   make(map[string]*model.Table),
+		BinaryFile:    NewBinaryFile("Combine"),
+		fd:            model.NewFileDescriptor(),
+		combineStruct: model.NewDescriptor(),
 	}
+
+	// 添加XXConfig全局结构
+	self.combineStruct.Name = stuctname
+	self.combineStruct.Kind = model.DescriptorKind_Struct
+	self.combineStruct.Usage = model.DescriptorUsage_CombineStruct
+	self.fd.Add(self.combineStruct)
 
 	self.WriteString("TABTOY")
 	self.WriteInt32(combineFileVersion)

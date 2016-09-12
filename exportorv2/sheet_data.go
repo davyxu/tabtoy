@@ -19,41 +19,34 @@ const (
 
 type DataSheet struct {
 	*Sheet
-
-	*DataHeader
 }
 
 func (self *DataSheet) Valid() bool {
 	return self.GetCellData(0, 0) != ""
 }
 
-func dataProcessor(file *File, fieldDef *model.FieldDefine, rawValue string, node *model.Node) bool {
-
-	//	if node.Define.Name == "Type" {
-	//		a := 1
-	//		a++
-	//	}
+func dataProcessor(file *File, fd *model.FieldDescriptor, raw string, node *model.Node) bool {
 
 	// 列表
-	if fieldDef.IsRepeated {
+	if fd.IsRepeated {
 
-		spliter := fieldDef.ListSpliter()
+		spliter := fd.ListSpliter()
 
 		// 使用多格子实现的repeated
 		if spliter == "" {
 
-			if _, ok := filter.ConvertValue(fieldDef, rawValue, file.TypeSet, node); !ok {
+			if _, ok := filter.ConvertValue(fd, raw, file.FileDescriptor, node); !ok {
 				goto ConvertError
 			}
 
 		} else {
 			// 一个格子切割的repeated
 
-			valueList := strings.Split(rawValue, spliter)
+			valueList := strings.Split(raw, spliter)
 
 			for _, v := range valueList {
 
-				if _, ok := filter.ConvertValue(fieldDef, v, file.TypeSet, node); !ok {
+				if _, ok := filter.ConvertValue(fd, v, file.FileDescriptor, node); !ok {
 					goto ConvertError
 				}
 			}
@@ -63,14 +56,14 @@ func dataProcessor(file *File, fieldDef *model.FieldDefine, rawValue string, nod
 	} else {
 
 		// 单值
-		if cv, ok := filter.ConvertValue(fieldDef, rawValue, file.TypeSet, node); !ok {
+		if cv, ok := filter.ConvertValue(fd, raw, file.FileDescriptor, node); !ok {
 			goto ConvertError
 
 		} else {
 
 			// 值重复检查
-			if fieldDef.Meta.RepeatCheck && !file.checkValueRepeat(fieldDef, cv) {
-				log.Errorf("found repeat value, %s raw: '%s'", fieldDef.String(), cv)
+			if fd.Meta.RepeatCheck && !file.checkValueRepeat(fd, cv) {
+				log.Errorf("found repeat value, %s raw: '%s'", fd.String(), cv)
 				return false
 			}
 		}
@@ -81,17 +74,12 @@ func dataProcessor(file *File, fieldDef *model.FieldDefine, rawValue string, nod
 
 ConvertError:
 
-	log.Errorf("value convert error, %s raw: '%s'", fieldDef.String(), rawValue)
+	log.Errorf("value convert error, %s raw: '%s'", fd.String(), raw)
 
 	return false
 }
 
-func (self *DataSheet) Export(file *File, tab *model.Table) bool {
-
-	// 检查引导头
-	if !self.ParseProtoField(self.Sheet, file.TypeSet) {
-		return true
-	}
+func (self *DataSheet) Export(file *File, tab *model.Table, dataHeader *DataHeader) bool {
 
 	// 是否继续读行
 	var readingLine bool = true
@@ -107,9 +95,9 @@ func (self *DataSheet) Export(file *File, tab *model.Table) bool {
 		record := model.NewRecord()
 
 		// 遍历每一列
-		for self.Column = 0; self.Column < len(self.rawHeaderFields); self.Column++ {
+		for self.Column = 0; self.Column < dataHeader.RawFieldCount(); self.Column++ {
 
-			fieldDef := self.FetchFieldDefine(self.Column)
+			fieldDef := dataHeader.RawField(self.Column)
 
 			// 数据大于列头时, 结束这个列
 			if fieldDef == nil {
@@ -161,7 +149,6 @@ ErrorStop:
 func newDataSheet(sheet *Sheet) *DataSheet {
 
 	return &DataSheet{
-		Sheet:      sheet,
-		DataHeader: newDataHeadSheet(),
+		Sheet: sheet,
 	}
 }
