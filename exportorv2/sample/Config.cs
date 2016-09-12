@@ -19,7 +19,7 @@ namespace gamedef
 	}
 	
 	
-	public partial class Config : tabtoy.DataObject
+	public partial class  : tabtoy.DataObject
 	{	
 		
 		// Sample

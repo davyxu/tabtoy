@@ -11,8 +11,7 @@ import (
 )
 
 type BinaryFile struct {
-	Name string // rootName
-	buf  bytes.Buffer
+	buf bytes.Buffer
 }
 
 func (self *BinaryFile) Buffer() *bytes.Buffer {
@@ -83,8 +82,6 @@ func (self *BinaryFile) WriteNodeValue(ft model.FieldType, value *model.Node) {
 
 }
 
-func NewBinaryFile(name string) *BinaryFile {
-	return &BinaryFile{
-		Name: name,
-	}
+func NewBinaryFile() *BinaryFile {
+	return &BinaryFile{}
 }

@@ -19,14 +19,37 @@ func valueWrapperJson(t model.FieldType, node *model.Node) string {
 	return node.Value
 }
 
-func PrintJson(tab *model.Table, version string, outfile string) bool {
+type jsonPrinter struct {
+}
 
-	bf := NewBinaryFile(tab.Name)
+func (self *jsonPrinter) Run(g *Globals) *BinaryFile {
 
+	bf := NewBinaryFile()
 	bf.Printf("{\n")
 
 	bf.Printf("	\"Tool\": \"github.com/davyxu/tabtoy\",\n")
-	bf.Printf("	\"Version\": \"%s\",\n", version)
+	bf.Printf("	\"Version\": \"%s\",\n", g.Version)
+
+	for tabIndex, tab := range g.Tables {
+
+		if !printTableJson(bf, tab) {
+			return nil
+		}
+
+		// 根字段分割
+		if tabIndex < len(g.Tables)-1 {
+			bf.Printf(", ")
+		}
+
+		bf.Printf("\n")
+	}
+
+	bf.Printf("}")
+
+	return bf
+}
+
+func printTableJson(bf *BinaryFile, tab *model.Table) bool {
 
 	bf.Printf("	\"%s\":[\n", tab.Name)
 
@@ -124,9 +147,14 @@ func PrintJson(tab *model.Table, version string, outfile string) bool {
 
 	}
 
-	bf.Printf("	]\n")
-	bf.Printf("}")
+	bf.Printf("	]")
 
-	return bf.Write(outfile)
+	return true
+
+}
+
+func init() {
+
+	RegisterPrinter(".json", &jsonPrinter{})
 
 }

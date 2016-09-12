@@ -73,7 +73,7 @@ namespace {{.Namespace}}{{$globalIndex:=.Indexes}}
 `
 
 type indexField struct {
-	tableIndex
+	TableIndex
 }
 
 func (self indexField) IndexName() string {
@@ -253,7 +253,10 @@ type csharpFileModel struct {
 	Indexes     []indexField // 全局的索引
 }
 
-func PrintCSharp(fileD *model.FileDescriptor, globalIndex []tableIndex, toolVersion string) *BinaryFile {
+type csharpPrinter struct {
+}
+
+func (self *csharpPrinter) Run(g *Globals) *BinaryFile {
 
 	tpl, err := template.New("csharp").Parse(csharpTemplate)
 	if err != nil {
@@ -263,17 +266,17 @@ func PrintCSharp(fileD *model.FileDescriptor, globalIndex []tableIndex, toolVers
 
 	var m csharpFileModel
 
-	m.Namespace = fileD.Pragma.Package
-	m.ToolVersion = toolVersion
+	m.Namespace = g.FileDescriptor.Pragma.Package
+	m.ToolVersion = g.Version
 
 	// combinestruct的全局索引
-	for _, ti := range globalIndex {
+	for _, ti := range g.GlobalIndexes {
 
-		m.Indexes = append(m.Indexes, indexField{tableIndex: ti})
+		m.Indexes = append(m.Indexes, indexField{TableIndex: ti})
 	}
 
 	// 遍历所有类型
-	for _, d := range fileD.Descriptors {
+	for _, d := range g.FileDescriptor.Descriptors {
 
 		var sm structModel
 		sm.Descriptor = d
@@ -315,7 +318,7 @@ func PrintCSharp(fileD *model.FileDescriptor, globalIndex []tableIndex, toolVers
 
 	}
 
-	bf := NewBinaryFile("C# Source")
+	bf := NewBinaryFile()
 
 	err = tpl.Execute(bf.Buffer(), &m)
 	if err != nil {
@@ -324,4 +327,10 @@ func PrintCSharp(fileD *model.FileDescriptor, globalIndex []tableIndex, toolVers
 	}
 
 	return bf
+}
+
+func init() {
+
+	RegisterPrinter(".cs", &csharpPrinter{})
+
 }

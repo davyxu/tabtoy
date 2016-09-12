@@ -10,6 +10,7 @@ import (
 	"github.com/davyxu/tabtoy/exportorv1"
 	"github.com/davyxu/tabtoy/exportorv1/data"
 	"github.com/davyxu/tabtoy/exportorv2"
+	"github.com/davyxu/tabtoy/exportorv2/printer"
 )
 
 var log *golog.Logger = golog.New("main")
@@ -47,14 +48,14 @@ var paramPatch = flag.String("patch", "", "[v1] patch input files then output")
 var paramFormat = flag.String("fmt", "pbt", "[v1] output file format, support 'pbt', 'lua' ")
 
 // ============================v2 版本参数============================
-var paramProto3OutDir = flag.String("proto3_outdir", "", "[v2] output protobuf define v3 (*.proto)")
-var paramProto2OutDir = flag.String("proto2_outdir", "", "[v2] output protobuf define v2 (*.proto)")
+var paramProtoOutDir = flag.String("proto_outdir", "", "[v2] output protobuf define (*.proto)")
 var paramPbtOutDir = flag.String("pbt_outdir", "", "[v2] output proto text format (*.pbt)")
 var paramLuaOutDir = flag.String("lua_outdir", "", "[v2] output lua code (*.lua)")
 var paramJsonOutDir = flag.String("json_outdir", "", "[v2] output json format (*.json)")
 var paramCSharpOutDir = flag.String("csharp_outdir", "", "[v2] output c# class and deserialize code (*.cs)")
 var paramBinaryOutDir = flag.String("binary_outdir", "", "[v2] input filename , output binary format(*.bin)")
 var paramCombineStructName = flag.String("combinename", "", "[v2] combine struct name, affect binary filename and code struct name")
+var paramProtoVersion = flag.Int("protover", 3, "[v2] output .proto file version, 2 or 3")
 
 const Version = "2.0.0"
 
@@ -84,19 +85,39 @@ func main() {
 		}
 	case "exportorv2":
 
-		if !exportorv2.Run(exportorv2.Parameter{
-			Version:           Version,
-			InputFileList:     flag.Args(),
-			ParaMode:          *paramPara,
-			Proto3OutDir:      *paramProto3OutDir,
-			Proto2OutDir:      *paramProto2OutDir,
-			PbtOutDir:         *paramPbtOutDir,
-			JsonOutDir:        *paramJsonOutDir,
-			LuaOutDir:         *paramLuaOutDir,
-			CSharpOutDir:      *paramCSharpOutDir,
-			BinaryOutDir:      *paramBinaryOutDir,
-			CombineStructName: *paramCombineStructName,
-		}) {
+		g := printer.NewGlobals()
+
+		g.Version = Version
+		g.InputFileList = flag.Args()
+		g.ParaMode = *paramPara
+		g.CombineStructName = *paramCombineStructName
+		g.ProtoVersion = *paramProtoVersion
+
+		if *paramProtoOutDir != "" {
+			g.AddOutputType(".proto", *paramProtoOutDir)
+		}
+
+		if *paramPbtOutDir != "" {
+			g.AddOutputType(".pbt", *paramPbtOutDir)
+		}
+
+		if *paramJsonOutDir != "" {
+			g.AddOutputType(".json", *paramJsonOutDir)
+		}
+
+		if *paramLuaOutDir != "" {
+			g.AddOutputType(".lua", *paramLuaOutDir)
+		}
+
+		if *paramCSharpOutDir != "" {
+			g.AddOutputType(".cs", *paramCSharpOutDir)
+		}
+
+		if *paramBinaryOutDir != "" {
+			g.AddOutputType(".bin", *paramBinaryOutDir)
+		}
+
+		if !exportorv2.Run(g) {
 			goto Err
 		}
 	default:

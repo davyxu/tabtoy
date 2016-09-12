@@ -16,8 +16,7 @@ namespace tabtoy
 	    String  = 6,
 	    Bool    = 7,
 	    Enum    = 8,
-	    Struct  = 9,
-	    Bytes   = 10, // 暂时为binaryfile输出使用
+	    Struct  = 9,	    
     }
 
     public interface DataObject

@@ -1,9 +1,9 @@
+*.suo
 /proto/protoc-gen-go.exe
 /proto/protoc.exe
-/test/test.pb
 /tabtoy.exe
-test/Actor_std.json
-exportorv2/test/~$Actor.xlsx
-*.suo
-exportorv2/test/csharptest/csharptest/bin/
-exportorv2/test/csharptest/csharptest/obj/
+exportorv1/test/test.pb
+exportorv1/test/Actor_std.json
+exportorv2/sample/~$Actor.xlsx
+exportorv2/sample/csharp/csharp/bin/
+exportorv2/sample/csharp/csharp/obj/
