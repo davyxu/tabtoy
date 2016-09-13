@@ -68,20 +68,22 @@
 
 # 第六代导出器文档(tabtoy v2)
 
+![电子表格](doc/table_v2.png)
+
 ## 导出步骤
 
 ### 准备电子表格文件
 
 格式请参考:
 	
-	[Sample.xlsx]: (https://github.com/davyxu/tabtoy/blob/master/exportorv2/sample/Sample.xlsx)
+	https://github.com/davyxu/tabtoy/blob/master/exportorv2/sample/Sample.xlsx
 	
 	
 ### 准备tabtoy二进制
 
 * 已经编译好的二进制:
 	
-	[Tabtoy Release]: (https://github.com/davyxu/tabtoy/releases)
+	https://github.com/davyxu/tabtoy/releases
 	
 * 手动编译
 	
@@ -91,24 +93,25 @@
 
 范例:
 		
-	```bat
-	
-	tabtoy --mode=exportorv2 --json_out=.\config.json Table.xlsx
-	
-	```
+```bat
+
+tabtoy --mode=exportorv2 --json_out=.\config.json Table.xlsx
+
+```
+
 ## 例子
 	
-[范例]: (https://github.com/davyxu/tabtoy/blob/master/exportorv2/sample)	
+https://github.com/davyxu/tabtoy/blob/master/exportorv2/sample
 
 ## 详细文档
 
-[Manual_V2.md]: (https://github.com/davyxu/tabtoy/blob/master/doc/Manual_V2.md)
+https://github.com/davyxu/tabtoy/blob/master/doc/Manual_V2.md
 
 
 推荐!
 
 # 第五代导出器文档(tabtoy v1)
-[Manual_V1.md]: (https://github.com/davyxu/tabtoy/blob/master/doc/Manual_V1.md)
+https://github.com/davyxu/tabtoy/blob/master/doc/Manual_V1.md
 
 已停止开发
 
