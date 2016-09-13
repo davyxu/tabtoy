@@ -70,7 +70,7 @@ func (self *File) Export(filename string) *model.Table {
 
 	self.Name = self.Pragma.TableName
 
-	tab := model.NewTable(self.Pragma.TableName)
+	tab := model.NewTable(self.FileDescriptor)
 
 	// 遍历数据表
 	for _, rawSheet := range file.Sheets {

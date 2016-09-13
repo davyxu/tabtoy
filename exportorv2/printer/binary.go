@@ -17,6 +17,10 @@ func (self *binaryPrinter) Run(g *Globals) *BinaryFile {
 
 	for index, tab := range g.Tables {
 
+		if !tab.MatchTag(".bin") {
+			continue
+		}
+
 		bf.WriteInt32(model.MakeTag(model.FieldType_Struct, int32(index)))
 
 		if !writeTableBinary(bf, tab) {

@@ -1,11 +1,11 @@
 ..\..\..\..\..\..\bin\tabtoy.exe ^
 --mode=exportorv2 ^
---csharp_outdir=. ^
---binary_outdir=. ^
---pbt_outdir=. ^
---proto_outdir=. ^
---json_outdir=. ^
---lua_outdir=. ^
+--csharp_out=.\Config.cs ^
+--binary_out=.\Config.bin ^
+--pbt_out=.\Config.pbt ^
+--proto_out=.\Config.proto ^
+--json_out=.\Config.json ^
+--lua_out=.\Config.lua ^
 --combinename=Config ^
 Sample.xlsx ^
 Exp.xlsx

@@ -48,13 +48,13 @@ var paramPatch = flag.String("patch", "", "[v1] patch input files then output")
 var paramFormat = flag.String("fmt", "pbt", "[v1] output file format, support 'pbt', 'lua' ")
 
 // ============================v2 版本参数============================
-var paramProtoOutDir = flag.String("proto_outdir", "", "[v2] output protobuf define (*.proto)")
-var paramPbtOutDir = flag.String("pbt_outdir", "", "[v2] output proto text format (*.pbt)")
-var paramLuaOutDir = flag.String("lua_outdir", "", "[v2] output lua code (*.lua)")
-var paramJsonOutDir = flag.String("json_outdir", "", "[v2] output json format (*.json)")
-var paramCSharpOutDir = flag.String("csharp_outdir", "", "[v2] output c# class and deserialize code (*.cs)")
-var paramBinaryOutDir = flag.String("binary_outdir", "", "[v2] input filename , output binary format(*.bin)")
-var paramCombineStructName = flag.String("combinename", "", "[v2] combine struct name, affect binary filename and code struct name")
+var paramProtoOut = flag.String("proto_out", "", "[v2] output protobuf define (*.proto)")
+var paramPbtOut = flag.String("pbt_out", "", "[v2] output proto text format (*.pbt)")
+var paramLuaOut = flag.String("lua_out", "", "[v2] output lua code (*.lua)")
+var paramJsonOut = flag.String("json_out", "", "[v2] output json format (*.json)")
+var paramCSharpOut = flag.String("csharp_out", "", "[v2] output c# class and deserialize code (*.cs)")
+var paramBinaryOut = flag.String("binary_out", "", "[v2] input filename , output binary format(*.bin)")
+var paramCombineStructName = flag.String("combinename", "", "[v2] combine struct name, code struct name")
 var paramProtoVersion = flag.Int("protover", 3, "[v2] output .proto file version, 2 or 3")
 
 const Version = "2.0.0"
@@ -79,7 +79,6 @@ func main() {
 			PatchFile:     *paramPatch,
 			Format:        *paramFormat,
 			ParaMode:      *paramPara,
-			OutDir:        *paramOutDir,
 		}) {
 			goto Err
 		}
@@ -93,28 +92,28 @@ func main() {
 		g.CombineStructName = *paramCombineStructName
 		g.ProtoVersion = *paramProtoVersion
 
-		if *paramProtoOutDir != "" {
-			g.AddOutputType(".proto", *paramProtoOutDir)
+		if *paramProtoOut != "" {
+			g.AddOutputType(".proto", *paramProtoOut)
 		}
 
-		if *paramPbtOutDir != "" {
-			g.AddOutputType(".pbt", *paramPbtOutDir)
+		if *paramPbtOut != "" {
+			g.AddOutputType(".pbt", *paramPbtOut)
 		}
 
-		if *paramJsonOutDir != "" {
-			g.AddOutputType(".json", *paramJsonOutDir)
+		if *paramJsonOut != "" {
+			g.AddOutputType(".json", *paramJsonOut)
 		}
 
-		if *paramLuaOutDir != "" {
-			g.AddOutputType(".lua", *paramLuaOutDir)
+		if *paramLuaOut != "" {
+			g.AddOutputType(".lua", *paramLuaOut)
 		}
 
-		if *paramCSharpOutDir != "" {
-			g.AddOutputType(".cs", *paramCSharpOutDir)
+		if *paramCSharpOut != "" {
+			g.AddOutputType(".cs", *paramCSharpOut)
 		}
 
-		if *paramBinaryOutDir != "" {
-			g.AddOutputType(".bin", *paramBinaryOutDir)
+		if *paramBinaryOut != "" {
+			g.AddOutputType(".bin", *paramBinaryOut)
 		}
 
 		if !exportorv2.Run(g) {

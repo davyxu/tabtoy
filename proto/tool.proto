@@ -50,8 +50,5 @@ message FilePragmaV2
 	
 	string TableName = 2;			// 表名, 文件类型名=表名File  行类型=表名Define	
 	
-	
-	string Proto3OutFileName = 11;		// 指定proto3输出文件名
-	
-	string Proto2OutFileName = 12;		// 指定proto2输出文件名
+	repeated string OutputTag = 3;	// tag, 无tag时全部类型输出, 有扩展时, 匹配输出
 }

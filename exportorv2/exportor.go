@@ -1,48 +1,33 @@
 package exportorv2
 
 import (
-	"bytes"
-
 	"github.com/davyxu/tabtoy/exportorv2/printer"
 	"github.com/davyxu/tabtoy/util"
 )
 
-func printIndent(indent int) string {
-
-	var buf bytes.Buffer
-	for i := 0; i < indent*10; i++ {
-		buf.WriteString(" ")
-	}
-
-	return buf.String()
-}
-
 func Run(g *printer.Globals) bool {
+
+	if !g.PreExport() {
+		return false
+	}
 
 	if !util.ParallelWorker(g.InputFileList, g.ParaMode, func(inputFile string) bool {
 
-		//	 显示电子表格到导出文件
-
 		file := NewFile()
 
+		// 电子表格数据导出到Table对象
 		tab := file.Export(inputFile)
 		if tab == nil {
 			return false
 		}
 
-		if !g.CombineType(inputFile, file.FileDescriptor) {
-			return false
-		}
-
-		if !g.CombineData(tab) {
-			return false
-		}
-
-		return true
+		// 整合类型信息和数据
+		return g.AddContent(tab)
 
 	}) {
 		return false
 	}
 
-	return g.Run()
+	// 根据各种导出类型, 调用各导出器导出
+	return g.Print()
 }

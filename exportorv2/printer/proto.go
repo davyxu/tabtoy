@@ -98,12 +98,26 @@ func (self *protoPrinter) Run(g *Globals) *BinaryFile {
 	// 遍历所有类型
 	for _, d := range g.FileDescriptor.Descriptors {
 
+		// 这给被限制输出
+		if !d.File.MatchTag(".proto") {
+			continue
+		}
+
 		var protoD protoDescriptor
 		protoD.Descriptor = d
 		protoD.file = &m
 
 		// 遍历字段
 		for index, fd := range d.Fields {
+
+			// 对CombineStruct的XXDefine对应的字段
+			if d.Usage == model.DescriptorUsage_CombineStruct {
+
+				// 这个字段被限制输出
+				if !fd.Complex.File.MatchTag(".proto") {
+					continue
+				}
+			}
 
 			var field protoFieldDescriptor
 			field.FieldDescriptor = fd

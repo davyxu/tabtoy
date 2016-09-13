@@ -1,18 +1,17 @@
 package printer
 
 import (
-	"path"
+	"path/filepath"
 )
 
 type PrinterContext struct {
-	outDir string
-	p      Printer
-	ext    string
+	outFile string
+	p       Printer
+	ext     string
 }
 
 func (self *PrinterContext) Start(g *Globals) bool {
-	filebase := g.CombineStructName + self.ext
-	outputFile := path.Join(self.outDir, filebase)
+	filebase := filepath.Base(self.outFile)
 
 	log.Infof("%s\n", filebase)
 
@@ -22,7 +21,7 @@ func (self *PrinterContext) Start(g *Globals) bool {
 		return false
 	}
 
-	return bf.Write(outputFile)
+	return bf.Write(self.outFile)
 }
 
 type Printer interface {

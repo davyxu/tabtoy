@@ -65,6 +65,12 @@ namespace tabtoy
         {
             if (pedingtag == 0 )
             {
+                // 已经读完
+                if ( _reader.BaseStream.Position == _reader.BaseStream.Length )
+                {
+                    return false;
+                }
+
                 pedingtag = _reader.ReadInt32();                
             }
 

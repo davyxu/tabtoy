@@ -19,14 +19,11 @@ namespace gamedef
 	}
 	
 	
-	public partial class  : tabtoy.DataObject
+	public partial class Config : tabtoy.DataObject
 	{	
 		
 		// Sample
 		public List<SampleDefine> Sample = new List<SampleDefine>();
-		
-		// Exp
-		public List<ExpDefine> Exp = new List<ExpDefine>();
 	
 	
 	
@@ -54,18 +51,6 @@ namespace gamedef
             return null;
         }
 	
-	 	Dictionary<int, ExpDefine> _ExpByLevel = new Dictionary<int, ExpDefine>();
-        public ExpDefine GetExpByLevel(int Level)
-        {
-            ExpDefine ret;
-            if ( _ExpByLevel.TryGetValue( Level, out ret ) )
-            {
-                return ret;
-            }
-
-            return null;
-        }
-	
 		public void Deserialize( tabtoy.DataReader reader )
 		{
 			
@@ -73,12 +58,6 @@ namespace gamedef
 			if ( reader.MatchTag(0x90000))
 			{
 				reader.ReadList_Struct<SampleDefine>( this.Sample );
-			}
-			
-			// Exp
-			if ( reader.MatchTag(0x90001))
-			{
-				reader.ReadList_Struct<ExpDefine>( this.Exp );
 			}
 			
 			
@@ -90,15 +69,6 @@ namespace gamedef
                 _SampleByID.Add(element.ID, element);                
 				
                 _SampleByName.Add(element.Name, element);                
-				
-            }
-			
-			// Build Exp Index
-            for( int i = 0;i< this.Exp.Count;i++)
-            {
-                var element = this.Exp[i];
-				
-                _ExpByLevel.Add(element.Level, element);                
 				
             }
 			
@@ -222,36 +192,6 @@ namespace gamedef
 			if ( reader.MatchTag(0x90007))
 			{
 				reader.ReadList_Struct<Prop>( this.StrStruct );
-			}
-			
-			
-		}
-	}
-	
-	public partial class ExpDefine : tabtoy.DataObject
-	{	
-		
-		// 唯一ID
-		public int Level = 0;
-		
-		// 名称
-		public int Exp = 0;
-	
-	
-	
-		public void Deserialize( tabtoy.DataReader reader )
-		{
-			
-			// 唯一ID
-			if ( reader.MatchTag(0x10000))
-			{
-				this.Level = reader.ReadInt32( );
-			}
-			
-			// 名称
-			if ( reader.MatchTag(0x10001))
-			{
-				this.Exp = reader.ReadInt32( );
 			}
 			
 			

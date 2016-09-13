@@ -18,7 +18,7 @@ enum ActorType
 }
 
 
-message 
+message Config
 {	
 	
 	// Sample

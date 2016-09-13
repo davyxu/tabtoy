@@ -14,6 +14,22 @@ type FileDescriptor struct {
 	Pragma tool.FilePragmaV2
 }
 
+func (self *FileDescriptor) MatchTag(tag string) bool {
+
+	if len(self.Pragma.OutputTag) == 0 {
+		return true
+	}
+
+	for _, t := range self.Pragma.OutputTag {
+		if t == tag {
+			return true
+		}
+	}
+
+	return false
+
+}
+
 // 取行类型的结构
 func (self *FileDescriptor) RowDescriptor() *Descriptor {
 
@@ -32,7 +48,12 @@ func (self *FileDescriptor) Add(def *Descriptor) {
 		panic("duplicate buildin type")
 	}
 
-	def.File = self
+	// Descriptor会在每个表对应的FileDescriptor中和CombineFileDescriptor中同时存在
+	// 这里忽略CombineFileDescriptor, 保持原有文件类型
+	if def.File == nil {
+		def.File = self
+	}
+
 	self.Descriptors = append(self.Descriptors, def)
 	self.DescriptorByName[def.Name] = def
 }

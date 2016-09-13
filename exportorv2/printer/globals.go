@@ -1,6 +1,8 @@
 package printer
 
 import (
+	"sync"
+
 	"github.com/davyxu/tabtoy/exportorv2/model"
 )
 
@@ -26,15 +28,47 @@ type Globals struct {
 
 	GlobalIndexes []TableIndex      // 类型信息.全局索引
 	CombineStruct *model.Descriptor // 类型信息.Combine结构体
+
+	guard sync.Mutex
 }
 
-func (self *Globals) AddOutputType(ext string, outdir string) {
+func (self *Globals) PreExport() bool {
+
+	// 当合并结构名没有指定时, 对于代码相关的输出器, 要报错
+	if self.CombineStructName == "" && self.hasAnyPrinter(".proto", ".cs") {
+		log.Errorf("please specify 'combinename' params while code generating")
+		return false
+	}
+
+	// 添加XXConfig全局结构
+	self.CombineStruct.Name = self.CombineStructName
+	self.CombineStruct.Kind = model.DescriptorKind_Struct
+	self.CombineStruct.Usage = model.DescriptorUsage_CombineStruct
+	self.FileDescriptor.Name = "Combine"
+	self.FileDescriptor.Add(self.CombineStruct)
+	return true
+}
+
+func (self *Globals) hasAnyPrinter(exts ...string) bool {
+	for _, ext := range exts {
+
+		for _, p := range self.Printers {
+			if p.ext == ext {
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
+func (self *Globals) AddOutputType(ext string, outfile string) {
 
 	if p, ok := printerByExt[ext]; ok {
 		self.Printers = append(self.Printers, &PrinterContext{
-			p:      p,
-			outDir: outdir,
-			ext:    ext,
+			p:       p,
+			outFile: outfile,
+			ext:     ext,
 		})
 	} else {
 		panic("output type not found:" + ext)
@@ -42,7 +76,7 @@ func (self *Globals) AddOutputType(ext string, outdir string) {
 
 }
 
-func (self *Globals) Run() bool {
+func (self *Globals) Print() bool {
 
 	for _, p := range self.Printers {
 
@@ -56,15 +90,29 @@ func (self *Globals) Run() bool {
 }
 
 // 合并每个表带的类型
-func (self *Globals) CombineType(inputFile string, fileD *model.FileDescriptor) bool {
-	// 有表格里描述的包名不一致, 无法合成最终的文件
+func (self *Globals) AddContent(tab *model.Table) bool {
 
+	fileD := tab.FileDescriptor
+
+	self.guard.Lock()
+
+	defer self.guard.Unlock()
+
+	// 有表格里描述的包名不一致, 无法合成最终的文件
 	if self.Pragma.Package == "" {
 		self.Pragma.Package = fileD.Pragma.Package
 	} else if self.Pragma.Package != fileD.Pragma.Package {
 		log.Errorf("keep all type in same package! %s, %s", self.Pragma.Package, fileD.Pragma.Package)
 		return false
 	}
+
+	if _, ok := self.tableByName[tab.Name]; ok {
+		log.Errorln("duplicate table name in combine binary output:", tab.Name)
+		return false
+	}
+
+	self.tableByName[tab.Name] = tab
+	self.Tables = append(self.Tables, tab)
 
 	// 每个表在结构体里的字段
 	var rowFD model.FieldDescriptor
@@ -105,31 +153,12 @@ func (self *Globals) CombineType(inputFile string, fileD *model.FileDescriptor) 
 	return true
 }
 
-func (self *Globals) CombineData(tab *model.Table) bool {
-
-	if _, ok := self.tableByName[tab.Name]; ok {
-		log.Errorln("duplicate table name in combine binary output:", tab.Name)
-		return false
-	}
-
-	self.tableByName[tab.Name] = tab
-	self.Tables = append(self.Tables, tab)
-
-	return true
-}
-
 func NewGlobals() *Globals {
 	self := &Globals{
 		tableByName:    make(map[string]*model.Table),
 		FileDescriptor: model.NewFileDescriptor(),
 		CombineStruct:  model.NewDescriptor(),
 	}
-
-	// 添加XXConfig全局结构
-	self.CombineStruct.Name = self.CombineStructName
-	self.CombineStruct.Kind = model.DescriptorKind_Struct
-	self.CombineStruct.Usage = model.DescriptorUsage_CombineStruct
-	self.FileDescriptor.Add(self.CombineStruct)
 
 	return self
 }

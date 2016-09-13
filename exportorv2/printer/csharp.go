@@ -272,11 +272,21 @@ func (self *csharpPrinter) Run(g *Globals) *BinaryFile {
 	// combinestruct的全局索引
 	for _, ti := range g.GlobalIndexes {
 
+		// 索引也限制
+		if !ti.Index.Parent.File.MatchTag(".cs") {
+			continue
+		}
+
 		m.Indexes = append(m.Indexes, indexField{TableIndex: ti})
 	}
 
 	// 遍历所有类型
 	for _, d := range g.FileDescriptor.Descriptors {
+
+		// 这给被限制输出
+		if !d.File.MatchTag(".cs") {
+			continue
+		}
 
 		var sm structModel
 		sm.Descriptor = d
@@ -291,12 +301,13 @@ func (self *csharpPrinter) Run(g *Globals) *BinaryFile {
 		// 遍历字段
 		for _, fd := range d.Fields {
 
-			csField := csharpField{FieldDescriptor: fd}
-
-			sm.Fields = append(sm.Fields, csField)
-
 			// 对CombineStruct的XXDefine对应的字段
 			if d.Usage == model.DescriptorUsage_CombineStruct {
+
+				// 这个字段被限制输出
+				if !fd.Complex.File.MatchTag(".cs") {
+					continue
+				}
 
 				// 这个结构有索引才创建
 				if len(fd.Complex.Indexes) > 0 {
@@ -313,6 +324,10 @@ func (self *csharpPrinter) Run(g *Globals) *BinaryFile {
 				}
 
 			}
+
+			csField := csharpField{FieldDescriptor: fd}
+
+			sm.Fields = append(sm.Fields, csField)
 
 		}
 
