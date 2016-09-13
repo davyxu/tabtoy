@@ -1,57 +1,8 @@
 # tabtoy
 
-游戏客户端,服务器的策划表格数据导出
+第五代导出器文档. 描述tabtoy v1版各种功能
 
-将电子表格文件根据制定proto及字段转化规则,导出为Protobuf文本格式(*.pbt)， json或lua格式
-
-使用者通过读取Protobuf文本格式, json, lua等格式直接获取到所有的格式化数据
-
-# 优点
-
-本转化器无需依赖vbs,vba.跨平台
-
-直接输出基于Protobuf文本的格式化数据, 直接读取
-
-支持lua, json格式输出, 无需解析,转换,直接读取
-
-字段位置随意调整, 自动检查错误, 精确报错位置
-
-充分利用CPU多核进行导出, 是已知的现有导出器中最快的
-
-持续更新, 不断添加新功能, 提高工作效率
-
-# 商用项目
-
-* Fairy in Wonderland
-	https://itunes.apple.com/us/app/fairy-in-wonderland-parkour/id1128656892?l=zh&ls=1&mt=8
-	
-* Mad Magic
-	https://itunes.apple.com/app/id1146098397
-
-
-如果你的项目在使用tabtoy, 请联系我添加链接, 互相宣传
-
-# 应用情况
-
-前面多个版本都在本人项目中使用
-
-53个Excel源文件, 格式xlsm, 大小3.8M
-
-导出速度(硬件环境: i7-4790 8核+SSD)
-
-* 9.4s 第四代导出器
-
-* 4.9s 第五代导出器单线程
-
-* 2.4s 第五代导出器
-
-
-# 编译
-
-	go get github.com/davyxu/tabtoy
-	
-	go install github.com/davyxu/tabtoy
-
+v1版已停止开发, 请使用更加强大的第六代导出器tabtoy v2版本
 
 # 导出步骤
 

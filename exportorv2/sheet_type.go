@@ -45,6 +45,20 @@ func (self *TypeSheet) Parse(fileD *model.FileDescriptor) bool {
 		goto ErrorStop
 	}
 
+	if fileD.Pragma.TableName == "" {
+		self.Row = TypeSheetRow_Pragma
+		self.Column = 0
+		log.Errorf("@Types TableName is empty")
+		goto ErrorStop
+	}
+
+	if fileD.Pragma.Package == "" {
+		self.Row = TypeSheetRow_Pragma
+		self.Column = 0
+		log.Errorf("@Types Package is empty")
+		goto ErrorStop
+	}
+
 	// 遍历每一行
 	for self.Row = TypeSheetRow_DataBegin; readingLine; self.Row++ {
 

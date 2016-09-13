@@ -24,6 +24,9 @@ namespace gamedef
 		
 		// Sample
 		public List<SampleDefine> Sample = new List<SampleDefine>();
+		
+		// Exp
+		public List<ExpDefine> Exp = new List<ExpDefine>();
 	
 	
 	
@@ -51,6 +54,18 @@ namespace gamedef
             return null;
         }
 	
+	 	Dictionary<int, ExpDefine> _ExpByLevel = new Dictionary<int, ExpDefine>();
+        public ExpDefine GetExpByLevel(int Level)
+        {
+            ExpDefine ret;
+            if ( _ExpByLevel.TryGetValue( Level, out ret ) )
+            {
+                return ret;
+            }
+
+            return null;
+        }
+	
 		public void Deserialize( tabtoy.DataReader reader )
 		{
 			
@@ -58,6 +73,12 @@ namespace gamedef
 			if ( reader.MatchTag(0x90000))
 			{
 				reader.ReadList_Struct<SampleDefine>( this.Sample );
+			}
+			
+			// Exp
+			if ( reader.MatchTag(0x90001))
+			{
+				reader.ReadList_Struct<ExpDefine>( this.Exp );
 			}
 			
 			
@@ -69,6 +90,15 @@ namespace gamedef
                 _SampleByID.Add(element.ID, element);                
 				
                 _SampleByName.Add(element.Name, element);                
+				
+            }
+			
+			// Build Exp Index
+            for( int i = 0;i< this.Exp.Count;i++)
+            {
+                var element = this.Exp[i];
+				
+                _ExpByLevel.Add(element.Level, element);                
 				
             }
 			
@@ -123,6 +153,9 @@ namespace gamedef
 		// 名称
 		public string Name = "";
 		
+		// 
+		public int IconID = 0;
+		
 		// 攻击率
 		public float NumericalRate = 0;
 		
@@ -158,40 +191,76 @@ namespace gamedef
 				this.Name = reader.ReadString( );
 			}
 			
+			// 
+			if ( reader.MatchTag(0x10002))
+			{
+				this.IconID = reader.ReadInt32( );
+			}
+			
 			// 攻击率
-			if ( reader.MatchTag(0x50002))
+			if ( reader.MatchTag(0x50003))
 			{
 				this.NumericalRate = reader.ReadFloat( );
 			}
 			
 			// 物品id
-			if ( reader.MatchTag(0x10003))
+			if ( reader.MatchTag(0x10004))
 			{
 				this.ItemID = reader.ReadInt32( );
 			}
 			
 			// BuffID
-			if ( reader.MatchTag(0x10004))
+			if ( reader.MatchTag(0x10005))
 			{
 				reader.ReadList_Int32( this.BuffID );
 			}
 			
 			// 类型
-			if ( reader.MatchTag(0x80005))
+			if ( reader.MatchTag(0x80006))
 			{
 				this.Type = reader.ReadEnum<ActorType>( );
 			}
 			
 			// 技能ID列表
-			if ( reader.MatchTag(0x10006))
+			if ( reader.MatchTag(0x10007))
 			{
 				reader.ReadList_Int32( this.SkillID );
 			}
 			
 			// 字符串结构
-			if ( reader.MatchTag(0x90007))
+			if ( reader.MatchTag(0x90008))
 			{
 				reader.ReadList_Struct<Prop>( this.StrStruct );
+			}
+			
+			
+		}
+	}
+	
+	public partial class ExpDefine : tabtoy.DataObject
+	{	
+		
+		// 唯一ID
+		public int Level = 0;
+		
+		// 名称
+		public int Exp = 0;
+	
+	
+	
+		public void Deserialize( tabtoy.DataReader reader )
+		{
+			
+			// 唯一ID
+			if ( reader.MatchTag(0x10000))
+			{
+				this.Level = reader.ReadInt32( );
+			}
+			
+			// 名称
+			if ( reader.MatchTag(0x10001))
+			{
+				this.Exp = reader.ReadInt32( );
 			}
 			
 			

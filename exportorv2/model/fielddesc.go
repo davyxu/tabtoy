@@ -21,7 +21,6 @@ const (
 	FieldType_Bool   FieldType = 7
 	FieldType_Enum   FieldType = 8
 	FieldType_Struct FieldType = 9
-	FieldType_Bytes  FieldType = 10 // 暂时为binaryfile输出使用
 )
 
 // 一列的描述

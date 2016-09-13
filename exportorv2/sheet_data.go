@@ -112,7 +112,7 @@ func (self *DataSheet) Export(file *File, tab *model.Table, dataHeader *DataHead
 			rawValue := self.GetCellData(self.Row, self.Column)
 
 			// repeated的, 没有填充的, 直接跳过, 不生成数据
-			if rawValue == "" && fieldDef.IsRepeated {
+			if rawValue == "" && fieldDef.Meta.Default == "" {
 				continue
 			}
 

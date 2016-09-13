@@ -33,6 +33,10 @@ func (self *luaPrinter) Run(g *Globals) *BinaryFile {
 
 	for tabIndex, tab := range g.Tables {
 
+		if !tab.MatchTag(".lua") {
+			continue
+		}
+
 		if !printTableLua(bf, tab) {
 			return nil
 		}
@@ -172,6 +176,11 @@ func genLuaIndexCode(bf *BinaryFile, combineStruct *model.Descriptor) bool {
 
 		// 对CombineStruct的XXDefine对应的字段
 		if combineStruct.Usage == model.DescriptorUsage_CombineStruct {
+
+			// 这个字段被限制输出
+			if !fd.Complex.File.MatchTag(".lua") {
+				continue
+			}
 
 			// 这个结构有索引才创建
 			if len(fd.Complex.Indexes) > 0 {

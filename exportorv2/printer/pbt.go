@@ -26,6 +26,10 @@ func (self *pbtPrinter) Run(g *Globals) *BinaryFile {
 
 	for _, tab := range g.Tables {
 
+		if !tab.MatchTag(".pbt") {
+			continue
+		}
+
 		if !printTablePBT(bf, tab) {
 			return nil
 		}

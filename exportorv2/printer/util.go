@@ -73,9 +73,6 @@ func (self *BinaryFile) WriteNodeValue(ft model.FieldType, value *model.Node) {
 		self.WriteString(value.Value)
 	case model.FieldType_Enum:
 		binary.Write(&self.buf, binary.LittleEndian, value.EnumValue)
-	case model.FieldType_Bytes:
-		binary.Write(&self.buf, binary.LittleEndian, int32(len(value.Raw)))
-		binary.Write(&self.buf, binary.LittleEndian, value.Raw)
 	default:
 		panic("unsupport type" + model.FieldTypeToString(ft))
 	}
