@@ -7,3 +7,4 @@ exportorv1/test/Actor_std.json
 exportorv2/sample/~*.xlsx
 exportorv2/sample/csharp/csharp/bin/
 exportorv2/sample/csharp/csharp/obj/
+Publish.bat

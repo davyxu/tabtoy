@@ -21,9 +21,6 @@ var paramVersion = flag.Bool("version", false, "Show version")
 // 工作模式
 var paramMode = flag.String("mode", "", "mode: exportorv1, exportorv2")
 
-// 输入电子表格文件
-var paramXlsFile = flag.String("xls", "XLS", "input excel file, use ',' splited file list by multipy files")
-
 // 并发导出,提高导出速度, 输出日志会混乱
 var paramPara = flag.Bool("para", false, "parallel export by your cpu count")
 
@@ -53,6 +50,7 @@ var paramPbtOut = flag.String("pbt_out", "", "[v2] output proto text format (*.p
 var paramLuaOut = flag.String("lua_out", "", "[v2] output lua code (*.lua)")
 var paramJsonOut = flag.String("json_out", "", "[v2] output json format (*.json)")
 var paramCSharpOut = flag.String("csharp_out", "", "[v2] output c# class and deserialize code (*.cs)")
+var paramGoOut = flag.String("go_out", "", "[v2] output golang index code (*.go)")
 var paramBinaryOut = flag.String("binary_out", "", "[v2] input filename , output binary format(*.bin)")
 var paramCombineStructName = flag.String("combinename", "", "[v2] combine struct name, code struct name")
 var paramProtoVersion = flag.Int("protover", 3, "[v2] output .proto file version, 2 or 3")
@@ -110,6 +108,10 @@ func main() {
 
 		if *paramCSharpOut != "" {
 			g.AddOutputType(".cs", *paramCSharpOut)
+		}
+
+		if *paramGoOut != "" {
+			g.AddOutputType(".go", *paramGoOut)
 		}
 
 		if *paramBinaryOut != "" {

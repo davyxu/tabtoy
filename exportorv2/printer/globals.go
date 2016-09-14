@@ -44,7 +44,7 @@ func (self *Globals) PreExport() bool {
 	self.CombineStruct.Name = self.CombineStructName
 	self.CombineStruct.Kind = model.DescriptorKind_Struct
 	self.CombineStruct.Usage = model.DescriptorUsage_CombineStruct
-	self.FileDescriptor.Name = "Combine"
+	self.FileDescriptor.Name = self.CombineStructName
 	self.FileDescriptor.Add(self.CombineStruct)
 	return true
 }

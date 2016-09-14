@@ -105,15 +105,16 @@ https://github.com/davyxu/tabtoy/blob/master/exportorv2/sample
 
 ## 详细文档
 
-https://github.com/davyxu/tabtoy/blob/master/doc/Manual_V2.md
-
-
 推荐!
 
+https://github.com/davyxu/tabtoy/blob/master/doc/Manual_V2.md
+
 # 第五代导出器文档(tabtoy v1)
-https://github.com/davyxu/tabtoy/blob/master/doc/Manual_V1.md
 
 已停止开发
+
+https://github.com/davyxu/tabtoy/blob/master/doc/Manual_V1.md
+
 
 # 备注
 
