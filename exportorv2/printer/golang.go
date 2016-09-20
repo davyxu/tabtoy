@@ -17,6 +17,7 @@ package table
 
 import(
 	"gamedef"
+	"fmt"
 )
 
 {{range $a, $row := .Rows}} {{range .Indexes}}
@@ -26,6 +27,11 @@ func Make{{.Name}}Index(v *{{.Package}}.{{.Name}}) {
 	{{range $a, $row := .Rows}}
 	// {{$row.Name}}
 	for _, def := range v.{{$row.Name}} {
+		{{range .Indexes}}
+		if _, ok := {{$row.Name}}By{{.Name}}[def.{{.Name}}]; ok {
+			panic(fmt.Sprintf("duplicate index in {{$row.Name}}By{{.Name}}: %v", def.{{.Name}}))
+		}
+		{{end}}		
 		{{range .Indexes}}
 		{{$row.Name}}By{{.Name}}[def.{{.Name}}] = def{{end}}
 	}
