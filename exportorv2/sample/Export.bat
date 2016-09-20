@@ -8,8 +8,9 @@
 --lua_out=.\Config.lua ^
 --go_out=.\Config.go ^
 --combinename=Config ^
+Globals.xlsx ^
 Sample.xlsx ^
-Exp.xlsx
+Info.xlsx
 
 @IF %ERRORLEVEL% NEQ 0 pause
 

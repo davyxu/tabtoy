@@ -9,7 +9,7 @@ package gamedef;
 enum ActorType
 {	
 
-	// 战士
+	// 格斗士
 	Fighter = 0;
 
 	// 超能
@@ -83,6 +83,9 @@ message ExpDefine
 	
 	// 名称
 	int32 Exp = 2;
+	
+	// 类型
+	ActorType Type = 3;
 
 }
 

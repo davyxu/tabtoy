@@ -29,7 +29,7 @@ type TypeSheet struct {
 	*Sheet
 }
 
-func (self *TypeSheet) Parse(fileD *model.FileDescriptor) bool {
+func (self *TypeSheet) Parse(localFD *model.FileDescriptor, globalFD *model.FileDescriptor) bool {
 
 	// 是否继续读行
 	var readingLine bool = true
@@ -38,21 +38,21 @@ func (self *TypeSheet) Parse(fileD *model.FileDescriptor) bool {
 
 	rawPragma := self.GetCellData(TypeSheetRow_Pragma, 0)
 
-	if err := proto.UnmarshalText(rawPragma, &fileD.Pragma); err != nil {
+	if err := proto.UnmarshalText(rawPragma, &localFD.Pragma); err != nil {
 		self.Row = TypeSheetRow_Pragma
 		self.Column = 0
 		log.Errorf("parse pragma failed: %s", rawPragma)
 		goto ErrorStop
 	}
 
-	if fileD.Pragma.TableName == "" {
+	if localFD.Pragma.TableName == "" {
 		self.Row = TypeSheetRow_Pragma
 		self.Column = 0
 		log.Errorf("@Types TableName is empty")
 		goto ErrorStop
 	}
 
-	if fileD.Pragma.Package == "" {
+	if localFD.Pragma.Package == "" {
 		self.Row = TypeSheetRow_Pragma
 		self.Column = 0
 		log.Errorf("@Types Package is empty")
@@ -72,7 +72,7 @@ func (self *TypeSheet) Parse(fileD *model.FileDescriptor) bool {
 
 		rawTypeName := self.GetCellData(self.Row, TypeSheetCol_ObjectType)
 
-		existType, ok := fileD.DescriptorByName[rawTypeName]
+		existType, ok := localFD.DescriptorByName[rawTypeName]
 
 		if ok {
 
@@ -82,7 +82,7 @@ func (self *TypeSheet) Parse(fileD *model.FileDescriptor) bool {
 
 			td = model.NewDescriptor()
 			td.Name = rawTypeName
-			fileD.Add(td)
+			localFD.Add(td)
 		}
 
 		// ====================解析字段名====================
@@ -91,30 +91,29 @@ func (self *TypeSheet) Parse(fileD *model.FileDescriptor) bool {
 		// ====================解析字段类型====================
 		rawFieldType := self.GetCellData(self.Row, TypeSheetCol_FieldType)
 
-		// 解析普通类型
-		if ft, ok := model.ParseFieldType(rawFieldType); ok {
-			fd.Type = ft
-		} else {
+		// 开始在本地symbol中找
+		testFD := localFD
 
-			// 解析内建类型
-			if desc, ok := fileD.DescriptorByName[rawFieldType]; ok {
+		for {
 
-				// 只有枚举( 结构体不允许再次嵌套, 增加理解复杂度 )
-				if desc.Kind != model.DescriptorKind_Enum {
-					self.Column = TypeSheetCol_FieldType
-					log.Errorln("struct field can only be normal type and enum", rawFieldType)
-					goto ErrorStop
+			result := parseFieldType(testFD, rawFieldType, &fd)
+
+			// 找不到就换全局范围找
+			if result == parseFieldTypeResult_UnknownFieldType {
+
+				if testFD == localFD {
+					testFD = globalFD
+					continue
 				}
 
-				fd.Type = model.FieldType_Enum
-				fd.Complex = desc
-
-			} else {
-
-				self.Column = TypeSheetCol_FieldType
 				log.Errorln("unknown field type: ", rawFieldType)
-				goto ErrorStop
+
+			} else if result == parseFieldTypeResult_OK {
+				break
 			}
+
+			self.Column = TypeSheetCol_FieldType
+			goto ErrorStop
 
 		}
 
@@ -162,7 +161,7 @@ func (self *TypeSheet) Parse(fileD *model.FileDescriptor) bool {
 
 	}
 
-	return self.checkProtobufCompatibility(fileD)
+	return self.checkProtobufCompatibility(localFD)
 
 ErrorStop:
 
@@ -170,6 +169,42 @@ ErrorStop:
 
 	log.Errorf("%s|%s(%s)", self.file.FileName, self.Name, util.ConvR1C1toA1(r, c))
 	return false
+}
+
+const (
+	parseFieldTypeResult_OK = iota
+	parseFieldTypeResult_OtherError
+	parseFieldTypeResult_UnknownFieldType
+)
+
+func parseFieldType(localFD *model.FileDescriptor, rawFieldType string, fd *model.FieldDescriptor) int {
+
+	// 解析普通类型
+	if ft, ok := model.ParseFieldType(rawFieldType); ok {
+		fd.Type = ft
+	} else {
+
+		// 解析内建类型
+		if desc, ok := localFD.DescriptorByName[rawFieldType]; ok {
+
+			// 只有枚举( 结构体不允许再次嵌套, 增加理解复杂度 )
+			if desc.Kind != model.DescriptorKind_Enum {
+				log.Errorln("struct field can only be normal type and enum", rawFieldType)
+				return parseFieldTypeResult_OtherError
+			}
+
+			fd.Type = model.FieldType_Enum
+			fd.Complex = desc
+
+		} else {
+
+			return parseFieldTypeResult_UnknownFieldType
+		}
+
+	}
+
+	return parseFieldTypeResult_OK
+
 }
 
 // 检查protobuf兼容性

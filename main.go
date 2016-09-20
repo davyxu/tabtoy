@@ -55,7 +55,7 @@ var paramBinaryOut = flag.String("binary_out", "", "[v2] input filename , output
 var paramCombineStructName = flag.String("combinename", "", "[v2] combine struct name, code struct name")
 var paramProtoVersion = flag.Int("protover", 3, "[v2] output .proto file version, 2 or 3")
 
-const Version = "2.0.0"
+const Version = "2.1.0"
 
 func main() {
 
@@ -71,13 +71,18 @@ func main() {
 	case "xls2pbt", "exportorv1":
 		// 调试信息挂接命令行
 		data.DebuggingLevel = *paramDebugLevel
-		if !exportor.Run(exportor.Parameter{
-			InputFileList: flag.Args(),
-			PBFile:        *paramPbFile,
-			PatchFile:     *paramPatch,
-			Format:        *paramFormat,
-			ParaMode:      *paramPara,
-		}) {
+		params := exportor.Parameter{
+			PBFile:    *paramPbFile,
+			PatchFile: *paramPatch,
+			Format:    *paramFormat,
+			ParaMode:  *paramPara,
+		}
+
+		for _, v := range flag.Args() {
+			params.InputFileList = append(params.InputFileList, v)
+		}
+
+		if !exportor.Run(params) {
 			goto Err
 		}
 	case "exportorv2":
@@ -85,7 +90,11 @@ func main() {
 		g := printer.NewGlobals()
 
 		g.Version = Version
-		g.InputFileList = flag.Args()
+
+		for _, v := range flag.Args() {
+			g.InputFileList = append(g.InputFileList, v)
+		}
+
 		g.ParaMode = *paramPara
 		g.CombineStructName = *paramCombineStructName
 		g.ProtoVersion = *paramProtoVersion

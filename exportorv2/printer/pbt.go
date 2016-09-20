@@ -26,7 +26,7 @@ func (self *pbtPrinter) Run(g *Globals) *BinaryFile {
 
 	for _, tab := range g.Tables {
 
-		if !tab.MatchTag(".pbt") {
+		if !tab.LocalFD.MatchTag(".pbt") {
 			continue
 		}
 
@@ -40,7 +40,7 @@ func (self *pbtPrinter) Run(g *Globals) *BinaryFile {
 
 func printTablePBT(bf *BinaryFile, tab *model.Table) bool {
 
-	bf.Printf("%s: [\n", tab.Name)
+	bf.Printf("%s: [\n", tab.LocalFD.Name)
 
 	// 遍历每一行
 	for recIndex, r := range tab.Recs {

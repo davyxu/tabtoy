@@ -17,7 +17,7 @@ func (self *binaryPrinter) Run(g *Globals) *BinaryFile {
 
 	for index, tab := range g.Tables {
 
-		if !tab.MatchTag(".bin") {
+		if !tab.LocalFD.MatchTag(".bin") {
 			continue
 		}
 

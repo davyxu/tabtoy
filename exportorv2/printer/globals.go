@@ -13,7 +13,7 @@ type TableIndex struct {
 
 type Globals struct {
 	Version       string
-	InputFileList []string
+	InputFileList []interface{}
 	ParaMode      bool
 	ProtoVersion  int
 
@@ -78,6 +78,8 @@ func (self *Globals) AddOutputType(ext string, outfile string) {
 
 func (self *Globals) Print() bool {
 
+	log.Infoln("==========Merge Combined Data==========")
+
 	for _, p := range self.Printers {
 
 		if !p.Start(self) {
@@ -89,10 +91,20 @@ func (self *Globals) Print() bool {
 
 }
 
+func (self *Globals) AddTypes(localFD *model.FileDescriptor) bool {
+
+	// 将行定义结构也添加到文件中
+	for _, d := range localFD.Descriptors {
+		self.FileDescriptor.Add(d)
+	}
+
+	return true
+}
+
 // 合并每个表带的类型
 func (self *Globals) AddContent(tab *model.Table) bool {
 
-	fileD := tab.FileDescriptor
+	localFD := tab.LocalFD
 
 	self.guard.Lock()
 
@@ -100,37 +112,34 @@ func (self *Globals) AddContent(tab *model.Table) bool {
 
 	// 有表格里描述的包名不一致, 无法合成最终的文件
 	if self.Pragma.Package == "" {
-		self.Pragma.Package = fileD.Pragma.Package
-	} else if self.Pragma.Package != fileD.Pragma.Package {
-		log.Errorf("keep all type in same package! %s, %s", self.Pragma.Package, fileD.Pragma.Package)
+		self.Pragma.Package = localFD.Pragma.Package
+	} else if self.Pragma.Package != localFD.Pragma.Package {
+		log.Errorf("keep all type in same package! %s, %s", self.Pragma.Package, localFD.Pragma.Package)
 		return false
 	}
 
-	if _, ok := self.tableByName[tab.Name]; ok {
-		log.Errorln("duplicate table name in combine binary output:", tab.Name)
+	if _, ok := self.tableByName[localFD.Name]; ok {
+		log.Errorln("duplicate table name in combine binary output:", localFD.Name)
 		return false
 	}
 
-	self.tableByName[tab.Name] = tab
+	// 表的全局类型信息与合并信息一致
+	tab.GlobalFD = self.FileDescriptor
+
+	self.tableByName[localFD.Name] = tab
 	self.Tables = append(self.Tables, tab)
 
 	// 每个表在结构体里的字段
 	var rowFD model.FieldDescriptor
-	rowFD.Name = fileD.Name
+	rowFD.Name = localFD.Name
 	rowFD.Type = model.FieldType_Struct
-	rowFD.Complex = fileD.RowDescriptor()
+	rowFD.Complex = localFD.RowDescriptor()
 	rowFD.IsRepeated = true
 	rowFD.Order = int32(len(self.CombineStruct.Fields) + 1)
-	rowFD.Comment = fileD.Name
+	rowFD.Comment = localFD.Name
 	self.CombineStruct.Add(&rowFD)
 
-	// 将行定义结构也添加到文件中
-
-	for _, d := range fileD.Descriptors {
-		self.FileDescriptor.Add(d)
-	}
-
-	for _, d := range fileD.Descriptors {
+	for _, d := range localFD.Descriptors {
 
 		// 非行类型的, 全部忽略
 		if d.Usage != model.DescriptorUsage_RowType {

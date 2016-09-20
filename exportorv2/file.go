@@ -1,7 +1,6 @@
 package exportorv2
 
 import (
-	"path/filepath"
 	"strings"
 
 	"github.com/davyxu/tabtoy/exportorv2/model"
@@ -16,17 +15,22 @@ type valueRepeatData struct {
 
 // 1个电子表格文件
 type File struct {
-	*model.FileDescriptor // 1个类型描述表
-	FileName              string
+	LocalFD  *model.FileDescriptor // 本文件的类型描述表
+	GlobalFD *model.FileDescriptor // 全局的类型描述表
+	FileName string
+	coreFile *xlsx.File
+
+	dataSheets []*DataSheet
+	Header     *DataHeader
 
 	valueRepByKey map[valueRepeatData]bool // 检查单元格值重复map
 }
 
-func (self *File) readTypeSheet(file *xlsx.File) bool {
+func (self *File) ExportLocalType() bool {
 
 	var sheetCount int
 	// 解析类型表
-	for _, rawSheet := range file.Sheets {
+	for _, rawSheet := range self.coreFile.Sheets {
 
 		if isTypeSheet(rawSheet.Name) {
 			if sheetCount > 0 {
@@ -37,7 +41,7 @@ func (self *File) readTypeSheet(file *xlsx.File) bool {
 			typeSheet := newTypeSheet(NewSheet(self, rawSheet))
 
 			// 从cell添加类型
-			if !typeSheet.Parse(self.FileDescriptor) {
+			if !typeSheet.Parse(self.LocalFD, self.GlobalFD) {
 				return false
 			}
 
@@ -46,37 +50,10 @@ func (self *File) readTypeSheet(file *xlsx.File) bool {
 		}
 	}
 
-	return true
-}
-
-func (self *File) Export(filename string) *model.Table {
-
-	self.FileName = filename
-
-	log.Infof("%s\n", filepath.Base(filename))
-
-	file, err := xlsx.OpenFile(filename)
-
-	if err != nil {
-		log.Errorln(err.Error())
-
-		return nil
-	}
-
-	// 读取类型表
-	if !self.readTypeSheet(file) {
-		return nil
-	}
-
-	self.Name = self.Pragma.TableName
-
-	tab := model.NewTable(self.FileDescriptor)
-
-	// 遍历数据表
-	for _, rawSheet := range file.Sheets {
+	// 解析表头
+	for _, rawSheet := range self.coreFile.Sheets {
 
 		if !isTypeSheet(rawSheet.Name) {
-
 			dSheet := newDataSheet(NewSheet(self, rawSheet))
 
 			if !dSheet.Valid() {
@@ -88,16 +65,34 @@ func (self *File) Export(filename string) *model.Table {
 			dataHeader := newDataHeadSheet()
 
 			// 检查引导头
-			if !dataHeader.ParseProtoField(dSheet.Sheet, self.FileDescriptor) {
-				return nil
+			if !dataHeader.ParseProtoField(dSheet.Sheet, self.LocalFD, self.GlobalFD) {
+				return false
 			}
 
-			// TODO 只使用第一个sheet中的protoheader定义
-			// TODO 其他Sheet可以在顶部定义一个标记@RefProtoHeader, 引用前面的protoheader
-			if !dSheet.Export(self, tab, dataHeader) {
-				return nil
+			if self.Header == nil {
+				self.Header = dataHeader
 			}
 
+			self.dataSheets = append(self.dataSheets, dSheet)
+		}
+	}
+
+	return true
+}
+
+func (self *File) ExportData() *model.Table {
+
+	self.LocalFD.Name = self.LocalFD.Pragma.TableName
+
+	tab := model.NewTable()
+	tab.LocalFD = self.LocalFD
+
+	for _, d := range self.dataSheets {
+
+		log.Infof("            %s", d.Name)
+
+		if !d.Export(self, tab, self.Header) {
+			return nil
 		}
 	}
 
@@ -124,11 +119,23 @@ func isTypeSheet(name string) bool {
 	return strings.TrimSpace(name) == model.TypeSheetName
 }
 
-func NewFile() *File {
+func NewFile(filename string) *File {
 
 	self := &File{
-		valueRepByKey:  make(map[valueRepeatData]bool),
-		FileDescriptor: model.NewFileDescriptor(),
+		valueRepByKey: make(map[valueRepeatData]bool),
+		LocalFD:       model.NewFileDescriptor(),
+		FileName:      filename,
+	}
+
+	//log.Infof("%s\n", filepath.Base(filename))
+
+	var err error
+	self.coreFile, err = xlsx.OpenFile(filename)
+
+	if err != nil {
+		log.Errorln(err.Error())
+
+		return nil
 	}
 
 	return self

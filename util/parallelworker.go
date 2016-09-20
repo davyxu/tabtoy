@@ -1,7 +1,7 @@
 package util
 
 // 封装signal返回, 因为go关键字会忽略函数返回值, 所以用channel来传递结果
-func task(input string, callback func(string) bool, signal chan bool) bool {
+func task(input interface{}, callback func(interface{}) bool, signal chan bool) bool {
 
 	result := callback(input)
 
@@ -13,7 +13,7 @@ func task(input string, callback func(string) bool, signal chan bool) bool {
 	return result
 }
 
-func ParallelWorker(fileList []string, para bool, callback func(string) bool) bool {
+func ParallelWorker(fileList []interface{}, para bool, callback func(interface{}) bool) bool {
 
 	// 处理多个导出文件情况
 

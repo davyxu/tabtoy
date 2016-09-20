@@ -151,19 +151,23 @@ const repeatedKeywordLen = len(repeatedKeyword)
 
 func (self *FieldDescriptor) ParseType(fileD *FileDescriptor, rawstr string) bool {
 
+	var puretype string
+
 	if strings.HasPrefix(rawstr, repeatedKeyword) {
 
-		rawstr = rawstr[repeatedKeywordLen+1:]
+		puretype = rawstr[repeatedKeywordLen+1:]
 
 		self.IsRepeated = true
+	} else {
+		puretype = rawstr
 	}
 
-	if ft, ok := ParseFieldType(rawstr); ok {
+	if ft, ok := ParseFieldType(puretype); ok {
 		self.Type = ft
 		return true
 	}
 
-	if desc, ok := fileD.DescriptorByName[rawstr]; ok {
+	if desc, ok := fileD.DescriptorByName[puretype]; ok {
 		self.Complex = desc
 
 		// 根据内建类型转成字段类型

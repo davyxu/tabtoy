@@ -34,7 +34,7 @@ func (self *DataHeader) RawFieldCount() int {
 }
 
 // 检查字段行的长度
-func (self *DataHeader) ParseProtoField(sheet *Sheet, fileD *model.FileDescriptor) bool {
+func (self *DataHeader) ParseProtoField(sheet *Sheet, localFD *model.FileDescriptor, globalFD *model.FileDescriptor) bool {
 
 	var def *model.FieldDescriptor
 
@@ -53,12 +53,28 @@ func (self *DataHeader) ParseProtoField(sheet *Sheet, fileD *model.FileDescripto
 		if strings.Index(def.Name, "#") != 0 {
 
 			// ====================解析类型====================
-			def.ParseType(fileD, sheet.GetCellData(DataSheetRow_FieldType, sheet.Column))
+
+			testFileD := localFD
+
+			rawFieldType := sheet.GetCellData(DataSheetRow_FieldType, sheet.Column)
+
+			for {
+				if def.ParseType(testFileD, rawFieldType) {
+					break
+				}
+
+				if testFileD == localFD {
+					testFileD = globalFD
+					continue
+				}
+
+				break
+			}
 
 			// 依然找不到, 报错
 			if def.Type == model.FieldType_None {
 				sheet.Row = DataSheetRow_FieldType
-				log.Errorf("field header type not found: %s  %s", def.Name, model.FieldTypeToString(def.Type))
+				log.Errorf("field header type not found: '%s' (%s) raw: %s", def.Name, model.FieldTypeToString(def.Type), rawFieldType)
 				goto ErrorStop
 			}
 
@@ -81,14 +97,14 @@ func (self *DataHeader) ParseProtoField(sheet *Sheet, fileD *model.FileDescripto
 				// 多个同名字段只允许repeated方式的字段
 				if !exist.IsRepeated {
 					sheet.Row = DataSheetRow_FieldName
-					log.Errorf("duplicate field header: %s", def.Name)
+					log.Errorf("duplicate field header: '%s'", def.Name)
 					goto ErrorStop
 				}
 
 				// 多个repeated描述类型不一致
 				if exist.Type != def.Type {
 					sheet.Row = DataSheetRow_FieldType
-					log.Errorf("repeated field type diff in multi column: %s, prev: %s, found: %s",
+					log.Errorf("repeated field type diff in multi column: '%s', prev: '%s', found: '%s'",
 						def.Name,
 						model.FieldTypeToString(exist.Type),
 						model.FieldTypeToString(def.Type))
@@ -99,7 +115,7 @@ func (self *DataHeader) ParseProtoField(sheet *Sheet, fileD *model.FileDescripto
 				// 多个repeated描述内建类型不一致
 				if exist.Complex != def.Complex {
 					sheet.Row = DataSheetRow_FieldType
-					log.Errorf("repeated field build type diff in multi column: %s",
+					log.Errorf("repeated field build type diff in multi column: '%s'",
 						def.Name)
 
 					goto ErrorStop
@@ -108,7 +124,7 @@ func (self *DataHeader) ParseProtoField(sheet *Sheet, fileD *model.FileDescripto
 				// 多个repeated描述的meta不一致
 				if proto.CompactTextString(&exist.Meta) != proto.CompactTextString(&def.Meta) {
 					sheet.Row = DataSheetRow_FieldMeta
-					log.Errorf("repeated field meta diff in multi column: %s",
+					log.Errorf("repeated field meta diff in multi column: '%s'",
 						def.Name)
 
 					goto ErrorStop
@@ -131,7 +147,7 @@ func (self *DataHeader) ParseProtoField(sheet *Sheet, fileD *model.FileDescripto
 	}
 
 	// 添加一次行结构
-	self.makeRowDescriptor(fileD, self.headerFields)
+	self.makeRowDescriptor(localFD, self.headerFields)
 
 	return true
 

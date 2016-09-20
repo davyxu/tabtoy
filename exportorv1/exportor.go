@@ -13,7 +13,7 @@ import (
 )
 
 type Parameter struct {
-	InputFileList []string
+	InputFileList []interface{}
 	PBFile        string
 	PatchFile     string
 	ParaMode      bool
@@ -43,7 +43,9 @@ func Run(param Parameter) bool {
 		log.Infof("patch file loaded: %s", param.PatchFile)
 	}
 
-	return util.ParallelWorker(param.InputFileList, param.ParaMode, func(input string) bool {
+	return util.ParallelWorker(param.InputFileList, param.ParaMode, func(in interface{}) bool {
+
+		input := in.(string)
 
 		var ext string
 		var writer printer.IPrinter

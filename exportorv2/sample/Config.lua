@@ -11,10 +11,10 @@ local tab = {
 	}, 
 
 	Exp = {
-		{ Level = 1, Exp = 10 	},
+		{ Level = 1, Exp = 10, Type = "Fighter" 	},
 		{ Level = 2, Exp = 30 	},
 		{ Level = 3, Exp = 50 	},
-		{ Level = 4, Exp = 70 	},
+		{ Level = 4, Exp = 70, Type = "Power" 	},
 		{ Level = 5, Exp = 80 	}
 	}
 

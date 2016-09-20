@@ -25,7 +25,9 @@
 	
 * Mad Magic
 	https://itunes.apple.com/app/id1146098397
-	
+
+* 消诺克
+	http://www.taptap.com/app/15881
 
 # 迭代历程
 

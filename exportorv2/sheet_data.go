@@ -35,7 +35,7 @@ func dataProcessor(file *File, fd *model.FieldDescriptor, raw string, node *mode
 		// 使用多格子实现的repeated
 		if spliter == "" {
 
-			if _, ok := filter.ConvertValue(fd, raw, file.FileDescriptor, node); !ok {
+			if _, ok := filter.ConvertValue(fd, raw, file.GlobalFD, node); !ok {
 				goto ConvertError
 			}
 
@@ -46,7 +46,7 @@ func dataProcessor(file *File, fd *model.FieldDescriptor, raw string, node *mode
 
 			for _, v := range valueList {
 
-				if _, ok := filter.ConvertValue(fd, v, file.FileDescriptor, node); !ok {
+				if _, ok := filter.ConvertValue(fd, v, file.GlobalFD, node); !ok {
 					goto ConvertError
 				}
 			}
@@ -56,7 +56,7 @@ func dataProcessor(file *File, fd *model.FieldDescriptor, raw string, node *mode
 	} else {
 
 		// 单值
-		if cv, ok := filter.ConvertValue(fd, raw, file.FileDescriptor, node); !ok {
+		if cv, ok := filter.ConvertValue(fd, raw, file.GlobalFD, node); !ok {
 			goto ConvertError
 
 		} else {

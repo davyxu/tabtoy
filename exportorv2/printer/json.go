@@ -51,7 +51,7 @@ func (self *jsonPrinter) Run(g *Globals) *BinaryFile {
 
 func printTableJson(bf *BinaryFile, tab *model.Table) bool {
 
-	bf.Printf("	\"%s\":[\n", tab.Name)
+	bf.Printf("	\"%s\":[\n", tab.LocalFD.Name)
 
 	// 遍历每一行
 	for rIndex, r := range tab.Recs {

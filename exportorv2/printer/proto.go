@@ -114,7 +114,7 @@ func (self *protoPrinter) Run(g *Globals) *BinaryFile {
 			if d.Usage == model.DescriptorUsage_CombineStruct {
 
 				// 这个字段被限制输出
-				if !fd.Complex.File.MatchTag(".proto") {
+				if fd.Complex != nil && !fd.Complex.File.MatchTag(".proto") {
 					continue
 				}
 			}

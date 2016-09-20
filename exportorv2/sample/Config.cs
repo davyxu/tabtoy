@@ -10,7 +10,7 @@ namespace gamedef
 	public enum ActorType
 	{
 		
-		// 战士
+		// 格斗士
 		Fighter = 0,
 		
 		// 超能
@@ -245,6 +245,9 @@ namespace gamedef
 		
 		// 名称
 		public int Exp = 0;
+		
+		// 类型
+		public ActorType Type = ActorType.Fighter;
 	
 	
 	
@@ -261,6 +264,12 @@ namespace gamedef
 			if ( reader.MatchTag(0x10001))
 			{
 				this.Exp = reader.ReadInt32( );
+			}
+			
+			// 类型
+			if ( reader.MatchTag(0x80002))
+			{
+				this.Type = reader.ReadEnum<ActorType>( );
 			}
 			
 			

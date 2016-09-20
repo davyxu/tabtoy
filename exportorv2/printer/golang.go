@@ -80,12 +80,12 @@ func (self *goPrinter) Run(g *Globals) *BinaryFile {
 		if g.CombineStruct.Usage == model.DescriptorUsage_CombineStruct {
 
 			// 这个字段被限制输出
-			if !fd.Complex.File.MatchTag(".go") {
+			if fd.Complex != nil && !fd.Complex.File.MatchTag(".go") {
 				continue
 			}
 
 			// 这个结构有索引才创建
-			if len(fd.Complex.Indexes) > 0 {
+			if fd.Complex != nil && len(fd.Complex.Indexes) > 0 {
 
 				rm := goRowModel{FieldDescriptor: fd}
 

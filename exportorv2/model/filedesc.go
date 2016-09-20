@@ -9,8 +9,6 @@ type FileDescriptor struct {
 	DescriptorByName map[string]*Descriptor
 	Descriptors      []*Descriptor
 
-	FileType *Descriptor // 自动创建的XXFile类型, 一个BuildInTypeSet 一次只有1个这样的对象
-
 	Pragma tool.FilePragmaV2
 }
 

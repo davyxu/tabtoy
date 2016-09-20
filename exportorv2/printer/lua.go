@@ -33,7 +33,7 @@ func (self *luaPrinter) Run(g *Globals) *BinaryFile {
 
 	for tabIndex, tab := range g.Tables {
 
-		if !tab.MatchTag(".lua") {
+		if !tab.LocalFD.MatchTag(".lua") {
 			continue
 		}
 
@@ -63,7 +63,7 @@ func (self *luaPrinter) Run(g *Globals) *BinaryFile {
 
 func printTableLua(bf *BinaryFile, tab *model.Table) bool {
 
-	bf.Printf("	%s = {\n", tab.Name)
+	bf.Printf("	%s = {\n", tab.LocalFD.Name)
 
 	// 遍历每一行
 	for rIndex, r := range tab.Recs {
@@ -178,12 +178,12 @@ func genLuaIndexCode(bf *BinaryFile, combineStruct *model.Descriptor) bool {
 		if combineStruct.Usage == model.DescriptorUsage_CombineStruct {
 
 			// 这个字段被限制输出
-			if !fd.Complex.File.MatchTag(".lua") {
+			if fd.Complex != nil && !fd.Complex.File.MatchTag(".lua") {
 				continue
 			}
 
 			// 这个结构有索引才创建
-			if len(fd.Complex.Indexes) > 0 {
+			if fd.Complex != nil && len(fd.Complex.Indexes) > 0 {
 
 				// 索引字段
 				for _, key := range fd.Complex.Indexes {
