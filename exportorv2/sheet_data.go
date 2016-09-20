@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/davyxu/tabtoy/exportorv2/filter"
+	"github.com/davyxu/tabtoy/exportorv2/i18n"
 	"github.com/davyxu/tabtoy/exportorv2/model"
 	"github.com/davyxu/tabtoy/util"
 )
@@ -63,7 +64,7 @@ func dataProcessor(file *File, fd *model.FieldDescriptor, raw string, node *mode
 
 			// 值重复检查
 			if fd.Meta.RepeatCheck && !file.checkValueRepeat(fd, cv) {
-				log.Errorf("found repeat value, %s raw: '%s'", fd.String(), cv)
+				log.Errorf("%s, %s raw: '%s'", i18n.String(i18n.DataSheet_ValueRepeated), fd.String(), cv)
 				return false
 			}
 		}
@@ -74,7 +75,7 @@ func dataProcessor(file *File, fd *model.FieldDescriptor, raw string, node *mode
 
 ConvertError:
 
-	log.Errorf("value convert error, %s raw: '%s'", fd.String(), raw)
+	log.Errorf("%s, %s raw: '%s'", i18n.String(i18n.DataSheet_ValueConvertError), fd.String(), raw)
 
 	return false
 }

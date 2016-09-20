@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/davyxu/tabtoy/exportorv2/i18n"
 	"github.com/davyxu/tabtoy/exportorv2/model"
 	"github.com/davyxu/tabtoy/util"
 	"github.com/golang/protobuf/proto"
@@ -74,7 +75,7 @@ func (self *DataHeader) ParseProtoField(sheet *Sheet, localFD *model.FileDescrip
 			// 依然找不到, 报错
 			if def.Type == model.FieldType_None {
 				sheet.Row = DataSheetRow_FieldType
-				log.Errorf("field header type not found: '%s' (%s) raw: %s", def.Name, model.FieldTypeToString(def.Type), rawFieldType)
+				log.Errorf("%s, '%s' (%s) raw: %s", i18n.String(i18n.DataHeader_TypeNotFound), def.Name, model.FieldTypeToString(def.Type), rawFieldType)
 				goto ErrorStop
 			}
 
@@ -83,7 +84,7 @@ func (self *DataHeader) ParseProtoField(sheet *Sheet, localFD *model.FileDescrip
 
 			if err := proto.UnmarshalText(metaString, &def.Meta); err != nil {
 				sheet.Row = DataSheetRow_FieldMeta
-				log.Errorln("parse field header failed", err)
+				log.Errorf("%s '%s'", i18n.String(i18n.DataHeader_MetaParseFailed), err)
 				goto ErrorStop
 			}
 
@@ -97,14 +98,15 @@ func (self *DataHeader) ParseProtoField(sheet *Sheet, localFD *model.FileDescrip
 				// 多个同名字段只允许repeated方式的字段
 				if !exist.IsRepeated {
 					sheet.Row = DataSheetRow_FieldName
-					log.Errorf("duplicate field header: '%s'", def.Name)
+					log.Errorf("%s '%s'", i18n.String(i18n.DataHeader_DuplicateFieldName), def.Name)
 					goto ErrorStop
 				}
 
 				// 多个repeated描述类型不一致
 				if exist.Type != def.Type {
 					sheet.Row = DataSheetRow_FieldType
-					log.Errorf("repeated field type diff in multi column: '%s', prev: '%s', found: '%s'",
+
+					log.Errorf("%s '%s' '%s' '%s'", i18n.String(i18n.DataHeader_RepeatedFieldTypeNotSameInMultiColumn),
 						def.Name,
 						model.FieldTypeToString(exist.Type),
 						model.FieldTypeToString(def.Type))
@@ -115,7 +117,8 @@ func (self *DataHeader) ParseProtoField(sheet *Sheet, localFD *model.FileDescrip
 				// 多个repeated描述内建类型不一致
 				if exist.Complex != def.Complex {
 					sheet.Row = DataSheetRow_FieldType
-					log.Errorf("repeated field build type diff in multi column: '%s'",
+
+					log.Errorf("%s '%s'", i18n.String(i18n.DataHeader_RepeatedFieldTypeNotSameInMultiColumn),
 						def.Name)
 
 					goto ErrorStop
@@ -124,7 +127,8 @@ func (self *DataHeader) ParseProtoField(sheet *Sheet, localFD *model.FileDescrip
 				// 多个repeated描述的meta不一致
 				if proto.CompactTextString(&exist.Meta) != proto.CompactTextString(&def.Meta) {
 					sheet.Row = DataSheetRow_FieldMeta
-					log.Errorf("repeated field meta diff in multi column: '%s'",
+
+					log.Errorf("%s '%s'", i18n.String(i18n.DataHeader_RepeatedFieldMetaNotSameInMultiColumn),
 						def.Name)
 
 					goto ErrorStop

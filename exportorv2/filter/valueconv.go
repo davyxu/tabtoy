@@ -3,6 +3,7 @@ package filter
 import (
 	"strconv"
 
+	"github.com/davyxu/tabtoy/exportorv2/i18n"
 	"github.com/davyxu/tabtoy/exportorv2/model"
 )
 
@@ -95,13 +96,13 @@ func ConvertValue(fd *model.FieldDescriptor, value string, fileD *model.FileDesc
 		node.AddValue(ret)
 	case model.FieldType_Enum:
 		if fd.Complex == nil {
-			log.Errorln("enum buildin type nil", fd.Name)
+			log.Errorf("%s, '%s'", i18n.String(i18n.ConvertValue_EnumTypeNil), fd.Name)
 			return "", false
 		}
 
 		evd := fd.Complex.FieldByValueAndMeta(value)
 		if evd == nil {
-			log.Errorf("enum value not found, '%s' enum type: %s", value, fd.Complex.Name)
+			log.Errorf("%s, '%s' '%s'", i18n.String(i18n.ConvertValue_EnumValueNotFound), value, fd.Complex.Name)
 			return "", false
 		}
 
@@ -112,7 +113,7 @@ func ConvertValue(fd *model.FieldDescriptor, value string, fileD *model.FileDesc
 	case model.FieldType_Struct:
 
 		if fd.Complex == nil {
-			log.Errorln("struct build type nil", fd.Name)
+			log.Errorf("%s, '%s'", i18n.String(i18n.ConvertValue_StructTypeNil), fd.Name)
 			return "", false
 		}
 
@@ -121,7 +122,7 @@ func ConvertValue(fd *model.FieldDescriptor, value string, fileD *model.FileDesc
 		}
 
 	default:
-		log.Errorln("unknown field type in filter", fd.Type, fd.Name)
+		log.Errorf("%s, '%s' '%s'", i18n.String(i18n.ConvertValue_UnknownFieldType), fd.Name, fd.Name)
 		return "", false
 	}
 

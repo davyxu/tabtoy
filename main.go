@@ -10,6 +10,7 @@ import (
 	"github.com/davyxu/tabtoy/exportorv1"
 	"github.com/davyxu/tabtoy/exportorv1/data"
 	"github.com/davyxu/tabtoy/exportorv2"
+	"github.com/davyxu/tabtoy/exportorv2/i18n"
 	"github.com/davyxu/tabtoy/exportorv2/printer"
 )
 
@@ -54,8 +55,9 @@ var paramGoOut = flag.String("go_out", "", "[v2] output golang index code (*.go)
 var paramBinaryOut = flag.String("binary_out", "", "[v2] input filename , output binary format(*.bin)")
 var paramCombineStructName = flag.String("combinename", "", "[v2] combine struct name, code struct name")
 var paramProtoVersion = flag.Int("protover", 3, "[v2] output .proto file version, 2 or 3")
+var paramLanguage = flag.String("lan", "en_us", "[v2] set output language")
 
-const Version = "2.1.0"
+const Version = "2.2.0"
 
 func main() {
 
@@ -88,6 +90,12 @@ func main() {
 	case "exportorv2":
 
 		g := printer.NewGlobals()
+
+		if *paramLanguage != "" {
+			if !i18n.SetLanguage(*paramLanguage) {
+				log.Infof("language not support: %s", *paramLanguage)
+			}
+		}
 
 		g.Version = Version
 

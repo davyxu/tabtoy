@@ -3,6 +3,7 @@ package exportorv2
 import (
 	"strconv"
 
+	"github.com/davyxu/tabtoy/exportorv2/i18n"
 	"github.com/davyxu/tabtoy/exportorv2/model"
 	"github.com/davyxu/tabtoy/util"
 	"github.com/golang/protobuf/proto"
@@ -41,21 +42,21 @@ func (self *TypeSheet) Parse(localFD *model.FileDescriptor, globalFD *model.File
 	if err := proto.UnmarshalText(rawPragma, &localFD.Pragma); err != nil {
 		self.Row = TypeSheetRow_Pragma
 		self.Column = 0
-		log.Errorf("parse pragma failed: %s", rawPragma)
+		log.Errorf("%s, '%s'", i18n.String(i18n.TypeSheet_PragmaParseFailed), rawPragma)
 		goto ErrorStop
 	}
 
 	if localFD.Pragma.TableName == "" {
 		self.Row = TypeSheetRow_Pragma
 		self.Column = 0
-		log.Errorf("@Types TableName is empty")
+		log.Errorf("%s", i18n.String(i18n.TypeSheet_TableNameIsEmpty))
 		goto ErrorStop
 	}
 
 	if localFD.Pragma.Package == "" {
 		self.Row = TypeSheetRow_Pragma
 		self.Column = 0
-		log.Errorf("@Types Package is empty")
+		log.Errorf("%s", i18n.String(i18n.TypeSheet_PackageIsEmpty))
 		goto ErrorStop
 	}
 
@@ -106,7 +107,7 @@ func (self *TypeSheet) Parse(localFD *model.FileDescriptor, globalFD *model.File
 					continue
 				}
 
-				log.Errorln("unknown field type: ", rawFieldType)
+				log.Errorf("%s, '%s'", i18n.String(i18n.TypeSheet_FieldTypeNotFound), rawFieldType)
 
 			} else if result == parseFieldTypeResult_OK {
 				break
@@ -130,7 +131,7 @@ func (self *TypeSheet) Parse(localFD *model.FileDescriptor, globalFD *model.File
 				fd.EnumValue = int32(v)
 			} else {
 				self.Column = TypeSheetCol_Value
-				log.Errorln("parse type value failed:", err)
+				log.Errorf("%s, %s", i18n.String(i18n.TypeSheet_EnumValueParseFailed), err.Error())
 				goto ErrorStop
 			}
 			kind = model.DescriptorKind_Enum
@@ -143,7 +144,7 @@ func (self *TypeSheet) Parse(localFD *model.FileDescriptor, globalFD *model.File
 			// 一些字段有填值, 一些没填值
 		} else if td.Kind != kind {
 			self.Column = TypeSheetCol_Value
-			log.Errorln("buildin kind shold be same", td.Kind, kind)
+			log.Errorf("%s", i18n.String(i18n.TypeSheet_DescriptorKindNotSame))
 			goto ErrorStop
 		}
 		// ====================解析注释====================
@@ -153,7 +154,7 @@ func (self *TypeSheet) Parse(localFD *model.FileDescriptor, globalFD *model.File
 		metaString := self.GetCellData(self.Row, TypeSheetCol_Meta)
 
 		if err := proto.UnmarshalText(metaString, &fd.Meta); err != nil {
-			log.Errorln("parse field header failed", err)
+			log.Errorf("%s, '%s'", i18n.String(i18n.TypeSheet_FieldMetaParseFailed), err.Error())
 			return false
 		}
 
@@ -189,7 +190,7 @@ func parseFieldType(localFD *model.FileDescriptor, rawFieldType string, fd *mode
 
 			// 只有枚举( 结构体不允许再次嵌套, 增加理解复杂度 )
 			if desc.Kind != model.DescriptorKind_Enum {
-				log.Errorln("struct field can only be normal type and enum", rawFieldType)
+				log.Errorf("%s, '%s'", i18n.String(i18n.TypeSheet_StructFieldCanNotBeStruct), rawFieldType)
 				return parseFieldTypeResult_OtherError
 			}
 
@@ -215,7 +216,7 @@ func (self *TypeSheet) checkProtobufCompatibility(fileD *model.FileDescriptor) b
 
 			// proto3 需要枚举有0值
 			if _, ok := bt.FieldByNumber[0]; !ok {
-				log.Errorf("proto3 require enum has value 0 in '%s'", bt.Name)
+				log.Errorf("%s, '%s'", i18n.String(i18n.TypeSheet_FirstEnumValueShouldBeZero), bt.Name)
 				return false
 			}
 		}

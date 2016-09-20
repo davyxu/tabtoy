@@ -8,6 +8,7 @@
 --lua_out=.\Config.lua ^
 --go_out=.\Config.go ^
 --combinename=Config ^
+--lan=zh_cn ^
 Globals.xlsx ^
 Sample.xlsx ^
 Info.xlsx

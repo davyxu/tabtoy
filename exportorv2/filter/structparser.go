@@ -2,6 +2,7 @@ package filter
 
 import (
 	"github.com/davyxu/golexer"
+	"github.com/davyxu/tabtoy/exportorv2/i18n"
 	"github.com/davyxu/tabtoy/exportorv2/model"
 )
 
@@ -49,7 +50,7 @@ func (self *structParser) Run(fd *model.FieldDescriptor, callback func(string, s
 			// 继续外抛， 方便调试
 			panic(err)
 		case error:
-			log.Errorf("field: '%s' parse error, %v", fd.Name, err)
+			log.Errorf("%s, '%s' '%v'", i18n.String(i18n.StructParser_LexerError), fd.Name, err.(error).Error())
 		case string:
 			if err.(string) == "EOF" {
 				ok = true
@@ -64,7 +65,7 @@ func (self *structParser) Run(fd *model.FieldDescriptor, callback func(string, s
 	for {
 
 		if self.TokenID() != Token_Identifier {
-			log.Errorf("expect field: '%s'", fd.Name)
+			log.Errorf("%s, '%s'", i18n.String(i18n.StructParser_ExpectField), fd.Name)
 			return false
 		}
 
@@ -73,7 +74,7 @@ func (self *structParser) Run(fd *model.FieldDescriptor, callback func(string, s
 		self.NextToken()
 
 		if self.TokenID() != Token_Comma {
-			log.Errorf("%s need ':' split value", key)
+			log.Errorf("%s, '%s'", i18n.String(i18n.StructParser_UnexpectedSpliter), key)
 			return false
 		}
 
@@ -136,7 +137,9 @@ func parseStruct(fd *model.FieldDescriptor, value string, fileD *model.FileDescr
 
 		bnField := fd.Complex.FieldByValueAndMeta(key)
 		if bnField == nil {
-			log.Errorf("struct field not found: '%s'", key)
+
+			log.Errorf("%s, '%s'", i18n.String(i18n.StructParser_FieldNotFound), key)
+
 			return false
 		}
 

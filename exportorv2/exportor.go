@@ -3,6 +3,7 @@ package exportorv2
 import (
 	"path/filepath"
 
+	"github.com/davyxu/tabtoy/exportorv2/i18n"
 	"github.com/davyxu/tabtoy/exportorv2/printer"
 	"github.com/davyxu/tabtoy/util"
 )
@@ -15,7 +16,7 @@ func Run(g *printer.Globals) bool {
 
 	fileObjList := make([]interface{}, 0)
 
-	log.Infoln("==========Collect Type info==========")
+	log.Infof("==========%s==========", i18n.String(i18n.Run_CollectTypeInfo))
 
 	// 合并类型
 	for _, in := range g.InputFileList {
@@ -49,7 +50,7 @@ func Run(g *printer.Globals) bool {
 
 	}
 
-	log.Infoln("==========Export Sheet Data==========")
+	log.Infof("==========%s==========", i18n.String(i18n.Run_ExportSheetData))
 	// 导出表格
 	if !util.ParallelWorker(fileObjList, false, func(in interface{}) bool {
 

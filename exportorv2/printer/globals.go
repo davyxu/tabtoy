@@ -3,6 +3,7 @@ package printer
 import (
 	"sync"
 
+	"github.com/davyxu/tabtoy/exportorv2/i18n"
 	"github.com/davyxu/tabtoy/exportorv2/model"
 )
 
@@ -36,7 +37,7 @@ func (self *Globals) PreExport() bool {
 
 	// 当合并结构名没有指定时, 对于代码相关的输出器, 要报错
 	if self.CombineStructName == "" && self.hasAnyPrinter(".proto", ".cs") {
-		log.Errorf("please specify 'combinename' params while code generating")
+		log.Errorf("%s", i18n.String(i18n.Globals_CombineNameLost))
 		return false
 	}
 
@@ -78,7 +79,7 @@ func (self *Globals) AddOutputType(ext string, outfile string) {
 
 func (self *Globals) Print() bool {
 
-	log.Infoln("==========Merge Combined Data==========")
+	log.Infof("==========%s==========", i18n.String(i18n.Globals_OutputCombineData))
 
 	for _, p := range self.Printers {
 
@@ -114,12 +115,14 @@ func (self *Globals) AddContent(tab *model.Table) bool {
 	if self.Pragma.Package == "" {
 		self.Pragma.Package = localFD.Pragma.Package
 	} else if self.Pragma.Package != localFD.Pragma.Package {
-		log.Errorf("keep all type in same package! %s, %s", self.Pragma.Package, localFD.Pragma.Package)
+
+		log.Errorf("%s, '%s' '%s'", i18n.String(i18n.Globals_PackageNameDiff), self.Pragma.Package, localFD.Pragma.Package)
 		return false
 	}
 
 	if _, ok := self.tableByName[localFD.Name]; ok {
-		log.Errorln("duplicate table name in combine binary output:", localFD.Name)
+
+		log.Errorf("%s, '%s'", i18n.String(i18n.Globals_TableNameDuplicated), localFD.Name)
 		return false
 	}
 

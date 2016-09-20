@@ -3,6 +3,7 @@ package exportorv2
 import (
 	"strings"
 
+	"github.com/davyxu/tabtoy/exportorv2/i18n"
 	"github.com/davyxu/tabtoy/exportorv2/model"
 	"github.com/tealeg/xlsx"
 )
@@ -34,7 +35,7 @@ func (self *File) ExportLocalType() bool {
 
 		if isTypeSheet(rawSheet.Name) {
 			if sheetCount > 0 {
-				log.Errorf("%s sheet should keep one!", model.TypeSheetName)
+				log.Errorf("%s", i18n.String(i18n.File_TypeSheetKeepSingleton))
 				return false
 			}
 
@@ -126,8 +127,6 @@ func NewFile(filename string) *File {
 		LocalFD:       model.NewFileDescriptor(),
 		FileName:      filename,
 	}
-
-	//log.Infof("%s\n", filepath.Base(filename))
 
 	var err error
 	self.coreFile, err = xlsx.OpenFile(filename)
