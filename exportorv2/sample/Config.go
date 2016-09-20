@@ -5,6 +5,7 @@ package table
 
 import (
 	"gamedef"
+	"fmt"
 )
 
 var SampleByID = make(map[int64]*gamedef.ItemDefine)

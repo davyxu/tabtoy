@@ -1,9 +1,5 @@
 package printer
 
-import (
-	"path/filepath"
-)
-
 type PrinterContext struct {
 	outFile string
 	p       Printer
@@ -11,9 +7,8 @@ type PrinterContext struct {
 }
 
 func (self *PrinterContext) Start(g *Globals) bool {
-	filebase := filepath.Base(self.outFile)
 
-	log.Infof("%s\n", filebase)
+	log.Infof("[%s] %s\n", self.ext, self.outFile)
 
 	bf := self.p.Run(g)
 

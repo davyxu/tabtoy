@@ -51,7 +51,7 @@ func Run(g *printer.Globals) bool {
 
 	log.Infoln("==========Export Sheet Data==========")
 	// 导出表格
-	if !util.ParallelWorker(fileObjList, g.ParaMode, func(in interface{}) bool {
+	if !util.ParallelWorker(fileObjList, false, func(in interface{}) bool {
 
 		file := in.(*File)
 
