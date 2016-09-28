@@ -17,7 +17,7 @@ package table
 
 import(
 	"gamedef"
-	"fmt"
+	{{if .HasAnyIndex}}"fmt"{{end}}
 )
 
 {{range $a, $row := .Rows}} {{range .Indexes}}
@@ -58,6 +58,11 @@ type goFileModel struct {
 	*model.FileDescriptor
 	ToolVersion string
 	Rows        []*goRowModel
+	IndexCount  int
+}
+
+func (self *goFileModel) HasAnyIndex() bool {
+	return self.IndexCount > 0
 }
 
 func (self *goFileModel) Package() string {
@@ -101,6 +106,7 @@ func (self *goPrinter) Run(g *Globals) *BinaryFile {
 					rm.Indexes = append(rm.Indexes, &goIndexModel{
 						FieldDescriptor: key,
 					})
+					fm.IndexCount++
 				}
 
 				fm.Rows = append(fm.Rows, &rm)
