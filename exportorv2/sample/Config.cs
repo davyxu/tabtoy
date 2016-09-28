@@ -70,13 +70,13 @@ namespace gamedef
 		{
 			
 			// Sample
-			if ( reader.MatchTag(0x90000))
+			if ( reader.MatchTag(0x90000) )
 			{
 				reader.ReadList_Struct<SampleDefine>( this.Sample );
 			}
 			
 			// Exp
-			if ( reader.MatchTag(0x90001))
+			if ( reader.MatchTag(0x90001) )
 			{
 				reader.ReadList_Struct<ExpDefine>( this.Exp );
 			}
@@ -114,7 +114,7 @@ namespace gamedef
 		// 攻击速率
 		public float AttackRate = 0;
 		
-		// 扩展类型
+		// 额外类型
 		public ActorType ExType = ActorType.Fighter;
 	
 	
@@ -123,19 +123,19 @@ namespace gamedef
 		{
 			
 			// 血量
-			if ( reader.MatchTag(0x10000))
+			if ( reader.MatchTag(0x10000) )
 			{
 				this.HP = reader.ReadInt32( );
 			}
 			
 			// 攻击速率
-			if ( reader.MatchTag(0x50001))
+			if ( reader.MatchTag(0x50001) )
 			{
 				this.AttackRate = reader.ReadFloat( );
 			}
 			
-			// 扩展类型
-			if ( reader.MatchTag(0x80002))
+			// 额外类型
+			if ( reader.MatchTag(0x80002) )
 			{
 				this.ExType = reader.ReadEnum<ActorType>( );
 			}
@@ -153,7 +153,7 @@ namespace gamedef
 		// 名称
 		public string Name = "";
 		
-		// 
+		// 图标ID
 		public int IconID = 0;
 		
 		// 攻击率
@@ -180,55 +180,55 @@ namespace gamedef
 		{
 			
 			// 唯一ID
-			if ( reader.MatchTag(0x20000))
+			if ( reader.MatchTag(0x20000) )
 			{
 				this.ID = reader.ReadInt64( );
 			}
 			
 			// 名称
-			if ( reader.MatchTag(0x60001))
+			if ( reader.MatchTag(0x60001) )
 			{
 				this.Name = reader.ReadString( );
 			}
 			
-			// 
-			if ( reader.MatchTag(0x10002))
+			// 图标ID
+			if ( reader.MatchTag(0x10002) )
 			{
 				this.IconID = reader.ReadInt32( );
 			}
 			
 			// 攻击率
-			if ( reader.MatchTag(0x50003))
+			if ( reader.MatchTag(0x50003) )
 			{
 				this.NumericalRate = reader.ReadFloat( );
 			}
 			
 			// 物品id
-			if ( reader.MatchTag(0x10004))
+			if ( reader.MatchTag(0x10004) )
 			{
 				this.ItemID = reader.ReadInt32( );
 			}
 			
 			// BuffID
-			if ( reader.MatchTag(0x10005))
+			if ( reader.MatchTag(0x10005) )
 			{
 				reader.ReadList_Int32( this.BuffID );
 			}
 			
 			// 类型
-			if ( reader.MatchTag(0x80006))
+			if ( reader.MatchTag(0x80006) )
 			{
 				this.Type = reader.ReadEnum<ActorType>( );
 			}
 			
 			// 技能ID列表
-			if ( reader.MatchTag(0x10007))
+			if ( reader.MatchTag(0x10007) )
 			{
 				reader.ReadList_Int32( this.SkillID );
 			}
 			
 			// 字符串结构
-			if ( reader.MatchTag(0x90008))
+			if ( reader.MatchTag(0x90008) )
 			{
 				reader.ReadList_Struct<Prop>( this.StrStruct );
 			}
@@ -255,19 +255,19 @@ namespace gamedef
 		{
 			
 			// 唯一ID
-			if ( reader.MatchTag(0x10000))
+			if ( reader.MatchTag(0x10000) )
 			{
 				this.Level = reader.ReadInt32( );
 			}
 			
 			// 名称
-			if ( reader.MatchTag(0x10001))
+			if ( reader.MatchTag(0x10001) )
 			{
 				this.Exp = reader.ReadInt32( );
 			}
 			
 			// 类型
-			if ( reader.MatchTag(0x80002))
+			if ( reader.MatchTag(0x80002) )
 			{
 				this.Type = reader.ReadEnum<ActorType>( );
 			}

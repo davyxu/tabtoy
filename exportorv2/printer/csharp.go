@@ -121,6 +121,15 @@ type csharpField struct {
 	IndexKeys []*model.FieldDescriptor
 }
 
+func (self csharpField) Comment() string {
+
+	if self.FieldDescriptor.Comment != "" {
+		return self.FieldDescriptor.Comment
+	}
+
+	return self.FieldDescriptor.Meta.Alias
+}
+
 func (self csharpField) ReadCode() string {
 
 	var baseType string

@@ -54,6 +54,15 @@ func (self protoFieldDescriptor) Label() string {
 	return ""
 }
 
+func (self protoFieldDescriptor) Comment() string {
+
+	if self.FieldDescriptor.Comment != "" {
+		return self.FieldDescriptor.Comment
+	}
+
+	return self.FieldDescriptor.Meta.Alias
+}
+
 func (self protoFieldDescriptor) TypeString() string {
 	if self.Complex != nil {
 		return self.Complex.Name

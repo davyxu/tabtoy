@@ -38,7 +38,7 @@ message Prop
 	// 攻击速率
 	float AttackRate = 2;
 	
-	// 扩展类型
+	// 额外类型
 	ActorType ExType = 3;
 
 }
@@ -52,7 +52,7 @@ message SampleDefine
 	// 名称
 	string Name = 2;
 	
-	// 
+	// 图标ID
 	int32 IconID = 3;
 	
 	// 攻击率
