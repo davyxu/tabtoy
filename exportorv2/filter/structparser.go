@@ -47,8 +47,10 @@ func (self *structParser) Run(fd *model.FieldDescriptor, callback func(string, s
 		case interface {
 			RuntimeError()
 		}:
+
 			// 继续外抛， 方便调试
 			panic(err)
+
 		case error:
 			log.Errorf("%s, '%s' '%v'", i18n.String(i18n.StructParser_LexerError), fd.Name, err.(error).Error())
 		case string:

@@ -50,7 +50,7 @@ namespace {{.Namespace}}{{$globalIndex:=.Indexes}}
 		{
 			{{range .Fields}}
 			// {{.Comment}}
-			if ( reader.MatchTag({{.Tag}}))
+			if ( reader.MatchTag({{.Tag}}) )
 			{
 				{{.ReadCode}}
 			}

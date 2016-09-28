@@ -274,7 +274,14 @@
 * 功能: 生成所有表中二进制数据
 
 * 范例: 生成bin后, 需要再生成cs格式, 通过[C#读取器]: (https://github.com/davyxu/tabtoy/blob/master/exportorv2/csharp) 读取二进制数据
-		
+	
+### go格式
+
+* 格式: --go_out=path/to/out.go
+
+* 功能: 生成所有表中索引信息的golang代码
+
+* 范例: 生成go后, 配合github/golang/protobuf库读取pbt格式, 再使用生成的golang文件为数据建立索引
 
 ## 指定合并结构体名
 
@@ -293,6 +300,14 @@
 	2表示proto2语法(使用protoc v2, 不带syntax识别头)
 
 	3表示proto3语法(使用protoc v3, 带syntax识别头)
+	
+## 设置输出语言
+
+* 格式: --lan=en_us
+
+* 功能: 通过语言名, 可以设置不同的输出日志, 方便非程序员导出查错
+
+* 范例: 语言名支持en_us(默认),  zh_cn(简体中文)
 
 
 # 例子

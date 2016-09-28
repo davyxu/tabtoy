@@ -4,17 +4,21 @@
 
 # 优点
 
-* 只需3步, 即可导出数据, 无任何其他工具依赖
+* 编写电子表格, 导出. 只需2步, 即可导出数据!
 
-* 无需依赖vbs,vba,dll, 跨平台
+* 跨平台运行, 无第三方依赖, 无需任何的vbs,vba,dll
 
-* 支持文件格式最多的导出器(json, lua, C#+二进制, pbt+proto) 
+* 支持文件格式最多的导出器(json, lua, C#+二进制, pbt+proto, Golang) 
 
 * 一次设置, 自动生成索引代码, 支持lua, C#
 
-* 单元格字段列随意调整, 自动检查错误, 精确报错位置
+* 单元格字段列顺序随意调整, 自动检查错误, 精确报错位置
 
-* 充分利用CPU多核进行导出, 是已知的现有导出器中最快的
+* 支持中文枚举值编写,更直观. 跟各种数字值的Magic Number说Bye Bye!
+
+* 全中文导出提示,并支持多语言导出提示
+
+* 充分利用CPU多核进行导出, 是已知的现有导出器中速度最快的
 
 * 持续更新, 不断添加新功能, 提高工作效率
 
@@ -54,9 +58,7 @@
 * 2011年: 第一代导出器,基于VBA的表格内建导出器,速度慢,复用困难,容易错,不安全
 
 
-# 应用情况
-
-前面多个版本都在本人项目中使用, 2个非本人项目商用
+# 导出性能
 
 53个Excel源文件, 格式xlsm, 大小3.8M
 
@@ -91,9 +93,9 @@
 	
 	https://github.com/davyxu/tabtoy/releases
 	
-* 手动编译
+* 手动编译获取最新版
 	
-	go get github.com/davyxu/tabtoy
+	go get -u -v github.com/davyxu/tabtoy
 	
 ### 编写导出命令行
 
@@ -109,13 +111,13 @@ tabtoy --mode=exportorv2 --json_out=.\config.json Table.xlsx
 	
 https://github.com/davyxu/tabtoy/blob/master/exportorv2/sample
 
-## 详细文档
+## 第六代导出器详细文档(tabtoy v2)
 
 推荐!
 
 https://github.com/davyxu/tabtoy/blob/master/doc/Manual_V2.md
 
-# 第五代导出器文档(tabtoy v1)
+# 旧版第五代导出器文档(tabtoy v1)
 
 已停止开发
 
