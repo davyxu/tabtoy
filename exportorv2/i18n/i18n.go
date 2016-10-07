@@ -15,6 +15,7 @@ const (
 	StructParser_ExpectField
 	StructParser_UnexpectedSpliter
 	StructParser_FieldNotFound
+	StructParser_DuplicateFieldInCell
 	Run_CollectTypeInfo
 	Run_ExportSheetData
 	Globals_CombineNameLost

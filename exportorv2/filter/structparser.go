@@ -135,6 +135,9 @@ func parseStruct(fd *model.FieldDescriptor, value string, fileD *model.FileDescr
 
 	p := newStructParser(value)
 
+	// 检查字段有没有重复
+	fieldByFD := make(map[*model.FieldDescriptor]bool)
+
 	return p.Run(fd, func(key, value string) bool {
 
 		bnField := fd.Complex.FieldByValueAndMeta(key)
@@ -144,6 +147,13 @@ func parseStruct(fd *model.FieldDescriptor, value string, fileD *model.FileDescr
 
 			return false
 		}
+
+		if _, ok := fieldByFD[bnField]; ok {
+			log.Errorf("%s, '%s'", i18n.String(i18n.StructParser_DuplicateFieldInCell), key)
+			return false
+		}
+
+		fieldByFD[bnField] = true
 
 		// 添加类型节点
 		fieldNode := node.AddKey(bnField)

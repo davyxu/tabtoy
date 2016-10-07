@@ -309,6 +309,12 @@
 
 * 范例: 语言名支持en_us(默认),  zh_cn(简体中文)
 
+# FAQ
+问：如何导出结构体数组？
+答：参考例子https://github.com/davyxu/tabtoy/blob/master/exportorv2/sample/Sample.xlsx
+中StrStruct字段
+注意： 结构体数组要求每个数组的元素在一个独立的单元格
+
 
 # 例子
 

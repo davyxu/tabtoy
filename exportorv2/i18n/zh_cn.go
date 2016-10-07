@@ -11,6 +11,7 @@ func init() {
 		StructParser_ExpectField:                         "结构体解析: 期望字段",
 		StructParser_UnexpectedSpliter:                   "结构体解析: 非预期的键值分割符",
 		StructParser_FieldNotFound:                       "结构体解析: 未知字段",
+		StructParser_DuplicateFieldInCell:                "结构体解析: 重复字段",
 		Run_CollectTypeInfo:                              "运行: 收集类型信息",
 		Run_ExportSheetData:                              "运行: 导出表单数据",
 		Globals_CombineNameLost:                          "合并: 请在参数中添加 'combinename' 指明合并配置名",

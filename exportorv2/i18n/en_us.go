@@ -11,6 +11,7 @@ func init() {
 		StructParser_ExpectField:                         "StructParser: Expect field",
 		StructParser_UnexpectedSpliter:                   "StructParser: Unexpected k-v spliter",
 		StructParser_FieldNotFound:                       "StructParser: Field not found",
+		StructParser_DuplicateFieldInCell:                "StructParser: Duplicate field",
 		Run_CollectTypeInfo:                              "Run: Collect Type Info",
 		Run_ExportSheetData:                              "Run: Export Sheet Data",
 		Globals_CombineNameLost:                          "Globals: Please specify 'combinename' params",

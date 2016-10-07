@@ -57,7 +57,7 @@ var paramCombineStructName = flag.String("combinename", "", "[v2] combine struct
 var paramProtoVersion = flag.Int("protover", 3, "[v2] output .proto file version, 2 or 3")
 var paramLanguage = flag.String("lan", "en_us", "[v2] set output language")
 
-const Version = "2.2.0"
+const Version = "2.2.1"
 
 func main() {
 
