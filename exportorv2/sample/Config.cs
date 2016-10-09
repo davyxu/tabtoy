@@ -171,6 +171,9 @@ namespace gamedef
 		// 技能ID列表
 		public List<int> SkillID = new List<int>();
 		
+		// 单结构解析
+		public Prop SingleStruct = new Prop();
+		
 		// 字符串结构
 		public List<Prop> StrStruct = new List<Prop>();
 	
@@ -227,8 +230,14 @@ namespace gamedef
 				reader.ReadList_Int32( this.SkillID );
 			}
 			
-			// 字符串结构
+			// 单结构解析
 			if ( reader.MatchTag(0x90008) )
+			{
+				this.SingleStruct = reader.ReadStruct<Prop>( );
+			}
+			
+			// 字符串结构
+			if ( reader.MatchTag(0x90009) )
 			{
 				reader.ReadList_Struct<Prop>( this.StrStruct );
 			}

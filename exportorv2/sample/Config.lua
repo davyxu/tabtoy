@@ -3,7 +3,7 @@
 
 local tab = {
 	Sample = {
-		{ ID = 100, Name = "黑猫警长", NumericalRate = 0.6, ItemID = 100, Type = "Fighter", SkillID = { 4, 6, 7 }, StrStruct = { { HP= 3, ExType= "Power" }, { AttackRate= 3.5 } } 	},
+		{ ID = 100, Name = "黑猫警长", NumericalRate = 0.6, ItemID = 100, Type = "Fighter", SkillID = { 4, 6, 7 }, SingleStruct = { HP= 100, AttackRate= 1.2 }, StrStruct = { { HP= 3, ExType= "Power" }, { AttackRate= 3.5 } } 	},
 		{ ID = 101, Name = "葫芦\n娃", NumericalRate = 0.8, ItemID = 100, BuffID = { 3, 1 }, Type = "Power", SkillID = { 1 } 	},
 		{ ID = 102, Name = "舒\"克\"", NumericalRate = 0.7, ItemID = 100, Type = "Fighter" 	},
 		{ ID = 103, Name = "贝\n塔", ItemID = 100 	},

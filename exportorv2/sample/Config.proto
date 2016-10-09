@@ -70,8 +70,11 @@ message SampleDefine
 	// 技能ID列表
 	repeated int32 SkillID = 8;
 	
+	// 单结构解析
+	Prop SingleStruct = 9;
+	
 	// 字符串结构
-	repeated Prop StrStruct = 9;
+	repeated Prop StrStruct = 10;
 
 }
 

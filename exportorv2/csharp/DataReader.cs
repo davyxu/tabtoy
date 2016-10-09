@@ -123,6 +123,15 @@ namespace tabtoy
             return (T)Enum.ToObject(typeof(T), _reader.ReadInt32());                
         }
 
+        public T ReadStruct<T>( ) where T : tabtoy.DataObject
+        {              
+            var element = Activator.CreateInstance<T>();
+
+            element.Deserialize(this);
+
+            return element;
+        }
+
 
         public void ReadList_Int32( List<int> list)
         {
