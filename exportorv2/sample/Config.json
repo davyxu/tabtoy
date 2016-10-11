@@ -9,10 +9,5 @@
 		{ "ID": 104, "Name": "邋遢大王", "NumericalRate": 1, "ItemID": 100, "Type": 0 }
 	], 
 	"Exp":[
-		{ "Level": 1, "Exp": 10, "Type": 0 },
-		{ "Level": 2, "Exp": 30 },
-		{ "Level": 3, "Exp": 50 },
-		{ "Level": 4, "Exp": 70, "Type": 21 },
-		{ "Level": 5, "Exp": 80 }
 	]
 }

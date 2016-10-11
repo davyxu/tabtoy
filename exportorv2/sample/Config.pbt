@@ -8,11 +8,3 @@ Sample: [
 	{ID: 104, Name: "邋遢大王", NumericalRate: 1, ItemID: 100, Type: Fighter }
 ]
 
-Exp: [
-	{Level: 1, Exp: 10, Type: Fighter }, 
-	{Level: 2, Exp: 30 }, 
-	{Level: 3, Exp: 50 }, 
-	{Level: 4, Exp: 70, Type: Power }, 
-	{Level: 5, Exp: 80 }
-]
-

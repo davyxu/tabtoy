@@ -14,6 +14,3 @@ Sample.xlsx ^
 Info.xlsx
 
 @IF %ERRORLEVEL% NEQ 0 pause
-
-
-

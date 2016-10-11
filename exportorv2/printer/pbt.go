@@ -40,6 +40,10 @@ func (self *pbtPrinter) Run(g *Globals) *BinaryFile {
 
 func printTablePBT(bf *BinaryFile, tab *model.Table) bool {
 
+	if len(tab.Recs) == 0 {
+		return true
+	}
+
 	bf.Printf("%s: [\n", tab.LocalFD.Name)
 
 	// 遍历每一行
