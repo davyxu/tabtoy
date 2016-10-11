@@ -1,165 +1,110 @@
 package exportorv2
 
 import (
-	"strconv"
-
 	"github.com/davyxu/tabtoy/exportorv2/i18n"
 	"github.com/davyxu/tabtoy/exportorv2/model"
 	"github.com/davyxu/tabtoy/util"
-	"github.com/golang/protobuf/proto"
 )
 
 const (
 	// 信息所在的行
 	TypeSheetRow_Pragma    = 0 // 配置
-	TypeSheetRow_Comment   = 1 // 字段名(对应proto)
-	TypeSheetRow_DataBegin = 2 // 数据开始
+	TypeSheetRow_FieldDesc = 1 // 类型描述
+	TypeSheetRow_Comment   = 2 // 字段名(对应proto)
+	TypeSheetRow_DataBegin = 3 // 数据开始
 )
 
-const (
-	// 信息所在列
-	TypeSheetCol_ObjectType = 0 // 对象类型
-	TypeSheetCol_FieldName  = 1 // 字段名
-	TypeSheetCol_FieldType  = 2 // 字段类型
-	TypeSheetCol_Value      = 3 // 值
-	TypeSheetCol_Comment    = 4 // 注释
-	TypeSheetCol_Meta       = 5 // 特性
-)
+var typeHeader = map[string]int{
+	"ObjectType": 0,
+	"FieldName":  1,
+	"FieldType":  2,
+	"Value":      3,
+	"Comment":    4,
+	"Meta":       5,
+}
 
 type TypeSheet struct {
 	*Sheet
 }
 
-func (self *TypeSheet) Parse(localFD *model.FileDescriptor, globalFD *model.FileDescriptor) bool {
+func (self *TypeSheet) ParseTable(root *typeModelRoot) bool {
 
-	// 是否继续读行
 	var readingLine bool = true
 
-	var td *model.Descriptor
+	root.pragma = self.GetCellData(TypeSheetRow_Pragma, 0)
 
-	rawPragma := self.GetCellData(TypeSheetRow_Pragma, 0)
+	for row := TypeSheetRow_DataBegin; readingLine; row++ {
 
-	if err := proto.UnmarshalText(rawPragma, &localFD.Pragma); err != nil {
-		self.Row = TypeSheetRow_Pragma
-		self.Column = 0
-		log.Errorf("%s, '%s'", i18n.String(i18n.TypeSheet_PragmaParseFailed), rawPragma)
+		tm := newTypeModel()
+		tm.row = row
+
+		for col := 0; ; col++ {
+
+			// 头
+			typeDeclare := self.GetCellData(TypeSheetRow_FieldDesc, col)
+
+			// 头已经读完
+			if typeDeclare == "" {
+				break
+			}
+
+			if _, ok := typeHeader[typeDeclare]; !ok {
+				self.Row = TypeSheetRow_FieldDesc
+				self.Column = col
+				log.Errorf("%s, '%s'", i18n.String(i18n.TypeSheet_UnexpectedTypeHeader), typeDeclare)
+				return false
+			}
+
+			// 值
+			typeValue := self.GetCellData(row, col)
+
+			// 类型空表示停止解析
+			if typeDeclare == "ObjectType" && typeValue == "" {
+				readingLine = false
+				break
+			}
+
+			tm.colData[typeDeclare] = &typeCell{
+				value: typeValue,
+				col:   col,
+			}
+
+		}
+
+		if len(tm.colData) > 0 {
+			root.models = append(root.models, tm)
+		}
+
+	}
+
+	return true
+}
+
+func (self *TypeSheet) Parse(localFD *model.FileDescriptor, globalFD *model.FileDescriptor) bool {
+
+	var root typeModelRoot
+
+	if !self.ParseTable(&root) {
 		goto ErrorStop
 	}
 
-	if localFD.Pragma.TableName == "" {
-		self.Row = TypeSheetRow_Pragma
-		self.Column = 0
-		log.Errorf("%s", i18n.String(i18n.TypeSheet_TableNameIsEmpty))
-		goto ErrorStop
-	}
-
-	if localFD.Pragma.Package == "" {
+	if !root.ParsePragma(localFD) {
 		self.Row = TypeSheetRow_Pragma
 		self.Column = 0
 		log.Errorf("%s", i18n.String(i18n.TypeSheet_PackageIsEmpty))
 		goto ErrorStop
 	}
 
-	// 遍历每一行
-	for self.Row = TypeSheetRow_DataBegin; readingLine; self.Row++ {
+	if !root.ParseData(localFD, globalFD) {
+		self.Row = root.Row
+		self.Column = root.Col
+		goto ErrorStop
+	}
 
-		// ====================解析对象类型====================
-		// 第一列是空的，结束
-		if self.GetCellData(self.Row, TypeSheetCol_ObjectType) == "" {
-			break
-		}
-
-		var fd model.FieldDescriptor
-
-		rawTypeName := self.GetCellData(self.Row, TypeSheetCol_ObjectType)
-
-		existType, ok := localFD.DescriptorByName[rawTypeName]
-
-		if ok {
-
-			td = existType
-
-		} else {
-
-			td = model.NewDescriptor()
-			td.Name = rawTypeName
-			localFD.Add(td)
-		}
-
-		// ====================解析字段名====================
-		fd.Name = self.GetCellData(self.Row, TypeSheetCol_FieldName)
-
-		// ====================解析字段类型====================
-		rawFieldType := self.GetCellData(self.Row, TypeSheetCol_FieldType)
-
-		// 开始在本地symbol中找
-		testFD := localFD
-
-		for {
-
-			result := parseFieldType(testFD, rawFieldType, &fd)
-
-			// 找不到就换全局范围找
-			if result == parseFieldTypeResult_UnknownFieldType {
-
-				if testFD == localFD {
-					testFD = globalFD
-					continue
-				}
-
-				log.Errorf("%s, '%s'", i18n.String(i18n.TypeSheet_FieldTypeNotFound), rawFieldType)
-
-			} else if result == parseFieldTypeResult_OK {
-				break
-			}
-
-			self.Column = TypeSheetCol_FieldType
-			goto ErrorStop
-
-		}
-
-		// ====================解析值====================
-		rawValue := self.GetCellData(self.Row, TypeSheetCol_Value)
-
-		var kind model.DescriptorKind
-
-		// 非空值是枚举
-		if rawValue != "" {
-
-			// 解析枚举值
-			if v, err := strconv.Atoi(rawValue); err == nil {
-				fd.EnumValue = int32(v)
-			} else {
-				self.Column = TypeSheetCol_Value
-				log.Errorf("%s, %s", i18n.String(i18n.TypeSheet_EnumValueParseFailed), err.Error())
-				goto ErrorStop
-			}
-			kind = model.DescriptorKind_Enum
-		} else {
-			kind = model.DescriptorKind_Struct
-		}
-
-		if td.Kind == model.DescriptorKind_None {
-			td.Kind = kind
-			// 一些字段有填值, 一些没填值
-		} else if td.Kind != kind {
-			self.Column = TypeSheetCol_Value
-			log.Errorf("%s", i18n.String(i18n.TypeSheet_DescriptorKindNotSame))
-			goto ErrorStop
-		}
-		// ====================解析注释====================
-		fd.Comment = self.GetCellData(self.Row, TypeSheetCol_Comment)
-
-		// ====================解析特性====================
-		metaString := self.GetCellData(self.Row, TypeSheetCol_Meta)
-
-		if err := proto.UnmarshalText(metaString, &fd.Meta); err != nil {
-			log.Errorf("%s, '%s'", i18n.String(i18n.TypeSheet_FieldMetaParseFailed), err.Error())
-			return false
-		}
-
-		td.Add(&fd)
-
+	if !root.SolveUnknownModel(localFD, globalFD) {
+		self.Row = root.Row
+		self.Column = root.Col
+		goto ErrorStop
 	}
 
 	return self.checkProtobufCompatibility(localFD)
@@ -170,42 +115,6 @@ ErrorStop:
 
 	log.Errorf("%s|%s(%s)", self.file.FileName, self.Name, util.ConvR1C1toA1(r, c))
 	return false
-}
-
-const (
-	parseFieldTypeResult_OK = iota
-	parseFieldTypeResult_OtherError
-	parseFieldTypeResult_UnknownFieldType
-)
-
-func parseFieldType(localFD *model.FileDescriptor, rawFieldType string, fd *model.FieldDescriptor) int {
-
-	// 解析普通类型
-	if ft, ok := model.ParseFieldType(rawFieldType); ok {
-		fd.Type = ft
-	} else {
-
-		// 解析内建类型
-		if desc, ok := localFD.DescriptorByName[rawFieldType]; ok {
-
-			// 只有枚举( 结构体不允许再次嵌套, 增加理解复杂度 )
-			if desc.Kind != model.DescriptorKind_Enum {
-				log.Errorf("%s, '%s'", i18n.String(i18n.TypeSheet_StructFieldCanNotBeStruct), rawFieldType)
-				return parseFieldTypeResult_OtherError
-			}
-
-			fd.Type = model.FieldType_Enum
-			fd.Complex = desc
-
-		} else {
-
-			return parseFieldTypeResult_UnknownFieldType
-		}
-
-	}
-
-	return parseFieldTypeResult_OK
-
 }
 
 // 检查protobuf兼容性

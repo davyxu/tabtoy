@@ -11,7 +11,7 @@ func init() {
 		StructParser_ExpectField:                         "结构体解析: 期望字段",
 		StructParser_UnexpectedSpliter:                   "结构体解析: 非预期的键值分割符",
 		StructParser_FieldNotFound:                       "结构体解析: 未知字段",
-		StructParser_DuplicateFieldInCell:                "结构体解析: 重复字段",
+		StructParser_DuplicateFieldInCell:                "结构体解析: 重复的字段",
 		Run_CollectTypeInfo:                              "运行: 收集类型信息",
 		Run_ExportSheetData:                              "运行: 导出表单数据",
 		Globals_CombineNameLost:                          "合并: 请在参数中添加 'combinename' 指明合并配置名",
@@ -23,9 +23,10 @@ func init() {
 		DataSheet_ValueRepeated:                          "数据表: 单元格值重复",
 		DataHeader_TypeNotFound:                          "数据头: 未知类型",
 		DataHeader_MetaParseFailed:                       "数据头: 特性解析错误",
-		DataHeader_DuplicateFieldName:                    "数据头: 重复字段名",
+		DataHeader_DuplicateFieldName:                    "数据头: 重复的字段名",
 		DataHeader_RepeatedFieldTypeNotSameInMultiColumn: "数据头: 数组字段在多列中的类型不一致",
 		DataHeader_RepeatedFieldMetaNotSameInMultiColumn: "数据头: 数组字段在多列中的特性不一致",
+		DataHeader_UseReservedTypeName:                   "数据头: 使用了保留的类型名 例如:表名+'Define'",
 		TypeSheet_PragmaParseFailed:                      "类型表: 文件特性解析失败",
 		TypeSheet_TableNameIsEmpty:                       "类型表: 表名(TableName)为空",
 		TypeSheet_PackageIsEmpty:                         "类型表: 包名(Package)为空",
@@ -35,5 +36,7 @@ func init() {
 		TypeSheet_FieldMetaParseFailed:                   "类型表: 字段特性解析失败",
 		TypeSheet_StructFieldCanNotBeStruct:              "类型表: 结构体字段类型不能是结构体类型",
 		TypeSheet_FirstEnumValueShouldBeZero:             "类型表: 第一个枚举值必须为0",
+		TypeSheet_UnexpectedTypeHeader:                   "类型表: 非期望的类型表头名",
+		TypeSheet_DuplicatedEnumValue:                    "类型表: 重复的枚举值",
 	})
 }

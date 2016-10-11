@@ -20,8 +20,8 @@ namespace {{.Namespace}}{{$globalIndex:=.Indexes}}
 	public enum {{.Name}}
 	{
 	{{range .Fields}}	
-		// {{.Comment}}
-		{{.FieldDescriptor.Name}} = {{.FieldDescriptor.EnumValue}},
+		{{.Alias}}
+		{{.FieldDescriptor.Name}} = {{.FieldDescriptor.EnumValue}}, {{.Comment}}
 	{{end}}
 	}
 	{{end}}
@@ -29,8 +29,8 @@ namespace {{.Namespace}}{{$globalIndex:=.Indexes}}
 	public partial class {{.Name}} : tabtoy.DataObject
 	{	
 	{{range .Fields}}	
-		// {{.Comment}}
-		{{.TypeCode}}
+		{{.Alias}}
+		{{.TypeCode}} {{.Comment}}
 	{{end}}
 	
 	{{if .IsCombine}}{{range $globalIndex}}
@@ -49,7 +49,7 @@ namespace {{.Namespace}}{{$globalIndex:=.Indexes}}
 		public void Deserialize( tabtoy.DataReader reader )
 		{
 			{{range .Fields}}
-			// {{.Comment}}
+			{{.Comment}}
 			if ( reader.MatchTag({{.Tag}}) )
 			{
 				{{.ReadCode}}
@@ -121,15 +121,24 @@ type csharpField struct {
 	IndexKeys []*model.FieldDescriptor
 }
 
-func (self csharpField) Comment() string {
+func (self csharpField) Alias() string {
 
-	if self.FieldDescriptor.Comment != "" {
-		return self.FieldDescriptor.Comment
+	if self.FieldDescriptor.Meta.Alias == "" {
+		return ""
 	}
 
-	return self.FieldDescriptor.Meta.Alias
+	return "// " + self.FieldDescriptor.Meta.Alias
 }
 
+func (self csharpField) Comment() string {
+
+	if self.FieldDescriptor.Comment == "" {
+		return ""
+	}
+
+	return "// " + self.FieldDescriptor.Comment
+
+}
 func (self csharpField) ReadCode() string {
 
 	var baseType string
@@ -207,7 +216,7 @@ func (self csharpField) TypeCode() string {
 		raw = self.Complex.Name
 	case model.FieldType_Struct:
 		if self.Complex == nil {
-			log.Errorln("unknown struct type ", self.Type)
+			log.Errorln("unknown struct type ", self.Type, self.FieldDescriptor.Name, self.FieldDescriptor.Parent.Name)
 			return "unknown"
 		}
 

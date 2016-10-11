@@ -26,6 +26,7 @@ func init() {
 		DataHeader_DuplicateFieldName:                    "DataHeader: Duplicated field name",
 		DataHeader_RepeatedFieldTypeNotSameInMultiColumn: "DataHeader: Repeated field type not same in columns",
 		DataHeader_RepeatedFieldMetaNotSameInMultiColumn: "DataHeader: Repeated field meta not same in columns",
+		DataHeader_UseReservedTypeName:                   "DataHeader: Use reserved type name, like TableName+'Define' ",
 		TypeSheet_PragmaParseFailed:                      "TypeSheet: File pragma parse failed",
 		TypeSheet_TableNameIsEmpty:                       "TypeSheet: Table name is empty",
 		TypeSheet_PackageIsEmpty:                         "TypeSheet: Package is empty",
@@ -35,5 +36,7 @@ func init() {
 		TypeSheet_FieldMetaParseFailed:                   "TypeSheet: Field meta parse failed",
 		TypeSheet_StructFieldCanNotBeStruct:              "TypeSheet: Struct field can not be struct kind",
 		TypeSheet_FirstEnumValueShouldBeZero:             "TypeSheet: First enum value should be zero",
+		TypeSheet_UnexpectedTypeHeader:                   "TypeSheet: Unexpected type header",
+		TypeSheet_DuplicatedEnumValue:                    "TypeSheet: Duplicated enum value",
 	})
 }

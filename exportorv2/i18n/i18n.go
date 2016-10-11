@@ -30,6 +30,7 @@ const (
 	DataHeader_DuplicateFieldName
 	DataHeader_RepeatedFieldTypeNotSameInMultiColumn
 	DataHeader_RepeatedFieldMetaNotSameInMultiColumn
+	DataHeader_UseReservedTypeName
 	TypeSheet_PragmaParseFailed
 	TypeSheet_TableNameIsEmpty
 	TypeSheet_PackageIsEmpty
@@ -39,6 +40,8 @@ const (
 	TypeSheet_FieldMetaParseFailed
 	TypeSheet_StructFieldCanNotBeStruct
 	TypeSheet_FirstEnumValueShouldBeZero
+	TypeSheet_UnexpectedTypeHeader
+	TypeSheet_DuplicatedEnumValue
 )
 
 var currLan map[StringID]string

@@ -54,6 +54,7 @@ func (self *File) ExportLocalType() bool {
 	// 解析表头
 	for _, rawSheet := range self.coreFile.Sheets {
 
+		// 是数据表
 		if !isTypeSheet(rawSheet.Name) {
 			dSheet := newDataSheet(NewSheet(self, rawSheet))
 
@@ -66,7 +67,7 @@ func (self *File) ExportLocalType() bool {
 			dataHeader := newDataHeadSheet()
 
 			// 检查引导头
-			if !dataHeader.ParseProtoField(dSheet.Sheet, self.LocalFD, self.GlobalFD) {
+			if !dataHeader.ParseProtoField(len(self.dataSheets), dSheet.Sheet, self.LocalFD, self.GlobalFD) {
 				return false
 			}
 
@@ -75,6 +76,7 @@ func (self *File) ExportLocalType() bool {
 			}
 
 			self.dataSheets = append(self.dataSheets, dSheet)
+
 		}
 	}
 

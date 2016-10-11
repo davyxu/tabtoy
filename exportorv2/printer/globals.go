@@ -142,6 +142,10 @@ func (self *Globals) AddContent(tab *model.Table) bool {
 	rowFD.Comment = localFD.Name
 	self.CombineStruct.Add(&rowFD)
 
+	if localFD.RowDescriptor() == nil {
+		panic("row field null:" + localFD.Name)
+	}
+
 	for _, d := range localFD.Descriptors {
 
 		// 非行类型的, 全部忽略

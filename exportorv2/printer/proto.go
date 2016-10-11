@@ -18,8 +18,8 @@ package {{.Package}};
 enum {{.Name}}
 {	
 {{range .ProtoFields}}
-	// {{.Comment}}
-	{{.Name}} = {{.Number}};
+	{{.Alias}}
+	{{.Name}} = {{.Number}}; {{.Comment}}
 {{end}}
 }
 {{end}}
@@ -27,8 +27,8 @@ enum {{.Name}}
 message {{.Name}}
 {	
 {{range .ProtoFields}}	
-	// {{.Comment}}
-	{{.Label}}{{.TypeString}} {{.Name}} = {{.Number}};
+	{{.Alias}}
+	{{.Label}}{{.TypeString}} {{.Name}} = {{.Number}}; {{.Comment}}
 {{end}}
 }
 {{end}}
@@ -54,13 +54,23 @@ func (self protoFieldDescriptor) Label() string {
 	return ""
 }
 
-func (self protoFieldDescriptor) Comment() string {
+func (self protoFieldDescriptor) Alias() string {
 
-	if self.FieldDescriptor.Comment != "" {
-		return self.FieldDescriptor.Comment
+	if self.FieldDescriptor.Meta.Alias == "" {
+		return ""
 	}
 
-	return self.FieldDescriptor.Meta.Alias
+	return "// " + self.FieldDescriptor.Meta.Alias
+}
+
+func (self protoFieldDescriptor) Comment() string {
+
+	if self.FieldDescriptor.Comment == "" {
+		return ""
+	}
+
+	return "// " + self.FieldDescriptor.Comment
+
 }
 
 func (self protoFieldDescriptor) TypeString() string {

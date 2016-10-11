@@ -35,7 +35,7 @@ func (self *DataHeader) RawFieldCount() int {
 }
 
 // 检查字段行的长度
-func (self *DataHeader) ParseProtoField(sheet *Sheet, localFD *model.FileDescriptor, globalFD *model.FileDescriptor) bool {
+func (self *DataHeader) ParseProtoField(index int, sheet *Sheet, localFD *model.FileDescriptor, globalFD *model.FileDescriptor) bool {
 
 	var def *model.FieldDescriptor
 
@@ -150,8 +150,12 @@ func (self *DataHeader) ParseProtoField(sheet *Sheet, localFD *model.FileDescrip
 		return false
 	}
 
-	// 添加一次行结构
-	self.makeRowDescriptor(localFD, self.headerFields)
+	if index == 0 {
+		// 添加第一个数据表的定义
+		if !self.makeRowDescriptor(localFD, self.headerFields) {
+			goto ErrorStop
+		}
+	}
 
 	return true
 
@@ -163,16 +167,17 @@ ErrorStop:
 	return false
 }
 
-func (self *DataHeader) makeRowDescriptor(fileD *model.FileDescriptor, rootField []*model.FieldDescriptor) {
+func (self *DataHeader) makeRowDescriptor(fileD *model.FileDescriptor, rootField []*model.FieldDescriptor) bool {
 
 	rowType := model.NewDescriptor()
 	rowType.Usage = model.DescriptorUsage_RowType
 	rowType.Name = fmt.Sprintf("%sDefine", fileD.Pragma.TableName)
 	rowType.Kind = model.DescriptorKind_Struct
 
-	// 有就不添加
+	// 类型已经存在, 说明是自己定义的 XXDefine, 不允许
 	if _, ok := fileD.DescriptorByName[rowType.Name]; ok {
-		return
+		log.Errorf("%s '%s'", i18n.String(i18n.DataHeader_UseReservedTypeName), rowType.Name)
+		return false
 	}
 
 	fileD.Add(rowType)
@@ -182,6 +187,8 @@ func (self *DataHeader) makeRowDescriptor(fileD *model.FileDescriptor, rootField
 
 		rowType.Add(field)
 	}
+
+	return true
 
 }
 
