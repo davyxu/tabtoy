@@ -1,5 +1,10 @@
+*.suo
 /proto/protoc-gen-go.exe
 /proto/protoc.exe
-/test/test.pb
 /tabtoy.exe
-test/Actor_std.json
+exportorv1/test/test.pb
+exportorv1/test/Actor_std.json
+exportorv2/sample/~*.xlsx
+exportorv2/sample/csharp/csharp/bin/
+exportorv2/sample/csharp/csharp/obj/
+Publish.bat
