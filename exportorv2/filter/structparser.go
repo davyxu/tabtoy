@@ -6,65 +6,31 @@ import (
 	"github.com/davyxu/tabtoy/exportorv2/model"
 )
 
+// 自定义的token id
+const (
+	Token_EOF = iota
+	Token_WhiteSpace
+	Token_LineEnd
+	Token_UnixStyleComment
+	Token_Identifier
+	Token_Numeral
+	Token_String
+	Token_Comma
+	Token_Unknown
+)
+
 type structParser struct {
-	lexer *golexer.Lexer
-
-	curr *golexer.Token
-}
-
-func (self *structParser) NextToken() {
-
-	token, err := self.lexer.Read()
-
-	if err != nil {
-		panic(err)
-	}
-
-	if token == nil {
-		panic("EOF")
-		return
-	}
-
-	self.curr = token
-}
-
-func (self *structParser) TokenID() int {
-	return self.curr.MatcherID()
-}
-
-func (self *structParser) TokenValue() string {
-	return self.curr.Value()
+	*golexer.Parser
 }
 
 func (self *structParser) Run(fd *model.FieldDescriptor, callback func(string, string) bool) (ok bool) {
 
-	defer func() {
+	defer golexer.ErrorCatcher(func(err error) {
 
-		err := recover()
+		log.Errorf("%s, '%s' '%v'", i18n.String(i18n.StructParser_LexerError), fd.Name, err.Error())
+	})
 
-		switch err.(type) {
-		// 运行时错误
-		case interface {
-			RuntimeError()
-		}:
-
-			// 继续外抛， 方便调试
-			panic(err)
-
-		case error:
-			log.Errorf("%s, '%s' '%v'", i18n.String(i18n.StructParser_LexerError), fd.Name, err.(error).Error())
-		case string:
-			if err.(string) == "EOF" {
-				ok = true
-			}
-
-		}
-
-	}()
-
-	self.NextToken()
-
-	for {
+	for self.TokenID() != Token_EOF {
 
 		if self.TokenID() != Token_Identifier {
 			log.Errorf("%s, '%s'", i18n.String(i18n.StructParser_ExpectField), fd.Name)
@@ -95,18 +61,6 @@ func (self *structParser) Run(fd *model.FieldDescriptor, callback func(string, s
 	return true
 }
 
-// 自定义的token id
-const (
-	Token_Unknown = iota
-	Token_WhiteSpace
-	Token_LineEnd
-	Token_UnixStyleComment
-	Token_Identifier
-	Token_Numeral
-	Token_String
-	Token_Comma
-)
-
 func newStructParser(value string) *structParser {
 	l := golexer.NewLexer()
 
@@ -126,7 +80,7 @@ func newStructParser(value string) *structParser {
 	l.Start(value)
 
 	return &structParser{
-		lexer: l,
+		golexer.NewParser(l),
 	}
 
 }
