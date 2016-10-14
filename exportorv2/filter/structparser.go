@@ -30,6 +30,8 @@ func (self *structParser) Run(fd *model.FieldDescriptor, callback func(string, s
 		log.Errorf("%s, '%s' '%v'", i18n.String(i18n.StructParser_LexerError), fd.Name, err.Error())
 	})
 
+	self.NextToken()
+
 	for self.TokenID() != Token_EOF {
 
 		if self.TokenID() != Token_Identifier {
