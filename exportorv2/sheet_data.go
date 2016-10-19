@@ -23,6 +23,12 @@ type DataSheet struct {
 }
 
 func (self *DataSheet) Valid() bool {
+
+	name := strings.TrimSpace(self.Sheet.Name)
+	if name != "" && name[0] == '#' {
+		return false
+	}
+
 	return self.GetCellData(0, 0) != ""
 }
 

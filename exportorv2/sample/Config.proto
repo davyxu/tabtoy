@@ -85,7 +85,7 @@ message ExpDefine
 	int32 Level = 1; // 唯一ID
 	
 	
-	int32 Exp = 2; // 名称
+	int32 Exp = 2; // 经验值
 	
 	
 	ActorType Type = 3; // 类型

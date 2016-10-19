@@ -253,7 +253,7 @@ namespace gamedef
 		public int Level = 0; // 唯一ID
 		
 		
-		public int Exp = 0; // 名称
+		public int Exp = 0; // 经验值
 		
 		
 		public ActorType Type = ActorType.Fighter; // 类型
@@ -269,7 +269,7 @@ namespace gamedef
 				this.Level = reader.ReadInt32( );
 			}
 			
-			// 名称
+			// 经验值
 			if ( reader.MatchTag(0x10001) )
 			{
 				this.Exp = reader.ReadInt32( );
