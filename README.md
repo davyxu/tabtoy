@@ -132,4 +132,4 @@ https://github.com/davyxu/tabtoy/blob/master/doc/Manual_V1.md
 
 知乎: http://www.zhihu.com/people/xu-bo-62-87
 
-邮箱: sunicdavy@qq.com
+提交bug及特性: https://github.com/davyxu/cellnet/issues
