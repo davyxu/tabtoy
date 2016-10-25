@@ -22,6 +22,7 @@ const (
 	Globals_PackageNameDiff
 	Globals_TableNameDuplicated
 	Globals_OutputCombineData
+	Globals_DuplicateTypeName
 	File_TypeSheetKeepSingleton
 	DataSheet_ValueConvertError
 	DataSheet_ValueRepeated

@@ -18,6 +18,7 @@ func init() {
 		Globals_PackageNameDiff:                          "合并: 所有表中的@Types中的包名(Package)请保持一致",
 		Globals_TableNameDuplicated:                      "合并: 表名(TableName)重复",
 		Globals_OutputCombineData:                        "合并: 输出合并数据",
+		Globals_DuplicateTypeName:                        "合并: 重复的类型名(表名?)",
 		File_TypeSheetKeepSingleton:                      "文件: 类型表在一个表中只能有一份",
 		DataSheet_ValueConvertError:                      "数据表: 单元格转换错误",
 		DataSheet_ValueRepeated:                          "数据表: 单元格值重复",

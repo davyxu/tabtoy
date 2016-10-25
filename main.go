@@ -56,8 +56,9 @@ var paramBinaryOut = flag.String("binary_out", "", "[v2] input filename , output
 var paramCombineStructName = flag.String("combinename", "", "[v2] combine struct name, code struct name")
 var paramProtoVersion = flag.Int("protover", 3, "[v2] output .proto file version, 2 or 3")
 var paramLanguage = flag.String("lan", "en_us", "[v2] set output language")
+var paramGoImportPackage = flag.String("goimportpkg", "gamedef", "[v2] golang import package path")
 
-const Version = "2.2.3"
+const Version = "2.2.4"
 
 func main() {
 
@@ -106,6 +107,7 @@ func main() {
 		g.ParaMode = *paramPara
 		g.CombineStructName = *paramCombineStructName
 		g.ProtoVersion = *paramProtoVersion
+		g.GoImportPackage = *paramGoImportPackage
 
 		if *paramProtoOut != "" {
 			g.AddOutputType(".proto", *paramProtoOut)

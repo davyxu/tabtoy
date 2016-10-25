@@ -13,10 +13,11 @@ type TableIndex struct {
 }
 
 type Globals struct {
-	Version       string
-	InputFileList []interface{}
-	ParaMode      bool
-	ProtoVersion  int
+	Version         string
+	InputFileList   []interface{}
+	ParaMode        bool
+	ProtoVersion    int
+	GoImportPackage string
 
 	Printers []*PrinterContext
 
@@ -96,7 +97,10 @@ func (self *Globals) AddTypes(localFD *model.FileDescriptor) bool {
 
 	// 将行定义结构也添加到文件中
 	for _, d := range localFD.Descriptors {
-		self.FileDescriptor.Add(d)
+		if !self.FileDescriptor.Add(d) {
+			log.Errorf("%s, %s", i18n.String(i18n.Globals_DuplicateTypeName), d.Name)
+			return false
+		}
 	}
 
 	return true

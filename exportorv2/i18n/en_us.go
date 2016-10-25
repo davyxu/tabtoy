@@ -18,6 +18,7 @@ func init() {
 		Globals_PackageNameDiff:                          "Globals: Keep all type in same package",
 		Globals_TableNameDuplicated:                      "Globals: Duplicate table name",
 		Globals_OutputCombineData:                        "Globals: Merge Combined Data",
+		Globals_DuplicateTypeName:                        "Globals: Duplicate type name( table name ?)",
 		File_TypeSheetKeepSingleton:                      "File: Type sheet only need ONE in a file",
 		DataSheet_ValueConvertError:                      "DataSheet: Cell value convert error",
 		DataSheet_ValueRepeated:                          "DataSheet: Duplicated cell value",

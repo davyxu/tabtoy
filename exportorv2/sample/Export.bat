@@ -9,8 +9,18 @@
 --go_out=.\Config.go ^
 --combinename=Config ^
 --lan=zh_cn ^
+--goimportpkg=github.com/davyxu/tabtoy/exportorv2/sample/gamedef ^
 Globals.xlsx ^
 Sample.xlsx ^
 Info.xlsx
 
 @IF %ERRORLEVEL% NEQ 0 pause
+
+: proto转go
+..\..\proto\protoc.exe --plugin=protoc-gen-go=..\..\proto\protoc-gen-go.exe --go_out .\gamedef --proto_path=. .\Config.proto
+@IF %ERRORLEVEL% NEQ 0 pause
+
+
+: 表索引
+copy .\Config.go .\table\tableindex.go
+

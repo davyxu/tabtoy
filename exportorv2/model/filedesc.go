@@ -40,10 +40,12 @@ func (self *FileDescriptor) RowDescriptor() *Descriptor {
 	return nil
 }
 
-func (self *FileDescriptor) Add(def *Descriptor) {
+func (self *FileDescriptor) Add(def *Descriptor) bool {
 
 	if _, ok := self.DescriptorByName[def.Name]; ok {
-		panic("duplicate buildin type")
+
+		return false
+		//panic("duplicate buildin type")
 	}
 
 	// Descriptor会在每个表对应的FileDescriptor中和CombineFileDescriptor中同时存在
@@ -54,6 +56,8 @@ func (self *FileDescriptor) Add(def *Descriptor) {
 
 	self.Descriptors = append(self.Descriptors, def)
 	self.DescriptorByName[def.Name] = def
+
+	return true
 }
 
 func NewFileDescriptor() *FileDescriptor {
