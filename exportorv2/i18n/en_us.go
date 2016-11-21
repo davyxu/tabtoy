@@ -28,6 +28,7 @@ func init() {
 		DataHeader_RepeatedFieldTypeNotSameInMultiColumn: "DataHeader: Repeated field type not same in columns",
 		DataHeader_RepeatedFieldMetaNotSameInMultiColumn: "DataHeader: Repeated field meta not same in columns",
 		DataHeader_UseReservedTypeName:                   "DataHeader: Use reserved type name, like TableName+'Define' ",
+		DataHeader_NotMatch:                              "DataHeader: Multi sheet data header not match",
 		TypeSheet_PragmaParseFailed:                      "TypeSheet: File pragma parse failed",
 		TypeSheet_TableNameIsEmpty:                       "TypeSheet: Table name is empty",
 		TypeSheet_PackageIsEmpty:                         "TypeSheet: Package is empty",

@@ -57,6 +57,43 @@ func (self *FieldDescriptor) MetaString() string {
 	return proto.MarshalTextString(&self.Meta)
 }
 
+func (self *FieldDescriptor) Equal(fd *FieldDescriptor) bool {
+
+	if self.Name != fd.Name {
+		return false
+	}
+
+	if self.Type != fd.Type {
+		return false
+	}
+
+	if self.Meta.String() != fd.Meta.String() {
+		return false
+	}
+
+	if self.IsRepeated != fd.IsRepeated {
+		return false
+	}
+
+	if self.EnumValue != fd.EnumValue {
+		return false
+	}
+
+	if self.complexName() != fd.complexName() {
+		return false
+	}
+
+	return true
+}
+
+func (self *FieldDescriptor) complexName() string {
+	if self.Complex != nil {
+		return self.Complex.Name
+	}
+
+	return ""
+}
+
 func (self *FieldDescriptor) String() string {
 
 	var typestr string

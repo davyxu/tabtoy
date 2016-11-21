@@ -32,6 +32,7 @@ const (
 	DataHeader_RepeatedFieldTypeNotSameInMultiColumn
 	DataHeader_RepeatedFieldMetaNotSameInMultiColumn
 	DataHeader_UseReservedTypeName
+	DataHeader_NotMatch
 	TypeSheet_PragmaParseFailed
 	TypeSheet_TableNameIsEmpty
 	TypeSheet_PackageIsEmpty

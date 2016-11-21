@@ -34,6 +34,21 @@ func (self *DataHeader) RawFieldCount() int {
 	return len(self.rawHeaderFields)
 }
 
+func (self *DataHeader) Equal(other *DataHeader) bool {
+
+	if len(self.headerFields) != len(other.headerFields) {
+		return false
+	}
+
+	for k, v := range self.headerFields {
+		if !v.Equal(other.headerFields[k]) {
+			return false
+		}
+	}
+
+	return true
+}
+
 // 检查字段行的长度
 func (self *DataHeader) ParseProtoField(index int, sheet *Sheet, localFD *model.FileDescriptor, globalFD *model.FileDescriptor) bool {
 

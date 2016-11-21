@@ -28,6 +28,7 @@ func init() {
 		DataHeader_RepeatedFieldTypeNotSameInMultiColumn: "数据头: 数组字段在多列中的类型不一致",
 		DataHeader_RepeatedFieldMetaNotSameInMultiColumn: "数据头: 数组字段在多列中的特性不一致",
 		DataHeader_UseReservedTypeName:                   "数据头: 使用了保留的类型名 例如:表名+'Define'",
+		DataHeader_NotMatch:                              "数据头: 多个表单使用的数据头描述不一致",
 		TypeSheet_PragmaParseFailed:                      "类型表: 文件特性解析失败",
 		TypeSheet_TableNameIsEmpty:                       "类型表: 表名(TableName)为空",
 		TypeSheet_PackageIsEmpty:                         "类型表: 包名(Package)为空",

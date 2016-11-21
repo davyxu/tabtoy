@@ -1,6 +1,6 @@
 {
 	"Tool": "github.com/davyxu/tabtoy",
-	"Version": "2.2.4",
+	"Version": "2.3.0",
 	"Sample":[
 		{ "ID": 100, "Name": "黑猫警长", "NumericalRate": 0.6, "ItemID": 100, "Type": 0, "SkillID":[ 4, 6, 7 ], "SingleStruct": { "HP": 100, "AttackRate": 1.2 }, "StrStruct":[ { "HP": 3, "ExType": 21 }, { "AttackRate": 3.5 } ] },
 		{ "ID": 101, "Name": "葫芦\n娃", "NumericalRate": 0.8, "ItemID": 100, "BuffID":[ 3, 1 ], "Type": 21, "SkillID":[ 1 ] },
@@ -9,8 +9,10 @@
 		{ "ID": 104, "Name": "邋遢大王", "NumericalRate": 1, "ItemID": 100, "Type": 0 }
 	], 
 	"Exp":[
-		{ "Level": 1, "Exp": 10, "Type": 0 },
+		{ "Level": 1, "Exp": 10, "BoolChecker": false, "Type": 0 },
 		{ "Level": 2, "Exp": 30 },
+		{ "Level": 4, "BoolChecker": false },
+		{ "Level": 5, "Type": 21 },
 		{ "Level": 3, "Exp": 50 },
 		{ "Level": 4, "Exp": 70, "Type": 21 },
 		{ "Level": 5, "Exp": 80 }

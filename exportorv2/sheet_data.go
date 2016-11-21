@@ -133,6 +133,8 @@ func (self *DataSheet) Export(file *File, tab *model.Table, dataHeader *DataHead
 
 			}
 
+			//log.Debugf("raw: %v  r:%d c: %d", rawValue, self.Row, self.Column)
+
 			if !dataProcessor(file, fieldDef, rawValue, node) {
 				goto ErrorStop
 			}

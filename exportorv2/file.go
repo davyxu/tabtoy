@@ -51,6 +51,9 @@ func (self *File) ExportLocalType() bool {
 		}
 	}
 
+	// 表头用到的表单
+	var headerSheet *DataSheet
+
 	// 解析表头
 	for _, rawSheet := range self.coreFile.Sheets {
 
@@ -73,6 +76,12 @@ func (self *File) ExportLocalType() bool {
 
 			if self.Header == nil {
 				self.Header = dataHeader
+				headerSheet = dSheet
+			} else {
+				if !self.Header.Equal(dataHeader) {
+					log.Errorf("%s %s!=%s", i18n.String(i18n.DataHeader_NotMatch), headerSheet.Name, dSheet.Name)
+					return false
+				}
 			}
 
 			self.dataSheets = append(self.dataSheets, dSheet)
