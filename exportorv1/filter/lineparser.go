@@ -46,8 +46,8 @@ func newLineParser(fd *pbmeta.FieldDescriptor, value string) *lineParser {
 	l.AddIgnoreMatcher(golexer.NewLineEndMatcher(Token_LineEnd))
 	l.AddIgnoreMatcher(golexer.NewUnixStyleCommentMatcher(Token_UnixStyleComment))
 
-	l.AddMatcher(golexer.NewSignMatcher(Token_True, "true"))
-	l.AddMatcher(golexer.NewSignMatcher(Token_False, "false"))
+	l.AddMatcher(golexer.NewKeywordMatcher(Token_True, "true"))
+	l.AddMatcher(golexer.NewKeywordMatcher(Token_False, "false"))
 	l.AddMatcher(golexer.NewSignMatcher(Token_Comma, ":"))
 
 	l.AddMatcher(golexer.NewIdentifierMatcher(Token_Identifier))

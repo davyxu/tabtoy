@@ -111,6 +111,11 @@ tabtoy --mode=exportorv2 --json_out=.\config.json Table.xlsx
 	
 https://github.com/davyxu/tabtoy/blob/master/exportorv2/sample
 
+* 注意: 例子中展现的是一般项目中多表的使用方法
+
+	共享的类型信息会被统一放在Globals表中, 最终导出时, 需要将Globals和其他表一起配合导出
+
+
 ## 第六代导出器详细文档(tabtoy v2)
 
 推荐!
