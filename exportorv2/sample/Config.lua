@@ -15,9 +15,9 @@ local tab = {
 		{ Level = 2, Exp = 30 	},
 		{ Level = 4, BoolChecker = false 	},
 		{ Level = 5, Type = "Power" 	},
-		{ Level = 3, Exp = 50 	},
-		{ Level = 4, Exp = 70, Type = "Power" 	},
-		{ Level = 5, Exp = 80 	}
+		{ Level = 6, Exp = 50 	},
+		{ Level = 7, Exp = 70, Type = "Power" 	},
+		{ Level = 8, Exp = 80 	}
 	}
 
 }
