@@ -67,8 +67,11 @@ func (self *BinaryFile) WriteNodeValue(ft model.FieldType, value *model.Node) {
 		binary.Write(&self.buf, binary.LittleEndian, float32(v))
 	case model.FieldType_Bool:
 		v, _ := strconv.ParseBool(value.Value)
-
-		binary.Write(&self.buf, binary.LittleEndian, v)
+		boolByte := []byte{0}
+		if v {
+			boolByte = []byte{1}
+		}
+		binary.Write(&self.buf, binary.LittleEndian, boolByte)
 	case model.FieldType_String:
 		self.WriteString(value.Value)
 	case model.FieldType_Enum:
