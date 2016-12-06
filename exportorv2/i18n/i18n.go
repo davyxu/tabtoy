@@ -26,6 +26,7 @@ const (
 	File_TypeSheetKeepSingleton
 	DataSheet_ValueConvertError
 	DataSheet_ValueRepeated
+	DataHeader_StructCellCannotSplit
 	DataHeader_TypeNotFound
 	DataHeader_MetaParseFailed
 	DataHeader_DuplicateFieldName

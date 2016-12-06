@@ -122,12 +122,6 @@ https://github.com/davyxu/tabtoy/blob/master/exportorv2/sample
 
 https://github.com/davyxu/tabtoy/blob/master/doc/Manual_V2.md
 
-# 旧版第五代导出器文档(tabtoy v1)
-
-已停止开发
-
-https://github.com/davyxu/tabtoy/blob/master/doc/Manual_V1.md
-
 
 # 备注
 

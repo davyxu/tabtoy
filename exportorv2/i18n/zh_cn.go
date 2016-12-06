@@ -22,6 +22,7 @@ func init() {
 		File_TypeSheetKeepSingleton:                      "文件: 类型表在一个表中只能有一份",
 		DataSheet_ValueConvertError:                      "数据表: 单元格转换错误",
 		DataSheet_ValueRepeated:                          "数据表: 单元格值重复",
+		DataHeader_StructCellCannotSplit:                 "数据头: 结构体单元格不能进行切分操作,请将多个结构体元素放在多个单元格实现",
 		DataHeader_TypeNotFound:                          "数据头: 未知类型",
 		DataHeader_MetaParseFailed:                       "数据头: 特性解析错误",
 		DataHeader_DuplicateFieldName:                    "数据头: 重复的字段名",

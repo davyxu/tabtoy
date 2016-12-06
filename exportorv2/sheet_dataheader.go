@@ -152,6 +152,17 @@ func (self *DataHeader) ParseProtoField(index int, sheet *Sheet, localFD *model.
 				def = exist
 
 			} else {
+
+				// 普通表头合法性检查
+
+				// 结构体单元格不能进行切分
+				if def.Type == model.FieldType_Struct && def.ListSpliter() != "" {
+					sheet.Row = DataSheetRow_FieldMeta
+					log.Errorf("%s '%s'", i18n.String(i18n.DataHeader_StructCellCannotSplit),
+						def.Name)
+					goto ErrorStop
+				}
+
 				self.HeaderByName[def.Name] = def
 				self.headerFields = append(self.headerFields, def)
 			}

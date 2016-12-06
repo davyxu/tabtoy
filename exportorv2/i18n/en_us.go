@@ -22,6 +22,7 @@ func init() {
 		File_TypeSheetKeepSingleton:                      "File: Type sheet only need ONE in a file",
 		DataSheet_ValueConvertError:                      "DataSheet: Cell value convert error",
 		DataSheet_ValueRepeated:                          "DataSheet: Duplicated cell value",
+		DataHeader_StructCellCannotSplit:                 "DataHeader: Struct cell can not have 'ListSpliter', make struct element in multi-cell",
 		DataHeader_TypeNotFound:                          "DataHeader: Type not found",
 		DataHeader_MetaParseFailed:                       "DataHeader: Meta parse failed",
 		DataHeader_DuplicateFieldName:                    "DataHeader: Duplicated field name",
