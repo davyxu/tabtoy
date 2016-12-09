@@ -8,6 +8,7 @@ import (
 	"go/token"
 	"text/template"
 
+	"github.com/davyxu/tabtoy/exportorv2/i18n"
 	"github.com/davyxu/tabtoy/exportorv2/model"
 )
 
@@ -213,6 +214,7 @@ func collectAllStructInfo(g *Globals, fm *goFileModel) {
 
 		// 这给被限制输出
 		if !d.File.MatchTag(".go") {
+			log.Infof("%s: %s", i18n.String(i18n.Printer_IgnoredByOutputTag), d.Name)
 			continue
 		}
 

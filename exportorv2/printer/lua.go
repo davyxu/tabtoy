@@ -3,6 +3,7 @@ package printer
 import (
 	"fmt"
 
+	"github.com/davyxu/tabtoy/exportorv2/i18n"
 	"github.com/davyxu/tabtoy/exportorv2/model"
 	"github.com/davyxu/tabtoy/util"
 )
@@ -34,6 +35,7 @@ func (self *luaPrinter) Run(g *Globals) *BinaryFile {
 	for tabIndex, tab := range g.Tables {
 
 		if !tab.LocalFD.MatchTag(".lua") {
+			log.Infof("%s: %s", i18n.String(i18n.Printer_IgnoredByOutputTag), tab.Name())
 			continue
 		}
 

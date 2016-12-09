@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"text/template"
 
+	"github.com/davyxu/tabtoy/exportorv2/i18n"
 	"github.com/davyxu/tabtoy/exportorv2/model"
 )
 
@@ -303,6 +304,7 @@ func (self *csharpPrinter) Run(g *Globals) *BinaryFile {
 
 		// 这给被限制输出
 		if !d.File.MatchTag(".cs") {
+			log.Infof("%s: %s", i18n.String(i18n.Printer_IgnoredByOutputTag), d.Name)
 			continue
 		}
 

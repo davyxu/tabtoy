@@ -45,6 +45,7 @@ const (
 	TypeSheet_FirstEnumValueShouldBeZero
 	TypeSheet_UnexpectedTypeHeader
 	TypeSheet_DuplicatedEnumValue
+	Printer_IgnoredByOutputTag
 )
 
 var currLan map[StringID]string

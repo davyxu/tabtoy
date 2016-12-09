@@ -41,5 +41,6 @@ func init() {
 		TypeSheet_FirstEnumValueShouldBeZero:             "TypeSheet: First enum value should be zero",
 		TypeSheet_UnexpectedTypeHeader:                   "TypeSheet: Unexpected type header",
 		TypeSheet_DuplicatedEnumValue:                    "TypeSheet: Duplicated enum value",
+		Printer_IgnoredByOutputTag:                       "Printer: Ignored by 'OutputTag' in @Types",
 	})
 }

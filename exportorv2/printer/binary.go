@@ -1,6 +1,7 @@
 package printer
 
 import (
+	"github.com/davyxu/tabtoy/exportorv2/i18n"
 	"github.com/davyxu/tabtoy/exportorv2/model"
 )
 
@@ -18,6 +19,7 @@ func (self *binaryPrinter) Run(g *Globals) *BinaryFile {
 	for index, tab := range g.Tables {
 
 		if !tab.LocalFD.MatchTag(".bin") {
+			log.Infof("%s: %s", i18n.String(i18n.Printer_IgnoredByOutputTag), tab.Name())
 			continue
 		}
 

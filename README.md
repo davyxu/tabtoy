@@ -178,6 +178,21 @@ https://github.com/davyxu/tabtoy/blob/master/exportorv2/sample
 
 https://github.com/davyxu/tabtoy/blob/master/doc/Manual_V2.md
 
+## 有意思的功能
+
+### 导出Tag匹配
+如果客户端使用C#并读取二进制导出数据, 服务器使用golang开发读取json
+
+* 我们不希望新手引导的表导入到服务器的配置文件中, 可以这么做:
+
+	在新手引导表的@Types表单里添加OutputTag: [".cs", ".bin"]
+
+* 我们不希望服务器的ip配置表导入到客户端的配置文件中, 可以这么做:
+
+	在ip配置表的@Types表单里添加OutputTag: [".go", ".json"]
+
+减少数据冗余和保证客户端数据安全, tabtoy已经为你考虑
+
 
 # 备注
 

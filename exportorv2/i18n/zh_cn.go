@@ -41,5 +41,6 @@ func init() {
 		TypeSheet_FirstEnumValueShouldBeZero:             "类型表: 第一个枚举值必须为0",
 		TypeSheet_UnexpectedTypeHeader:                   "类型表: 非期望的类型表头名",
 		TypeSheet_DuplicatedEnumValue:                    "类型表: 重复的枚举值",
+		Printer_IgnoredByOutputTag:                       "输出器: @Types的'OutputTag'忽略了目标",
 	})
 }

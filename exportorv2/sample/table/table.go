@@ -1,13 +1,14 @@
 package table
 
+// 本文件来自于: github.com/davyxu/tabtoy
+// 请不要进行任何形式的修改
+// 使用时, 请将将此文件放入你的工程的table包内
+// tabtoy输出的go代码请与本文件放在同一个包内
+
 import (
 	"encoding/json"
 	"io/ioutil"
 )
-
-// 请将将此文件及所在包引入工程(不包含table_gen.go)
-
-// table的索引入口函数
 
 var (
 	indexEntryByName = make(map[string]func(interface{}))

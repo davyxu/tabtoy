@@ -37,6 +37,10 @@ func (self *Table) Add(r *Record) {
 	self.Recs = append(self.Recs, r)
 }
 
+func (self *Table) Name() string {
+	return self.LocalFD.Name
+}
+
 func NewTable() *Table {
 	return &Table{}
 }
