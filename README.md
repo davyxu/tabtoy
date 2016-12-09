@@ -14,7 +14,7 @@
 
 * 单元格字段列顺序随意调整, 自动检查错误, 精确报错位置
 
-* 支持中文枚举值编写,更直观. 跟各种数字值的Magic Number说Bye Bye!
+* 支持中文枚举值, 中文结构体字段, 编写,更直观
 
 * 全中文导出提示,并支持多语言导出提示
 
@@ -107,7 +107,65 @@ tabtoy --mode=exportorv2 --json_out=.\config.json Table.xlsx
 
 ```
 
-## 例子
+
+### Golang读取例子
+
+	
+```golang
+	var config table.Config
+
+	if err := table.LoadTableFromFile("../Config.json", &config); err != nil {
+		panic(err)
+	}
+	
+	for index, v := range table.SampleByID {
+		fmt.Println(index, v)
+	}
+```
+
+	详细请查看
+	https://github.com/davyxu/tabtoy/tree/master/exportorv2/sample/goreadjson
+
+### C#读取例子
+
+```csharp
+	using (var stream = new FileStream("../../../../Config.bin", FileMode.Open))
+	{
+	    stream.Position = 0;
+	
+	    var reader = new DataReader(stream);
+	    
+	    if ( !reader.ReadHeader( ) )
+	    {
+	        Console.WriteLine("combine file crack!");
+	        return;
+	    }
+	
+	    var file = new gamedef.Config();
+	    file.Deserialize(reader);
+	}
+```
+
+### lua读取例子
+
+```lua
+-- 添加搜索路径
+package.path = package.path .. ";../?.lua"
+
+-- 加载
+local t = require "Config"
+
+-- 直接访问原始数据
+print(t.Sample[1].Name)
+
+-- 通过索引访问
+print(t.SampleByID[103].ID)
+
+print(t.SampleByName["黑猫警长"].ID)
+```
+
+
+## 所有例子
 	
 https://github.com/davyxu/tabtoy/blob/master/exportorv2/sample
 
@@ -116,9 +174,7 @@ https://github.com/davyxu/tabtoy/blob/master/exportorv2/sample
 	共享的类型信息会被统一放在Globals表中, 最终导出时, 需要将Globals和其他表一起配合导出
 
 
-## 第六代导出器详细文档(tabtoy v2)
-
-推荐!
+## 详细文档
 
 https://github.com/davyxu/tabtoy/blob/master/doc/Manual_V2.md
 

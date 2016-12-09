@@ -94,21 +94,23 @@ func (self *FieldDescriptor) complexName() string {
 	return ""
 }
 
-func (self *FieldDescriptor) String() string {
-
-	var typestr string
+// 自动适配结构体和枚举输出合适的类型, 类型名为go only
+func (self *FieldDescriptor) TypeString() string {
 	if self.Complex != nil {
-		typestr = fmt.Sprintf("%s|%s", self.Complex.Name, FieldTypeToString(self.Type))
+		return self.Complex.Name
 	} else {
-		typestr = FieldTypeToString(self.Type)
+		return FieldTypeToString(self.Type)
 	}
+}
+
+func (self *FieldDescriptor) String() string {
 
 	var repString string
 	if self.IsRepeated {
 		repString = "repeated "
 	}
 
-	return fmt.Sprintf("name: '%s' %stype: '%s'", self.Name, repString, typestr)
+	return fmt.Sprintf("name: '%s' %stype: '%s'", self.Name, repString, self.TypeString())
 }
 
 func (self *FieldDescriptor) DefaultValue() string {

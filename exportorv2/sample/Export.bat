@@ -22,5 +22,5 @@ Info.xlsx
 
 
 : 表索引
-copy .\Config.go .\table\tableindex.go
+copy .\Config.go .\table\table_gen.go
 

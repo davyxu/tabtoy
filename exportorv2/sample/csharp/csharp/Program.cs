@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using tabtoy;
 
@@ -23,7 +23,6 @@ namespace csharptest
 
                 var file = new gamedef.Config();
                 file.Deserialize(reader);
-
             }
             
             

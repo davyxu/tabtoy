@@ -73,14 +73,6 @@ func (self protoFieldDescriptor) Comment() string {
 
 }
 
-func (self protoFieldDescriptor) TypeString() string {
-	if self.Complex != nil {
-		return self.Complex.Name
-	} else {
-		return model.FieldTypeToString(self.Type)
-	}
-}
-
 type protoDescriptor struct {
 	*model.Descriptor
 
