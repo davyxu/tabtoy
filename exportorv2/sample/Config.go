@@ -38,7 +38,7 @@ type SampleDefine struct {
 	ID int64
 
 	// 名称
-	Name string
+	Name string `自定义tag:"支持go的struct tag"`
 
 	// 图标ID
 	IconID int32

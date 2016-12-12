@@ -3,8 +3,6 @@ package model
 import (
 	"fmt"
 	"strings"
-
-	"github.com/davyxu/golexer"
 )
 
 type FieldType int
@@ -32,7 +30,7 @@ type FieldDescriptor struct {
 
 	Order int32 // 在Descriptor中的顺序
 
-	Meta *golexer.KVPair // 扩展字段
+	Meta *MetaInfo // 扩展字段
 
 	IsRepeated bool
 
@@ -45,7 +43,7 @@ type FieldDescriptor struct {
 
 func NewFieldDescriptor() *FieldDescriptor {
 	return &FieldDescriptor{
-		Meta: golexer.NewKVPair(),
+		Meta: NewMetaInfo(),
 	}
 }
 

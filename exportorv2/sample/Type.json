@@ -1,4 +1,6 @@
 {
+ "Tool": "github.com/davyxu/tabtoy",
+ "Version": "2.5.0",
  "Structs": [
   {
    "Name": "Config",
@@ -84,7 +86,7 @@
      "IsRepeated": false,
      "Meta": {
       "MakeIndex": "true",
-      "我是tag": "haha"
+      "自定义tag": "支持go的struct tag"
      },
      "Comment": "名称",
      "Value": 0

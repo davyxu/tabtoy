@@ -3,7 +3,6 @@ package exportorv2
 import (
 	"strconv"
 
-	"github.com/davyxu/golexer"
 	"github.com/davyxu/tabtoy/exportorv2/i18n"
 	"github.com/davyxu/tabtoy/exportorv2/model"
 )
@@ -53,8 +52,6 @@ type typeModelRoot struct {
 }
 
 func (self *typeModelRoot) ParsePragma(localFD *model.FileDescriptor) bool {
-
-	localFD.Pragma = golexer.NewKVPair()
 
 	if err := localFD.Pragma.Parse(self.pragma); err != nil {
 		log.Errorf("%s, '%s'", i18n.String(i18n.TypeSheet_PragmaParseFailed), self.pragma)
@@ -156,8 +153,6 @@ func (self *typeModelRoot) ParseData(localFD *model.FileDescriptor, globalFD *mo
 
 		var rawMeta string
 		rawMeta, self.Col = m.getValue("Meta")
-
-		m.fd.Meta = golexer.NewKVPair()
 
 		if err := m.fd.Meta.Parse(rawMeta); err != nil {
 			log.Errorf("%s, '%s'", i18n.String(i18n.TypeSheet_FieldMetaParseFailed), err.Error())

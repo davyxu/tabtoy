@@ -30,6 +30,8 @@ type typeStructModel struct {
 
 // 整个文件类型信息
 type typeFileModel struct {
+	Tool    string
+	Version string
 	Structs []*typeStructModel
 	Enums   []*typeStructModel
 }
@@ -39,6 +41,8 @@ func (self *typePrinter) Run(g *Globals) *BinaryFile {
 	bf := NewBinaryFile()
 
 	var fm typeFileModel
+	fm.Tool = "github.com/davyxu/tabtoy"
+	fm.Version = g.Version
 
 	// 遍历所有类型
 	for _, d := range g.FileDescriptor.Descriptors {
