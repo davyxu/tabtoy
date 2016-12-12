@@ -69,7 +69,7 @@ func dataProcessor(file *File, fd *model.FieldDescriptor, raw string, node *mode
 		} else {
 
 			// 值重复检查
-			if fd.Meta.RepeatCheck && !file.checkValueRepeat(fd, cv) {
+			if fd.Meta.GetBool("RepeatCheck") && !file.checkValueRepeat(fd, cv) {
 				log.Errorf("%s, %s raw: '%s'", i18n.String(i18n.DataSheet_ValueRepeated), fd.String(), cv)
 				return false
 			}
@@ -119,7 +119,7 @@ func (self *DataSheet) Export(file *File, tab *model.Table, dataHeader *DataHead
 			rawValue := self.GetCellData(self.Row, self.Column)
 
 			// repeated的, 没有填充的, 直接跳过, 不生成数据
-			if rawValue == "" && fieldDef.Meta.Default == "" {
+			if rawValue == "" && fieldDef.Meta.GetString("Default") == "" {
 				continue
 			}
 

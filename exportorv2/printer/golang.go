@@ -78,9 +78,9 @@ func (self goFieldModel) Comment() string {
 
 	var out string
 
-	if self.FieldDescriptor.Meta.Alias == "" {
+	if self.FieldDescriptor.Meta.GetString("Alias") == "" {
 		out += "// "
-		out += self.FieldDescriptor.Meta.Alias
+		out += self.FieldDescriptor.Meta.GetString("Alias")
 	}
 
 	if self.FieldDescriptor.Comment != "" {
@@ -97,7 +97,7 @@ func (self goFieldModel) Comment() string {
 func (self *goFieldModel) KeyType() string {
 
 	if self.Type == model.FieldType_Enum {
-		return fmt.Sprintf("%s.%s", self.FieldDescriptor.Parent.File.Pragma.Package, self.Complex.Name)
+		return fmt.Sprintf("%s.%s", self.FieldDescriptor.Parent.File.Pragma.GetString("Package"), self.Complex.Name)
 	}
 
 	return model.FieldTypeToString(self.Type)
@@ -158,7 +158,7 @@ func (self *goFileModel) HasAnyStruct() bool {
 }
 
 func (self *goFileModel) Package() string {
-	return self.FileDescriptor.Pragma.Package
+	return self.FileDescriptor.Pragma.GetString("Package")
 }
 
 type goPrinter struct {

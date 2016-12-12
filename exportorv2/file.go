@@ -94,7 +94,7 @@ func (self *File) ExportLocalType() bool {
 
 func (self *File) ExportData() *model.Table {
 
-	self.LocalFD.Name = self.LocalFD.Pragma.TableName
+	self.LocalFD.Name = self.LocalFD.Pragma.GetString("TableName")
 
 	tab := model.NewTable()
 	tab.LocalFD = self.LocalFD

@@ -57,11 +57,11 @@ func (self protoFieldDescriptor) Label() string {
 
 func (self protoFieldDescriptor) Alias() string {
 
-	if self.FieldDescriptor.Meta.Alias == "" {
+	if self.FieldDescriptor.Meta.GetString("Alias") == "" {
 		return ""
 	}
 
-	return "// " + self.FieldDescriptor.Meta.Alias
+	return "// " + self.FieldDescriptor.Meta.GetString("Alias")
 }
 
 func (self protoFieldDescriptor) Comment() string {
@@ -103,7 +103,7 @@ func (self *protoPrinter) Run(g *Globals) *BinaryFile {
 
 	var m protoFileModel
 
-	m.Package = g.FileDescriptor.Pragma.Package
+	m.Package = g.FileDescriptor.Pragma.GetString("Package")
 	m.ProtoVersion = g.ProtoVersion
 	m.ToolVersion = g.Version
 

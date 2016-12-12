@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/davyxu/golexer"
 	"github.com/davyxu/tabtoy/exportorv2/i18n"
 	"github.com/davyxu/tabtoy/exportorv2/model"
 	"github.com/davyxu/tabtoy/util"
-	"github.com/golang/protobuf/proto"
 )
 
 type DataHeader struct {
@@ -57,7 +57,7 @@ func (self *DataHeader) ParseProtoField(index int, sheet *Sheet, localFD *model.
 	// 遍历列
 	for sheet.Column = 0; ; sheet.Column++ {
 
-		def = new(model.FieldDescriptor)
+		def = model.NewFieldDescriptor()
 
 		// ====================解析字段====================
 		def.Name = sheet.GetCellData(DataSheetRow_FieldName, sheet.Column)
@@ -97,7 +97,9 @@ func (self *DataHeader) ParseProtoField(index int, sheet *Sheet, localFD *model.
 			// ====================解析特性====================
 			metaString := sheet.GetCellData(DataSheetRow_FieldMeta, sheet.Column)
 
-			if err := proto.UnmarshalText(metaString, &def.Meta); err != nil {
+			def.Meta = golexer.NewKVPair()
+
+			if err := def.Meta.Parse(metaString); err != nil {
 				sheet.Row = DataSheetRow_FieldMeta
 				log.Errorf("%s '%s'", i18n.String(i18n.DataHeader_MetaParseFailed), err)
 				goto ErrorStop
@@ -140,7 +142,7 @@ func (self *DataHeader) ParseProtoField(index int, sheet *Sheet, localFD *model.
 				}
 
 				// 多个repeated描述的meta不一致
-				if proto.CompactTextString(&exist.Meta) != proto.CompactTextString(&def.Meta) {
+				if exist.Meta.String() != def.Meta.String() {
 					sheet.Row = DataSheetRow_FieldMeta
 
 					log.Errorf("%s '%s'", i18n.String(i18n.DataHeader_RepeatedFieldMetaNotSameInMultiColumn),
@@ -197,7 +199,7 @@ func (self *DataHeader) makeRowDescriptor(fileD *model.FileDescriptor, rootField
 
 	rowType := model.NewDescriptor()
 	rowType.Usage = model.DescriptorUsage_RowType
-	rowType.Name = fmt.Sprintf("%sDefine", fileD.Pragma.TableName)
+	rowType.Name = fmt.Sprintf("%sDefine", fileD.Pragma.GetString("TableName"))
 	rowType.Kind = model.DescriptorKind_Struct
 
 	// 类型已经存在, 说明是自己定义的 XXDefine, 不允许

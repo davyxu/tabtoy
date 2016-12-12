@@ -116,11 +116,11 @@ func (self *Globals) AddContent(tab *model.Table) bool {
 	defer self.guard.Unlock()
 
 	// 有表格里描述的包名不一致, 无法合成最终的文件
-	if self.Pragma.Package == "" {
-		self.Pragma.Package = localFD.Pragma.Package
-	} else if self.Pragma.Package != localFD.Pragma.Package {
+	if self.Pragma.GetString("Package") == "" {
+		self.Pragma.SetString("Package", localFD.Pragma.GetString("Package"))
+	} else if self.Pragma.GetString("Package") != localFD.Pragma.GetString("Package") {
 
-		log.Errorf("%s, '%s' '%s'", i18n.String(i18n.Globals_PackageNameDiff), self.Pragma.Package, localFD.Pragma.Package)
+		log.Errorf("%s, '%s' '%s'", i18n.String(i18n.Globals_PackageNameDiff), self.Pragma.GetString("Package"), localFD.Pragma.GetString("Package"))
 		return false
 	}
 
@@ -137,14 +137,14 @@ func (self *Globals) AddContent(tab *model.Table) bool {
 	self.Tables = append(self.Tables, tab)
 
 	// 每个表在结构体里的字段
-	var rowFD model.FieldDescriptor
+	rowFD := model.NewFieldDescriptor()
 	rowFD.Name = localFD.Name
 	rowFD.Type = model.FieldType_Struct
 	rowFD.Complex = localFD.RowDescriptor()
 	rowFD.IsRepeated = true
 	rowFD.Order = int32(len(self.CombineStruct.Fields) + 1)
 	rowFD.Comment = localFD.Name
-	self.CombineStruct.Add(&rowFD)
+	self.CombineStruct.Add(rowFD)
 
 	if localFD.RowDescriptor() == nil {
 		panic("row field null:" + localFD.Name)
@@ -160,7 +160,7 @@ func (self *Globals) AddContent(tab *model.Table) bool {
 		for _, indexFD := range d.Indexes {
 
 			key := TableIndex{
-				Row:   &rowFD,
+				Row:   rowFD,
 				Index: indexFD,
 			}
 

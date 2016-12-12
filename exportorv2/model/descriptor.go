@@ -47,7 +47,7 @@ func (self *Descriptor) Add(def *FieldDescriptor) {
 	}
 
 	// 创建索引
-	if def.Meta.MakeIndex {
+	if def.Meta.GetBool("MakeIndex") {
 		if _, ok := self.IndexByName[def.Name]; ok {
 			panic("duplicate index name")
 			return
@@ -67,7 +67,7 @@ func (self *Descriptor) FieldByValueAndMeta(value string) *FieldDescriptor {
 			return v
 		}
 
-		if v.Meta.Alias == value {
+		if v.Meta.GetString("Alias") == value {
 			return v
 		}
 

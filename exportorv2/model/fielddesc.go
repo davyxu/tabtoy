@@ -4,8 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/davyxu/tabtoy/proto/tool"
-	"github.com/golang/protobuf/proto"
+	"github.com/davyxu/golexer"
 )
 
 type FieldType int
@@ -33,7 +32,7 @@ type FieldDescriptor struct {
 
 	Order int32 // 在Descriptor中的顺序
 
-	Meta tool.FieldMetaV2 // 扩展字段
+	Meta *golexer.KVPair // 扩展字段
 
 	IsRepeated bool
 
@@ -44,6 +43,12 @@ type FieldDescriptor struct {
 	Parent *Descriptor
 }
 
+func NewFieldDescriptor() *FieldDescriptor {
+	return &FieldDescriptor{
+		Meta: golexer.NewKVPair(),
+	}
+}
+
 func (self *FieldDescriptor) Tag() int32 {
 	return MakeTag(self.Type, self.Order)
 }
@@ -52,10 +57,10 @@ func MakeTag(t FieldType, order int32) int32 {
 	return int32(t)<<16 | order
 }
 
-func (self *FieldDescriptor) MetaString() string {
+//func (self *FieldDescriptor) MetaString() string {
 
-	return proto.MarshalTextString(&self.Meta)
-}
+//	return proto.MarshalTextString(&self.Meta)
+//}
 
 func (self *FieldDescriptor) Equal(fd *FieldDescriptor) bool {
 
@@ -115,8 +120,8 @@ func (self *FieldDescriptor) String() string {
 
 func (self *FieldDescriptor) DefaultValue() string {
 
-	if self.Meta.Default != "" {
-		return self.Meta.Default
+	if v := self.Meta.GetString("Default"); v != "" {
+		return v
 	}
 
 	switch self.Type {
@@ -148,12 +153,12 @@ func (self *FieldDescriptor) DefaultValue() string {
 
 func (self *FieldDescriptor) ListSpliter() string {
 
-	return self.Meta.ListSpliter
+	return self.Meta.GetString("ListSpliter")
 }
 
 func (self *FieldDescriptor) RepeatCheck() bool {
 
-	return self.Meta.RepeatCheck
+	return self.Meta.GetBool("RepeatCheck")
 }
 
 var strByFieldDescriptor = map[FieldType]string{

@@ -3,9 +3,9 @@ package exportorv2
 import (
 	"strconv"
 
+	"github.com/davyxu/golexer"
 	"github.com/davyxu/tabtoy/exportorv2/i18n"
 	"github.com/davyxu/tabtoy/exportorv2/model"
-	"github.com/golang/protobuf/proto"
 )
 
 type typeCell struct {
@@ -20,7 +20,7 @@ type typeModel struct {
 
 	row int
 
-	fd model.FieldDescriptor
+	fd *model.FieldDescriptor
 
 	rawFieldType string
 }
@@ -36,6 +36,7 @@ func (self *typeModel) getValue(row string) (string, int) {
 func newTypeModel() *typeModel {
 	return &typeModel{
 		colData: make(map[string]*typeCell),
+		fd:      model.NewFieldDescriptor(),
 	}
 }
 
@@ -53,17 +54,19 @@ type typeModelRoot struct {
 
 func (self *typeModelRoot) ParsePragma(localFD *model.FileDescriptor) bool {
 
-	if err := proto.UnmarshalText(self.pragma, &localFD.Pragma); err != nil {
+	localFD.Pragma = golexer.NewKVPair()
+
+	if err := localFD.Pragma.Parse(self.pragma); err != nil {
 		log.Errorf("%s, '%s'", i18n.String(i18n.TypeSheet_PragmaParseFailed), self.pragma)
 		return false
 	}
 
-	if localFD.Pragma.TableName == "" {
+	if localFD.Pragma.GetString("TableName") == "" {
 		log.Errorf("%s", i18n.String(i18n.TypeSheet_TableNameIsEmpty))
 		return false
 	}
 
-	if localFD.Pragma.Package == "" {
+	if localFD.Pragma.GetString("Package") == "" {
 		log.Errorf("%s", i18n.String(i18n.TypeSheet_PackageIsEmpty))
 		return false
 	}
@@ -75,7 +78,7 @@ func (self *typeModelRoot) ParseData(localFD *model.FileDescriptor, globalFD *mo
 
 	var td *model.Descriptor
 
-	reservedRowFieldTypeName := localFD.Pragma.TableName + "Define"
+	reservedRowFieldTypeName := localFD.Pragma.GetString("TableName") + "Define"
 
 	// 每一行
 	for _, m := range self.models {
@@ -154,12 +157,14 @@ func (self *typeModelRoot) ParseData(localFD *model.FileDescriptor, globalFD *mo
 		var rawMeta string
 		rawMeta, self.Col = m.getValue("Meta")
 
-		if err := proto.UnmarshalText(rawMeta, &m.fd.Meta); err != nil {
+		m.fd.Meta = golexer.NewKVPair()
+
+		if err := m.fd.Meta.Parse(rawMeta); err != nil {
 			log.Errorf("%s, '%s'", i18n.String(i18n.TypeSheet_FieldMetaParseFailed), err.Error())
 			return false
 		}
 
-		td.Add(&m.fd)
+		td.Add(m.fd)
 
 	}
 

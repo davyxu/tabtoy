@@ -1,30 +1,22 @@
 package model
 
-import (
-	"github.com/davyxu/tabtoy/proto/tool"
-)
+import "github.com/davyxu/golexer"
 
 type FileDescriptor struct {
 	Name             string
 	DescriptorByName map[string]*Descriptor
 	Descriptors      []*Descriptor
 
-	Pragma tool.FilePragmaV2
+	Pragma *golexer.KVPair
 }
 
 func (self *FileDescriptor) MatchTag(tag string) bool {
 
-	if len(self.Pragma.OutputTag) == 0 {
+	if !self.Pragma.ContainKey("OutputTag") {
 		return true
 	}
 
-	for _, t := range self.Pragma.OutputTag {
-		if t == tag {
-			return true
-		}
-	}
-
-	return false
+	return self.Pragma.ContainValue("OutputTag", tag)
 
 }
 
@@ -63,5 +55,6 @@ func (self *FileDescriptor) Add(def *Descriptor) bool {
 func NewFileDescriptor() *FileDescriptor {
 	return &FileDescriptor{
 		DescriptorByName: make(map[string]*Descriptor),
+		Pragma:           golexer.NewKVPair(),
 	}
 }

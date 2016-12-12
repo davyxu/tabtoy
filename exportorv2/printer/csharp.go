@@ -124,11 +124,12 @@ type csharpField struct {
 
 func (self csharpField) Alias() string {
 
-	if self.FieldDescriptor.Meta.Alias == "" {
+	v := self.FieldDescriptor.Meta.GetString("Alias")
+	if v == "" {
 		return ""
 	}
 
-	return "// " + self.FieldDescriptor.Meta.Alias
+	return "// " + v
 }
 
 func (self csharpField) Comment() string {
@@ -285,7 +286,7 @@ func (self *csharpPrinter) Run(g *Globals) *BinaryFile {
 
 	var m csharpFileModel
 
-	m.Namespace = g.FileDescriptor.Pragma.Package
+	m.Namespace = g.FileDescriptor.Pragma.GetString("Package")
 	m.ToolVersion = g.Version
 
 	// combinestruct的全局索引
