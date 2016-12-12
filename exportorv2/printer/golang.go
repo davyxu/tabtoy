@@ -307,6 +307,6 @@ func formatCode(bf *bytes.Buffer) error {
 
 func init() {
 
-	RegisterPrinter(".go", &goPrinter{})
+	RegisterPrinter("go", &goPrinter{})
 
 }

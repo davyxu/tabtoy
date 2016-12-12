@@ -3,12 +3,12 @@ package printer
 type PrinterContext struct {
 	outFile string
 	p       Printer
-	ext     string
+	name    string
 }
 
 func (self *PrinterContext) Start(g *Globals) bool {
 
-	log.Infof("[%s] %s\n", self.ext, self.outFile)
+	log.Infof("[%s] %s\n", self.name, self.outFile)
 
 	bf := self.p.Run(g)
 

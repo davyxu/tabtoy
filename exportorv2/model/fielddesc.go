@@ -57,11 +57,6 @@ func MakeTag(t FieldType, order int32) int32 {
 	return int32(t)<<16 | order
 }
 
-//func (self *FieldDescriptor) MetaString() string {
-
-//	return proto.MarshalTextString(&self.Meta)
-//}
-
 func (self *FieldDescriptor) Equal(fd *FieldDescriptor) bool {
 
 	if self.Name != fd.Name {
@@ -106,6 +101,10 @@ func (self *FieldDescriptor) TypeString() string {
 	} else {
 		return FieldTypeToString(self.Type)
 	}
+}
+
+func (self *FieldDescriptor) KindString() string {
+	return FieldTypeToString(self.Type)
 }
 
 func (self *FieldDescriptor) String() string {

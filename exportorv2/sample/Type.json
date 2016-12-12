@@ -1,0 +1,243 @@
+{
+ "Structs": [
+  {
+   "Name": "Config",
+   "Fields": [
+    {
+     "Name": "Sample",
+     "Type": "SampleDefine",
+     "Kind": "struct",
+     "IsRepeated": true,
+     "Meta": {},
+     "Comment": "Sample",
+     "Value": 0
+    },
+    {
+     "Name": "Exp",
+     "Type": "ExpDefine",
+     "Kind": "struct",
+     "IsRepeated": true,
+     "Meta": {},
+     "Comment": "Exp",
+     "Value": 0
+    }
+   ]
+  },
+  {
+   "Name": "Prop",
+   "Fields": [
+    {
+     "Name": "HP",
+     "Type": "int32",
+     "Kind": "int32",
+     "IsRepeated": false,
+     "Meta": {
+      "Alias": "血量",
+      "Default": "10"
+     },
+     "Comment": "",
+     "Value": 0
+    },
+    {
+     "Name": "AttackRate",
+     "Type": "float",
+     "Kind": "float",
+     "IsRepeated": false,
+     "Meta": {
+      "Alias": "攻击速率"
+     },
+     "Comment": "",
+     "Value": 0
+    },
+    {
+     "Name": "ExType",
+     "Type": "ActorType",
+     "Kind": "enum",
+     "IsRepeated": false,
+     "Meta": {
+      "Alias": "额外类型"
+     },
+     "Comment": "",
+     "Value": 0
+    }
+   ]
+  },
+  {
+   "Name": "SampleDefine",
+   "Fields": [
+    {
+     "Name": "ID",
+     "Type": "int64",
+     "Kind": "int64",
+     "IsRepeated": false,
+     "Meta": {
+      "MakeIndex": "true",
+      "RepeatCheck": "true"
+     },
+     "Comment": "唯一ID",
+     "Value": 0
+    },
+    {
+     "Name": "Name",
+     "Type": "string",
+     "Kind": "string",
+     "IsRepeated": false,
+     "Meta": {
+      "MakeIndex": "true",
+      "我是tag": "haha"
+     },
+     "Comment": "名称",
+     "Value": 0
+    },
+    {
+     "Name": "IconID",
+     "Type": "int32",
+     "Kind": "int32",
+     "IsRepeated": false,
+     "Meta": {},
+     "Comment": "图标ID",
+     "Value": 0
+    },
+    {
+     "Name": "NumericalRate",
+     "Type": "float",
+     "Kind": "float",
+     "IsRepeated": false,
+     "Meta": {},
+     "Comment": "攻击率",
+     "Value": 0
+    },
+    {
+     "Name": "ItemID",
+     "Type": "int32",
+     "Kind": "int32",
+     "IsRepeated": false,
+     "Meta": {
+      "Default": "100"
+     },
+     "Comment": "物品id",
+     "Value": 0
+    },
+    {
+     "Name": "BuffID",
+     "Type": "int32",
+     "Kind": "int32",
+     "IsRepeated": true,
+     "Meta": {},
+     "Comment": "BuffID",
+     "Value": 0
+    },
+    {
+     "Name": "Type",
+     "Type": "ActorType",
+     "Kind": "enum",
+     "IsRepeated": false,
+     "Meta": {},
+     "Comment": "类型",
+     "Value": 0
+    },
+    {
+     "Name": "SkillID",
+     "Type": "int32",
+     "Kind": "int32",
+     "IsRepeated": true,
+     "Meta": {
+      "ListSpliter": ";"
+     },
+     "Comment": "技能ID列表",
+     "Value": 0
+    },
+    {
+     "Name": "SingleStruct",
+     "Type": "Prop",
+     "Kind": "struct",
+     "IsRepeated": false,
+     "Meta": {},
+     "Comment": "单结构解析",
+     "Value": 0
+    },
+    {
+     "Name": "StrStruct",
+     "Type": "Prop",
+     "Kind": "struct",
+     "IsRepeated": true,
+     "Meta": {},
+     "Comment": "字符串结构",
+     "Value": 0
+    }
+   ]
+  },
+  {
+   "Name": "ExpDefine",
+   "Fields": [
+    {
+     "Name": "Level",
+     "Type": "int32",
+     "Kind": "int32",
+     "IsRepeated": false,
+     "Meta": {
+      "MakeIndex": "true"
+     },
+     "Comment": "唯一ID",
+     "Value": 0
+    },
+    {
+     "Name": "Exp",
+     "Type": "int32",
+     "Kind": "int32",
+     "IsRepeated": false,
+     "Meta": {},
+     "Comment": "经验值",
+     "Value": 0
+    },
+    {
+     "Name": "BoolChecker",
+     "Type": "bool",
+     "Kind": "bool",
+     "IsRepeated": false,
+     "Meta": {},
+     "Comment": "布尔检查",
+     "Value": 0
+    },
+    {
+     "Name": "Type",
+     "Type": "ActorType",
+     "Kind": "enum",
+     "IsRepeated": false,
+     "Meta": {},
+     "Comment": "类型",
+     "Value": 0
+    }
+   ]
+  }
+ ],
+ "Enums": [
+  {
+   "Name": "ActorType",
+   "Fields": [
+    {
+     "Name": "Fighter",
+     "Type": "int32",
+     "Kind": "int32",
+     "IsRepeated": false,
+     "Meta": {
+      "Alias": "格斗士"
+     },
+     "Comment": "",
+     "Value": 0
+    },
+    {
+     "Name": "Power",
+     "Type": "int32",
+     "Kind": "int32",
+     "IsRepeated": false,
+     "Meta": {
+      "Alias": "超能"
+     },
+     "Comment": "",
+     "Value": 21
+    }
+   ]
+  }
+ ]
+}

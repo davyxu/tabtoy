@@ -210,6 +210,6 @@ func genLuaIndexCode(bf *BinaryFile, combineStruct *model.Descriptor) bool {
 
 func init() {
 
-	RegisterPrinter(".lua", &luaPrinter{})
+	RegisterPrinter("lua", &luaPrinter{})
 
 }

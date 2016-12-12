@@ -367,6 +367,6 @@ func (self *csharpPrinter) Run(g *Globals) *BinaryFile {
 
 func init() {
 
-	RegisterPrinter(".cs", &csharpPrinter{})
+	RegisterPrinter("cs", &csharpPrinter{})
 
 }

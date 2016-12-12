@@ -169,6 +169,6 @@ func (self *protoPrinter) Run(g *Globals) *BinaryFile {
 
 func init() {
 
-	RegisterPrinter(".proto", &protoPrinter{})
+	RegisterPrinter("proto", &protoPrinter{})
 
 }

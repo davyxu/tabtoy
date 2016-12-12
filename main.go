@@ -27,8 +27,9 @@ var paramPbtOut = flag.String("pbt_out", "", "output proto text format (*.pbt)")
 var paramLuaOut = flag.String("lua_out", "", "output lua code (*.lua)")
 var paramJsonOut = flag.String("json_out", "", "output json format (*.json)")
 var paramCSharpOut = flag.String("csharp_out", "", "output c# class and deserialize code (*.cs)")
-var paramGoOut = flag.String("go_out", "", "output golang index code (*.go)")
-var paramBinaryOut = flag.String("binary_out", "", "input filename , output binary format(*.bin)")
+var paramGoOut = flag.String("go_out", "", "output golang code (*.go)")
+var paramBinaryOut = flag.String("binary_out", "", "output binary format(*.bin)")
+var paramTypeOut = flag.String("type_out", "", "output table types(*.json)")
 var paramCombineStructName = flag.String("combinename", "", "combine struct name, code struct name")
 var paramProtoVersion = flag.Int("protover", 3, "output .proto file version, 2 or 3")
 var paramLanguage = flag.String("lan", "en_us", "set output language")
@@ -69,31 +70,35 @@ func main() {
 		g.GoImportPackage = *paramGoImportPackage
 
 		if *paramProtoOut != "" {
-			g.AddOutputType(".proto", *paramProtoOut)
+			g.AddOutputType("proto", *paramProtoOut)
 		}
 
 		if *paramPbtOut != "" {
-			g.AddOutputType(".pbt", *paramPbtOut)
+			g.AddOutputType("pbt", *paramPbtOut)
 		}
 
 		if *paramJsonOut != "" {
-			g.AddOutputType(".json", *paramJsonOut)
+			g.AddOutputType("json", *paramJsonOut)
 		}
 
 		if *paramLuaOut != "" {
-			g.AddOutputType(".lua", *paramLuaOut)
+			g.AddOutputType("lua", *paramLuaOut)
 		}
 
 		if *paramCSharpOut != "" {
-			g.AddOutputType(".cs", *paramCSharpOut)
+			g.AddOutputType("cs", *paramCSharpOut)
 		}
 
 		if *paramGoOut != "" {
-			g.AddOutputType(".go", *paramGoOut)
+			g.AddOutputType("go", *paramGoOut)
 		}
 
 		if *paramBinaryOut != "" {
-			g.AddOutputType(".bin", *paramBinaryOut)
+			g.AddOutputType("bin", *paramBinaryOut)
+		}
+
+		if *paramTypeOut != "" {
+			g.AddOutputType("type", *paramTypeOut)
 		}
 
 		if !exportorv2.Run(g) {

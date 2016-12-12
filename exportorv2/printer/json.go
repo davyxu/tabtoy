@@ -161,6 +161,6 @@ func printTableJson(bf *BinaryFile, tab *model.Table) bool {
 
 func init() {
 
-	RegisterPrinter(".json", &jsonPrinter{})
+	RegisterPrinter("json", &jsonPrinter{})
 
 }

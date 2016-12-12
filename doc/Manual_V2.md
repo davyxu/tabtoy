@@ -287,6 +287,14 @@
 
 * 范例: 生成go后, 配合github/golang/protobuf库读取pbt格式, 再使用生成的golang文件为数据建立索引
 
+### 类型信息
+
+* 格式: --type_out=path/to/out.json
+
+* 功能: 生成所有表中类型信息并输出json
+
+* 范例: 对于没有反射功能的语言, 例如C++, 想快速的遍历所有表格的类型信息, 可以通过这个选项自行解析读取
+
 ## 指定合并结构体名
 
 * 格式: --combinename=YourStructName

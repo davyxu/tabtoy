@@ -55,7 +55,7 @@ func (self *Globals) hasAnyPrinter(exts ...string) bool {
 	for _, ext := range exts {
 
 		for _, p := range self.Printers {
-			if p.ext == ext {
+			if p.name == ext {
 				return true
 			}
 		}
@@ -64,16 +64,16 @@ func (self *Globals) hasAnyPrinter(exts ...string) bool {
 	return false
 }
 
-func (self *Globals) AddOutputType(ext string, outfile string) {
+func (self *Globals) AddOutputType(name string, outfile string) {
 
-	if p, ok := printerByExt[ext]; ok {
+	if p, ok := printerByExt[name]; ok {
 		self.Printers = append(self.Printers, &PrinterContext{
 			p:       p,
 			outFile: outfile,
-			ext:     ext,
+			name:    name,
 		})
 	} else {
-		panic("output type not found:" + ext)
+		panic("output type not found:" + name)
 	}
 
 }
