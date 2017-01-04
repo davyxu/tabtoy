@@ -18,6 +18,10 @@ func (self *BinaryFile) Buffer() *bytes.Buffer {
 	return &self.buf
 }
 
+func (self *BinaryFile) WriteBytes(b []byte) {
+	self.buf.Write(b)
+}
+
 func (self *BinaryFile) Printf(format string, args ...interface{}) {
 	self.buf.WriteString(fmt.Sprintf(format, args...))
 }

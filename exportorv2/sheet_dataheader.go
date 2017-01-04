@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/davyxu/golexer"
 	"github.com/davyxu/tabtoy/exportorv2/i18n"
 	"github.com/davyxu/tabtoy/exportorv2/model"
 	"github.com/davyxu/tabtoy/util"
@@ -96,8 +95,6 @@ func (self *DataHeader) ParseProtoField(index int, sheet *Sheet, localFD *model.
 
 			// ====================解析特性====================
 			metaString := sheet.GetCellData(DataSheetRow_FieldMeta, sheet.Column)
-
-			def.Meta = golexer.NewKVPair()
 
 			if err := def.Meta.Parse(metaString); err != nil {
 				sheet.Row = DataSheetRow_FieldMeta

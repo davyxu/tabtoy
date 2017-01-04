@@ -3,8 +3,6 @@ package model
 import (
 	"fmt"
 	"strings"
-
-	"github.com/davyxu/golexer"
 )
 
 type FieldType int
@@ -32,7 +30,7 @@ type FieldDescriptor struct {
 
 	Order int32 // 在Descriptor中的顺序
 
-	Meta *golexer.KVPair // 扩展字段
+	Meta *MetaInfo // 扩展字段
 
 	IsRepeated bool
 
@@ -45,7 +43,7 @@ type FieldDescriptor struct {
 
 func NewFieldDescriptor() *FieldDescriptor {
 	return &FieldDescriptor{
-		Meta: golexer.NewKVPair(),
+		Meta: NewMetaInfo(),
 	}
 }
 
@@ -56,11 +54,6 @@ func (self *FieldDescriptor) Tag() int32 {
 func MakeTag(t FieldType, order int32) int32 {
 	return int32(t)<<16 | order
 }
-
-//func (self *FieldDescriptor) MetaString() string {
-
-//	return proto.MarshalTextString(&self.Meta)
-//}
 
 func (self *FieldDescriptor) Equal(fd *FieldDescriptor) bool {
 
@@ -106,6 +99,10 @@ func (self *FieldDescriptor) TypeString() string {
 	} else {
 		return FieldTypeToString(self.Type)
 	}
+}
+
+func (self *FieldDescriptor) KindString() string {
+	return FieldTypeToString(self.Type)
 }
 
 func (self *FieldDescriptor) String() string {

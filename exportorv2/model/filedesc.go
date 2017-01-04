@@ -1,13 +1,11 @@
 package model
 
-import "github.com/davyxu/golexer"
-
 type FileDescriptor struct {
 	Name             string
 	DescriptorByName map[string]*Descriptor
 	Descriptors      []*Descriptor
 
-	Pragma *golexer.KVPair
+	Pragma *MetaInfo
 }
 
 func (self *FileDescriptor) MatchTag(tag string) bool {
@@ -55,6 +53,6 @@ func (self *FileDescriptor) Add(def *Descriptor) bool {
 func NewFileDescriptor() *FileDescriptor {
 	return &FileDescriptor{
 		DescriptorByName: make(map[string]*Descriptor),
-		Pragma:           golexer.NewKVPair(),
+		Pragma:           NewMetaInfo(),
 	}
 }

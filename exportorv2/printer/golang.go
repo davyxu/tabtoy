@@ -34,7 +34,7 @@ const (
 type {{$strus.Name}} struct{
 	{{range $b, $fd := $strus.GoFields}} 
 	{{.Comment}}
-	{{$fd.Name}} {{$fd.TypeString}} 
+	{{$fd.Name}} {{$fd.TypeString}} {{$fd.StructTag}}
 	{{end}}
 }
 {{end}}
@@ -101,6 +101,36 @@ func (self *goFieldModel) KeyType() string {
 	}
 
 	return model.FieldTypeToString(self.Type)
+}
+
+func (self *goFieldModel) StructTag() string {
+
+	var buf bytes.Buffer
+
+	buf.WriteString("`")
+
+	var userTagCount int
+
+	self.Meta.VisitUserMeta(func(k string, v interface{}) bool {
+
+		if userTagCount > 0 {
+			buf.WriteString(" ")
+		}
+
+		buf.WriteString(fmt.Sprintf("%s:\"%s\"", k, v))
+
+		userTagCount++
+
+		return true
+	})
+
+	buf.WriteString("`")
+
+	if userTagCount == 0 {
+		return ""
+	}
+
+	return buf.String()
 }
 
 func (self *goFieldModel) TypeString() string {
@@ -307,6 +337,6 @@ func formatCode(bf *bytes.Buffer) error {
 
 func init() {
 
-	RegisterPrinter(".go", &goPrinter{})
+	RegisterPrinter("go", &goPrinter{})
 
 }

@@ -93,6 +93,6 @@ func writeTableBinary(self *BinaryFile, tab *model.Table) bool {
 
 func init() {
 
-	RegisterPrinter(".bin", &binaryPrinter{})
+	RegisterPrinter("bin", &binaryPrinter{})
 
 }

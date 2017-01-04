@@ -6,6 +6,7 @@
 --json_out=.\Config.json ^
 --lua_out=.\Config.lua ^
 --go_out=.\Config.go ^
+--type_out=.\Type.json ^
 --combinename=Config ^
 --lan=zh_cn ^
 --goimportpkg=github.com/davyxu/tabtoy/exportorv2/sample/gamedef ^

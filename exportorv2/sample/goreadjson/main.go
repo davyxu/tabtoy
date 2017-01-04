@@ -17,5 +17,4 @@ func main() {
 	for index, v := range table.SampleByID {
 		fmt.Println(index, v)
 	}
-
 }
