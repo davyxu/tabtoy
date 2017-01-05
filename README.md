@@ -116,6 +116,7 @@ tabtoy --mode=exportorv2 --json_out=.\config.json Table.xlsx
 
 ### Golang读取例子
 
+	地址: https://github.com/davyxu/tabtoy/tree/master/exportorv2/sample/golang
 	
 ```golang
 	var config table.Config
@@ -128,31 +129,50 @@ tabtoy --mode=exportorv2 --json_out=.\config.json Table.xlsx
 		fmt.Println(index, v)
 	}
 ```
-
-	详细请查看
-	https://github.com/davyxu/tabtoy/tree/master/exportorv2/sample/goreadjson
+	
+	
 
 ### C#读取例子
 
+	地址: https://github.com/davyxu/tabtoy/tree/master/exportorv2/sample/csharp
+
 ```csharp
-	using (var stream = new FileStream("../../../../Config.bin", FileMode.Open))
-	{
-	    stream.Position = 0;
-	
-	    var reader = new DataReader(stream);
-	    
-	    if ( !reader.ReadHeader( ) )
-	    {
-	        Console.WriteLine("combine file crack!");
-	        return;
-	    }
-	
-	    var file = new gamedef.Config();
-	    file.Deserialize(reader);
-	}
+    using (var stream = new FileStream("../../../../Config.bin", FileMode.Open))
+    {
+        stream.Position = 0;
+
+        var reader = new tabtoy.DataReader(stream);
+        
+        if ( !reader.ReadHeader( ) )
+        {
+            Console.WriteLine("combine file crack!");
+            return;
+        }
+
+        var config = new gamedef.Config();
+        config.Deserialize(reader);
+
+        // 直接通过下标获取或遍历
+        var directFetch = config.Sample[2];
+
+        // 根据索引取
+        var indexFetch = config.GetSampleByID(100);
+
+        // 取不存在的元素时, 返回给定的默认值, 避免空
+        var indexFetchByDefault = config.GetSampleByID(0, new gamedef.SampleDefine() );
+
+        // 添加日志输出或自定义输出
+        config.TableLogger.AddTarget( new tabtoy.DebuggerTarget() );
+
+        // 取空时, 当默认值不为空时, 输出日志
+        var nullFetchOutLog = config.GetSampleByID( 0 );
+
+    }
 ```
 
 ### lua读取例子
+
+	地址: https://github.com/davyxu/tabtoy/tree/master/exportorv2/sample/lua
 
 ```lua
 -- 添加搜索路径
