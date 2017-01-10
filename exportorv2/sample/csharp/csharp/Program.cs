@@ -20,7 +20,7 @@ namespace csharptest
                     return;
                 }
 
-                var config = new gamedef.Config();
+                var config = new table.Config();
                 config.Deserialize(reader);
 
                 // 直接通过下标获取或遍历
