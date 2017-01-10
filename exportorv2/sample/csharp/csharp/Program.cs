@@ -23,6 +23,10 @@ namespace csharptest
 
                 var file = new gamedef.Config();
                 file.Deserialize(reader);
+
+                var a= file.GetSampleByID(100);
+
+                var b = file.GetSampleByID(0, new gamedef.SampleDefine { });
             }
             
             

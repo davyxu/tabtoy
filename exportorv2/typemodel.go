@@ -12,6 +12,7 @@ type typeCell struct {
 	col   int
 }
 
+// 类型表的数据
 type typeModel struct {
 	colData map[string]*typeCell
 
@@ -71,6 +72,7 @@ func (self *typeModelRoot) ParsePragma(localFD *model.FileDescriptor) bool {
 	return true
 }
 
+// 解析类型表里的所有类型描述
 func (self *typeModelRoot) ParseData(localFD *model.FileDescriptor, globalFD *model.FileDescriptor) bool {
 
 	var td *model.Descriptor
@@ -157,6 +159,20 @@ func (self *typeModelRoot) ParseData(localFD *model.FileDescriptor, globalFD *mo
 		if err := m.fd.Meta.Parse(rawMeta); err != nil {
 			log.Errorf("%s, '%s'", i18n.String(i18n.TypeSheet_FieldMetaParseFailed), err.Error())
 			return false
+		}
+
+		// 别名
+		var rawAlias string
+		rawAlias, self.Col = m.getValue("Alias")
+		if self.Col != -1 {
+			m.fd.Meta.SetString("Alias", rawAlias)
+		}
+
+		// 默认值
+		var rawDefault string
+		rawDefault, self.Col = m.getValue("Default")
+		if self.Col != -1 {
+			m.fd.Meta.SetString("Default", rawDefault)
 		}
 
 		td.Add(m.fd)

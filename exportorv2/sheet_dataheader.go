@@ -9,6 +9,11 @@ import (
 	"github.com/davyxu/tabtoy/util"
 )
 
+/*
+	Sheet数据表单类型头
+
+*/
+
 type DataHeader struct {
 
 	// 按排列的, 保留有注释掉的字段和重复的repeated列

@@ -6,6 +6,11 @@ import (
 	"github.com/davyxu/tabtoy/util"
 )
 
+/*
+	@Types表解析
+
+*/
+
 const (
 	// 信息所在的行
 	TypeSheetRow_Pragma    = 0 // 配置
@@ -21,13 +26,15 @@ var typeHeader = map[string]int{
 	"Value":      3,
 	"Comment":    4,
 	"Meta":       5,
+	"Alias":      6,
+	"Default":    7,
 }
 
 type TypeSheet struct {
 	*Sheet
 }
 
-func (self *TypeSheet) ParseTable(root *typeModelRoot) bool {
+func (self *TypeSheet) parseTable(root *typeModelRoot) bool {
 
 	var readingLine bool = true
 
@@ -80,11 +87,12 @@ func (self *TypeSheet) ParseTable(root *typeModelRoot) bool {
 	return true
 }
 
+// 解析所有的类型及数据
 func (self *TypeSheet) Parse(localFD *model.FileDescriptor, globalFD *model.FileDescriptor) bool {
 
 	var root typeModelRoot
 
-	if !self.ParseTable(&root) {
+	if !self.parseTable(&root) {
 		goto ErrorStop
 	}
 

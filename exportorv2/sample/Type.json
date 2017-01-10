@@ -46,7 +46,8 @@
      "Kind": "float",
      "IsRepeated": false,
      "Meta": {
-      "Alias": "攻击速率"
+      "Alias": "攻击速率",
+      "Default": ""
      },
      "Comment": "",
      "Value": 0
@@ -57,7 +58,8 @@
      "Kind": "enum",
      "IsRepeated": false,
      "Meta": {
-      "Alias": "额外类型"
+      "Alias": "额外类型",
+      "Default": ""
      },
      "Comment": "",
      "Value": 0

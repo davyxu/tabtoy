@@ -6,6 +6,7 @@ import (
 	"github.com/tealeg/xlsx"
 )
 
+// 描述一个表单
 type Sheet struct {
 	*xlsx.Sheet
 
