@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using tabtoy;
 
 namespace csharptest
 {
@@ -13,7 +12,7 @@ namespace csharptest
             {
                 stream.Position = 0;
 
-                var reader = new DataReader(stream);
+                var reader = new tabtoy.DataReader(stream);
                 
                 if ( !reader.ReadHeader( ) )
                 {
@@ -21,12 +20,22 @@ namespace csharptest
                     return;
                 }
 
-                var file = new gamedef.Config();
-                file.Deserialize(reader);
+                var config = new gamedef.Config();
+                config.Deserialize(reader);
 
-                var a= file.GetSampleByID(100);
+                // 直接通过下标获取或遍历
+                var directFetch = config.Sample[2];
 
-                var b = file.GetSampleByID(0, new gamedef.SampleDefine { });
+                // 根据索引取
+
+                // 取不存在的元素时, 返回给定的默认值, 避免空
+
+                // 添加日志输出或自定义输出
+                config.TableLogger.AddTarget( new tabtoy.DebuggerTarget() );
+
+                // 取空时, 当默认值不为空时, 输出日志
+                var nullFetchOutLog = config.GetSampleByID( 0 );
+
             }
             
             

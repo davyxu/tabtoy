@@ -28,7 +28,9 @@ namespace {{.Namespace}}{{$globalIndex:=.Indexes}}
 	{{end}}
 	{{range .Classes}}
 	public partial class {{.Name}} : tabtoy.DataObject
-	{	
+	{
+		public tabtoy.Logger TableLogger = new tabtoy.Logger();
+		
 	{{range .Fields}}	
 		{{.Alias}}
 		{{.TypeCode}} {{.Comment}}
@@ -36,15 +38,20 @@ namespace {{.Namespace}}{{$globalIndex:=.Indexes}}
 	
 	{{if .IsCombine}}{{range $globalIndex}}
 	 	Dictionary<{{.IndexType}}, {{.RowType}}> _{{.RowName}}By{{.IndexName}} = new Dictionary<{{.IndexType}}, {{.RowType}}>();
-        public {{.RowType}} Get{{.RowName}}By{{.IndexName}}({{.IndexType}} {{.IndexName}})
+        public {{.RowType}} Get{{.RowName}}By{{.IndexName}}({{.IndexType}} {{.IndexName}}, {{.RowType}} def = default({{.RowType}}))
         {
             {{.RowType}} ret;
             if ( _{{.RowName}}By{{.IndexName}}.TryGetValue( {{.IndexName}}, out ret ) )
             {
                 return ret;
             }
+			
+			if ( def == default({{.RowType}}) )
+			{
+				TableLogger.ErrorLine("Get{{.RowName}}By{{.IndexName}} failed, {{.IndexName}}: {0}", {{.IndexName}});
+			}
 
-            return null;
+            return def;
         }
 	{{end}}{{end}}
 		public void Deserialize( tabtoy.DataReader reader )

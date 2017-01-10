@@ -40,14 +40,16 @@ func (self *TypeSheet) parseTable(root *typeModelRoot) bool {
 
 	root.pragma = self.GetCellData(TypeSheetRow_Pragma, 0)
 
+	// 读行
 	for row := TypeSheetRow_DataBegin; readingLine; row++ {
 
 		tm := newTypeModel()
 		tm.row = row
 
+		// 读列
 		for col := 0; ; col++ {
 
-			// 头
+			// 头的类型
 			typeDeclare := self.GetCellData(TypeSheetRow_FieldDesc, col)
 
 			// 头已经读完
