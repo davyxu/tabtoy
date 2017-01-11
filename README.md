@@ -97,7 +97,7 @@
 
 * 已经编译好的二进制:
 	
-	https://github.com/davyxu/tabtoy/releases
+	[https://github.com/davyxu/tabtoy/releases](https://github.com/davyxu/tabtoy/releases)
 	
 * 手动编译获取最新版
 	
@@ -116,7 +116,7 @@ tabtoy --mode=exportorv2 --json_out=.\config.json Table.xlsx
 
 ### Golang读取例子
 
-	地址: https://github.com/davyxu/tabtoy/tree/master/exportorv2/sample/golang
+	[例子](https://github.com/davyxu/tabtoy/tree/master/exportorv2/sample/golang)		
 	
 ```golang
 	var config table.Config
@@ -133,8 +133,8 @@ tabtoy --mode=exportorv2 --json_out=.\config.json Table.xlsx
 	
 
 ### C#读取例子
-
-	地址: https://github.com/davyxu/tabtoy/tree/master/exportorv2/sample/csharp
+	
+	[例子](https://github.com/davyxu/tabtoy/tree/master/exportorv2/sample/csharp)	
 
 ```csharp
     using (var stream = new FileStream("../../../../Config.bin", FileMode.Open))
@@ -172,7 +172,7 @@ tabtoy --mode=exportorv2 --json_out=.\config.json Table.xlsx
 
 ### lua读取例子
 
-	地址: https://github.com/davyxu/tabtoy/tree/master/exportorv2/sample/lua
+	[例子](https://github.com/davyxu/tabtoy/tree/master/exportorv2/sample/lua)	
 
 ```lua
 -- 添加搜索路径
@@ -193,7 +193,7 @@ print(t.SampleByName["黑猫警长"].ID)
 
 ## 所有例子
 	
-https://github.com/davyxu/tabtoy/blob/master/exportorv2/sample
+[例子](https://github.com/davyxu/tabtoy/blob/master/exportorv2/sample)
 
 * 注意: 例子中展现的是一般项目中多表的使用方法
 
@@ -202,7 +202,10 @@ https://github.com/davyxu/tabtoy/blob/master/exportorv2/sample
 
 ## 详细文档
 
-https://github.com/davyxu/tabtoy/blob/master/doc/Manual_V2.md
+[文档](https://github.com/davyxu/tabtoy/blob/master/doc/Manual_V2.md)
+
+[错误描述](https://github.com/davyxu/tabtoy/blob/master/doc/error_v2.md)
+
 
 ## 有意思的功能
 
@@ -220,12 +223,14 @@ https://github.com/davyxu/tabtoy/blob/master/doc/Manual_V2.md
 减少数据冗余和保证客户端数据安全, tabtoy已经为你考虑
 
 
+
+
 # 备注
 
 感觉不错请star, 谢谢!
 
-博客: http://www.cppblog.com/sunicdavy
+博客: [http://www.cppblog.com/sunicdavy](http://www.cppblog.com/sunicdavy)
 
-知乎: http://www.zhihu.com/people/xu-bo-62-87
+知乎: [http://www.zhihu.com/people/xu-bo-62-87](http://www.zhihu.com/people/xu-bo-62-87)
 
-提交bug及特性: https://github.com/davyxu/cellnet/issues
+提交bug及特性: [https://github.com/davyxu/cellnet/issues](https://github.com/davyxu/cellnet/issues)

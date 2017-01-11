@@ -26,6 +26,7 @@ const (
 	File_TypeSheetKeepSingleton
 	DataSheet_ValueConvertError
 	DataSheet_ValueRepeated
+	DataSheet_RowDataSplitedByEmptyLine
 	DataHeader_StructCellCannotSplit
 	DataHeader_TypeNotFound
 	DataHeader_MetaParseFailed
@@ -45,6 +46,8 @@ const (
 	TypeSheet_FirstEnumValueShouldBeZero
 	TypeSheet_UnexpectedTypeHeader
 	TypeSheet_DuplicatedEnumValue
+	TypeSheet_RowDataSplitedByEmptyLine
+	TypeSheet_ObjectNameEmpty
 	Printer_IgnoredByOutputTag
 )
 

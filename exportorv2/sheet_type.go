@@ -34,11 +34,32 @@ type TypeSheet struct {
 	*Sheet
 }
 
+func (self *TypeSheet) detectMaxTypeCol() int {
+	for col := 0; col < 100; col++ {
+
+		// 头的类型
+		typeDeclare := self.GetCellData(TypeSheetRow_FieldDesc, col)
+
+		// 头已经读完
+		if typeDeclare == "" {
+			return col
+		}
+	}
+
+	return 0
+}
+
 func (self *TypeSheet) parseTable(root *typeModelRoot) bool {
 
 	var readingLine bool = true
 
 	root.pragma = self.GetCellData(TypeSheetRow_Pragma, 0)
+
+	maxCol := self.detectMaxTypeCol()
+
+	var meetEmptyLine bool
+
+	var warningAfterEmptyLineDataOnce bool
 
 	// 读行
 	for row := TypeSheetRow_DataBegin; readingLine; row++ {
@@ -46,16 +67,35 @@ func (self *TypeSheet) parseTable(root *typeModelRoot) bool {
 		tm := newTypeModel()
 		tm.row = row
 
+		// 整行都是空的
+		if self.IsFullRowEmpty(row, maxCol) {
+
+			// 再次碰空行, 表示确实是空的
+			if meetEmptyLine {
+				break
+
+			} else {
+				meetEmptyLine = true
+			}
+
+			continue
+
+		} else {
+
+			//已经碰过空行, 这里又碰到数据, 说明有人为隔出的空行, 做warning提醒, 防止数据没导出
+			if meetEmptyLine && !warningAfterEmptyLineDataOnce {
+				log.Errorf("%s %s|%s(%s)", i18n.String(i18n.TypeSheet_RowDataSplitedByEmptyLine), self.file.FileName, self.Name, util.ConvR1C1toA1(row, 1))
+
+				warningAfterEmptyLineDataOnce = true
+			}
+
+		}
+
 		// 读列
-		for col := 0; ; col++ {
+		for col := 0; col < maxCol; col++ {
 
 			// 头的类型
 			typeDeclare := self.GetCellData(TypeSheetRow_FieldDesc, col)
-
-			// 头已经读完
-			if typeDeclare == "" {
-				break
-			}
 
 			if _, ok := typeHeader[typeDeclare]; !ok {
 				self.Row = TypeSheetRow_FieldDesc
@@ -67,10 +107,11 @@ func (self *TypeSheet) parseTable(root *typeModelRoot) bool {
 			// 值
 			typeValue := self.GetCellData(row, col)
 
-			// 类型空表示停止解析
 			if typeDeclare == "ObjectType" && typeValue == "" {
-				readingLine = false
-				break
+				self.Row = row
+				self.Column = col
+				log.Errorf("%s", i18n.String(i18n.TypeSheet_ObjectNameEmpty))
+				return false
 			}
 
 			tm.colData[typeDeclare] = &typeCell{

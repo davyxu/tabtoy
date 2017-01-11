@@ -12,7 +12,7 @@ type typeCell struct {
 	col   int
 }
 
-// 类型表的数据
+// 类型表的数据, 数据读取与使用分开使用, 让类型互相没有依赖
 type typeModel struct {
 	colData map[string]*typeCell
 

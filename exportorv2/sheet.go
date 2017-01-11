@@ -25,16 +25,40 @@ func (self *Sheet) GetRC() (int, int) {
 
 }
 
-// 获取单元格
+// 获取单元格 cursor=行,  index=列
 func (self *Sheet) GetCellData(cursor, index int) string {
 
-	return strings.TrimSpace(self.Cell(cursor, index).Value)
+	if cursor >= len(self.Rows) {
+		return ""
+	}
+
+	r := self.Rows[cursor]
+	for len(r.Cells) <= index {
+		r.AddCell()
+	}
+
+	return strings.TrimSpace(r.Cells[index].Value)
 }
 
 // 设置单元格
 func (self *Sheet) SetCellData(cursor, index int, data string) {
 
 	self.Cell(cursor, index).Value = data
+}
+
+// 整行都是空的
+func (self *Sheet) IsFullRowEmpty(row, maxCol int) bool {
+
+	for col := 0; col < maxCol; col++ {
+
+		data := self.GetCellData(row, col)
+
+		if data != "" {
+			return false
+		}
+	}
+
+	return true
 }
 
 func NewSheet(file *File, sheet *xlsx.Sheet) *Sheet {

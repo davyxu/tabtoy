@@ -120,7 +120,7 @@ func (self *Globals) AddContent(tab *model.Table) bool {
 		self.Pragma.SetString("Package", localFD.Pragma.GetString("Package"))
 	} else if self.Pragma.GetString("Package") != localFD.Pragma.GetString("Package") {
 
-		log.Errorf("%s, '%s' '%s'", i18n.String(i18n.Globals_PackageNameDiff), self.Pragma.GetString("Package"), localFD.Pragma.GetString("Package"))
+		log.Errorf("%s, '%s' '%s'", i18n.String(i18n.Globals_PackageNameDiff), localFD.Pragma.GetString("TableName"), self.Pragma.GetString("TableName"))
 		return false
 	}
 

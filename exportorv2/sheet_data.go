@@ -96,12 +96,37 @@ func (self *DataSheet) Export(file *File, tab *model.Table, dataHeader *DataHead
 	// 是否继续读行
 	var readingLine bool = true
 
+	var meetEmptyLine bool
+
+	var warningAfterEmptyLineDataOnce bool
+
 	// 遍历每一行
 	for self.Row = DataSheetRow_DataBegin; readingLine; self.Row++ {
 
-		// 第一列是空的，结束
-		if self.GetCellData(self.Row, 0) == "" {
-			break
+		// 整行都是空的
+		if self.IsFullRowEmpty(self.Row, dataHeader.RawFieldCount()) {
+
+			// 再次碰空行, 表示确实是空的
+			if meetEmptyLine {
+				break
+
+			} else {
+				meetEmptyLine = true
+			}
+
+			continue
+
+		} else {
+
+			//已经碰过空行, 这里又碰到数据, 说明有人为隔出的空行, 做warning提醒, 防止数据没导出
+			if meetEmptyLine && !warningAfterEmptyLineDataOnce {
+				r, _ := self.GetRC()
+
+				log.Warnf("%s %s|%s(%s)", i18n.String(i18n.DataSheet_RowDataSplitedByEmptyLine), self.file.FileName, self.Name, util.ConvR1C1toA1(r, 1))
+
+				warningAfterEmptyLineDataOnce = true
+			}
+
 		}
 
 		record := model.NewRecord()
