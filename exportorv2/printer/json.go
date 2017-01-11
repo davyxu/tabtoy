@@ -38,16 +38,14 @@ func (self *jsonPrinter) Run(g *Globals) *BinaryFile {
 			continue
 		}
 
+		if tabIndex > 0 {
+			bf.Printf(", \n")
+		}
+
 		if !printTableJson(bf, tab) {
 			return nil
 		}
 
-		// 根字段分割
-		if tabIndex < len(g.Tables)-1 {
-			bf.Printf(", ")
-		}
-
-		bf.Printf("\n")
 	}
 
 	bf.Printf("}")
