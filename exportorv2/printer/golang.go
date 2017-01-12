@@ -19,6 +19,8 @@ package {{.Package}}
 
 import(	
 	{{if .HasAnyIndex}}"fmt"{{end}}
+	"encoding/json"
+	"io/ioutil"
 )
 {{range $a, $en := .Enums}} 
 type {{$en.Name}} int32
@@ -39,32 +41,84 @@ type {{$strus.Name}} struct{
 }
 {{end}}
 
-
-{{range $a, $strus := .IndexedStructs}} {{range .Indexes}}
-var {{$strus.Name}}By{{.Name}} = make(map[{{.KeyType}}]*{{$strus.TypeName}})
-{{end}} {{end}}
-func init() {
+// {{$.Name}} 访问接口
+type {{$.Name}}Table struct{
+	{{$.Name}}
 	
-	{{range $a, $strus := .IndexedStructs}}
+	indexEntryByName map[string]func(*{{$.Name}}Table)
 	
-	RegisterIndexEntry("{{$strus.Name}}", func( content interface{} ){
-		
-		config := content.(*{{$.Name}})
-		
-		// {{$strus.Name}}
-		for _, def := range config.{{$strus.Name}} {
-			{{range .Indexes}}
-			if _, ok := {{$strus.Name}}By{{.Name}}[def.{{.Name}}]; ok {
-				panic(fmt.Sprintf("duplicate index in {{$strus.Name}}By{{.Name}}: %v", def.{{.Name}}))
-			}
-			{{end}}		
-			{{range .Indexes}}
-			{{$strus.Name}}By{{.Name}}[def.{{.Name}}] = def{{end}}
-			
-		}
-		
-	}){{end}}
+	{{range $a, $strus := .IndexedStructs}} {{range .Indexes}}
+	{{$strus.Name}}By{{.Name}} map[{{.KeyType}}]*{{$strus.TypeName}}
+	{{end}} {{end}}
 }
+
+// 从json文件加载
+func (self *{{$.Name}}Table) Load(filename string) error {
+
+	data, err := ioutil.ReadFile(filename)
+
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(data, &self.{{$.Name}})
+	if err != nil {
+		return err
+	}
+
+	// 生成索引
+	for _, v := range self.indexEntryByName {
+		v(self)
+	}
+
+	return nil
+}
+
+// 注册外部索引入口
+func (self *{{$.Name}}Table) RegisterIndexEntry(name string, callback func(*{{$.Name}}Table)) {
+
+	if _, ok := self.indexEntryByName[name]; ok {
+		panic("duplicate '{{$.Name}}' table index entry")
+	}
+
+	self.indexEntryByName[name] = callback
+}
+
+// 创建一个{{$.Name}}表读取实例
+func New{{$.Name}}Table() *{{$.Name}}Table {
+	return &{{$.Name}}Table{
+
+	
+		indexEntryByName: map[string]func(*{{$.Name}}Table){
+		
+		{{range $a, $strus := .IndexedStructs}}
+			"{{$strus.Name}}": func(tab *{{$.Name}}Table) {
+				
+				// {{$strus.Name}}
+				for _, def := range tab.{{$strus.Name}} {
+					{{range .Indexes}}
+					if _, ok := tab.{{$strus.Name}}By{{.Name}}[def.{{.Name}}]; ok {
+						panic(fmt.Sprintf("duplicate index in {{$strus.Name}}By{{.Name}}: %v", def.{{.Name}}))
+					}
+					{{end}}		
+					{{range .Indexes}}
+					tab.{{$strus.Name}}By{{.Name}}[def.{{.Name}}] = def{{end}}
+					
+				}
+			},
+		{{end}}
+		
+			
+		},
+		
+		
+		{{range $a, $strus := .IndexedStructs}} {{range .Indexes}}
+		{{$strus.Name}}By{{.Name}} : make(map[{{.KeyType}}]*{{$strus.TypeName}}),
+		{{end}} {{end}}
+		
+	}
+}
+
 
 `
 

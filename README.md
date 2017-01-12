@@ -119,13 +119,13 @@ tabtoy --mode=exportorv2 --json_out=.\config.json Table.xlsx
 	[例子](https://github.com/davyxu/tabtoy/tree/master/exportorv2/sample/golang)		
 	
 ```golang
-	var config table.Config
+	config := table.NewConfigTable()
 
-	if err := table.LoadTableFromFile("../Config.json", &config); err != nil {
+	if err := config.Load("../Config.json"); err != nil {
 		panic(err)
 	}
-	
-	for index, v := range table.SampleByID {
+
+	for index, v := range config.SampleByID {
 		fmt.Println(index, v)
 	}
 ```
@@ -233,4 +233,4 @@ print(t.SampleByName["黑猫警长"].ID)
 
 知乎: [http://www.zhihu.com/people/xu-bo-62-87](http://www.zhihu.com/people/xu-bo-62-87)
 
-提交bug及特性: [https://github.com/davyxu/cellnet/issues](https://github.com/davyxu/cellnet/issues)
+提交bug及特性: [https://github.com/davyxu/tabtoy/issues](https://github.com/davyxu/tabtoy/issues)

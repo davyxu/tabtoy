@@ -5,6 +5,8 @@ package table
 
 import (
 	"fmt"
+	"encoding/json"
+	"io/ioutil"
 )
 
 type ActorType int32
@@ -80,50 +82,95 @@ type ExpDefine struct {
 	Type ActorType
 }
 
-var SampleByID = make(map[int64]*SampleDefine)
+// Config 访问接口
+type ConfigTable struct {
+	Config
 
-var SampleByName = make(map[string]*SampleDefine)
+	indexEntryByName map[string]func(*ConfigTable)
 
-var ExpByLevel = make(map[int32]*ExpDefine)
+	SampleByID map[int64]*SampleDefine
 
-func init() {
+	SampleByName map[string]*SampleDefine
 
-	RegisterIndexEntry("Sample", func(content interface{}) {
+	ExpByLevel map[int32]*ExpDefine
+}
 
-		config := content.(*Config)
+// 从json文件加载
+func (self *ConfigTable) Load(filename string) error {
 
-		// Sample
-		for _, def := range config.Sample {
+	data, err := ioutil.ReadFile(filename)
 
-			if _, ok := SampleByID[def.ID]; ok {
-				panic(fmt.Sprintf("duplicate index in SampleByID: %v", def.ID))
-			}
+	if err != nil {
+		return err
+	}
 
-			if _, ok := SampleByName[def.Name]; ok {
-				panic(fmt.Sprintf("duplicate index in SampleByName: %v", def.Name))
-			}
+	err = json.Unmarshal(data, &self.Config)
+	if err != nil {
+		return err
+	}
 
-			SampleByID[def.ID] = def
-			SampleByName[def.Name] = def
+	// 生成索引
+	for _, v := range self.indexEntryByName {
+		v(self)
+	}
 
-		}
+	return nil
+}
 
-	})
+// 注册外部索引入口
+func (self *ConfigTable) RegisterIndexEntry(name string, callback func(*ConfigTable)) {
 
-	RegisterIndexEntry("Exp", func(content interface{}) {
+	if _, ok := self.indexEntryByName[name]; ok {
+		panic("duplicate 'Config' table index entry")
+	}
 
-		config := content.(*Config)
+	self.indexEntryByName[name] = callback
+}
 
-		// Exp
-		for _, def := range config.Exp {
+// 创建一个Config表读取实例
+func NewConfigTable() *ConfigTable {
+	return &ConfigTable{
 
-			if _, ok := ExpByLevel[def.Level]; ok {
-				panic(fmt.Sprintf("duplicate index in ExpByLevel: %v", def.Level))
-			}
+		indexEntryByName: map[string]func(*ConfigTable){
 
-			ExpByLevel[def.Level] = def
+			"Sample": func(tab *ConfigTable) {
 
-		}
+				// Sample
+				for _, def := range tab.Sample {
 
-	})
+					if _, ok := tab.SampleByID[def.ID]; ok {
+						panic(fmt.Sprintf("duplicate index in SampleByID: %v", def.ID))
+					}
+
+					if _, ok := tab.SampleByName[def.Name]; ok {
+						panic(fmt.Sprintf("duplicate index in SampleByName: %v", def.Name))
+					}
+
+					tab.SampleByID[def.ID] = def
+					tab.SampleByName[def.Name] = def
+
+				}
+			},
+
+			"Exp": func(tab *ConfigTable) {
+
+				// Exp
+				for _, def := range tab.Exp {
+
+					if _, ok := tab.ExpByLevel[def.Level]; ok {
+						panic(fmt.Sprintf("duplicate index in ExpByLevel: %v", def.Level))
+					}
+
+					tab.ExpByLevel[def.Level] = def
+
+				}
+			},
+		},
+
+		SampleByID: make(map[int64]*SampleDefine),
+
+		SampleByName: make(map[string]*SampleDefine),
+
+		ExpByLevel: make(map[int32]*ExpDefine),
+	}
 }

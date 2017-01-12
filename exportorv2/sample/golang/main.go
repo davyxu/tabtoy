@@ -8,13 +8,13 @@ import (
 
 func main() {
 
-	var config table.Config
+	config := table.NewConfigTable()
 
-	if err := table.LoadTableFromFile("../Config.json", &config); err != nil {
+	if err := config.Load("../Config.json"); err != nil {
 		panic(err)
 	}
 
-	for index, v := range table.SampleByID {
+	for index, v := range config.SampleByID {
 		fmt.Println(index, v)
 	}
 }
