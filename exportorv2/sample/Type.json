@@ -1,6 +1,6 @@
 {
  "Tool": "github.com/davyxu/tabtoy",
- "Version": "2.6.0",
+ "Version": "2.6.1",
  "Structs": [
   {
    "Name": "Config",

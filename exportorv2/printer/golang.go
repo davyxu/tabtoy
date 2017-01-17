@@ -43,9 +43,15 @@ type {{$strus.Name}} struct{
 
 // {{$.Name}} 访问接口
 type {{$.Name}}Table struct{
+	
+	// 表格原始数据
 	{{$.Name}}
 	
-	indexEntryByName map[string]func(*{{$.Name}}Table)
+	// 索引函数表
+	indexFuncByName map[string]func(*{{$.Name}}Table)
+	
+	// 清空函数表
+	clearFuncByName map[string]func(*{{$.Name}}Table)
 	
 	{{range $a, $strus := .IndexedStructs}} {{range .Indexes}}
 	{{$strus.Name}}By{{.Name}} map[{{.KeyType}}]*{{$strus.TypeName}}
@@ -67,21 +73,22 @@ func (self *{{$.Name}}Table) Load(filename string) error {
 	}
 
 	// 生成索引
-	for _, v := range self.indexEntryByName {
+	for _, v := range self.indexFuncByName {
 		v(self)
 	}
 
 	return nil
 }
 
-// 注册外部索引入口
-func (self *{{$.Name}}Table) RegisterIndexEntry(name string, callback func(*{{$.Name}}Table)) {
+// 注册外部索引入口, 索引回调, 清空回调
+func (self *{{$.Name}}Table) RegisterIndexEntry(name string, indexCallback func(*{{$.Name}}Table), clearCallback func(*{{$.Name}}Table)) {
 
-	if _, ok := self.indexEntryByName[name]; ok {
+	if _, ok := self.indexFuncByName[name]; ok {
 		panic("duplicate '{{$.Name}}' table index entry")
 	}
 
-	self.indexEntryByName[name] = callback
+	self.indexFuncByName[name] = indexCallback
+	self.clearFuncByName[name] = clearCallback
 }
 
 // 创建一个{{$.Name}}表读取实例
@@ -89,7 +96,7 @@ func New{{$.Name}}Table() *{{$.Name}}Table {
 	return &{{$.Name}}Table{
 
 	
-		indexEntryByName: map[string]func(*{{$.Name}}Table){
+		indexFuncByName: map[string]func(*{{$.Name}}Table){
 		
 		{{range $a, $strus := .IndexedStructs}}
 			"{{$strus.Name}}": func(tab *{{$.Name}}Table) {
@@ -111,7 +118,22 @@ func New{{$.Name}}Table() *{{$.Name}}Table {
 			
 		},
 		
+		clearFuncByName: map[string]func(*{{$.Name}}Table){
 		
+		{{range $a, $strus := .IndexedStructs}}
+			"{{$strus.Name}}": func(tab *{{$.Name}}Table) {
+				
+				// {{$strus.Name}}
+	
+				{{range .Indexes}}
+				tab.{{$strus.Name}}By{{.Name}} = make(map[{{.KeyType}}]*{{$strus.TypeName}}){{end}}
+			},
+		{{end}}
+		
+			
+		},
+		
+
 		{{range $a, $strus := .IndexedStructs}} {{range .Indexes}}
 		{{$strus.Name}}By{{.Name}} : make(map[{{.KeyType}}]*{{$strus.TypeName}}),
 		{{end}} {{end}}

@@ -35,7 +35,7 @@ var paramProtoVersion = flag.Int("protover", 3, "output .proto file version, 2 o
 var paramLanguage = flag.String("lan", "en_us", "set output language")
 var paramGoImportPackage = flag.String("goimportpkg", "gamedef", "golang import package path")
 
-const Version = "2.6.0"
+const Version = "2.6.1"
 
 func main() {
 
