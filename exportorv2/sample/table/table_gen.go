@@ -110,6 +110,11 @@ func (self *ConfigTable) Load(filename string) error {
 		return err
 	}
 
+	// 生成索引
+	for _, v := range self.clearFuncByName {
+		v(self)
+	}
+
 	err = json.Unmarshal(data, &self.Config)
 	if err != nil {
 		return err

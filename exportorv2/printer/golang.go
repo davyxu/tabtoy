@@ -66,6 +66,11 @@ func (self *{{$.Name}}Table) Load(filename string) error {
 	if err != nil {
 		return err
 	}
+	
+	// 生成索引
+	for _, v := range self.clearFuncByName {
+		v(self)
+	}
 
 	err = json.Unmarshal(data, &self.{{$.Name}})
 	if err != nil {
