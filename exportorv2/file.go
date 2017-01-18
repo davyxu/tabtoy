@@ -25,6 +25,8 @@ type File struct {
 	Header     *DataHeader
 
 	valueRepByKey map[valueRepeatData]bool // 检查单元格值重复map
+
+	mergeNext *File
 }
 
 func (self *File) ExportLocalType() bool {

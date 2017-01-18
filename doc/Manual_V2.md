@@ -332,6 +332,15 @@
 
 * 范例: 语言名支持en_us(默认),  zh_cn(简体中文)
 
+
+## 多文件合并
+
+* 格式: 在输入电子表格文件名中, 使用加号(+)将要合并的文件写出来,注意+号前后不能有空格
+
+* 功能: 将格式相同的多个电子表格内容合并
+
+* 范例: tabtoy --mode=exportorv2 Info.xlsx+Info2.xlsx OtherFile.xlsx
+
 # FAQ
 问：如何导出结构体数组？
 答：参考例子https://github.com/davyxu/tabtoy/blob/master/exportorv2/sample/Sample.xlsx

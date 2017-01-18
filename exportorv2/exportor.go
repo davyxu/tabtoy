@@ -2,8 +2,10 @@ package exportorv2
 
 import (
 	"path/filepath"
+	"strings"
 
 	"github.com/davyxu/tabtoy/exportorv2/i18n"
+	"github.com/davyxu/tabtoy/exportorv2/model"
 	"github.com/davyxu/tabtoy/exportorv2/printer"
 	"github.com/davyxu/tabtoy/util"
 )
@@ -23,29 +25,45 @@ func Run(g *printer.Globals) bool {
 
 		inputFile := in.(string)
 
-		file := NewFile(inputFile)
+		var mainMergeFile *File
 
-		if file == nil {
-			return false
-		}
+		for index, fileName := range strings.Split(inputFile, "+") {
 
-		log.Infoln(filepath.Base(inputFile))
+			file := NewFile(fileName)
 
-		file.GlobalFD = g.FileDescriptor
+			if file == nil {
+				return false
+			}
 
-		// 电子表格数据导出到Table对象
-		if !file.ExportLocalType() {
-			return false
-		}
+			log.Infoln(filepath.Base(fileName))
 
-		// 整合类型信息和数据
-		if !g.AddTypes(file.LocalFD) {
-			return false
-		}
+			file.GlobalFD = g.FileDescriptor
 
-		// 没有
-		if file.Header != nil {
-			fileObjList = append(fileObjList, file)
+			// 电子表格数据导出到Table对象
+			if !file.ExportLocalType() {
+				return false
+			}
+
+			// 主文件才写入全局信息
+			if index == 0 {
+
+				// 整合类型信息和数据
+				if !g.AddTypes(file.LocalFD) {
+					return false
+				}
+
+				// 没有
+				if file.Header != nil {
+					fileObjList = append(fileObjList, file)
+				}
+
+				mainMergeFile = file
+			} else {
+
+				mainMergeFile.mergeNext = file
+
+			}
+
 		}
 
 	}
@@ -56,12 +74,27 @@ func Run(g *printer.Globals) bool {
 
 		file := in.(*File)
 
-		log.Infoln(filepath.Base(file.FileName))
+		var tab *model.Table
 
-		// 电子表格数据导出到Table对象
-		tab := file.ExportData()
-		if tab == nil {
-			return false
+		for file != nil {
+
+			log.Infoln(filepath.Base(file.FileName))
+
+			// 电子表格数据导出到Table对象
+			thisTab := file.ExportData()
+			if thisTab == nil {
+				return false
+			}
+
+			if tab == nil {
+				tab = thisTab
+			} else {
+
+				// 合并表格数据到主tab
+				tab.Recs = append(tab.Recs, thisTab.Recs...)
+			}
+
+			file = file.mergeNext
 		}
 
 		// 整合类型信息和数据
