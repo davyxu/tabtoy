@@ -92,9 +92,9 @@ func parseStruct(fd *model.FieldDescriptor, value string, fileD *model.FileDescr
 	p := newStructParser(value)
 
 	// 检查字段有没有重复
-	fieldByFD := make(map[*model.FieldDescriptor]bool)
+	sfList := newStructFieldList()
 
-	return p.Run(fd, func(key, value string) bool {
+	result := p.Run(fd, func(key, value string) bool {
 
 		bnField := fd.Complex.FieldByValueAndMeta(key)
 		if bnField == nil {
@@ -104,20 +104,39 @@ func parseStruct(fd *model.FieldDescriptor, value string, fileD *model.FileDescr
 			return false
 		}
 
-		if _, ok := fieldByFD[bnField]; ok {
+		if sfList.Exists(bnField) {
 			log.Errorf("%s, '%s'", i18n.String(i18n.StructParser_DuplicateFieldInCell), key)
 			return false
 		}
 
-		fieldByFD[bnField] = true
+		sfList.Add(bnField, value)
+
+		return true
+	})
+
+	if !result {
+		return false
+	}
+
+	// 结构体输出是map顺序, 必须按照定义时的order进行排序, 否则在二进制中顺序是错的
+	sfList.Sort()
+
+	for i := 0; i < sfList.Len(); i++ {
+
+		v := sfList.Get(i)
 
 		// 添加类型节点
-		fieldNode := node.AddKey(bnField)
+		fieldNode := node.AddKey(v.key)
 
 		// 在类型节点下添加值节点
-		_, ok := ConvertValue(bnField, value, fileD, fieldNode)
+		_, ok := ConvertValue(v.key, v.value, fileD, fieldNode)
 
-		return ok
-	})
+		if !ok {
+			return false
+		}
+
+	}
+
+	return true
 
 }
