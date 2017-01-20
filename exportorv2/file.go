@@ -91,12 +91,13 @@ func (self *File) ExportLocalType() bool {
 		}
 	}
 
+	// File描述符的名字必须放在类型里, 因为这里始终会被调用, 但是如果数据表缺失, 是不会更新Name的
+	self.LocalFD.Name = self.LocalFD.Pragma.GetString("TableName")
+
 	return true
 }
 
 func (self *File) ExportData() *model.Table {
-
-	self.LocalFD.Name = self.LocalFD.Pragma.GetString("TableName")
 
 	tab := model.NewTable()
 	tab.LocalFD = self.LocalFD

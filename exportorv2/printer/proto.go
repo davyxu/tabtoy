@@ -16,6 +16,7 @@ syntax = "proto3";
 {{end}}
 package {{.Package}};
 {{range .Enums}}
+// Defined in table: {{.DefinedTable}}
 enum {{.Name}}
 {	
 {{range .ProtoFields}}
@@ -25,6 +26,7 @@ enum {{.Name}}
 }
 {{end}}
 {{range .Messages}}
+// Defined in table: {{.DefinedTable}}
 message {{.Name}}
 {	
 {{range .ProtoFields}}	
@@ -80,6 +82,10 @@ type protoDescriptor struct {
 	ProtoFields []protoFieldDescriptor
 
 	file *protoFileModel
+}
+
+func (self *protoDescriptor) DefinedTable() string {
+	return self.File.Name
 }
 
 type protoFileModel struct {

@@ -23,6 +23,7 @@ import(
 	"io/ioutil"
 )
 {{range $a, $en := .Enums}} 
+// Defined in table: {{$en.DefinedTable}}
 type {{$en.Name}} int32
 const (	
 {{range .GoFields}}
@@ -33,6 +34,7 @@ const (
 {{end}}
 
 {{range $a, $strus := .Structs}} 
+// Defined in table: {{$strus.DefinedTable}}
 type {{$strus.Name}} struct{
 	{{range $b, $fd := $strus.GoFields}} 
 	{{.Comment}}
@@ -155,11 +157,15 @@ type goFieldModel struct {
 	Number int
 }
 
+func (self goFieldModel) Alias() string {
+	return self.FieldDescriptor.Meta.GetString("Alias")
+}
+
 func (self goFieldModel) Comment() string {
 
 	var out string
 
-	if self.FieldDescriptor.Meta.GetString("Alias") == "" {
+	if self.FieldDescriptor.Meta.GetString("Alias") != "" {
 		out += "// "
 		out += self.FieldDescriptor.Meta.GetString("Alias")
 	}
@@ -247,6 +253,10 @@ type goStructModel struct {
 	*model.Descriptor
 
 	GoFields []*goFieldModel
+}
+
+func (self *goStructModel) DefinedTable() string {
+	return self.File.Name
 }
 
 // 整个导出文件
