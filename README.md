@@ -231,6 +231,6 @@ print(t.SampleByName["黑猫警长"].ID)
 
 博客: [http://www.cppblog.com/sunicdavy](http://www.cppblog.com/sunicdavy)
 
-知乎: [http://www.zhihu.com/people/xu-bo-62-87](http://www.zhihu.com/people/xu-bo-62-87)
+知乎: [http://www.zhihu.com/people/sunicdavy](http://www.zhihu.com/people/sunicdavy)
 
 提交bug及特性: [https://github.com/davyxu/tabtoy/issues](https://github.com/davyxu/tabtoy/issues)
