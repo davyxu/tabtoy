@@ -9,11 +9,17 @@ namespace table
 	public enum ActorType
 	{
 		
-		// 格斗士
-		Fighter = 0, 
+		// 唐僧
+		Leader = 0, 
 		
-		// 超能
-		Power = 21, 
+		// 孙悟空
+		Monkey = 1, 
+		
+		// 猪八戒
+		Pig = 2, 
+		
+		// 沙僧
+		Hammer = 3, 
 	
 	}
 	
@@ -133,7 +139,7 @@ namespace table
 		public float AttackRate = 0; 
 		
 		// 额外类型
-		public ActorType ExType = ActorType.Fighter; 
+		public ActorType ExType = ActorType.Leader; 
 	
 	
 	
@@ -186,7 +192,7 @@ namespace table
 		public List<int> BuffID = new List<int>(); // BuffID
 		
 		
-		public ActorType Type = ActorType.Fighter; // 类型
+		public ActorType Type = ActorType.Leader; // 类型
 		
 		
 		public List<int> SkillID = new List<int>(); // 技能ID列表
@@ -281,7 +287,7 @@ namespace table
 		public bool BoolChecker = false; // 布尔检查
 		
 		
-		public ActorType Type = ActorType.Fighter; // 类型
+		public ActorType Type = ActorType.Leader; // 类型
 	
 	
 	

@@ -3,20 +3,20 @@
 
 local tab = {
 	Sample = {
-		{ ID = 100, Name = "黑猫警长", NumericalRate = 0.6, ItemID = 100, Type = "Fighter", SkillID = { 4, 6, 7 }, SingleStruct = { HP= 100, AttackRate= 1.2 }, StrStruct = { { HP= 3, ExType= "Power" }, { AttackRate= 3.5 } } 	},
-		{ ID = 101, Name = "葫芦\n娃", NumericalRate = 0.8, ItemID = 100, BuffID = { 3, 1 }, Type = "Power", SkillID = { 1 } 	},
-		{ ID = 102, Name = "舒\"克\"", NumericalRate = 0.7, ItemID = 100, Type = "Fighter" 	},
-		{ ID = 103, Name = "贝\n塔", ItemID = 100 	},
-		{ ID = 104, Name = "邋遢大王", NumericalRate = 1, ItemID = 100, Type = "Fighter" 	}
+		{ ID = 100, Name = "黑猫警长", NumericalRate = 0.6, ItemID = 100, Type = "Leader", SkillID = { 4, 6, 7 }, SingleStruct = { HP= 100, AttackRate= 1.2 }, StrStruct = { { HP= 3, ExType= "Leader" }, { AttackRate= 3.5 } } 	},
+		{ ID = 101, Name = "葫芦\n娃", NumericalRate = 0.8, ItemID = 100, BuffID = { 3, 1 }, Type = "Pig", SkillID = { 1 } 	},
+		{ ID = 102, Name = "舒\"克\"", NumericalRate = 0.7, ItemID = 100, Type = "Hammer" 	},
+		{ ID = 103, Name = "贝\n塔", ItemID = 100, Type = "Monkey" 	},
+		{ ID = 104, Name = "邋遢大王", NumericalRate = 1, ItemID = 100, Type = "Pig" 	}
 	}, 
 
 	Exp = {
-		{ Level = 1, Exp = 10, BoolChecker = false, Type = "Fighter" 	},
+		{ Level = 1, Exp = 10, BoolChecker = false, Type = "Hammer" 	},
 		{ Level = 2, Exp = 30 	},
 		{ Level = 4, BoolChecker = false 	},
-		{ Level = 5, Type = "Power" 	},
+		{ Level = 5, Type = "Monkey" 	},
 		{ Level = 6, Exp = 50 	},
-		{ Level = 7, Exp = 70, Type = "Power" 	},
+		{ Level = 7, Exp = 70, Type = "Pig" 	},
 		{ Level = 8, Exp = 80 	}
 	}
 

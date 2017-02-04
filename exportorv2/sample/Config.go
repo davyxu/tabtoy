@@ -12,9 +12,13 @@ import (
 type ActorType int32
 
 const (
-	ActorType_Fighter ActorType = 0
+	ActorType_Leader ActorType = 0
 
-	ActorType_Power ActorType = 21
+	ActorType_Monkey ActorType = 1
+
+	ActorType_Pig ActorType = 2
+
+	ActorType_Hammer ActorType = 3
 )
 
 type Config struct {

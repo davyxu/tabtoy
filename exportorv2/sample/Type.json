@@ -220,26 +220,48 @@
    "Name": "ActorType",
    "Fields": [
     {
-     "Name": "Fighter",
+     "Name": "Leader",
      "Type": "int32",
      "Kind": "int32",
      "IsRepeated": false,
      "Meta": {
-      "Alias": "格斗士"
+      "Alias": "唐僧"
      },
      "Comment": "",
      "Value": 0
     },
     {
-     "Name": "Power",
+     "Name": "Monkey",
      "Type": "int32",
      "Kind": "int32",
      "IsRepeated": false,
      "Meta": {
-      "Alias": "超能"
+      "Alias": "孙悟空"
      },
      "Comment": "",
-     "Value": 21
+     "Value": 1
+    },
+    {
+     "Name": "Pig",
+     "Type": "int32",
+     "Kind": "int32",
+     "IsRepeated": false,
+     "Meta": {
+      "Alias": "猪八戒"
+     },
+     "Comment": "",
+     "Value": 2
+    },
+    {
+     "Name": "Hammer",
+     "Type": "int32",
+     "Kind": "int32",
+     "IsRepeated": false,
+     "Meta": {
+      "Alias": "沙僧"
+     },
+     "Comment": "",
+     "Value": 3
     }
    ]
   }
