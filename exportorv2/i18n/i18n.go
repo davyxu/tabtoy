@@ -49,6 +49,8 @@ const (
 	TypeSheet_RowDataSplitedByEmptyLine
 	TypeSheet_ObjectNameEmpty
 	Printer_IgnoredByOutputTag
+	Printer_OpenWriteOutputFileFailed
+	System_OpenReadXlsxFailed
 )
 
 var currLan map[StringID]string

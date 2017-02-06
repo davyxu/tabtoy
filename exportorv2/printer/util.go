@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"strconv"
 
+	"github.com/davyxu/tabtoy/exportorv2/i18n"
 	"github.com/davyxu/tabtoy/exportorv2/model"
 )
 
@@ -29,7 +30,7 @@ func (self *BinaryFile) Printf(format string, args ...interface{}) {
 func (self *BinaryFile) Write(outfile string) bool {
 	err := ioutil.WriteFile(outfile, self.buf.Bytes(), 0666)
 	if err != nil {
-		log.Errorln(err.Error())
+		log.Errorf("%s, %v", i18n.String(i18n.Printer_OpenWriteOutputFileFailed), err.Error())
 		return false
 	}
 

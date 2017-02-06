@@ -147,6 +147,7 @@ func NewFile(filename string) *File {
 
 	if err != nil {
 		log.Errorln(err.Error())
+		log.Errorf("%s, %v", i18n.String(i18n.System_OpenReadXlsxFailed), err.Error())
 
 		return nil
 	}
