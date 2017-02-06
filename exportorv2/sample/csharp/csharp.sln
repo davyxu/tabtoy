@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemQL", "..\..\..\..\MemQLS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComplexQuery", "ComplexQuery\ComplexQuery.csproj", "{5D78A9F3-6509-4539-9196-FE4918D79671}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleSample", "SampleSample\SampleSample.csproj", "{4D2317BA-05F3-4030-BF57-9ADD24694DC1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleSample", "SimpleSample\SimpleSample.csproj", "{4D2317BA-05F3-4030-BF57-9ADD24694DC1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
