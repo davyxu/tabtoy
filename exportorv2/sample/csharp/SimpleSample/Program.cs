@@ -31,6 +31,10 @@ namespace csharptest
 
                 // 取空时, 当默认值不为空时, 输出日志
                 var nullFetchOutLog = config.GetSampleByID( 0 );
+
+                // Vertical: "true"是的配置表, 直接取配置
+                var c = config.GetVertical();
+                
             }
            
         }
