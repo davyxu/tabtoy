@@ -222,8 +222,9 @@ print(t.SampleByName["黑猫警长"].ID)
 
 减少数据冗余和保证客户端数据安全, tabtoy已经为你考虑
 
-
-
+### 支持纵向导出, 用于配置表
+![电子表格](doc/vertical_v2.png)
+请参考Vertical.xlsx表
 
 # 备注
 

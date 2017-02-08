@@ -33,7 +33,10 @@ message Config
 	repeated SampleDefine Sample = 1; // Sample
 	
 	
-	repeated ExpDefine Exp = 2; // Exp
+	repeated VerticalDefine Vertical = 2; // Vertical
+	
+	
+	repeated ExpDefine Exp = 3; // Exp
 
 }
 
@@ -85,6 +88,36 @@ message SampleDefine
 	
 	
 	repeated Prop StrStruct = 10; // 字符串结构
+
+}
+
+// Defined in table: Vertical
+message PeerData
+{	
+	
+	// 名字
+	string Name = 1; 
+	
+	// 类型
+	string Type = 2; 
+
+}
+
+// Defined in table: Vertical
+message VerticalDefine
+{	
+	
+	
+	string ServerIP = 1; // 服务器IP
+	
+	
+	bool DebugMode = 2; // 调试模式
+	
+	
+	int32 ClientLimit = 3; // 客户端人数限制
+	
+	
+	PeerData Peer = 4; // 端
 
 }
 

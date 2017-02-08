@@ -35,6 +35,81 @@ type DataHeader struct {
 	HeaderByName map[string]*model.FieldDescriptor
 }
 
+// 检查字段行的长度
+func (self *DataHeader) ParseProtoField(index int, sheet *Sheet, localFD *model.FileDescriptor, globalFD *model.FileDescriptor) bool {
+
+	verticalHeader := localFD.Pragma.GetBool("Vertical")
+
+	// 适用于配置的表格
+	if verticalHeader {
+		// 遍历行(从第二行开始)
+		for sheet.Row = 1; ; sheet.Row++ {
+
+			he := &DataHeaderElement{
+				FieldName: sheet.GetCellData(sheet.Row, DataSheetHeader_FieldName),
+				FieldType: sheet.GetCellData(sheet.Row, DataSheetHeader_FieldType),
+				FieldMeta: sheet.GetCellData(sheet.Row, DataSheetHeader_FieldMeta),
+				Comment:   sheet.GetCellData(sheet.Row, DataSheetHeader_Comment),
+			}
+
+			if he.FieldName == "" {
+				break
+			}
+
+			if errorPos := self.addHeaderElement(he, localFD, globalFD); errorPos != -1 {
+				sheet.Column = errorPos
+				goto ErrorStop
+			}
+
+		}
+
+	} else {
+		// 适用于正常数据的表格
+
+		// 遍历列
+		for sheet.Column = 0; ; sheet.Column++ {
+
+			he := &DataHeaderElement{
+				FieldName: sheet.GetCellData(DataSheetHeader_FieldName, sheet.Column),
+				FieldType: sheet.GetCellData(DataSheetHeader_FieldType, sheet.Column),
+				FieldMeta: sheet.GetCellData(DataSheetHeader_FieldMeta, sheet.Column),
+				Comment:   sheet.GetCellData(DataSheetHeader_Comment, sheet.Column),
+			}
+
+			if he.FieldName == "" {
+				break
+			}
+
+			if errorPos := self.addHeaderElement(he, localFD, globalFD); errorPos != -1 {
+				sheet.Row = errorPos
+				goto ErrorStop
+			}
+
+		}
+
+	}
+
+	if len(self.rawHeaderFields) == 0 {
+		return false
+	}
+
+	if index == 0 {
+		// 添加第一个数据表的定义
+		if !self.makeRowDescriptor(localFD, self.headerFields) {
+			goto ErrorStop
+		}
+	}
+
+	return true
+
+ErrorStop:
+
+	r, c := sheet.GetRC()
+
+	log.Errorf("%s|%s(%s)", sheet.file.FileName, sheet.Name, util.ConvR1C1toA1(r, c))
+	return false
+}
+
 func (self *DataHeader) RawField(index int) *model.FieldDescriptor {
 	if index >= len(self.rawHeaderFields) {
 		return nil
@@ -62,85 +137,47 @@ func (self *DataHeader) Equal(other *DataHeader) bool {
 	return true
 }
 
-// 检查字段行的长度
-func (self *DataHeader) ParseProtoField(index int, sheet *Sheet, localFD *model.FileDescriptor, globalFD *model.FileDescriptor) bool {
+func (self *DataHeader) addHeaderElement(he *DataHeaderElement, localFD *model.FileDescriptor, globalFD *model.FileDescriptor) int {
+	var def *model.FieldDescriptor
+	var errorPos int = -1
 
-	// 遍历列
-	for sheet.Column = 0; ; sheet.Column++ {
+	// #开头表示注释, 跳过
+	if strings.Index(he.FieldName, "#") != 0 {
 
-		he := &DataHeaderElement{
-			FieldName: sheet.GetCellData(DataSheetHeader_FieldName, sheet.Column),
-			FieldType: sheet.GetCellData(DataSheetHeader_FieldType, sheet.Column),
-			FieldMeta: sheet.GetCellData(DataSheetHeader_FieldMeta, sheet.Column),
-			Comment:   sheet.GetCellData(DataSheetHeader_Comment, sheet.Column),
+		def, errorPos = he.Parse(localFD, globalFD, self.HeaderByName)
+		if errorPos != -1 {
+			return errorPos
 		}
 
-		if he.FieldName == "" {
-			break
-		}
+		// 根据字段名查找, 处理repeated字段case
+		exist, ok := self.HeaderByName[def.Name]
 
-		var def *model.FieldDescriptor
-		var errorPos int = -1
+		if ok {
 
-		// #开头表示注释, 跳过
-		if strings.Index(he.FieldName, "#") != 0 {
-
-			def, errorPos = he.Parse(localFD, globalFD, self.HeaderByName)
+			errorPos = checkSameNameElement(exist, def)
 			if errorPos != -1 {
-				sheet.Row = errorPos
-				goto ErrorStop
+				return errorPos
 			}
 
-			// 根据字段名查找, 处理repeated字段case
-			exist, ok := self.HeaderByName[def.Name]
+			def = exist
 
-			if ok {
+		} else {
 
-				errorPos = checkSameNameElement(exist, def)
-				if errorPos != -1 {
-					sheet.Row = errorPos
-					goto ErrorStop
-				}
-
-				def = exist
-
-			} else {
-
-				// 普通表头合法性检查
-				errorPos = checkElement(def)
-				if errorPos != -1 {
-					sheet.Row = errorPos
-					goto ErrorStop
-				}
-
-				self.HeaderByName[def.Name] = def
-				self.headerFields = append(self.headerFields, def)
+			// 普通表头合法性检查
+			errorPos = checkElement(def)
+			if errorPos != -1 {
+				return errorPos
 			}
-		}
 
-		// 有注释字段, 但是依然要放到这里来进行索引
-		self.rawHeaderFields = append(self.rawHeaderFields, def)
-	}
-
-	if len(self.rawHeaderFields) == 0 {
-		return false
-	}
-
-	if index == 0 {
-		// 添加第一个数据表的定义
-		if !self.makeRowDescriptor(localFD, self.headerFields) {
-			goto ErrorStop
+			self.HeaderByName[def.Name] = def
+			self.headerFields = append(self.headerFields, def)
 		}
 	}
 
-	return true
+	// 有注释字段, 但是依然要放到这里来进行索引
+	self.rawHeaderFields = append(self.rawHeaderFields, def)
 
-ErrorStop:
-
-	r, c := sheet.GetRC()
-
-	log.Errorf("%s|%s(%s)", sheet.file.FileName, sheet.Name, util.ConvR1C1toA1(r, c))
-	return false
+	return -1
 }
 
 func (self *DataHeader) makeRowDescriptor(fileD *model.FileDescriptor, rootField []*model.FieldDescriptor) bool {

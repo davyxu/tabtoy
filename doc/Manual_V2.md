@@ -341,6 +341,14 @@
 
 * 范例: tabtoy --mode=exportorv2 Info.xlsx+Info2.xlsx OtherFile.xlsx
 
+## 纵向表格导出
+
+* 方法: 在@Types表中的1,1单元格位置添加Vertical: "true" 开启功能
+
+* 功能: 将以行延伸的表格, 适用于配置
+
+* 范例: https://github.com/davyxu/tabtoy/blob/master/exportorv2/sample/Vertical.xlsx
+
 # FAQ
 问：如何导出结构体数组？
 答：参考例子https://github.com/davyxu/tabtoy/blob/master/exportorv2/sample/Sample.xlsx

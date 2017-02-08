@@ -10,6 +10,13 @@ local tab = {
 		{ ID = 104, Name = "邋遢大王", NumericalRate = 1, ItemID = 100, Type = "Pig" 	}
 	}, 
 
+	Vertical = {
+		{ ServerIP = "192.168.0.1" 	},
+		{ DebugMode = true 	},
+		{ ClientLimit = 3000 	},
+		{ Peer = { Name= "Agent", Type= "Acceptor" } 	}
+	}, 
+
 	Exp = {
 		{ Level = 1, Exp = 10, BoolChecker = false, Type = "Hammer" 	},
 		{ Level = 2, Exp = 30 	},

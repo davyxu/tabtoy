@@ -15,6 +15,15 @@
      "Value": 0
     },
     {
+     "Name": "Vertical",
+     "Type": "VerticalDefine",
+     "Kind": "struct",
+     "IsRepeated": true,
+     "Meta": {},
+     "Comment": "Vertical",
+     "Value": 0
+    },
+    {
      "Name": "Exp",
      "Type": "ExpDefine",
      "Kind": "struct",
@@ -167,6 +176,76 @@
      "IsRepeated": true,
      "Meta": {},
      "Comment": "字符串结构",
+     "Value": 0
+    }
+   ]
+  },
+  {
+   "Name": "PeerData",
+   "Fields": [
+    {
+     "Name": "Name",
+     "Type": "string",
+     "Kind": "string",
+     "IsRepeated": false,
+     "Meta": {
+      "Alias": "名字",
+      "Default": ""
+     },
+     "Comment": "",
+     "Value": 0
+    },
+    {
+     "Name": "Type",
+     "Type": "string",
+     "Kind": "string",
+     "IsRepeated": false,
+     "Meta": {
+      "Alias": "类型",
+      "Default": ""
+     },
+     "Comment": "",
+     "Value": 0
+    }
+   ]
+  },
+  {
+   "Name": "VerticalDefine",
+   "Fields": [
+    {
+     "Name": "ServerIP",
+     "Type": "string",
+     "Kind": "string",
+     "IsRepeated": false,
+     "Meta": {},
+     "Comment": "服务器IP",
+     "Value": 0
+    },
+    {
+     "Name": "DebugMode",
+     "Type": "bool",
+     "Kind": "bool",
+     "IsRepeated": false,
+     "Meta": {},
+     "Comment": "调试模式",
+     "Value": 0
+    },
+    {
+     "Name": "ClientLimit",
+     "Type": "int32",
+     "Kind": "int32",
+     "IsRepeated": false,
+     "Meta": {},
+     "Comment": "客户端人数限制",
+     "Value": 0
+    },
+    {
+     "Name": "Peer",
+     "Type": "PeerData",
+     "Kind": "struct",
+     "IsRepeated": false,
+     "Meta": {},
+     "Comment": "端",
      "Value": 0
     }
    ]

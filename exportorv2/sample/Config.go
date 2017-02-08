@@ -33,6 +33,9 @@ type Config struct {
 	//Sample
 	Sample []*SampleDefine
 
+	//Vertical
+	Vertical []*VerticalDefine
+
 	//Exp
 	Exp []*ExpDefine
 }
@@ -82,6 +85,32 @@ type SampleDefine struct {
 
 	//字符串结构
 	StrStruct []*Prop
+}
+
+// Defined in table: Vertical
+type PeerData struct {
+
+	// 名字
+	Name string
+
+	// 类型
+	Type string
+}
+
+// Defined in table: Vertical
+type VerticalDefine struct {
+
+	//服务器IP
+	ServerIP string
+
+	//调试模式
+	DebugMode bool
+
+	//客户端人数限制
+	ClientLimit int32
+
+	//端
+	Peer *PeerData
 }
 
 // Defined in table: Exp

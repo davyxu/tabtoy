@@ -8,6 +8,12 @@
 		{ "ID": 103, "Name": "贝\n塔", "ItemID": 100, "Type": 1 },
 		{ "ID": 104, "Name": "邋遢大王", "NumericalRate": 1, "ItemID": 100, "Type": 2 }
 	], 
+	"Vertical":[
+		{ "ServerIP": "192.168.0.1" },
+		{ "DebugMode": true },
+		{ "ClientLimit": 3000 },
+		{ "Peer": { "Name": "Agent", "Type": "Acceptor" } }
+	], 
 	"Exp":[
 		{ "Level": 1, "Exp": 10, "BoolChecker": false, "Type": 3 },
 		{ "Level": 2, "Exp": 30 },

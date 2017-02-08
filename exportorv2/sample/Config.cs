@@ -35,6 +35,9 @@ namespace table
 		public List<SampleDefine> Sample = new List<SampleDefine>(); // Sample
 		
 		
+		public List<VerticalDefine> Vertical = new List<VerticalDefine>(); // Vertical
+		
+		
 		public List<ExpDefine> Exp = new List<ExpDefine>(); // Exp
 	
 	
@@ -99,8 +102,14 @@ namespace table
 				reader.ReadList_Struct<SampleDefine>( this.Sample );
 			}
 			
-			// Exp
+			// Vertical
 			if ( reader.MatchTag(0x90001) )
+			{
+				reader.ReadList_Struct<VerticalDefine>( this.Vertical );
+			}
+			
+			// Exp
+			if ( reader.MatchTag(0x90002) )
 			{
 				reader.ReadList_Struct<ExpDefine>( this.Exp );
 			}
@@ -270,6 +279,90 @@ namespace table
 			if ( reader.MatchTag(0x90009) )
 			{
 				reader.ReadList_Struct<Prop>( this.StrStruct );
+			}
+			
+			
+		}
+	}
+	
+	// Defined in table: Vertical
+	public partial class PeerData : tabtoy.DataObject
+	{
+		public tabtoy.Logger TableLogger = new tabtoy.Logger();
+		
+		
+		// 名字
+		public string Name = ""; 
+		
+		// 类型
+		public string Type = ""; 
+	
+	
+	
+		public void Deserialize( tabtoy.DataReader reader )
+		{
+			
+			
+			if ( reader.MatchTag(0x60000) )
+			{
+				this.Name = reader.ReadString( );
+			}
+			
+			
+			if ( reader.MatchTag(0x60001) )
+			{
+				this.Type = reader.ReadString( );
+			}
+			
+			
+		}
+	}
+	
+	// Defined in table: Vertical
+	public partial class VerticalDefine : tabtoy.DataObject
+	{
+		public tabtoy.Logger TableLogger = new tabtoy.Logger();
+		
+		
+		
+		public string ServerIP = ""; // 服务器IP
+		
+		
+		public bool DebugMode = false; // 调试模式
+		
+		
+		public int ClientLimit = 0; // 客户端人数限制
+		
+		
+		public PeerData Peer = new PeerData(); // 端
+	
+	
+	
+		public void Deserialize( tabtoy.DataReader reader )
+		{
+			
+			// 服务器IP
+			if ( reader.MatchTag(0x60000) )
+			{
+				this.ServerIP = reader.ReadString( );
+			}
+			
+			// 调试模式
+			if ( reader.MatchTag(0x70001) )
+			{
+				this.DebugMode = reader.ReadBool( );
+			}
+			
+			// 客户端人数限制
+			if ( reader.MatchTag(0x10002) )
+			{
+				this.ClientLimit = reader.ReadInt32( );
+			}
+			
+			// 端
+			if ( reader.MatchTag(0x90003) )
+			{
+				this.Peer = reader.ReadStruct<PeerData>( );
 			}
 			
 			

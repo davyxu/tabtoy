@@ -12,6 +12,7 @@
 --goimportpkg=github.com/davyxu/tabtoy/exportorv2/sample/gamedef ^
 Globals.xlsx ^
 Sample.xlsx ^
+Vertical.xlsx ^
 Info.xlsx
 
 @IF %ERRORLEVEL% NEQ 0 pause
