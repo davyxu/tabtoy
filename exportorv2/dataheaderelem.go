@@ -65,11 +65,7 @@ func checkSameNameElement(exist, def *model.FieldDescriptor) int {
 	return -1
 }
 
-func (self *DataHeaderElement) Parse(localFD *model.FileDescriptor, globalFD *model.FileDescriptor, headerByName map[string]*model.FieldDescriptor) (def *model.FieldDescriptor, errorPos int) {
-
-	def = model.NewFieldDescriptor()
-
-	def.Name = self.FieldName
+func (self *DataHeaderElement) Parse(def *model.FieldDescriptor, localFD *model.FileDescriptor, globalFD *model.FileDescriptor, headerByName map[string]*model.FieldDescriptor) int {
 
 	// ====================解析类型====================
 
@@ -92,13 +88,13 @@ func (self *DataHeaderElement) Parse(localFD *model.FileDescriptor, globalFD *mo
 	// 依然找不到, 报错
 	if def.Type == model.FieldType_None {
 		log.Errorf("%s, '%s' (%s) raw: %s", i18n.String(i18n.DataHeader_TypeNotFound), def.Name, model.FieldTypeToString(def.Type), self.FieldType)
-		return nil, DataSheetHeader_FieldType
+		return DataSheetHeader_FieldType
 	}
 
 	// ====================解析特性====================
 	if err := def.Meta.Parse(self.FieldMeta); err != nil {
 		log.Errorf("%s '%s'", i18n.String(i18n.DataHeader_MetaParseFailed), err)
-		return nil, DataSheetHeader_FieldMeta
+		return DataSheetHeader_FieldMeta
 	}
 
 	def.Comment = self.Comment
@@ -111,7 +107,7 @@ func (self *DataHeaderElement) Parse(localFD *model.FileDescriptor, globalFD *mo
 		// 多个同名字段只允许repeated方式的字段
 		if !exist.IsRepeated {
 			log.Errorf("%s '%s'", i18n.String(i18n.DataHeader_DuplicateFieldName), def.Name)
-			return nil, DataSheetHeader_FieldName
+			return DataSheetHeader_FieldName
 		}
 
 		// 多个repeated描述类型不一致
@@ -122,7 +118,7 @@ func (self *DataHeaderElement) Parse(localFD *model.FileDescriptor, globalFD *mo
 				model.FieldTypeToString(exist.Type),
 				model.FieldTypeToString(def.Type))
 
-			return nil, DataSheetHeader_FieldType
+			return DataSheetHeader_FieldType
 		}
 
 		// 多个repeated描述内建类型不一致
@@ -131,7 +127,7 @@ func (self *DataHeaderElement) Parse(localFD *model.FileDescriptor, globalFD *mo
 			log.Errorf("%s '%s'", i18n.String(i18n.DataHeader_RepeatedFieldTypeNotSameInMultiColumn),
 				def.Name)
 
-			return nil, DataSheetHeader_FieldType
+			return DataSheetHeader_FieldType
 		}
 
 		// 多个repeated描述的meta不一致
@@ -140,11 +136,11 @@ func (self *DataHeaderElement) Parse(localFD *model.FileDescriptor, globalFD *mo
 			log.Errorf("%s '%s'", i18n.String(i18n.DataHeader_RepeatedFieldMetaNotSameInMultiColumn),
 				def.Name)
 
-			return nil, DataSheetHeader_FieldMeta
+			return DataSheetHeader_FieldMeta
 		}
 
 		def = exist
 	}
 
-	return def, -1
+	return -1
 }

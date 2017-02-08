@@ -138,13 +138,15 @@ func (self *DataHeader) Equal(other *DataHeader) bool {
 }
 
 func (self *DataHeader) addHeaderElement(he *DataHeaderElement, localFD *model.FileDescriptor, globalFD *model.FileDescriptor) int {
-	var def *model.FieldDescriptor
+	def := model.NewFieldDescriptor()
+	def.Name = he.FieldName
+
 	var errorPos int = -1
 
 	// #开头表示注释, 跳过
 	if strings.Index(he.FieldName, "#") != 0 {
 
-		def, errorPos = he.Parse(localFD, globalFD, self.HeaderByName)
+		errorPos = he.Parse(def, localFD, globalFD, self.HeaderByName)
 		if errorPos != -1 {
 			return errorPos
 		}
