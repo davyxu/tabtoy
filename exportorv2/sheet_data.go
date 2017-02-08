@@ -14,15 +14,6 @@ import (
 
 */
 
-const (
-	// 信息所在的行
-	DataSheetRow_FieldName = 0 // 字段名(对应proto)
-	DataSheetRow_FieldType = 1 // 字段类型
-	DataSheetRow_FieldMeta = 2 // 字段特性
-	DataSheetRow_Comment   = 3 // 用户注释
-	DataSheetRow_DataBegin = 4 // 数据开始
-)
-
 type DataSheet struct {
 	*Sheet
 }
@@ -101,7 +92,7 @@ func (self *DataSheet) Export(file *File, tab *model.Table, dataHeader *DataHead
 	var warningAfterEmptyLineDataOnce bool
 
 	// 遍历每一行
-	for self.Row = DataSheetRow_DataBegin; readingLine; self.Row++ {
+	for self.Row = DataSheetHeader_DataBegin; readingLine; self.Row++ {
 
 		// 整行都是空的
 		if self.IsFullRowEmpty(self.Row, dataHeader.RawFieldCount()) {

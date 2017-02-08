@@ -6,6 +6,7 @@ syntax = "proto3";
 
 package table;
 
+// Defined in table: Globals
 enum ActorType
 {	
 
@@ -24,6 +25,7 @@ enum ActorType
 }
 
 
+// Defined in table: Config
 message Config
 {	
 	
@@ -35,6 +37,7 @@ message Config
 
 }
 
+// Defined in table: Sample
 message Prop
 {	
 	
@@ -49,6 +52,7 @@ message Prop
 
 }
 
+// Defined in table: Sample
 message SampleDefine
 {	
 	
@@ -84,6 +88,7 @@ message SampleDefine
 
 }
 
+// Defined in table: Exp
 message ExpDefine
 {	
 	

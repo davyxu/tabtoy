@@ -6,6 +6,7 @@ using System.Collections.Generic;
 namespace table
 {
 	
+	// Defined in table: Globals
 	public enum ActorType
 	{
 		
@@ -24,6 +25,7 @@ namespace table
 	}
 	
 	
+	// Defined in table: Config
 	public partial class Config : tabtoy.DataObject
 	{
 		public tabtoy.Logger TableLogger = new tabtoy.Logger();
@@ -127,6 +129,7 @@ namespace table
 		}
 	}
 	
+	// Defined in table: Sample
 	public partial class Prop : tabtoy.DataObject
 	{
 		public tabtoy.Logger TableLogger = new tabtoy.Logger();
@@ -168,6 +171,7 @@ namespace table
 		}
 	}
 	
+	// Defined in table: Sample
 	public partial class SampleDefine : tabtoy.DataObject
 	{
 		public tabtoy.Logger TableLogger = new tabtoy.Logger();
@@ -272,6 +276,7 @@ namespace table
 		}
 	}
 	
+	// Defined in table: Exp
 	public partial class ExpDefine : tabtoy.DataObject
 	{
 		public tabtoy.Logger TableLogger = new tabtoy.Logger();

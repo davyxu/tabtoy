@@ -9,80 +9,94 @@ import (
 	"io/ioutil"
 )
 
+// Defined in table: Globals
 type ActorType int32
 
 const (
+
+	// 唐僧
 	ActorType_Leader ActorType = 0
 
+	// 孙悟空
 	ActorType_Monkey ActorType = 1
 
+	// 猪八戒
 	ActorType_Pig ActorType = 2
 
+	// 沙僧
 	ActorType_Hammer ActorType = 3
 )
 
+// Defined in table: Config
 type Config struct {
 
-	// Sample
+	//Sample
 	Sample []*SampleDefine
 
-	// Exp
+	//Exp
 	Exp []*ExpDefine
 }
 
+// Defined in table: Sample
 type Prop struct {
+
+	// 血量
 	HP int32
 
+	// 攻击速率
 	AttackRate float32
 
+	// 额外类型
 	ExType ActorType
 }
 
+// Defined in table: Sample
 type SampleDefine struct {
 
-	// 唯一ID
+	//唯一ID
 	ID int64
 
-	// 名称
+	//名称
 	Name string `自定义tag:"支持go的struct tag"`
 
-	// 图标ID
+	//图标ID
 	IconID int32
 
-	// 攻击率
+	//攻击率
 	NumericalRate float32
 
-	// 物品id
+	//物品id
 	ItemID int32
 
-	// BuffID
+	//BuffID
 	BuffID []int32
 
-	// 类型
+	//类型
 	Type ActorType
 
-	// 技能ID列表
+	//技能ID列表
 	SkillID []int32
 
-	// 单结构解析
+	//单结构解析
 	SingleStruct *Prop
 
-	// 字符串结构
+	//字符串结构
 	StrStruct []*Prop
 }
 
+// Defined in table: Exp
 type ExpDefine struct {
 
-	// 唯一ID
+	//唯一ID
 	Level int32
 
-	// 经验值
+	//经验值
 	Exp int32
 
-	// 布尔检查
+	//布尔检查
 	BoolChecker bool
 
-	// 类型
+	//类型
 	Type ActorType
 }
 
