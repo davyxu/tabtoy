@@ -116,7 +116,7 @@ tabtoy --mode=exportorv2 --json_out=.\config.json Table.xlsx
 
 ### Golang读取例子
 
-	[例子](https://github.com/davyxu/tabtoy/tree/master/exportorv2/sample/golang)		
+	[例子](https://github.com/davyxu/tabtoy/tree/master/exportorv2/exsample/golang)		
 	
 ```golang
 	config := table.NewConfigTable()
@@ -134,7 +134,7 @@ tabtoy --mode=exportorv2 --json_out=.\config.json Table.xlsx
 
 ### C#读取例子
 	
-	[例子](https://github.com/davyxu/tabtoy/tree/master/exportorv2/sample/csharp)	
+	[例子](https://github.com/davyxu/tabtoy/tree/master/exportorv2/exsample/csharp)	
 
 ```csharp
     using (var stream = new FileStream("../../../../Config.bin", FileMode.Open))
@@ -172,7 +172,7 @@ tabtoy --mode=exportorv2 --json_out=.\config.json Table.xlsx
 
 ### lua读取例子
 
-	[例子](https://github.com/davyxu/tabtoy/tree/master/exportorv2/sample/lua)	
+	[例子](https://github.com/davyxu/tabtoy/tree/master/exportorv2/exsample/lua)	
 
 ```lua
 -- 添加搜索路径
@@ -193,7 +193,7 @@ print(t.SampleByName["黑猫警长"].ID)
 
 ## 所有例子
 	
-[例子](https://github.com/davyxu/tabtoy/blob/master/exportorv2/sample)
+[例子](https://github.com/davyxu/tabtoy/blob/master/exportorv2/exsample)
 
 * 注意: 例子中展现的是一般项目中多表的使用方法
 

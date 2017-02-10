@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/davyxu/tabtoy/exportorv2/sample/table"
+	"github.com/davyxu/tabtoy/exportorv2/exsample/table"
 )
 
 func main() {

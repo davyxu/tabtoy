@@ -6,7 +6,7 @@
 
 格式请参考:
 	
-	[Sample.xlsx]: (https://github.com/davyxu/tabtoy/blob/master/exportorv2/sample/Sample.xlsx)
+	[Sample.xlsx]: (https://github.com/davyxu/tabtoy/blob/master/exportorv2/exsample/Sample.xlsx)
 	
 	
 ## 准备tabtoy二进制
@@ -347,11 +347,11 @@
 
 * 功能: 将以行延伸的表格, 适用于配置
 
-* 范例: https://github.com/davyxu/tabtoy/blob/master/exportorv2/sample/Vertical.xlsx
+* 范例: https://github.com/davyxu/tabtoy/blob/master/exportorv2/exsample/Vertical.xlsx
 
 # FAQ
 问：如何导出结构体数组？
-答：参考例子https://github.com/davyxu/tabtoy/blob/master/exportorv2/sample/Sample.xlsx
+答：参考例子https://github.com/davyxu/tabtoy/blob/master/exportorv2/exsample/Sample.xlsx
 中StrStruct字段
 注意： 结构体数组要求每个数组的元素在一个独立的单元格
 
@@ -360,7 +360,7 @@
 
 参考文件夹:
 	
-	[范例]: (https://github.com/davyxu/tabtoy/blob/master/exportorv2/sample)	
+	[范例]: (https://github.com/davyxu/tabtoy/blob/master/exportorv2/exsample)	
 	
 文件夹说明:
 
