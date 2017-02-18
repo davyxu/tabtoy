@@ -82,7 +82,7 @@ func newStructParser(value string) *structParser {
 	l.Start(value)
 
 	return &structParser{
-		golexer.NewParser(l),
+		golexer.NewParser(l, value),
 	}
 
 }
