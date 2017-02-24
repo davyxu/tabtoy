@@ -60,6 +60,13 @@ type {{$.Name}}Table struct{
 	{{end}} {{end}}
 }
 
+{{range .VerticalFields}}
+{{.Comment}}
+func (self *{{$.Name}}Table) Get{{.Name}}( ) {{.ElementTypeString}} {
+	return self.{{.Name}}[0]
+}
+{{end}}
+
 // 从json文件加载
 func (self *{{$.Name}}Table) Load(filename string) error {
 
@@ -220,6 +227,18 @@ func (self *goFieldModel) StructTag() string {
 	return buf.String()
 }
 
+func (self *goFieldModel) ElementTypeString() string {
+
+	switch self.FieldDescriptor.Type {
+	case model.FieldType_Float:
+		return "float32"
+	case model.FieldType_Struct:
+		return "*" + self.FieldDescriptor.TypeString()
+	default:
+		return self.FieldDescriptor.TypeString()
+	}
+}
+
 func (self *goFieldModel) TypeString() string {
 
 	var prefix string
@@ -227,14 +246,7 @@ func (self *goFieldModel) TypeString() string {
 		prefix = "[]"
 	}
 
-	switch self.FieldDescriptor.Type {
-	case model.FieldType_Float:
-		return prefix + "float32"
-	case model.FieldType_Struct:
-		return prefix + "*" + self.FieldDescriptor.TypeString()
-	default:
-		return prefix + self.FieldDescriptor.TypeString()
-	}
+	return prefix + self.ElementTypeString()
 
 }
 
@@ -268,6 +280,9 @@ type goFileModel struct {
 	Enums          []*goStructModel
 	IndexCount     int
 	ImportPackage  string
+
+	// 配置的字段
+	VerticalFields []*goFieldModel
 }
 
 func (self *goFileModel) HasAnyIndex() bool {
@@ -351,6 +366,10 @@ func collectAllStructInfo(g *Globals, fm *goFileModel) {
 				if fd.Complex != nil && !fd.Complex.File.MatchTag(".go") {
 					continue
 				}
+
+				if fd.Complex != nil && fd.Complex.File.Pragma.GetBool("Vertical") {
+					fm.VerticalFields = append(fm.VerticalFields, &goFieldModel{FieldDescriptor: fd})
+				}
 			}
 
 			field := &goFieldModel{FieldDescriptor: fd}
@@ -402,6 +421,7 @@ func (self *goPrinter) Run(g *Globals) *BinaryFile {
 
 	if err := formatCode(bf.Buffer()); err != nil {
 		log.Errorln("format golang code err", err)
+		return nil
 	}
 
 	return bf

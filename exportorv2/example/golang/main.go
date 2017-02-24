@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/davyxu/tabtoy/exportorv2/exsample/table"
+	"github.com/davyxu/tabtoy/exportorv2/example/table"
 )
 
 func main() {
@@ -17,4 +17,7 @@ func main() {
 	for index, v := range config.SampleByID {
 		fmt.Println(index, v)
 	}
+
+	fmt.Println(config.GetVertical())
+
 }

@@ -1,6 +1,4 @@
-/proto/protoc-gen-go.exe
-/proto/protoc.exe
-/tabtoy.exe
+*.exe
 exportorv2/example/~*.xlsx
 Publish.bat
 exportorv2/example/goreadpbt/goreadpbt.exe

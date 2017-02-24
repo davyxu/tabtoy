@@ -23,6 +23,9 @@ func (self *DataSheet) exportColumnMajor(file *File, tab *model.Table, dataHeade
 
 	var warningAfterEmptyLineDataOnce bool
 
+	record := model.NewRecord()
+	tab.Add(record)
+
 	for self.Row = ColumnMajor_RowDataBegin; readingLine; self.Row++ {
 		// 整行都是空的
 		if self.IsFullRowEmpty(self.Row, dataHeader.RawFieldCount()) {
@@ -49,8 +52,6 @@ func (self *DataSheet) exportColumnMajor(file *File, tab *model.Table, dataHeade
 			}
 
 		}
-
-		record := model.NewRecord()
 
 		fieldDef := dataHeader.RawField(self.Row - ColumnMajor_RowDataBegin)
 
@@ -85,8 +86,6 @@ func (self *DataSheet) exportColumnMajor(file *File, tab *model.Table, dataHeade
 		if !dataProcessor(file, fieldDef, rawValue, node) {
 			goto ErrorStop
 		}
-
-		tab.Add(record)
 
 	}
 
