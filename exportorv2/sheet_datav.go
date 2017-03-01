@@ -69,6 +69,11 @@ func (self *DataSheet) exportColumnMajor(file *File, tab *model.Table, dataHeade
 
 		// repeated的, 没有填充的, 直接跳过, 不生成数据
 		if rawValue == "" && fieldDef.Meta.GetString("Default") == "" {
+
+			if !mustFillCheck(fieldDef, rawValue) {
+				goto ErrorStop
+			}
+
 			continue
 		}
 

@@ -22,6 +22,7 @@ func init() {
 		File_TypeSheetKeepSingleton:                      "[TT401] File: Type sheet only need ONE in a file",
 		DataSheet_ValueConvertError:                      "[TT501] DataSheet: Cell value convert error",
 		DataSheet_ValueRepeated:                          "[TT502] DataSheet: Duplicated cell value",
+		DataSheet_MustFill:                               "[TT503] DataSheet: cell value must fill",
 		DataSheet_RowDataSplitedByEmptyLine:              "[TT503] DataSheet: Row data splited by empty line",
 		DataHeader_StructCellCannotSplit:                 "[TT601] DataHeader: Struct cell can not have 'ListSpliter', make struct element in multi-cell",
 		DataHeader_TypeNotFound:                          "[TT602] DataHeader: Type not found",

@@ -99,6 +99,11 @@ func (self *DataSheet) exportRowMajor(file *File, tab *model.Table, dataHeader *
 
 			// repeated的, 没有填充的, 直接跳过, 不生成数据
 			if rawValue == "" && fieldDef.Meta.GetString("Default") == "" {
+
+				if !mustFillCheck(fieldDef, rawValue) {
+					goto ErrorStop
+				}
+
 				continue
 			}
 
@@ -132,6 +137,19 @@ ErrorStop:
 
 	log.Errorf("%s|%s(%s)", self.file.FileName, self.Name, util.ConvR1C1toA1(r, c))
 	return false
+}
+
+func mustFillCheck(fd *model.FieldDescriptor, raw string) bool {
+	// 值重复检查
+	if fd.Meta.GetBool("MustFill") {
+
+		if raw == "" {
+			log.Errorf("%s, %s", i18n.String(i18n.DataSheet_MustFill), fd.String())
+			return false
+		}
+	}
+
+	return true
 }
 
 func newDataSheet(sheet *Sheet) *DataSheet {

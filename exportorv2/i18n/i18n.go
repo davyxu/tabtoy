@@ -27,6 +27,7 @@ const (
 	DataSheet_ValueConvertError
 	DataSheet_ValueRepeated
 	DataSheet_RowDataSplitedByEmptyLine
+	DataSheet_MustFill
 	DataHeader_StructCellCannotSplit
 	DataHeader_TypeNotFound
 	DataHeader_MetaParseFailed
