@@ -48,6 +48,7 @@ const (
 	TypeSheet_DuplicatedEnumValue
 	TypeSheet_RowDataSplitedByEmptyLine
 	TypeSheet_ObjectNameEmpty
+	TypeSheet_DuplicateFieldName
 	Printer_IgnoredByOutputTag
 	Printer_OpenWriteOutputFileFailed
 	System_OpenReadXlsxFailed

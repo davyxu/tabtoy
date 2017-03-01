@@ -1,5 +1,7 @@
 package model
 
+import "errors"
+
 type DescriptorKind int
 
 const (
@@ -31,15 +33,19 @@ type Descriptor struct {
 	File *FileDescriptor
 }
 
-func (self *Descriptor) Add(def *FieldDescriptor) {
+var (
+	ErrDuplicateFieldName = errors.New("Duplicate field name")
+	ErrDuplicateIndexName = errors.New("Duplicate index name")
+)
+
+func (self *Descriptor) Add(def *FieldDescriptor) error {
 
 	def.Parent = self
 	def.Order = int32(len(self.Fields))
 
 	// 创建字段
 	if _, ok := self.FieldByName[def.Name]; ok {
-		panic("duplicate build in type")
-		return
+		return ErrDuplicateFieldName
 	} else {
 		self.FieldByName[def.Name] = def
 		self.FieldByNumber[def.EnumValue] = def
@@ -48,15 +54,16 @@ func (self *Descriptor) Add(def *FieldDescriptor) {
 
 	// 创建索引
 	if def.Meta.GetBool("MakeIndex") {
+
 		if _, ok := self.IndexByName[def.Name]; ok {
-			panic("duplicate index name")
-			return
+			return ErrDuplicateIndexName
 		} else {
 			self.IndexByName[def.Name] = def
 			self.Indexes = append(self.Indexes, def)
 		}
 	}
 
+	return nil
 }
 
 func (self *Descriptor) FieldByValueAndMeta(value string) *FieldDescriptor {

@@ -44,6 +44,7 @@ func init() {
 		TypeSheet_DuplicatedEnumValue:                    "[TT711] 类型表: 重复的枚举值",
 		TypeSheet_RowDataSplitedByEmptyLine:              "[TT712] 类型表: 空行后依然有数据没有导出",
 		TypeSheet_ObjectNameEmpty:                        "[TT713] 类型表: 'ObjectName'字段不能为空",
+		TypeSheet_DuplicateFieldName:                     "[TT714] 类型表: 重复的字段名",
 		Printer_IgnoredByOutputTag:                       "[TT801] 输出器: @Types的'OutputTag'忽略了目标",
 		Printer_OpenWriteOutputFileFailed:                "[TT802] 输出器: 打开输出文件失败,",
 		System_OpenReadXlsxFailed:                        "[TT901] 打开读取电子表格失败:",
