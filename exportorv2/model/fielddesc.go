@@ -18,6 +18,7 @@ const (
 	FieldType_Bool   FieldType = 7
 	FieldType_Enum   FieldType = 8
 	FieldType_Struct FieldType = 9
+	FieldType_Table  FieldType = 10 // 表格, 仅限二进制使用
 )
 
 // 一列的描述
@@ -48,11 +49,12 @@ func NewFieldDescriptor() *FieldDescriptor {
 }
 
 func (self *FieldDescriptor) Tag() int32 {
-	return MakeTag(self.Type, self.Order)
+
+	return MakeTag(int32(self.Type), self.Order)
 }
 
-func MakeTag(t FieldType, order int32) int32 {
-	return int32(t)<<16 | order
+func MakeTag(t int32, order int32) int32 {
+	return t<<16 | order
 }
 
 func (self *FieldDescriptor) Equal(fd *FieldDescriptor) bool {

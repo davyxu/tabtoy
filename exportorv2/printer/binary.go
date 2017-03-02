@@ -23,7 +23,7 @@ func (self *binaryPrinter) Run(g *Globals) *BinaryFile {
 			continue
 		}
 
-		bf.WriteInt32(model.MakeTag(model.FieldType_Struct, int32(index)))
+		bf.WriteInt32(model.MakeTag(int32(model.FieldType_Table), int32(index)))
 
 		if !writeTableBinary(bf, tab) {
 			return nil

@@ -135,6 +135,8 @@ type csharpField struct {
 	*model.FieldDescriptor
 
 	IndexKeys []*model.FieldDescriptor
+
+	parentStruct *structModel
 }
 
 func (self csharpField) Alias() string {
@@ -201,6 +203,12 @@ func (self csharpField) ReadCode() string {
 }
 
 func (self csharpField) Tag() string {
+
+	if self.parentStruct.IsCombine() {
+		tag := model.MakeTag(int32(model.FieldType_Table), self.Order)
+
+		return fmt.Sprintf("0x%x", tag)
+	}
 
 	return fmt.Sprintf("0x%x", self.FieldDescriptor.Tag())
 }
@@ -373,7 +381,7 @@ func (self *csharpPrinter) Run(g *Globals) *BinaryFile {
 				if fd.Complex != nil && len(fd.Complex.Indexes) > 0 {
 
 					// 被索引的结构
-					indexedField := csharpField{FieldDescriptor: fd}
+					indexedField := csharpField{FieldDescriptor: fd, parentStruct: &sm}
 
 					// 索引字段
 					for _, key := range fd.Complex.Indexes {
@@ -384,12 +392,12 @@ func (self *csharpPrinter) Run(g *Globals) *BinaryFile {
 				}
 
 				if fd.Complex != nil && fd.Complex.File.Pragma.GetBool("Vertical") {
-					m.VerticalFields = append(m.VerticalFields, csharpField{FieldDescriptor: fd})
+					m.VerticalFields = append(m.VerticalFields, csharpField{FieldDescriptor: fd, parentStruct: &sm})
 				}
 
 			}
 
-			csField := csharpField{FieldDescriptor: fd}
+			csField := csharpField{FieldDescriptor: fd, parentStruct: &sm}
 
 			sm.Fields = append(sm.Fields, csField)
 

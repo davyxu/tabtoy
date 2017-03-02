@@ -1,6 +1,6 @@
 {
  "Tool": "github.com/davyxu/tabtoy",
- "Version": "2.7.2",
+ "Version": "2.7.3",
  "Structs": [
   {
    "Name": "Config",
@@ -253,7 +253,9 @@
      "Type": "float",
      "Kind": "float",
      "IsRepeated": false,
-     "Meta": {},
+     "Meta": {
+      "Default": "0.5"
+     },
      "Comment": "",
      "Value": 0
     }
