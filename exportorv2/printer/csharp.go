@@ -277,6 +277,8 @@ func wrapCSharpDefaultValue(fd *model.FieldDescriptor) string {
 		return fmt.Sprintf("%s.%s", fd.Complex.Name, fd.DefaultValue())
 	case model.FieldType_String:
 		return fmt.Sprintf("\"%s\"", fd.DefaultValue())
+	case model.FieldType_Float:
+		return fmt.Sprintf("%sf", fd.DefaultValue())
 	}
 
 	return fd.DefaultValue()
