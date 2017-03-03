@@ -76,6 +76,11 @@ func (self *DataSheet) exportRowMajor(file *File, tab *model.Table, dataHeader *
 				warningAfterEmptyLineDataOnce = true
 			}
 
+			// 曾经有过空行, 即便现在不是空行也没用, 结束
+			if meetEmptyLine {
+				break
+			}
+
 		}
 
 		record := model.NewRecord()
