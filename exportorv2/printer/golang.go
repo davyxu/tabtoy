@@ -190,8 +190,9 @@ func (self goFieldModel) Comment() string {
 
 func (self *goFieldModel) KeyType() string {
 
+	// 修复: 当枚举做索引时, 多出包名
 	if self.Type == model.FieldType_Enum {
-		return fmt.Sprintf("%s.%s", self.FieldDescriptor.Parent.File.Pragma.GetString("Package"), self.Complex.Name)
+		return self.Complex.Name
 	}
 
 	return model.FieldTypeToString(self.Type)
