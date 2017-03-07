@@ -28,7 +28,7 @@ const (
 	DataSheet_ValueRepeated
 	DataSheet_RowDataSplitedByEmptyLine
 	DataSheet_MustFill
-	DataHeader_StructCellCannotSplit
+	DataHeader_StructCellCannotSplit //废除
 	DataHeader_TypeNotFound
 	DataHeader_MetaParseFailed
 	DataHeader_DuplicateFieldName

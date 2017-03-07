@@ -8,49 +8,66 @@ import (
 	"github.com/davyxu/tabtoy/exportorv2/model"
 )
 
-func dataProcessor(file *File, fd *model.FieldDescriptor, raw string, node *model.Node) bool {
+func coloumnProcessor(file *File, record *model.Record, fd *model.FieldDescriptor, raw string) bool {
 
-	// 列表
-	if fd.IsRepeated {
+	spliter := fd.ListSpliter()
 
-		spliter := fd.ListSpliter()
+	if fd.IsRepeated && spliter != "" {
 
-		// 使用多格子实现的repeated
-		if spliter == "" {
+		valueList := strings.Split(raw, spliter)
 
-			if _, ok := filter.ConvertValue(fd, raw, file.GlobalFD, node); !ok {
-				goto ConvertError
-			}
+		var node *model.Node
 
-		} else {
-			// 一个格子切割的repeated
-
-			valueList := strings.Split(raw, spliter)
-
-			for _, v := range valueList {
-
-				if _, ok := filter.ConvertValue(fd, v, file.GlobalFD, node); !ok {
-					goto ConvertError
-				}
-			}
-
+		if fd.Type != model.FieldType_Struct {
+			node = record.NewNodeByDefine(fd)
 		}
 
-	} else {
+		for _, v := range valueList {
 
-		// 单值
-		if cv, ok := filter.ConvertValue(fd, raw, file.GlobalFD, node); !ok {
-			goto ConvertError
+			// 结构体要多添加一个节点, 处理repeated 结构体情况
+			if fd.Type == model.FieldType_Struct {
+				node = record.NewNodeByDefine(fd)
+				node.StructRoot = true
+				node = node.AddKey(fd)
+			}
 
-		} else {
-
-			// 值重复检查
-			if fd.Meta.GetBool("RepeatCheck") && !file.checkValueRepeat(fd, cv) {
-				log.Errorf("%s, %s raw: '%s'", i18n.String(i18n.DataSheet_ValueRepeated), fd.String(), cv)
+			if !dataProcessor(file, fd, v, node) {
 				return false
 			}
 		}
 
+	} else { // 普通数据/repeated单元格分多个列
+
+		node := record.NewNodeByDefine(fd)
+
+		// 结构体要多添加一个节点, 处理repeated 结构体情况
+		if fd.Type == model.FieldType_Struct {
+
+			node.StructRoot = true
+			node = node.AddKey(fd)
+		}
+
+		if !dataProcessor(file, fd, raw, node) {
+			return false
+		}
+	}
+
+	return true
+}
+
+func dataProcessor(file *File, fd *model.FieldDescriptor, raw string, node *model.Node) bool {
+
+	// 单值
+	if cv, ok := filter.ConvertValue(fd, raw, file.GlobalFD, node); !ok {
+		goto ConvertError
+
+	} else {
+
+		// 值重复检查
+		if fd.Meta.GetBool("RepeatCheck") && !file.checkValueRepeat(fd, cv) {
+			log.Errorf("%s, %s raw: '%s'", i18n.String(i18n.DataSheet_ValueRepeated), fd.String(), cv)
+			return false
+		}
 	}
 
 	return true

@@ -24,7 +24,6 @@ func init() {
 		DataSheet_ValueRepeated:                          "[TT502] 数据表: 单元格值重复",
 		DataSheet_RowDataSplitedByEmptyLine:              "[TT503] 数据表: 空行后依然有数据没有导出",
 		DataSheet_MustFill:                               "[TT504] 数据表: 单元格必须被填充",
-		DataHeader_StructCellCannotSplit:                 "[TT601] 数据头: 结构体单元格不能进行切分操作,请将多个结构体元素放在多个单元格实现",
 		DataHeader_TypeNotFound:                          "[TT602] 数据头: 未知类型",
 		DataHeader_MetaParseFailed:                       "[TT603] 数据头: 特性解析错误",
 		DataHeader_DuplicateFieldName:                    "[TT604] 数据头: 重复的字段名",

@@ -112,21 +112,25 @@ func (self *DataSheet) exportRowMajor(file *File, tab *model.Table, dataHeader *
 				continue
 			}
 
-			node := record.NewNodeByDefine(fieldDef)
-
-			// 结构体要多添加一个节点, 处理repeated 结构体情况
-			if fieldDef.Type == model.FieldType_Struct {
-
-				node.StructRoot = true
-				node = node.AddKey(fieldDef)
-
-			}
-
-			//log.Debugf("raw: %v  r:%d c: %d", rawValue, self.Row, self.Column)
-
-			if !dataProcessor(file, fieldDef, rawValue, node) {
+			if !coloumnProcessor(file, record, fieldDef, rawValue) {
 				goto ErrorStop
 			}
+			//
+			//node := record.NewNodeByDefine(fieldDef)
+			//
+			//// 结构体要多添加一个节点, 处理repeated 结构体情况
+			//if fieldDef.Type == model.FieldType_Struct {
+			//
+			//	node.StructRoot = true
+			//	node = node.AddKey(fieldDef)
+			//
+			//}
+			//
+			////log.Debugf("raw: %v  r:%d c: %d", rawValue, self.Row, self.Column)
+			//
+			//if !dataProcessor(file, fieldDef, rawValue, node) {
+			//	goto ErrorStop
+			//}
 
 		}
 

@@ -1,6 +1,6 @@
 {
  "Tool": "github.com/davyxu/tabtoy",
- "Version": "2.7.3",
+ "Version": "2.7.4",
  "Structs": [
   {
    "Name": "Config",
@@ -174,7 +174,9 @@
      "Type": "Prop",
      "Kind": "struct",
      "IsRepeated": true,
-     "Meta": {},
+     "Meta": {
+      "ListSpliter": "|"
+     },
      "Comment": "字符串结构",
      "Value": 0
     }
