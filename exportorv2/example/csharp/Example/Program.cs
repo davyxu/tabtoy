@@ -21,7 +21,7 @@ namespace csharptest
                 }
 
                 var config = new table.Config();
-                config.Deserialize(reader);
+                table.Config.Deserialize(config, reader);                
 
                 // 直接通过下标获取或遍历
                 var directFetch = config.Sample[2];

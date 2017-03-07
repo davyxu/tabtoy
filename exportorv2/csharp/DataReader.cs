@@ -19,10 +19,7 @@ namespace tabtoy
 	    Struct  = 9,	    
     }
 
-    public interface DataObject
-    {
-        void Deserialize(DataReader reader);
-    }
+    public delegate void DeserializeHandler<T>(T ins, DataReader reader);
 
     public class DataReader
     {
@@ -123,11 +120,11 @@ namespace tabtoy
             return (T)Enum.ToObject(typeof(T), _reader.ReadInt32());                
         }
 
-        public T ReadStruct<T>( ) where T : tabtoy.DataObject
+        public T ReadStruct<T>(DeserializeHandler<T> handler) where T : class
         {              
             var element = Activator.CreateInstance<T>();
 
-            element.Deserialize(this);
+            handler(element, this);            
 
             return element;
         }
@@ -230,7 +227,9 @@ namespace tabtoy
             }
         }
 
-        public void ReadList_Struct<T>(List<T> list) where T : tabtoy.DataObject
+
+
+        public void ReadList_Struct<T>(List<T> list, DeserializeHandler<T> handler) where T : class
         {
             var c = _reader.ReadInt32();
 
@@ -238,7 +237,7 @@ namespace tabtoy
             {
                 var element = Activator.CreateInstance<T>();
 
-                element.Deserialize(this);
+                handler(element, this);                
 
                 list.Add(element);
             }

@@ -27,7 +27,7 @@ namespace {{.Namespace}}{{$globalIndex:=.Indexes}}{{$verticalFields:=.VerticalFi
 	{{end}}
 	{{range .Classes}}
 	// Defined in table: {{.DefinedTable}}
-	public partial class {{.Name}} : tabtoy.DataObject
+	public partial class {{.Name}}
 	{
 		public tabtoy.Logger TableLogger = new tabtoy.Logger();
 		
@@ -36,8 +36,8 @@ namespace {{.Namespace}}{{$globalIndex:=.Indexes}}{{$verticalFields:=.VerticalFi
 		{{.TypeCode}} {{.Comment}}
 	{{end}}
 	
-	{{if .IsCombine}}{{range $globalIndex}}
-	 	Dictionary<{{.IndexType}}, {{.RowType}}> _{{.RowName}}By{{.IndexName}} = new Dictionary<{{.IndexType}}, {{.RowType}}>();
+	{{if .IsCombine}}
+	 	{{range $globalIndex}}Dictionary<{{.IndexType}}, {{.RowType}}> _{{.RowName}}By{{.IndexName}} = new Dictionary<{{.IndexType}}, {{.RowType}}>();
         public {{.RowType}} Get{{.RowName}}By{{.IndexName}}({{.IndexType}} {{.IndexName}}, {{.RowType}} def = default({{.RowType}}))
         {
             {{.RowType}} ret;
@@ -53,16 +53,16 @@ namespace {{.Namespace}}{{$globalIndex:=.Indexes}}{{$verticalFields:=.VerticalFi
 
             return def;
         }
-	{{end}}{{end}}
-	{{if .IsCombine}}
-		{{range $verticalFields}}	
+		{{end}}
+	{{range $verticalFields}}
 		public {{.StructName}} Get{{.Name}}( )
 		{
 			return {{.Name}}[0];
 		}	
-		{{end}}	
 	{{end}}
-		public void Deserialize( tabtoy.DataReader reader )
+		{{range $.Classes}}
+		static tabtoy.DeserializeHandler<{{.Name}}> {{.Name}}DeserializeHandler = new tabtoy.DeserializeHandler<{{.Name}}>(Deserialize);
+		public static void Deserialize( {{.Name}} ins, tabtoy.DataReader reader )
 		{
 			{{range .Fields}}
 			{{.Comment}}
@@ -71,19 +71,21 @@ namespace {{.Namespace}}{{$globalIndex:=.Indexes}}{{$verticalFields:=.VerticalFi
 				{{.ReadCode}}
 			}
 			{{end}}
-			{{if .IsCombine}}{{range $a, $row :=.IndexedFields}}
+			{{range $a, $row :=.IndexedFields}}
 			// Build {{$row.FieldDescriptor.Name}} Index
-            for( int i = 0;i< this.{{$row.FieldDescriptor.Name}}.Count;i++)
-            {
-                var element = this.{{$row.FieldDescriptor.Name}}[i];
+			for( int i = 0;i< ins.{{$row.FieldDescriptor.Name}}.Count;i++)
+			{
+				var element = ins.{{$row.FieldDescriptor.Name}}[i];
 				{{range $b, $key := .IndexKeys}}
-                _{{$row.FieldDescriptor.Name}}By{{$key.Name}}.Add(element.{{$key.Name}}, element);                
+				ins._{{$row.FieldDescriptor.Name}}By{{$key.Name}}.Add(element.{{$key.Name}}, element);
 				{{end}}
-            }
-			{{end}}{{end}}
-		}
-	}
-	{{end}}
+			}
+			{{end}}
+		}{{end}}
+	{{end}} } {{end}}
+
+
+
 
 }
 `
@@ -162,6 +164,8 @@ func (self csharpField) ReadCode() string {
 
 	var baseType string
 
+	var descHandlerCode string
+
 	switch self.Type {
 	case model.FieldType_Int32:
 		baseType = "Int32"
@@ -194,10 +198,19 @@ func (self csharpField) ReadCode() string {
 
 	}
 
+	if self.Type == model.FieldType_Struct {
+		descHandlerCode = fmt.Sprintf("%sDeserializeHandler", self.Complex.Name)
+	}
+
 	if self.IsRepeated {
-		return fmt.Sprintf("reader.ReadList_%s( this.%s );", baseType, self.Name)
+
+		if descHandlerCode != "" {
+			descHandlerCode = ", " + descHandlerCode
+		}
+
+		return fmt.Sprintf("reader.ReadList_%s( ins.%s %s);", baseType, self.Name, descHandlerCode)
 	} else {
-		return fmt.Sprintf("this.%s = reader.Read%s( );", self.Name, baseType)
+		return fmt.Sprintf("ins.%s = reader.Read%s(%s);", self.Name, baseType, descHandlerCode)
 	}
 
 }

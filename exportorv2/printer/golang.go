@@ -280,7 +280,6 @@ type goFileModel struct {
 	Structs        []*goStructModel
 	Enums          []*goStructModel
 	IndexCount     int
-	ImportPackage  string
 
 	// 配置的字段
 	VerticalFields []*goFieldModel
@@ -407,7 +406,6 @@ func (self *goPrinter) Run(g *Globals) *BinaryFile {
 	var fm goFileModel
 	fm.ToolVersion = g.Version
 	fm.FileDescriptor = g.FileDescriptor
-	fm.ImportPackage = g.GoImportPackage
 
 	collectIndexInfo(g, &fm)
 	collectAllStructInfo(g, &fm)
@@ -422,6 +420,7 @@ func (self *goPrinter) Run(g *Globals) *BinaryFile {
 
 	if err := formatCode(bf.Buffer()); err != nil {
 		log.Errorln("format golang code err", err)
+		log.Errorln(bf.Buffer().String())
 		return nil
 	}
 

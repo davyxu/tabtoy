@@ -9,7 +9,6 @@
 --type_out=.\Type.json ^
 --combinename=Config ^
 --lan=zh_cn ^
---goimportpkg=github.com/davyxu/tabtoy/exportorv2/sample/gamedef ^
 Globals.xlsx ^
 Sample.xlsx ^
 Vertical.xlsx ^

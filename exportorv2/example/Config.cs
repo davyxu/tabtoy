@@ -26,7 +26,7 @@ namespace table
 	
 	
 	// Defined in table: Config
-	public partial class Config : tabtoy.DataObject
+	public partial class Config
 	{
 		public tabtoy.Logger TableLogger = new tabtoy.Logger();
 		
@@ -58,8 +58,7 @@ namespace table
 
             return def;
         }
-	
-	 	Dictionary<string, SampleDefine> _SampleByName = new Dictionary<string, SampleDefine>();
+		Dictionary<string, SampleDefine> _SampleByName = new Dictionary<string, SampleDefine>();
         public SampleDefine GetSampleByName(string Name, SampleDefine def = default(SampleDefine))
         {
             SampleDefine ret;
@@ -75,8 +74,7 @@ namespace table
 
             return def;
         }
-	
-	 	Dictionary<int, ExpDefine> _ExpByLevel = new Dictionary<int, ExpDefine>();
+		Dictionary<int, ExpDefine> _ExpByLevel = new Dictionary<int, ExpDefine>();
         public ExpDefine GetExpByLevel(int Level, ExpDefine def = default(ExpDefine))
         {
             ExpDefine ret;
@@ -92,62 +90,235 @@ namespace table
 
             return def;
         }
+		
 	
-	
-			
 		public VerticalDefine GetVertical( )
 		{
 			return Vertical[0];
 		}	
-			
 	
-		public void Deserialize( tabtoy.DataReader reader )
+		
+		static tabtoy.DeserializeHandler<Config> ConfigDeserializeHandler = new tabtoy.DeserializeHandler<Config>(Deserialize);
+		public static void Deserialize( Config ins, tabtoy.DataReader reader )
 		{
 			
 			// Sample
 			if ( reader.MatchTag(0xa0000) )
 			{
-				reader.ReadList_Struct<SampleDefine>( this.Sample );
+				reader.ReadList_Struct<SampleDefine>( ins.Sample , SampleDefineDeserializeHandler);
 			}
 			
 			// Vertical
 			if ( reader.MatchTag(0xa0001) )
 			{
-				reader.ReadList_Struct<VerticalDefine>( this.Vertical );
+				reader.ReadList_Struct<VerticalDefine>( ins.Vertical , VerticalDefineDeserializeHandler);
 			}
 			
 			// Exp
 			if ( reader.MatchTag(0xa0002) )
 			{
-				reader.ReadList_Struct<ExpDefine>( this.Exp );
+				reader.ReadList_Struct<ExpDefine>( ins.Exp , ExpDefineDeserializeHandler);
 			}
 			
 			
 			// Build Sample Index
-            for( int i = 0;i< this.Sample.Count;i++)
-            {
-                var element = this.Sample[i];
+			for( int i = 0;i< ins.Sample.Count;i++)
+			{
+				var element = ins.Sample[i];
 				
-                _SampleByID.Add(element.ID, element);                
+				ins._SampleByID.Add(element.ID, element);
 				
-                _SampleByName.Add(element.Name, element);                
+				ins._SampleByName.Add(element.Name, element);
 				
-            }
+			}
 			
 			// Build Exp Index
-            for( int i = 0;i< this.Exp.Count;i++)
-            {
-                var element = this.Exp[i];
+			for( int i = 0;i< ins.Exp.Count;i++)
+			{
+				var element = ins.Exp[i];
 				
-                _ExpByLevel.Add(element.Level, element);                
+				ins._ExpByLevel.Add(element.Level, element);
 				
-            }
+			}
 			
 		}
-	}
-	
+		static tabtoy.DeserializeHandler<Prop> PropDeserializeHandler = new tabtoy.DeserializeHandler<Prop>(Deserialize);
+		public static void Deserialize( Prop ins, tabtoy.DataReader reader )
+		{
+			
+			
+			if ( reader.MatchTag(0x10000) )
+			{
+				ins.HP = reader.ReadInt32();
+			}
+			
+			
+			if ( reader.MatchTag(0x50001) )
+			{
+				ins.AttackRate = reader.ReadFloat();
+			}
+			
+			
+			if ( reader.MatchTag(0x80002) )
+			{
+				ins.ExType = reader.ReadEnum<ActorType>();
+			}
+			
+			
+		}
+		static tabtoy.DeserializeHandler<SampleDefine> SampleDefineDeserializeHandler = new tabtoy.DeserializeHandler<SampleDefine>(Deserialize);
+		public static void Deserialize( SampleDefine ins, tabtoy.DataReader reader )
+		{
+			
+			// 唯一ID
+			if ( reader.MatchTag(0x20000) )
+			{
+				ins.ID = reader.ReadInt64();
+			}
+			
+			// 名称
+			if ( reader.MatchTag(0x60001) )
+			{
+				ins.Name = reader.ReadString();
+			}
+			
+			// 图标ID
+			if ( reader.MatchTag(0x10002) )
+			{
+				ins.IconID = reader.ReadInt32();
+			}
+			
+			// 攻击率
+			if ( reader.MatchTag(0x50003) )
+			{
+				ins.NumericalRate = reader.ReadFloat();
+			}
+			
+			// 物品id
+			if ( reader.MatchTag(0x10004) )
+			{
+				ins.ItemID = reader.ReadInt32();
+			}
+			
+			// BuffID
+			if ( reader.MatchTag(0x10005) )
+			{
+				reader.ReadList_Int32( ins.BuffID );
+			}
+			
+			// 类型
+			if ( reader.MatchTag(0x80006) )
+			{
+				ins.Type = reader.ReadEnum<ActorType>();
+			}
+			
+			// 技能ID列表
+			if ( reader.MatchTag(0x10007) )
+			{
+				reader.ReadList_Int32( ins.SkillID );
+			}
+			
+			// 单结构解析
+			if ( reader.MatchTag(0x90008) )
+			{
+				ins.SingleStruct = reader.ReadStruct<Prop>(PropDeserializeHandler);
+			}
+			
+			// 字符串结构
+			if ( reader.MatchTag(0x90009) )
+			{
+				reader.ReadList_Struct<Prop>( ins.StrStruct , PropDeserializeHandler);
+			}
+			
+			
+		}
+		static tabtoy.DeserializeHandler<PeerData> PeerDataDeserializeHandler = new tabtoy.DeserializeHandler<PeerData>(Deserialize);
+		public static void Deserialize( PeerData ins, tabtoy.DataReader reader )
+		{
+			
+			
+			if ( reader.MatchTag(0x60000) )
+			{
+				ins.Name = reader.ReadString();
+			}
+			
+			
+			if ( reader.MatchTag(0x60001) )
+			{
+				ins.Type = reader.ReadString();
+			}
+			
+			
+		}
+		static tabtoy.DeserializeHandler<VerticalDefine> VerticalDefineDeserializeHandler = new tabtoy.DeserializeHandler<VerticalDefine>(Deserialize);
+		public static void Deserialize( VerticalDefine ins, tabtoy.DataReader reader )
+		{
+			
+			// 服务器IP
+			if ( reader.MatchTag(0x60000) )
+			{
+				ins.ServerIP = reader.ReadString();
+			}
+			
+			// 调试模式
+			if ( reader.MatchTag(0x70001) )
+			{
+				ins.DebugMode = reader.ReadBool();
+			}
+			
+			// 客户端人数限制
+			if ( reader.MatchTag(0x10002) )
+			{
+				ins.ClientLimit = reader.ReadInt32();
+			}
+			
+			// 端
+			if ( reader.MatchTag(0x90003) )
+			{
+				ins.Peer = reader.ReadStruct<PeerData>(PeerDataDeserializeHandler);
+			}
+			
+			
+			if ( reader.MatchTag(0x50004) )
+			{
+				ins.Float = reader.ReadFloat();
+			}
+			
+			
+		}
+		static tabtoy.DeserializeHandler<ExpDefine> ExpDefineDeserializeHandler = new tabtoy.DeserializeHandler<ExpDefine>(Deserialize);
+		public static void Deserialize( ExpDefine ins, tabtoy.DataReader reader )
+		{
+			
+			// 唯一ID
+			if ( reader.MatchTag(0x10000) )
+			{
+				ins.Level = reader.ReadInt32();
+			}
+			
+			// 经验值
+			if ( reader.MatchTag(0x10001) )
+			{
+				ins.Exp = reader.ReadInt32();
+			}
+			
+			// 布尔检查
+			if ( reader.MatchTag(0x70002) )
+			{
+				ins.BoolChecker = reader.ReadBool();
+			}
+			
+			// 类型
+			if ( reader.MatchTag(0x80003) )
+			{
+				ins.Type = reader.ReadEnum<ActorType>();
+			}
+			
+			
+		}
+	 } 
 	// Defined in table: Sample
-	public partial class Prop : tabtoy.DataObject
+	public partial class Prop
 	{
 		public tabtoy.Logger TableLogger = new tabtoy.Logger();
 		
@@ -162,35 +333,9 @@ namespace table
 		public ActorType ExType = ActorType.Leader; 
 	
 	
-	
-	
-		public void Deserialize( tabtoy.DataReader reader )
-		{
-			
-			
-			if ( reader.MatchTag(0x10000) )
-			{
-				this.HP = reader.ReadInt32( );
-			}
-			
-			
-			if ( reader.MatchTag(0x50001) )
-			{
-				this.AttackRate = reader.ReadFloat( );
-			}
-			
-			
-			if ( reader.MatchTag(0x80002) )
-			{
-				this.ExType = reader.ReadEnum<ActorType>( );
-			}
-			
-			
-		}
-	}
-	
+	 } 
 	// Defined in table: Sample
-	public partial class SampleDefine : tabtoy.DataObject
+	public partial class SampleDefine
 	{
 		public tabtoy.Logger TableLogger = new tabtoy.Logger();
 		
@@ -226,77 +371,9 @@ namespace table
 		public List<Prop> StrStruct = new List<Prop>(); // 字符串结构
 	
 	
-	
-	
-		public void Deserialize( tabtoy.DataReader reader )
-		{
-			
-			// 唯一ID
-			if ( reader.MatchTag(0x20000) )
-			{
-				this.ID = reader.ReadInt64( );
-			}
-			
-			// 名称
-			if ( reader.MatchTag(0x60001) )
-			{
-				this.Name = reader.ReadString( );
-			}
-			
-			// 图标ID
-			if ( reader.MatchTag(0x10002) )
-			{
-				this.IconID = reader.ReadInt32( );
-			}
-			
-			// 攻击率
-			if ( reader.MatchTag(0x50003) )
-			{
-				this.NumericalRate = reader.ReadFloat( );
-			}
-			
-			// 物品id
-			if ( reader.MatchTag(0x10004) )
-			{
-				this.ItemID = reader.ReadInt32( );
-			}
-			
-			// BuffID
-			if ( reader.MatchTag(0x10005) )
-			{
-				reader.ReadList_Int32( this.BuffID );
-			}
-			
-			// 类型
-			if ( reader.MatchTag(0x80006) )
-			{
-				this.Type = reader.ReadEnum<ActorType>( );
-			}
-			
-			// 技能ID列表
-			if ( reader.MatchTag(0x10007) )
-			{
-				reader.ReadList_Int32( this.SkillID );
-			}
-			
-			// 单结构解析
-			if ( reader.MatchTag(0x90008) )
-			{
-				this.SingleStruct = reader.ReadStruct<Prop>( );
-			}
-			
-			// 字符串结构
-			if ( reader.MatchTag(0x90009) )
-			{
-				reader.ReadList_Struct<Prop>( this.StrStruct );
-			}
-			
-			
-		}
-	}
-	
+	 } 
 	// Defined in table: Vertical
-	public partial class PeerData : tabtoy.DataObject
+	public partial class PeerData
 	{
 		public tabtoy.Logger TableLogger = new tabtoy.Logger();
 		
@@ -308,29 +385,9 @@ namespace table
 		public string Type = ""; 
 	
 	
-	
-	
-		public void Deserialize( tabtoy.DataReader reader )
-		{
-			
-			
-			if ( reader.MatchTag(0x60000) )
-			{
-				this.Name = reader.ReadString( );
-			}
-			
-			
-			if ( reader.MatchTag(0x60001) )
-			{
-				this.Type = reader.ReadString( );
-			}
-			
-			
-		}
-	}
-	
+	 } 
 	// Defined in table: Vertical
-	public partial class VerticalDefine : tabtoy.DataObject
+	public partial class VerticalDefine
 	{
 		public tabtoy.Logger TableLogger = new tabtoy.Logger();
 		
@@ -351,47 +408,9 @@ namespace table
 		public float Float = 0.5f; 
 	
 	
-	
-	
-		public void Deserialize( tabtoy.DataReader reader )
-		{
-			
-			// 服务器IP
-			if ( reader.MatchTag(0x60000) )
-			{
-				this.ServerIP = reader.ReadString( );
-			}
-			
-			// 调试模式
-			if ( reader.MatchTag(0x70001) )
-			{
-				this.DebugMode = reader.ReadBool( );
-			}
-			
-			// 客户端人数限制
-			if ( reader.MatchTag(0x10002) )
-			{
-				this.ClientLimit = reader.ReadInt32( );
-			}
-			
-			// 端
-			if ( reader.MatchTag(0x90003) )
-			{
-				this.Peer = reader.ReadStruct<PeerData>( );
-			}
-			
-			
-			if ( reader.MatchTag(0x50004) )
-			{
-				this.Float = reader.ReadFloat( );
-			}
-			
-			
-		}
-	}
-	
+	 } 
 	// Defined in table: Exp
-	public partial class ExpDefine : tabtoy.DataObject
+	public partial class ExpDefine
 	{
 		public tabtoy.Logger TableLogger = new tabtoy.Logger();
 		
@@ -409,38 +428,9 @@ namespace table
 		public ActorType Type = ActorType.Leader; // 类型
 	
 	
-	
-	
-		public void Deserialize( tabtoy.DataReader reader )
-		{
-			
-			// 唯一ID
-			if ( reader.MatchTag(0x10000) )
-			{
-				this.Level = reader.ReadInt32( );
-			}
-			
-			// 经验值
-			if ( reader.MatchTag(0x10001) )
-			{
-				this.Exp = reader.ReadInt32( );
-			}
-			
-			// 布尔检查
-			if ( reader.MatchTag(0x70002) )
-			{
-				this.BoolChecker = reader.ReadBool( );
-			}
-			
-			// 类型
-			if ( reader.MatchTag(0x80003) )
-			{
-				this.Type = reader.ReadEnum<ActorType>( );
-			}
-			
-			
-		}
-	}
-	
+	 } 
+
+
+
 
 }

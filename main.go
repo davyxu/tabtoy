@@ -33,7 +33,6 @@ var paramTypeOut = flag.String("type_out", "", "output table types(*.json)")
 var paramCombineStructName = flag.String("combinename", "", "combine struct name, code struct name")
 var paramProtoVersion = flag.Int("protover", 3, "output .proto file version, 2 or 3")
 var paramLanguage = flag.String("lan", "en_us", "set output language")
-var paramGoImportPackage = flag.String("goimportpkg", "gamedef", "golang import package path")
 
 const Version = "2.7.4"
 
@@ -67,7 +66,6 @@ func main() {
 		g.ParaMode = *paramPara
 		g.CombineStructName = *paramCombineStructName
 		g.ProtoVersion = *paramProtoVersion
-		g.GoImportPackage = *paramGoImportPackage
 
 		if *paramProtoOut != "" {
 			g.AddOutputType("proto", *paramProtoOut)
