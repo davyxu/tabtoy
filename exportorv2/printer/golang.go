@@ -50,10 +50,10 @@ type {{$.Name}}Table struct{
 	{{$.Name}}
 	
 	// 索引函数表
-	indexFuncByName map[string]func(*{{$.Name}}Table)
-	
+	indexFuncByName map[string][]func(*{{$.Name}}Table)
+
 	// 清空函数表
-	clearFuncByName map[string]func(*{{$.Name}}Table)
+	clearFuncByName map[string][]func(*{{$.Name}}Table)
 	
 	{{range $a, $strus := .IndexedStructs}} {{range .Indexes}}
 	{{$strus.Name}}By{{.Name}} map[{{.KeyType}}]*{{$strus.TypeName}}
@@ -76,9 +76,11 @@ func (self *{{$.Name}}Table) Load(filename string) error {
 		return err
 	}
 	
-	// 生成索引
-	for _, v := range self.clearFuncByName {
-		v(self)
+	// 清除
+	for _, list := range self.clearFuncByName {
+		for _, v := range list {
+			v(self)
+		}
 	}
 
 	err = json.Unmarshal(data, &self.{{$.Name}})
@@ -87,8 +89,10 @@ func (self *{{$.Name}}Table) Load(filename string) error {
 	}
 
 	// 生成索引
-	for _, v := range self.indexFuncByName {
-		v(self)
+	for _, list := range self.indexFuncByName {
+		for _, v := range list {
+			v(self)
+		}
 	}
 
 	return nil
@@ -97,12 +101,19 @@ func (self *{{$.Name}}Table) Load(filename string) error {
 // 注册外部索引入口, 索引回调, 清空回调
 func (self *{{$.Name}}Table) RegisterIndexEntry(name string, indexCallback func(*{{$.Name}}Table), clearCallback func(*{{$.Name}}Table)) {
 
-	if _, ok := self.indexFuncByName[name]; ok {
-		panic("duplicate '{{$.Name}}' table index entry")
+	indexList, _ := self.indexFuncByName[name]
+	clearList, _ := self.clearFuncByName[name]
+
+	if indexCallback != nil {
+		indexList = append(indexList, indexCallback)
 	}
 
-	self.indexFuncByName[name] = indexCallback
-	self.clearFuncByName[name] = clearCallback
+	if clearCallback != nil {
+		clearList = append(clearList, clearCallback)
+	}
+
+	self.indexFuncByName[name] = indexList
+	self.clearFuncByName[name] = clearList
 }
 
 // 创建一个{{$.Name}}表读取实例
@@ -110,10 +121,10 @@ func New{{$.Name}}Table() *{{$.Name}}Table {
 	return &{{$.Name}}Table{
 
 	
-		indexFuncByName: map[string]func(*{{$.Name}}Table){
+		indexFuncByName: map[string][]func(*{{$.Name}}Table){
 		
 		{{range $a, $strus := .IndexedStructs}}
-			"{{$strus.Name}}": func(tab *{{$.Name}}Table) {
+			"{{$strus.Name}}": {func(tab *{{$.Name}}Table) {
 				
 				// {{$strus.Name}}
 				for _, def := range tab.{{$strus.Name}} {
@@ -126,22 +137,22 @@ func New{{$.Name}}Table() *{{$.Name}}Table {
 					tab.{{$strus.Name}}By{{.Name}}[def.{{.Name}}] = def{{end}}
 					
 				}
-			},
+			}},
 		{{end}}
 		
 			
 		},
 		
-		clearFuncByName: map[string]func(*{{$.Name}}Table){
+		clearFuncByName: map[string][]func(*{{$.Name}}Table){
 		
 		{{range $a, $strus := .IndexedStructs}}
-			"{{$strus.Name}}": func(tab *{{$.Name}}Table) {
+			"{{$strus.Name}}": {func(tab *{{$.Name}}Table) {
 				
 				// {{$strus.Name}}
 	
 				{{range .Indexes}}
 				tab.{{$strus.Name}}By{{.Name}} = make(map[{{.KeyType}}]*{{$strus.TypeName}}){{end}}
-			},
+			}},
 		{{end}}
 		
 			

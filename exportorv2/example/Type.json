@@ -35,6 +35,33 @@
    ]
   },
   {
+   "Name": "Vec2",
+   "Fields": [
+    {
+     "Name": "X",
+     "Type": "int32",
+     "Kind": "int32",
+     "IsRepeated": false,
+     "Meta": {
+      "Alias": ""
+     },
+     "Comment": "",
+     "Value": 0
+    },
+    {
+     "Name": "Y",
+     "Type": "int32",
+     "Kind": "int32",
+     "IsRepeated": false,
+     "Meta": {
+      "Alias": ""
+     },
+     "Comment": "",
+     "Value": 0
+    }
+   ]
+  },
+  {
    "Name": "Prop",
    "Fields": [
     {
@@ -138,6 +165,15 @@
      "IsRepeated": true,
      "Meta": {},
      "Comment": "BuffID",
+     "Value": 0
+    },
+    {
+     "Name": "Pos",
+     "Type": "Vec2",
+     "Kind": "struct",
+     "IsRepeated": false,
+     "Meta": {},
+     "Comment": "",
      "Value": 0
     },
     {

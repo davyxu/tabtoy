@@ -24,6 +24,8 @@ func coloumnProcessor(file *File, record *model.Record, fd *model.FieldDescripto
 
 		for _, v := range valueList {
 
+			rawSingle := strings.TrimSpace(v)
+
 			// 结构体要多添加一个节点, 处理repeated 结构体情况
 			if fd.Type == model.FieldType_Struct {
 				node = record.NewNodeByDefine(fd)
@@ -31,7 +33,7 @@ func coloumnProcessor(file *File, record *model.Record, fd *model.FieldDescripto
 				node = node.AddKey(fd)
 			}
 
-			if !dataProcessor(file, fd, v, node) {
+			if !dataProcessor(file, fd, rawSingle, node) {
 				return false
 			}
 		}

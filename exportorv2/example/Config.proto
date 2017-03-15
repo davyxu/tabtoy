@@ -40,6 +40,18 @@ message Config
 
 }
 
+// Defined in table: Globals
+message Vec2
+{	
+	
+	
+	int32 X = 1; 
+	
+	
+	int32 Y = 2; 
+
+}
+
 // Defined in table: Sample
 message Prop
 {	
@@ -78,16 +90,19 @@ message SampleDefine
 	repeated int32 BuffID = 6; // BuffID
 	
 	
-	ActorType Type = 7; // 类型
+	Vec2 Pos = 7; 
 	
 	
-	repeated int32 SkillID = 8; // 技能ID列表
+	ActorType Type = 8; // 类型
 	
 	
-	Prop SingleStruct = 9; // 单结构解析
+	repeated int32 SkillID = 9; // 技能ID列表
 	
 	
-	repeated Prop StrStruct = 10; // 字符串结构
+	Prop SingleStruct = 10; // 单结构解析
+	
+	
+	repeated Prop StrStruct = 11; // 字符串结构
 
 }
 

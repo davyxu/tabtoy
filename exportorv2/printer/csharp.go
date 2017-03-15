@@ -29,14 +29,15 @@ namespace {{.Namespace}}{{$globalIndex:=.Indexes}}{{$verticalFields:=.VerticalFi
 	// Defined in table: {{.DefinedTable}}
 	public partial class {{.Name}}
 	{
+	{{if .IsCombine}}
 		public tabtoy.Logger TableLogger = new tabtoy.Logger();
-		
+	{{end}}
 	{{range .Fields}}	
 		{{.Alias}}
-		{{.TypeCode}} {{.Comment}}
-	{{end}}
+		{{.TypeCode}} {{.Comment}} {{end}}
 	
 	{{if .IsCombine}}
+		#region Index code
 	 	{{range $globalIndex}}Dictionary<{{.IndexType}}, {{.RowType}}> _{{.RowName}}By{{.IndexName}} = new Dictionary<{{.IndexType}}, {{.RowType}}>();
         public {{.RowType}} Get{{.RowName}}By{{.IndexName}}({{.IndexType}} {{.IndexName}}, {{.RowType}} def = default({{.RowType}}))
         {
@@ -60,6 +61,8 @@ namespace {{.Namespace}}{{$globalIndex:=.Indexes}}{{$verticalFields:=.VerticalFi
 			return {{.Name}}[0];
 		}	
 	{{end}}
+		#endregion
+		#region Deserialize code
 		{{range $.Classes}}
 		static tabtoy.DeserializeHandler<{{.Name}}> {{.Name}}DeserializeHandler = new tabtoy.DeserializeHandler<{{.Name}}>(Deserialize);
 		public static void Deserialize( {{.Name}} ins, tabtoy.DataReader reader )
@@ -82,10 +85,10 @@ namespace {{.Namespace}}{{$globalIndex:=.Indexes}}{{$verticalFields:=.VerticalFi
 			}
 			{{end}}
 		}{{end}}
-	{{end}} } {{end}}
+		#endregion
+	{{end}}
 
-
-
+	} {{end}}
 
 }
 `

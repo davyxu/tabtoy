@@ -40,6 +40,13 @@ type Config struct {
 	Exp []*ExpDefine
 }
 
+// Defined in table: Globals
+type Vec2 struct {
+	X int32
+
+	Y int32
+}
+
 // Defined in table: Sample
 type Prop struct {
 
@@ -73,6 +80,8 @@ type SampleDefine struct {
 
 	//BuffID
 	BuffID []int32
+
+	Pos *Vec2
 
 	//类型
 	Type ActorType
