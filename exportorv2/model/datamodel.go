@@ -2,13 +2,19 @@ package model
 
 import "sort"
 
+type GlobalChecker interface {
+	CheckValueRepeat(fd *FieldDescriptor, value string) bool
+
+	GlobalFileDesc() *FileDescriptor
+}
+
 type FieldValue struct {
 	FieldDef  *FieldDescriptor
 	RawValue  string
 	R         int
 	C         int
-	File      interface{}
 	SheetName string
+	FileName  string
 }
 
 // 对应record

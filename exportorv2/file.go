@@ -29,6 +29,11 @@ type File struct {
 	mergeList []*File
 }
 
+func (self *File) GlobalFileDesc() *model.FileDescriptor {
+	return self.GlobalFD
+
+}
+
 func (self *File) ExportLocalType() bool {
 
 	var sheetCount int
@@ -116,7 +121,7 @@ func (self *File) ExportData(dataModel *model.DataModel, parentHeader *DataHeade
 
 }
 
-func (self *File) checkValueRepeat(fd *model.FieldDescriptor, value string) bool {
+func (self *File) CheckValueRepeat(fd *model.FieldDescriptor, value string) bool {
 
 	key := valueRepeatData{
 		fd:    fd,

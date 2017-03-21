@@ -105,10 +105,15 @@ func Run(g *printer.Globals) bool {
 			}
 		}
 
+		var mergeResult bool
 		if file.IsVertical() {
-			mergeV(dataModel, tab)
+			mergeResult = mergeV(dataModel, tab, file)
 		} else {
-			mergeSTD(dataModel, tab)
+			mergeResult = mergeSTD(dataModel, tab, file)
+		}
+
+		if !mergeResult {
+			return false
 		}
 
 		// 整合类型信息和数据

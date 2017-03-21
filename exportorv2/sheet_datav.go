@@ -72,9 +72,9 @@ func (self *DataSheet) exportColumnMajor(file *File, dataModel *model.DataModel,
 			FieldDef:  fieldDef,
 			RawValue:  rawValue,
 			SheetName: self.Name,
+			FileName:  self.file.FileName,
 			R:         r,
 			C:         c,
-			File:      file,
 		})
 
 	}

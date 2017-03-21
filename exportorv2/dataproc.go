@@ -8,7 +8,7 @@ import (
 	"github.com/davyxu/tabtoy/exportorv2/model"
 )
 
-func coloumnProcessor(file *File, record *model.Record, fd *model.FieldDescriptor, raw string) bool {
+func coloumnProcessor(file model.GlobalChecker, record *model.Record, fd *model.FieldDescriptor, raw string) bool {
 
 	spliter := fd.ListSpliter()
 
@@ -57,16 +57,16 @@ func coloumnProcessor(file *File, record *model.Record, fd *model.FieldDescripto
 	return true
 }
 
-func dataProcessor(file *File, fd *model.FieldDescriptor, raw string, node *model.Node) bool {
+func dataProcessor(gc model.GlobalChecker, fd *model.FieldDescriptor, raw string, node *model.Node) bool {
 
 	// 单值
-	if cv, ok := filter.ConvertValue(fd, raw, file.GlobalFD, node); !ok {
+	if cv, ok := filter.ConvertValue(fd, raw, gc.GlobalFileDesc(), node); !ok {
 		goto ConvertError
 
 	} else {
 
 		// 值重复检查
-		if fd.Meta.GetBool("RepeatCheck") && !file.checkValueRepeat(fd, cv) {
+		if fd.Meta.GetBool("RepeatCheck") && !gc.CheckValueRepeat(fd, cv) {
 			log.Errorf("%s, %s raw: '%s'", i18n.String(i18n.DataSheet_ValueRepeated), fd.String(), cv)
 			return false
 		}

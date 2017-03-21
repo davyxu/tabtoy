@@ -5,7 +5,7 @@ import (
 	"github.com/davyxu/tabtoy/util"
 )
 
-func mergeSTD(modelData *model.DataModel, tab *model.Table) bool {
+func mergeSTD(modelData *model.DataModel, tab *model.Table, checker model.GlobalChecker) bool {
 
 	var currFV *model.FieldValue
 
@@ -25,7 +25,7 @@ func mergeSTD(modelData *model.DataModel, tab *model.Table) bool {
 				continue
 			}
 
-			if !coloumnProcessor(fv.File.(*File), record, fv.FieldDef, fv.RawValue) {
+			if !coloumnProcessor(checker, record, fv.FieldDef, fv.RawValue) {
 				goto ErrorStop
 			}
 
@@ -38,14 +38,16 @@ func mergeSTD(modelData *model.DataModel, tab *model.Table) bool {
 
 ErrorStop:
 
-	file := currFV.File.(*File)
+	if currFV == nil {
+		return false
+	}
 
-	log.Errorf("%s|%s(%s)", file.FileName, currFV.SheetName, util.ConvR1C1toA1(currFV.R, currFV.C))
+	log.Errorf("%s|%s(%s)", currFV.FileName, currFV.SheetName, util.ConvR1C1toA1(currFV.R, currFV.C))
 	return false
 
 }
 
-func mergeV(modelData *model.DataModel, tab *model.Table) bool {
+func mergeV(modelData *model.DataModel, tab *model.Table, checker model.GlobalChecker) bool {
 
 	var currFV *model.FieldValue
 
@@ -76,7 +78,7 @@ func mergeV(modelData *model.DataModel, tab *model.Table) bool {
 
 			//log.Debugf("raw: %v  r:%d c: %d", rawValue, self.Row, self.Column)
 
-			if !dataProcessor(fv.File.(*File), fv.FieldDef, fv.RawValue, node) {
+			if !dataProcessor(checker, fv.FieldDef, fv.RawValue, node) {
 				goto ErrorStop
 			}
 
@@ -89,9 +91,11 @@ func mergeV(modelData *model.DataModel, tab *model.Table) bool {
 
 ErrorStop:
 
-	file := currFV.File.(*File)
+	if currFV == nil {
+		return false
+	}
 
-	log.Errorf("%s|%s(%s)", file.FileName, currFV.SheetName, util.ConvR1C1toA1(currFV.R, currFV.C))
+	log.Errorf("%s|%s(%s)", currFV.FileName, currFV.SheetName, util.ConvR1C1toA1(currFV.R, currFV.C))
 	return false
 
 }
