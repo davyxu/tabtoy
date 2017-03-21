@@ -27,20 +27,20 @@ func (self *DataSheet) Valid() bool {
 	return self.GetCellData(0, 0) != ""
 }
 
-func (self *DataSheet) Export(file *File, tab *model.Table, dataHeader *DataHeader) bool {
+func (self *DataSheet) Export(file *File, dataModel *model.DataModel, dataHeader, parentHeader *DataHeader) bool {
 
-	verticalHeader := tab.LocalFD.Pragma.GetBool("Vertical")
+	verticalHeader := file.LocalFD.Pragma.GetBool("Vertical")
 
 	if verticalHeader {
-		return self.exportColumnMajor(file, tab, dataHeader)
+		return self.exportColumnMajor(file, dataModel, dataHeader, parentHeader)
 	} else {
-		return self.exportRowMajor(file, tab, dataHeader)
+		return self.exportRowMajor(file, dataModel, dataHeader, parentHeader)
 	}
 
 }
 
 // 导出以行数据延展的表格(普通表格)
-func (self *DataSheet) exportRowMajor(file *File, tab *model.Table, dataHeader *DataHeader) bool {
+func (self *DataSheet) exportRowMajor(file *File, dataModel *model.DataModel, dataHeader, parentHeader *DataHeader) bool {
 
 	// 是否继续读行
 	var readingLine bool = true
@@ -83,12 +83,12 @@ func (self *DataSheet) exportRowMajor(file *File, tab *model.Table, dataHeader *
 
 		}
 
-		record := model.NewRecord()
+		line := model.NewLineData()
 
 		// 遍历每一列
 		for self.Column = 0; self.Column < dataHeader.RawFieldCount(); self.Column++ {
 
-			fieldDef := dataHeader.RawField(self.Column)
+			fieldDef := fieldDefGetter(self.Column, dataHeader, parentHeader)
 
 			// 数据大于列头时, 结束这个列
 			if fieldDef == nil {
@@ -102,50 +102,44 @@ func (self *DataSheet) exportRowMajor(file *File, tab *model.Table, dataHeader *
 
 			rawValue := self.GetCellData(self.Row, self.Column)
 
-			// repeated的, 没有填充的, 直接跳过, 不生成数据
-			if rawValue == "" && fieldDef.Meta.GetString("Default") == "" {
+			r, c := self.GetRC()
 
-				if !mustFillCheck(fieldDef, rawValue) {
-					goto ErrorStop
-				}
-
-				continue
-			}
-
-			if !coloumnProcessor(file, record, fieldDef, rawValue) {
-				goto ErrorStop
-			}
-			//
-			//node := record.NewNodeByDefine(fieldDef)
-			//
-			//// 结构体要多添加一个节点, 处理repeated 结构体情况
-			//if fieldDef.Type == model.FieldType_Struct {
-			//
-			//	node.StructRoot = true
-			//	node = node.AddKey(fieldDef)
-			//
-			//}
-			//
-			////log.Debugf("raw: %v  r:%d c: %d", rawValue, self.Row, self.Column)
-			//
-			//if !dataProcessor(file, fieldDef, rawValue, node) {
-			//	goto ErrorStop
-			//}
+			line.Add(&model.FieldValue{
+				FieldDef:  fieldDef,
+				RawValue:  rawValue,
+				SheetName: self.Name,
+				R:         r,
+				C:         c,
+				File:      file,
+			})
 
 		}
 
-		tab.Add(record)
+		dataModel.Add(line)
 
 	}
 
 	return true
+}
 
-ErrorStop:
+// 多表合并时, 要从从表的字段名在主表的表头里做索引
+func fieldDefGetter(index int, dataHeader, parentHeader *DataHeader) *model.FieldDescriptor {
 
-	r, c := self.GetRC()
+	fieldDef := dataHeader.RawField(index)
+	if fieldDef == nil {
+		return nil
+	}
 
-	log.Errorf("%s|%s(%s)", self.file.FileName, self.Name, util.ConvR1C1toA1(r, c))
-	return false
+	if parentHeader != nil {
+		ret, ok := parentHeader.HeaderByName[fieldDef.Name]
+		if !ok {
+			return nil
+		}
+		return ret
+	}
+
+	return fieldDef
+
 }
 
 func mustFillCheck(fd *model.FieldDescriptor, raw string) bool {

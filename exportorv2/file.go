@@ -26,7 +26,7 @@ type File struct {
 
 	valueRepByKey map[valueRepeatData]bool // 检查单元格值重复map
 
-	mergeNext *File
+	mergeList []*File
 }
 
 func (self *File) ExportLocalType() bool {
@@ -97,21 +97,23 @@ func (self *File) ExportLocalType() bool {
 	return true
 }
 
-func (self *File) ExportData() *model.Table {
+func (self *File) IsVertical() bool {
+	return self.LocalFD.Pragma.GetBool("Vertical")
+}
 
-	tab := model.NewTable()
-	tab.LocalFD = self.LocalFD
+func (self *File) ExportData(dataModel *model.DataModel, parentHeader *DataHeader) bool {
 
 	for _, d := range self.dataSheets {
 
 		log.Infof("            %s", d.Name)
 
-		if !d.Export(self, tab, self.Header) {
-			return nil
+		if !d.Export(self, dataModel, self.Header, parentHeader) {
+			return false
 		}
 	}
 
-	return tab
+	return true
+
 }
 
 func (self *File) checkValueRepeat(fd *model.FieldDescriptor, value string) bool {

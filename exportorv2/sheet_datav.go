@@ -14,7 +14,7 @@ const (
 )
 
 // 导出适合配置格式的表格
-func (self *DataSheet) exportColumnMajor(file *File, tab *model.Table, dataHeader *DataHeader) bool {
+func (self *DataSheet) exportColumnMajor(file *File, dataModel *model.DataModel, dataHeader, parentHeader *DataHeader) bool {
 
 	// 是否继续读行
 	var readingLine bool = true
@@ -23,8 +23,7 @@ func (self *DataSheet) exportColumnMajor(file *File, tab *model.Table, dataHeade
 
 	var warningAfterEmptyLineDataOnce bool
 
-	record := model.NewRecord()
-	tab.Add(record)
+	line := model.NewLineData()
 
 	for self.Row = ColumnMajor_RowDataBegin; readingLine; self.Row++ {
 		// 整行都是空的
@@ -67,40 +66,21 @@ func (self *DataSheet) exportColumnMajor(file *File, tab *model.Table, dataHeade
 
 		rawValue := self.GetCellData(self.Row, ColumnMajor_ColumnValue)
 
-		// repeated的, 没有填充的, 直接跳过, 不生成数据
-		if rawValue == "" && fieldDef.Meta.GetString("Default") == "" {
+		r, c := self.GetRC()
 
-			if !mustFillCheck(fieldDef, rawValue) {
-				goto ErrorStop
-			}
-
-			continue
-		}
-
-		node := record.NewNodeByDefine(fieldDef)
-
-		// 结构体要多添加一个节点, 处理repeated 结构体情况
-		if fieldDef.Type == model.FieldType_Struct {
-
-			node.StructRoot = true
-			node = node.AddKey(fieldDef)
-		}
-
-		//log.Debugf("raw: %v  r:%d c: %d", rawValue, self.Row, self.Column)
-
-		if !dataProcessor(file, fieldDef, rawValue, node) {
-			goto ErrorStop
-		}
+		line.Add(&model.FieldValue{
+			FieldDef:  fieldDef,
+			RawValue:  rawValue,
+			SheetName: self.Name,
+			R:         r,
+			C:         c,
+			File:      file,
+		})
 
 	}
 
+	dataModel.Add(line)
+
 	return true
-
-ErrorStop:
-
-	r, c := self.GetRC()
-
-	log.Errorf("%s|%s(%s)", self.file.FileName, self.Name, util.ConvR1C1toA1(r, c))
-	return false
 
 }

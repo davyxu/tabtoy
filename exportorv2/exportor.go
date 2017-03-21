@@ -27,7 +27,9 @@ func Run(g *printer.Globals) bool {
 
 		var mainMergeFile *File
 
-		for index, fileName := range strings.Split(inputFile, "+") {
+		mergeFileList := strings.Split(inputFile, "+")
+
+		for index, fileName := range mergeFileList {
 
 			file := NewFile(fileName)
 
@@ -35,7 +37,12 @@ func Run(g *printer.Globals) bool {
 				return false
 			}
 
-			log.Infoln(filepath.Base(fileName))
+			var mergeTarget string
+			if len(mergeFileList) > 1 {
+				mergeTarget = "--> " + filepath.Base(mergeFileList[0])
+			}
+
+			log.Infoln(filepath.Base(fileName), mergeTarget)
 
 			file.GlobalFD = g.FileDescriptor
 
@@ -52,7 +59,7 @@ func Run(g *printer.Globals) bool {
 					return false
 				}
 
-				// 没有
+				// 只写入主文件的文件列表
 				if file.Header != nil {
 					fileObjList = append(fileObjList, file)
 				}
@@ -60,7 +67,8 @@ func Run(g *printer.Globals) bool {
 				mainMergeFile = file
 			} else {
 
-				mainMergeFile.mergeNext = file
+				// 添加自文件
+				mainMergeFile.mergeList = append(mainMergeFile.mergeList, file)
 
 			}
 
@@ -74,27 +82,33 @@ func Run(g *printer.Globals) bool {
 
 		file := in.(*File)
 
-		var tab *model.Table
+		log.Infoln(filepath.Base(file.FileName))
 
-		for file != nil {
+		dataModel := model.NewDataModel()
 
-			log.Infoln(filepath.Base(file.FileName))
+		tab := model.NewTable()
+		tab.LocalFD = file.LocalFD
+
+		// 主表
+		if !file.ExportData(dataModel, nil) {
+			return false
+		}
+
+		// 子表提供数据
+		for _, mergeFile := range file.mergeList {
+
+			log.Infoln(filepath.Base(mergeFile.FileName), "--->", filepath.Base(file.FileName))
 
 			// 电子表格数据导出到Table对象
-			thisTab := file.ExportData()
-			if thisTab == nil {
+			if !mergeFile.ExportData(dataModel, file.Header) {
 				return false
 			}
+		}
 
-			if tab == nil {
-				tab = thisTab
-			} else {
-
-				// 合并表格数据到主tab
-				tab.Recs = append(tab.Recs, thisTab.Recs...)
-			}
-
-			file = file.mergeNext
+		if file.IsVertical() {
+			mergeV(dataModel, tab)
+		} else {
+			mergeSTD(dataModel, tab)
 		}
 
 		// 整合类型信息和数据
