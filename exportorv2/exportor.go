@@ -105,14 +105,8 @@ func Run(g *printer.Globals) bool {
 			}
 		}
 
-		var mergeResult bool
-		if file.IsVertical() {
-			mergeResult = mergeV(dataModel, tab, file)
-		} else {
-			mergeResult = mergeSTD(dataModel, tab, file)
-		}
-
-		if !mergeResult {
+		// 合并所有值到node节点
+		if !mergeValues(dataModel, tab, file, file.IsVertical()) {
 			return false
 		}
 

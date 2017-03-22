@@ -88,7 +88,12 @@ func (self *DataSheet) exportRowMajor(file *File, dataModel *model.DataModel, da
 		// 遍历每一列
 		for self.Column = 0; self.Column < dataHeader.RawFieldCount(); self.Column++ {
 
-			fieldDef := fieldDefGetter(self.Column, dataHeader, parentHeader)
+			fieldDef, ok := fieldDefGetter(self.Column, dataHeader, parentHeader)
+
+			if !ok {
+				log.Errorf("%s %s|%s(%s)", i18n.String(i18n.DataHeader_FieldNotDefinedInMainTableInMultiTableMode), self.file.FileName, self.Name, util.ConvR1C1toA1(self.Row+1, self.Column+1))
+				return false
+			}
 
 			// 数据大于列头时, 结束这个列
 			if fieldDef == nil {
@@ -123,22 +128,22 @@ func (self *DataSheet) exportRowMajor(file *File, dataModel *model.DataModel, da
 }
 
 // 多表合并时, 要从从表的字段名在主表的表头里做索引
-func fieldDefGetter(index int, dataHeader, parentHeader *DataHeader) *model.FieldDescriptor {
+func fieldDefGetter(index int, dataHeader, parentHeader *DataHeader) (*model.FieldDescriptor, bool) {
 
 	fieldDef := dataHeader.RawField(index)
 	if fieldDef == nil {
-		return nil
+		return nil, true
 	}
 
 	if parentHeader != nil {
 		ret, ok := parentHeader.HeaderByName[fieldDef.Name]
 		if !ok {
-			return nil
+			return nil, false
 		}
-		return ret
+		return ret, true
 	}
 
-	return fieldDef
+	return fieldDef, true
 
 }
 
