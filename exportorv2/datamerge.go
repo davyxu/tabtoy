@@ -22,7 +22,11 @@ func mergeValues(modelData *model.DataModel, tab *model.Table, checker model.Glo
 					goto ErrorStop
 				}
 
-				continue
+				// 普通,非结构体字段, 空的情况是跳过的,  重复的结构体字段默认填充(多单元格处理)
+				if !fv.FieldDef.IsRepeated {
+					continue
+				}
+
 			}
 
 			if vertical {
