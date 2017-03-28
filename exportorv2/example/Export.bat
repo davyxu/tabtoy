@@ -19,3 +19,4 @@ Info.xlsx
 : 表索引
 copy .\Config.go .\table\table_gen.go
 
+: ..\..\..\..\..\..\bin\tabtoy.exe --mode=exportorv2 --json_out=.\Config.json --combinename=Config Globals.xlsx Sample.xlsx Vertical.xlsx Info.xlsx

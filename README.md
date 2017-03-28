@@ -109,7 +109,7 @@
 		
 ```bat
 
-tabtoy --mode=exportorv2 --json_out=.\config.json Table.xlsx
+tabtoy --mode=exportorv2 --json_out=config.json Table.xlsx
 
 ```
 * 注意: 不要将这个命令行指令对例子表格进行导出, 例子表格包含类型信息, 需要多个表格组合导出
