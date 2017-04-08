@@ -54,6 +54,7 @@ func mergeValues(modelData *model.DataModel, tab *model.Table, checker model.Glo
 				}
 
 			} else {
+
 				if !coloumnProcessor(checker, record, fv.FieldDef, fv.RawValue) {
 					goto ErrorStop
 				}

@@ -35,10 +35,12 @@ func (self *LineData) Less(i, j int) bool {
 	a := self.Values[i]
 	b := self.Values[j]
 
-	return a.FieldDef.Order < b.FieldDef.Order
+	// repeated字段分多个单元格导出时, 由于进行数据排序, 所以需要增加对列排序因子保证最终数据正确性
+	return a.FieldDef.Order+int32(a.C) < b.FieldDef.Order+int32(b.C)
 }
 
 func (self *LineData) Add(fv *FieldValue) {
+
 	self.Values = append(self.Values, fv)
 }
 
