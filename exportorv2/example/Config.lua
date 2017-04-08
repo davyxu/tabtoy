@@ -45,4 +45,13 @@ for _, rec in pairs(tab.Exp) do
 	tab.ExpByLevel[rec.Level] = rec
 end
 
+tab.Enum = {
+	ActorType = {
+		["Leader"] = 0,
+		["Monkey"] = 1,
+		["Pig"] = 2,
+		["Hammer"] = 3,
+	},
+}
+
 return tab

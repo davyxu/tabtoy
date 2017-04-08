@@ -58,6 +58,11 @@ func (self *luaPrinter) Run(g *Globals) *BinaryFile {
 		return bf
 	}
 
+	// 生成枚举
+	if !genLuaEnumCode(bf, g.FileDescriptor) {
+		return bf
+	}
+
 	bf.Printf("\nreturn tab")
 
 	return bf
@@ -171,18 +176,46 @@ func printTableLua(bf *BinaryFile, tab *model.Table) bool {
 }
 
 // 收集需要构建的索引的类型
+func genLuaEnumCode(bf *BinaryFile, globalFile *model.FileDescriptor) bool {
+
+	bf.Printf("\ntab.Enum = {\n")
+
+	// 遍历字段
+	for _, d := range globalFile.Descriptors {
+
+		if d.Kind != model.DescriptorKind_Enum {
+			continue
+		}
+
+		bf.Printf("	%s = {\n", d.Name)
+
+		for _, fd := range d.Fields {
+			bf.Printf("		[\"%s\"] = %d,\n", fd.Name, fd.EnumValue)
+		}
+
+		bf.Printf("	},\n")
+
+	}
+
+	bf.Printf("}\n")
+
+	return true
+
+}
+
+// 收集需要构建的索引的类型
 func genLuaIndexCode(bf *BinaryFile, combineStruct *model.Descriptor) bool {
 
 	// 遍历字段
 	for _, fd := range combineStruct.Fields {
 
+		// 这个字段被限制输出
+		if fd.Complex != nil && !fd.Complex.File.MatchTag(".lua") {
+			continue
+		}
+
 		// 对CombineStruct的XXDefine对应的字段
 		if combineStruct.Usage == model.DescriptorUsage_CombineStruct {
-
-			// 这个字段被限制输出
-			if fd.Complex != nil && !fd.Complex.File.MatchTag(".lua") {
-				continue
-			}
 
 			// 这个结构有索引才创建
 			if fd.Complex != nil && len(fd.Complex.Indexes) > 0 {

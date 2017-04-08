@@ -192,3 +192,4 @@ FakesAssemblies/
 GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
+exportorv2/example/lua/luadll.dll
