@@ -36,9 +36,9 @@ type typeFileModel struct {
 	Enums   []*typeStructModel
 }
 
-func (self *typePrinter) Run(g *Globals) *BinaryFile {
+func (self *typePrinter) Run(g *Globals) *Stream {
 
-	bf := NewBinaryFile()
+	bf := NewStream()
 
 	var fm typeFileModel
 	fm.Tool = "github.com/davyxu/tabtoy"

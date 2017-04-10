@@ -67,13 +67,19 @@ namespace {{.Namespace}}{{$globalIndex:=.Indexes}}{{$verticalFields:=.VerticalFi
 		static tabtoy.DeserializeHandler<{{.Name}}> {{.Name}}DeserializeHandler = new tabtoy.DeserializeHandler<{{.Name}}>(Deserialize);
 		public static void Deserialize( {{.Name}} ins, tabtoy.DataReader reader )
 		{
-			{{range .Fields}}
-			{{.Comment}}
-			if ( reader.MatchTag({{.Tag}}) )
-			{
-				{{.ReadCode}}
-			}
-			{{end}}
+ 			int tag = -1;
+            while ( -1 != (tag = reader.ReadTag()))
+            {
+                switch (tag)
+                { {{range .Fields}}
+                	case {{.Tag}}:
+                	{
+						{{.ReadCode}}
+                	}
+                	break; {{end}}
+                }
+             }
+
 			{{range $a, $row :=.IndexedFields}}
 			// Build {{$row.FieldDescriptor.Name}} Index
 			for( int i = 0;i< ins.{{$row.FieldDescriptor.Name}}.Count;i++)
@@ -206,12 +212,7 @@ func (self csharpField) ReadCode() string {
 	}
 
 	if self.IsRepeated {
-
-		if descHandlerCode != "" {
-			descHandlerCode = ", " + descHandlerCode
-		}
-
-		return fmt.Sprintf("reader.ReadList_%s( ins.%s %s);", baseType, self.Name, descHandlerCode)
+		return fmt.Sprintf("ins.%s.Add( reader.Read%s(%s) );", self.Name, baseType, descHandlerCode)
 	} else {
 		return fmt.Sprintf("ins.%s = reader.Read%s(%s);", self.Name, baseType, descHandlerCode)
 	}
@@ -339,7 +340,7 @@ type csharpFileModel struct {
 type csharpPrinter struct {
 }
 
-func (self *csharpPrinter) Run(g *Globals) *BinaryFile {
+func (self *csharpPrinter) Run(g *Globals) *Stream {
 
 	tpl, err := template.New("csharp").Parse(csharpTemplate)
 	if err != nil {
@@ -421,7 +422,7 @@ func (self *csharpPrinter) Run(g *Globals) *BinaryFile {
 
 	}
 
-	bf := NewBinaryFile()
+	bf := NewStream()
 
 	err = tpl.Execute(bf.Buffer(), &m)
 	if err != nil {

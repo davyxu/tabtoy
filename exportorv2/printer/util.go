@@ -11,30 +11,27 @@ import (
 	"github.com/davyxu/tabtoy/exportorv2/model"
 )
 
-type BinaryFile struct {
-	buf       bytes.Buffer
-	stopAtPos int
+type Stream struct {
+	buf bytes.Buffer
 }
 
-func (self *BinaryFile) Len() int {
+func (self *Stream) Len() int {
 	return self.buf.Len()
 }
 
-func (self *BinaryFile) Buffer() *bytes.Buffer {
+func (self *Stream) Buffer() *bytes.Buffer {
 	return &self.buf
 }
 
-func (self *BinaryFile) WriteBytes(b []byte) {
+func (self *Stream) WriteBytes(b []byte) {
 	self.buf.Write(b)
-	self.checkStopPos()
 }
 
-func (self *BinaryFile) Printf(format string, args ...interface{}) {
+func (self *Stream) Printf(format string, args ...interface{}) {
 	self.buf.WriteString(fmt.Sprintf(format, args...))
-	self.checkStopPos()
 }
 
-func (self *BinaryFile) Write(outfile string) bool {
+func (self *Stream) Write(outfile string) bool {
 	err := ioutil.WriteFile(outfile, self.buf.Bytes(), 0666)
 	if err != nil {
 		log.Errorf("%s, %v", i18n.String(i18n.Printer_OpenWriteOutputFileFailed), err.Error())
@@ -44,35 +41,20 @@ func (self *BinaryFile) Write(outfile string) bool {
 	return true
 }
 
-func (self *BinaryFile) checkStopPos() {
-	if self.stopAtPos != -1 && self.Len() == self.stopAtPos {
-		self.stopAtPos = self.stopAtPos
-	}
-}
-
-func (self *BinaryFile) StopAtPos(pos int) {
-	self.stopAtPos = pos
-}
-
-func (self *BinaryFile) WriteInt32(v int32) {
+func (self *Stream) WriteInt32(v int32) {
 
 	binary.Write(&self.buf, binary.LittleEndian, v)
-	self.checkStopPos()
 }
 
-func (self *BinaryFile) WriteString(v string) {
+func (self *Stream) WriteString(v string) {
 	rawStr := []byte(v)
 
 	binary.Write(&self.buf, binary.LittleEndian, int32(len(rawStr)))
 
-	self.checkStopPos()
-
 	binary.Write(&self.buf, binary.LittleEndian, rawStr)
-
-	self.checkStopPos()
 }
 
-func (self *BinaryFile) WriteNodeValue(ft model.FieldType, value *model.Node) {
+func (self *Stream) WriteNodeValue(ft model.FieldType, value *model.Node) {
 
 	switch ft {
 	case model.FieldType_Int32:
@@ -109,12 +91,8 @@ func (self *BinaryFile) WriteNodeValue(ft model.FieldType, value *model.Node) {
 		panic("unsupport type" + model.FieldTypeToString(ft))
 	}
 
-	self.checkStopPos()
-
 }
 
-func NewBinaryFile() *BinaryFile {
-	return &BinaryFile{
-		stopAtPos: -1,
-	}
+func NewStream() *Stream {
+	return &Stream{}
 }

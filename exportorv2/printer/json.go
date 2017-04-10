@@ -23,9 +23,9 @@ func valueWrapperJson(t model.FieldType, node *model.Node) string {
 type jsonPrinter struct {
 }
 
-func (self *jsonPrinter) Run(g *Globals) *BinaryFile {
+func (self *jsonPrinter) Run(g *Globals) *Stream {
 
-	bf := NewBinaryFile()
+	bf := NewStream()
 	bf.Printf("{\n")
 
 	bf.Printf("	\"Tool\": \"github.com/davyxu/tabtoy\",\n")
@@ -53,7 +53,7 @@ func (self *jsonPrinter) Run(g *Globals) *BinaryFile {
 	return bf
 }
 
-func printTableJson(bf *BinaryFile, tab *model.Table) bool {
+func printTableJson(bf *Stream, tab *model.Table) bool {
 
 	bf.Printf("	\"%s\":[\n", tab.LocalFD.Name)
 

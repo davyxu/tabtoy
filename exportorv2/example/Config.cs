@@ -102,25 +102,29 @@ namespace table
 		static tabtoy.DeserializeHandler<Config> ConfigDeserializeHandler = new tabtoy.DeserializeHandler<Config>(Deserialize);
 		public static void Deserialize( Config ins, tabtoy.DataReader reader )
 		{
-			
-			// Sample
-			if ( reader.MatchTag(0xa0000) )
-			{
-				reader.ReadList_Struct<SampleDefine>( ins.Sample , SampleDefineDeserializeHandler);
-			}
-			
-			// Vertical
-			if ( reader.MatchTag(0xa0001) )
-			{
-				reader.ReadList_Struct<VerticalDefine>( ins.Vertical , VerticalDefineDeserializeHandler);
-			}
-			
-			// Exp
-			if ( reader.MatchTag(0xa0002) )
-			{
-				reader.ReadList_Struct<ExpDefine>( ins.Exp , ExpDefineDeserializeHandler);
-			}
-			
+ 			int tag = -1;
+            while ( -1 != (tag = reader.ReadTag()))
+            {
+                switch (tag)
+                { 
+                	case 0xa0000:
+                	{
+						ins.Sample.Add( reader.ReadStruct<SampleDefine>(SampleDefineDeserializeHandler) );
+                	}
+                	break; 
+                	case 0xa0001:
+                	{
+						ins.Vertical.Add( reader.ReadStruct<VerticalDefine>(VerticalDefineDeserializeHandler) );
+                	}
+                	break; 
+                	case 0xa0002:
+                	{
+						ins.Exp.Add( reader.ReadStruct<ExpDefine>(ExpDefineDeserializeHandler) );
+                	}
+                	break; 
+                }
+             }
+
 			
 			// Build Sample Index
 			for( int i = 0;i< ins.Sample.Count;i++)
@@ -146,199 +150,214 @@ namespace table
 		static tabtoy.DeserializeHandler<Vec2> Vec2DeserializeHandler = new tabtoy.DeserializeHandler<Vec2>(Deserialize);
 		public static void Deserialize( Vec2 ins, tabtoy.DataReader reader )
 		{
-			
-			
-			if ( reader.MatchTag(0x10000) )
-			{
-				ins.X = reader.ReadInt32();
-			}
-			
-			
-			if ( reader.MatchTag(0x10001) )
-			{
-				ins.Y = reader.ReadInt32();
-			}
-			
+ 			int tag = -1;
+            while ( -1 != (tag = reader.ReadTag()))
+            {
+                switch (tag)
+                { 
+                	case 0x10000:
+                	{
+						ins.X = reader.ReadInt32();
+                	}
+                	break; 
+                	case 0x10001:
+                	{
+						ins.Y = reader.ReadInt32();
+                	}
+                	break; 
+                }
+             }
+
 			
 		}
 		static tabtoy.DeserializeHandler<Prop> PropDeserializeHandler = new tabtoy.DeserializeHandler<Prop>(Deserialize);
 		public static void Deserialize( Prop ins, tabtoy.DataReader reader )
 		{
-			
-			
-			if ( reader.MatchTag(0x10000) )
-			{
-				ins.HP = reader.ReadInt32();
-			}
-			
-			
-			if ( reader.MatchTag(0x50001) )
-			{
-				ins.AttackRate = reader.ReadFloat();
-			}
-			
-			
-			if ( reader.MatchTag(0x80002) )
-			{
-				ins.ExType = reader.ReadEnum<ActorType>();
-			}
-			
+ 			int tag = -1;
+            while ( -1 != (tag = reader.ReadTag()))
+            {
+                switch (tag)
+                { 
+                	case 0x10000:
+                	{
+						ins.HP = reader.ReadInt32();
+                	}
+                	break; 
+                	case 0x50001:
+                	{
+						ins.AttackRate = reader.ReadFloat();
+                	}
+                	break; 
+                	case 0x80002:
+                	{
+						ins.ExType = reader.ReadEnum<ActorType>();
+                	}
+                	break; 
+                }
+             }
+
 			
 		}
 		static tabtoy.DeserializeHandler<SampleDefine> SampleDefineDeserializeHandler = new tabtoy.DeserializeHandler<SampleDefine>(Deserialize);
 		public static void Deserialize( SampleDefine ins, tabtoy.DataReader reader )
 		{
-			
-			// 唯一ID
-			if ( reader.MatchTag(0x20000) )
-			{
-				ins.ID = reader.ReadInt64();
-			}
-			
-			// 名称
-			if ( reader.MatchTag(0x60001) )
-			{
-				ins.Name = reader.ReadString();
-			}
-			
-			// 图标ID
-			if ( reader.MatchTag(0x10002) )
-			{
-				ins.IconID = reader.ReadInt32();
-			}
-			
-			// 攻击率
-			if ( reader.MatchTag(0x50003) )
-			{
-				ins.NumericalRate = reader.ReadFloat();
-			}
-			
-			// 物品id
-			if ( reader.MatchTag(0x10004) )
-			{
-				ins.ItemID = reader.ReadInt32();
-			}
-			
-			// BuffID
-			if ( reader.MatchTag(0x10005) )
-			{
-				reader.ReadList_Int32( ins.BuffID );
-			}
-			
-			
-			if ( reader.MatchTag(0x90006) )
-			{
-				ins.Pos = reader.ReadStruct<Vec2>(Vec2DeserializeHandler);
-			}
-			
-			// 类型
-			if ( reader.MatchTag(0x80007) )
-			{
-				ins.Type = reader.ReadEnum<ActorType>();
-			}
-			
-			// 技能ID列表
-			if ( reader.MatchTag(0x10008) )
-			{
-				reader.ReadList_Int32( ins.SkillID );
-			}
-			
-			// 单结构解析
-			if ( reader.MatchTag(0x90009) )
-			{
-				ins.SingleStruct = reader.ReadStruct<Prop>(PropDeserializeHandler);
-			}
-			
-			// 字符串结构
-			if ( reader.MatchTag(0x9000a) )
-			{
-				reader.ReadList_Struct<Prop>( ins.StrStruct , PropDeserializeHandler);
-			}
-			
+ 			int tag = -1;
+            while ( -1 != (tag = reader.ReadTag()))
+            {
+                switch (tag)
+                { 
+                	case 0x20000:
+                	{
+						ins.ID = reader.ReadInt64();
+                	}
+                	break; 
+                	case 0x60001:
+                	{
+						ins.Name = reader.ReadString();
+                	}
+                	break; 
+                	case 0x10002:
+                	{
+						ins.IconID = reader.ReadInt32();
+                	}
+                	break; 
+                	case 0x50003:
+                	{
+						ins.NumericalRate = reader.ReadFloat();
+                	}
+                	break; 
+                	case 0x10004:
+                	{
+						ins.ItemID = reader.ReadInt32();
+                	}
+                	break; 
+                	case 0x10005:
+                	{
+						ins.BuffID.Add( reader.ReadInt32() );
+                	}
+                	break; 
+                	case 0x90006:
+                	{
+						ins.Pos = reader.ReadStruct<Vec2>(Vec2DeserializeHandler);
+                	}
+                	break; 
+                	case 0x80007:
+                	{
+						ins.Type = reader.ReadEnum<ActorType>();
+                	}
+                	break; 
+                	case 0x10008:
+                	{
+						ins.SkillID.Add( reader.ReadInt32() );
+                	}
+                	break; 
+                	case 0x90009:
+                	{
+						ins.SingleStruct = reader.ReadStruct<Prop>(PropDeserializeHandler);
+                	}
+                	break; 
+                	case 0x9000a:
+                	{
+						ins.StrStruct.Add( reader.ReadStruct<Prop>(PropDeserializeHandler) );
+                	}
+                	break; 
+                }
+             }
+
 			
 		}
 		static tabtoy.DeserializeHandler<PeerData> PeerDataDeserializeHandler = new tabtoy.DeserializeHandler<PeerData>(Deserialize);
 		public static void Deserialize( PeerData ins, tabtoy.DataReader reader )
 		{
-			
-			
-			if ( reader.MatchTag(0x60000) )
-			{
-				ins.Name = reader.ReadString();
-			}
-			
-			
-			if ( reader.MatchTag(0x60001) )
-			{
-				ins.Type = reader.ReadString();
-			}
-			
+ 			int tag = -1;
+            while ( -1 != (tag = reader.ReadTag()))
+            {
+                switch (tag)
+                { 
+                	case 0x60000:
+                	{
+						ins.Name = reader.ReadString();
+                	}
+                	break; 
+                	case 0x60001:
+                	{
+						ins.Type = reader.ReadString();
+                	}
+                	break; 
+                }
+             }
+
 			
 		}
 		static tabtoy.DeserializeHandler<VerticalDefine> VerticalDefineDeserializeHandler = new tabtoy.DeserializeHandler<VerticalDefine>(Deserialize);
 		public static void Deserialize( VerticalDefine ins, tabtoy.DataReader reader )
 		{
-			
-			// 服务器IP
-			if ( reader.MatchTag(0x60000) )
-			{
-				ins.ServerIP = reader.ReadString();
-			}
-			
-			// 调试模式
-			if ( reader.MatchTag(0x70001) )
-			{
-				ins.DebugMode = reader.ReadBool();
-			}
-			
-			// 客户端人数限制
-			if ( reader.MatchTag(0x10002) )
-			{
-				ins.ClientLimit = reader.ReadInt32();
-			}
-			
-			// 端
-			if ( reader.MatchTag(0x90003) )
-			{
-				ins.Peer = reader.ReadStruct<PeerData>(PeerDataDeserializeHandler);
-			}
-			
-			
-			if ( reader.MatchTag(0x50004) )
-			{
-				ins.Float = reader.ReadFloat();
-			}
-			
+ 			int tag = -1;
+            while ( -1 != (tag = reader.ReadTag()))
+            {
+                switch (tag)
+                { 
+                	case 0x60000:
+                	{
+						ins.ServerIP = reader.ReadString();
+                	}
+                	break; 
+                	case 0x70001:
+                	{
+						ins.DebugMode = reader.ReadBool();
+                	}
+                	break; 
+                	case 0x10002:
+                	{
+						ins.ClientLimit = reader.ReadInt32();
+                	}
+                	break; 
+                	case 0x90003:
+                	{
+						ins.Peer = reader.ReadStruct<PeerData>(PeerDataDeserializeHandler);
+                	}
+                	break; 
+                	case 0x50004:
+                	{
+						ins.Float = reader.ReadFloat();
+                	}
+                	break; 
+                }
+             }
+
 			
 		}
 		static tabtoy.DeserializeHandler<ExpDefine> ExpDefineDeserializeHandler = new tabtoy.DeserializeHandler<ExpDefine>(Deserialize);
 		public static void Deserialize( ExpDefine ins, tabtoy.DataReader reader )
 		{
-			
-			// 唯一ID
-			if ( reader.MatchTag(0x10000) )
-			{
-				ins.Level = reader.ReadInt32();
-			}
-			
-			// 经验值
-			if ( reader.MatchTag(0x10001) )
-			{
-				ins.Exp = reader.ReadInt32();
-			}
-			
-			// 布尔检查
-			if ( reader.MatchTag(0x70002) )
-			{
-				ins.BoolChecker = reader.ReadBool();
-			}
-			
-			// 类型
-			if ( reader.MatchTag(0x80003) )
-			{
-				ins.Type = reader.ReadEnum<ActorType>();
-			}
-			
+ 			int tag = -1;
+            while ( -1 != (tag = reader.ReadTag()))
+            {
+                switch (tag)
+                { 
+                	case 0x10000:
+                	{
+						ins.Level = reader.ReadInt32();
+                	}
+                	break; 
+                	case 0x10001:
+                	{
+						ins.Exp = reader.ReadInt32();
+                	}
+                	break; 
+                	case 0x70002:
+                	{
+						ins.BoolChecker = reader.ReadBool();
+                	}
+                	break; 
+                	case 0x80003:
+                	{
+						ins.Type = reader.ReadEnum<ActorType>();
+                	}
+                	break; 
+                }
+             }
+
 			
 		}
 		#endregion

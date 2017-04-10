@@ -5,16 +5,16 @@ import (
 	"github.com/davyxu/tabtoy/exportorv2/model"
 )
 
-const combineFileVersion = 1
+const combineFileVersion = 2
 
 type binaryPrinter struct {
 }
 
-func (self *binaryPrinter) Run(g *Globals) *BinaryFile {
+func (self *binaryPrinter) Run(g *Globals) *Stream {
 
-	bf := NewBinaryFile()
-	bf.WriteString("TABTOY")
-	bf.WriteInt32(combineFileVersion)
+	fileStresam := NewStream()
+	fileStresam.WriteString("TABTOY")
+	fileStresam.WriteInt32(combineFileVersion)
 
 	for index, tab := range g.Tables {
 
@@ -23,34 +23,28 @@ func (self *binaryPrinter) Run(g *Globals) *BinaryFile {
 			continue
 		}
 
-		bf.WriteInt32(model.MakeTag(int32(model.FieldType_Table), int32(index)))
-
-		if !writeTableBinary(bf, tab) {
+		if !writeTableBinary(fileStresam, tab, int32(index)) {
 			return nil
 		}
+
 	}
 
-	return bf
+	return fileStresam
 }
 
-func writeTableBinary(self *BinaryFile, tab *model.Table) bool {
-
-	// 表所在的字段
-
-	self.WriteInt32(int32(len(tab.Recs)))
+func writeTableBinary(tabStream *Stream, tab *model.Table, index int32) bool {
 
 	// 遍历每一行
 	for _, r := range tab.Recs {
 
+		rowStream := NewStream()
+
 		// 遍历每一列
 		for _, node := range r.Nodes {
 
-			// 写入字段索引
-			self.WriteInt32(node.Tag())
-
-			// 写入数量
+			// 子节点数量
 			if node.IsRepeated {
-				self.WriteInt32(int32(len(node.Child)))
+				rowStream.WriteInt32(int32(len(node.Child)))
 			}
 
 			// 普通值
@@ -58,7 +52,9 @@ func writeTableBinary(self *BinaryFile, tab *model.Table) bool {
 
 				for _, valueNode := range node.Child {
 
-					self.WriteNodeValue(node.Type, valueNode)
+					// 写入字段索引
+					rowStream.WriteInt32(node.Tag())
+					rowStream.WriteNodeValue(node.Type, valueNode)
 				}
 
 			} else {
@@ -66,18 +62,25 @@ func writeTableBinary(self *BinaryFile, tab *model.Table) bool {
 				// 遍历repeated的结构体
 				for _, structNode := range node.Child {
 
+					structStream := NewStream()
+
 					// 遍历一个结构体的字段
 					for _, fieldNode := range structNode.Child {
 
 						// 写入字段索引
-						self.WriteInt32(fieldNode.Tag())
+						structStream.WriteInt32(fieldNode.Tag())
 
 						// 值节点总是在第一个
 						valueNode := fieldNode.Child[0]
 
-						self.WriteNodeValue(fieldNode.Type, valueNode)
+						structStream.WriteNodeValue(fieldNode.Type, valueNode)
 
 					}
+
+					// 真正写到文件中
+					rowStream.WriteInt32(node.Tag())
+					rowStream.WriteInt32(int32(structStream.Len()))
+					rowStream.WriteBytes(structStream.Buffer().Bytes())
 
 				}
 
@@ -85,6 +88,9 @@ func writeTableBinary(self *BinaryFile, tab *model.Table) bool {
 
 		}
 
+		tabStream.WriteInt32(model.MakeTag(int32(model.FieldType_Table), index))
+		tabStream.WriteInt32(int32(rowStream.Len()))
+		tabStream.WriteBytes(rowStream.Buffer().Bytes())
 	}
 
 	return true

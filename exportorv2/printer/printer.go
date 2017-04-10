@@ -20,7 +20,7 @@ func (self *PrinterContext) Start(g *Globals) bool {
 }
 
 type Printer interface {
-	Run(g *Globals) *BinaryFile
+	Run(g *Globals) *Stream
 }
 
 var printerByExt = make(map[string]Printer)

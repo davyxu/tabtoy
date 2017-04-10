@@ -99,7 +99,7 @@ type protoFileModel struct {
 type protoPrinter struct {
 }
 
-func (self *protoPrinter) Run(g *Globals) *BinaryFile {
+func (self *protoPrinter) Run(g *Globals) *Stream {
 
 	tpl, err := template.New("proto").Parse(protoTemplate)
 	if err != nil {
@@ -162,7 +162,7 @@ func (self *protoPrinter) Run(g *Globals) *BinaryFile {
 
 	}
 
-	bf := NewBinaryFile()
+	bf := NewStream()
 
 	err = tpl.Execute(bf.Buffer(), &m)
 	if err != nil {

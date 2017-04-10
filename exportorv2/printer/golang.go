@@ -406,7 +406,7 @@ func collectAllStructInfo(g *Globals, fm *goFileModel) {
 	}
 }
 
-func (self *goPrinter) Run(g *Globals) *BinaryFile {
+func (self *goPrinter) Run(g *Globals) *Stream {
 
 	tpl, err := template.New("golang").Parse(goTemplate)
 	if err != nil {
@@ -421,7 +421,7 @@ func (self *goPrinter) Run(g *Globals) *BinaryFile {
 	collectIndexInfo(g, &fm)
 	collectAllStructInfo(g, &fm)
 
-	bf := NewBinaryFile()
+	bf := NewStream()
 
 	err = tpl.Execute(bf.Buffer(), &fm)
 	if err != nil {

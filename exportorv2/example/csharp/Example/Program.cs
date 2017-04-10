@@ -12,9 +12,9 @@ namespace csharptest
             {
                 stream.Position = 0;
 
-                var reader = new tabtoy.DataReader(stream);
+                var reader = new tabtoy.DataReader(stream, stream.Length );
                 
-                if ( !reader.ReadHeader( ) )
+                if ( !reader.ReadHeader(  ) )
                 {
                     Console.WriteLine("combine file crack!");
                     return;

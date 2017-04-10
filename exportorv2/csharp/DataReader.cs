@@ -24,227 +24,130 @@ namespace tabtoy
     public class DataReader
     {
         BinaryReader _reader;
+        long _boundPos  = -1;
 
-        public DataReader( Stream straem )
+        public DataReader(Stream stream, long boundpos)
         {
-            _reader = new BinaryReader(straem );
+            _reader = new BinaryReader(stream );
+            _boundPos = boundpos;
         }
 
-       
-        const int CombineFileVersion = 1;
-
-        public bool ReadHeader()
+        public DataReader(DataReader reader, long boundpos )
         {
-            var tag = RawReadString();
+            _reader = reader._reader;
+            _boundPos = boundpos;
+        }
+
+        void ConsumeData(int size)
+        {          
+            if ( !IsDataEnough( size ) )
+            {
+                throw new Exception("Out of struct bound");
+            }            
+        }
+
+        bool IsDataEnough(int size)
+        {            
+            return _reader.BaseStream.Position + size <= _boundPos;
+        }
+
+        const int CombineFileVersion = 2;
+
+        public bool ReadHeader( )
+        {            
+            var tag = ReadString();
             if (tag != "TABTOY")
             {
                 return false;
             }
 
-            var ver = _reader.ReadInt32();
+            var ver = ReadInt32();
             if (ver != CombineFileVersion)
             {
                 return false;
             }
-
+           
             return true;
         }
 
         static readonly UTF8Encoding encoding = new UTF8Encoding();
-        public string RawReadString( )
-        {
-            var len = _reader.ReadInt32();
-            return encoding.GetString(_reader.ReadBytes(len));
-        }
 
-        int pedingtag;
-        public bool MatchTag( int expect )
+        public int ReadTag()
         {
-            if (pedingtag == 0 )
+            if ( IsDataEnough(sizeof(Int32) ) )
             {
-                // 已经读完
-                if ( _reader.BaseStream.Position == _reader.BaseStream.Length )
-                {
-                    return false;
-                }
-
-                pedingtag = _reader.ReadInt32();                
+                return ReadInt32( );
             }
 
-            if ( expect == pedingtag )
-            {
-                pedingtag = 0;
-                return true;
-            }
-
-            return false;
+            return -1;
         }
    
         public int ReadInt32( )
         {
+            ConsumeData(sizeof(Int32));
+
             return _reader.ReadInt32();
         }
 
         public long ReadInt64( )
         {
+            ConsumeData(sizeof(Int64));
+
             return _reader.ReadInt64();
         }
 
         public uint ReadUInt32( )
         {
+            ConsumeData(sizeof(UInt32));
+
             return _reader.ReadUInt32();
         }
 
         public ulong ReadUInt64( )
         {
+            ConsumeData(sizeof(UInt64));
+
             return _reader.ReadUInt64();
         }
 
         public float ReadFloat( )
         {
+            ConsumeData(sizeof(float));
+
             return _reader.ReadSingle();
         }
 
         public bool ReadBool( )
         {
+            ConsumeData(sizeof(bool));
+
             return _reader.ReadBoolean();
         }
 
-        public string ReadString( )
+        public string ReadString()
         {
-            return RawReadString();
+            var len = ReadInt32();
+
+            ConsumeData(sizeof(Byte) * len);
+
+            return encoding.GetString(_reader.ReadBytes(len));
         }
 
         public T ReadEnum<T>( )
         {
-            return (T)Enum.ToObject(typeof(T), _reader.ReadInt32());                
+            return (T)Enum.ToObject(typeof(T), ReadInt32());                
         }
 
         public T ReadStruct<T>(DeserializeHandler<T> handler) where T : class
-        {              
+        {
+            var bound = _reader.ReadInt32();
+
             var element = Activator.CreateInstance<T>();
 
-            handler(element, this);            
+            handler(element, new DataReader(this, _reader.BaseStream.Position + bound));
 
             return element;
         }
-
-
-        public void ReadList_Int32( List<int> list)
-        {
-            var c = _reader.ReadInt32();
-
-            for (int i = 0; i < c; i++)
-            {
-                var element = _reader.ReadInt32();
-
-                list.Add(element);
-            }
-        }
-
-        public void ReadList_Int64(List<long> list)
-        {
-            var c = _reader.ReadInt32();
-
-            for (int i = 0; i < c; i++)
-            {
-                var element = _reader.ReadInt64();
-
-                list.Add(element);
-            }
-        }
-
-        public void ReadList_UInt32( List<uint> list)
-        {
-            var c = _reader.ReadInt32();
-
-            for (int i = 0; i < c; i++)
-            {
-                var element = _reader.ReadUInt32();
-
-                list.Add(element);
-            }
-        }
-
-        public void ReadList_UInt64( List<ulong> list)
-        {
-            var c = _reader.ReadInt32();
-
-            for (int i = 0; i < c; i++)
-            {
-                var element = _reader.ReadUInt64();
-
-                list.Add(element);
-            }
-        }
-
-        public void ReadList_Float(List<float> list)
-        {
-            var c = _reader.ReadInt32();
-
-            for (int i = 0; i < c; i++)
-            {
-                var element = _reader.ReadSingle();
-
-                list.Add(element);
-            }
-        }
-
-        public void ReadList_String(List<string> list)
-        {
-            var c = _reader.ReadInt32();
-
-            for (int i = 0; i < c; i++)
-            {
-                var element = RawReadString();
-
-                list.Add(element);
-            }
-        }
-
-
-        public void ReadList_Bool(List<bool> list)
-        {
-            var c = _reader.ReadInt32();
-
-            for (int i = 0; i < c; i++)
-            {
-                var element = _reader.ReadBoolean();
-
-                list.Add(element);
-            }
-        }
-
-        public void ReadList_Enum<T>(List<T> list)
-        {
-            var c = _reader.ReadInt32();            
-
-            for (int i = 0; i < c; i++)
-            {
-                var element = (T)Enum.ToObject( typeof(T), _reader.ReadInt32() );
-
-                list.Add(element);
-            }
-        }
-
-
-
-        public void ReadList_Struct<T>(List<T> list, DeserializeHandler<T> handler) where T : class
-        {
-            var c = _reader.ReadInt32();
-
-            for (int i = 0; i < c; i++)
-            {
-                var element = Activator.CreateInstance<T>();
-
-                handler(element, this);                
-
-                list.Add(element);
-            }
-        }
-
-
-
         
     }
 }
