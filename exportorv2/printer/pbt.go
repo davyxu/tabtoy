@@ -151,6 +151,6 @@ func printTablePBT(bf *BinaryFile, tab *model.Table) bool {
 
 func init() {
 
-	RegisterPrinter(".pbt", &pbtPrinter{})
+	RegisterPrinter("pbt", &pbtPrinter{})
 
 }
