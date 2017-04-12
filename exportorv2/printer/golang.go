@@ -76,13 +76,17 @@ func (self *{{$.Name}}Table) Load(filename string) error {
 		return err
 	}
 	
-	// 清除
+	// 清除前通知
 	for _, list := range self.clearFuncByName {
 		for _, v := range list {
 			v(self)
 		}
 	}
 
+	// 复位数据
+	self.{{$.Name}} = {{$.Name}}{}
+
+	// 读取
 	err = json.Unmarshal(data, &self.{{$.Name}})
 	if err != nil {
 		return err
