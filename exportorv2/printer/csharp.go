@@ -21,8 +21,8 @@ namespace {{.Namespace}}{{$globalIndex:=.Indexes}}{{$verticalFields:=.VerticalFi
 	public enum {{.Name}}
 	{
 	{{range .Fields}}	
-		{{.Alias}}
-		{{.FieldDescriptor.Name}} = {{.FieldDescriptor.EnumValue}}, {{.Comment}}
+		{{.Comment}}
+		{{.FieldDescriptor.Name}} = {{.FieldDescriptor.EnumValue}}, {{.Alias}}
 	{{end}}
 	}
 	{{end}}
@@ -170,7 +170,7 @@ func (self csharpField) Comment() string {
 	}
 
 	// zjwps 建议修改
-	return "/// <summary> \n		///" + strings.Replace(self.FieldDescriptor.Comment, "\n", "\n		///", -1) + "\n		/// </summary>"
+	return "/// <summary> \n		/// " + strings.Replace(self.FieldDescriptor.Comment, "\n", "\n		///", -1) + "\n		/// </summary>"
 }
 
 func (self csharpField) ReadCode() string {
