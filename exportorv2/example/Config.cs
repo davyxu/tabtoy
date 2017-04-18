@@ -10,17 +10,17 @@ namespace table
 	public enum ActorType
 	{
 		
-		// 唐僧
-		Leader = 0, 
 		
-		// 孙悟空
-		Monkey = 1, 
+		Leader = 0, // 唐僧
 		
-		// 猪八戒
-		Pig = 2, 
 		
-		// 沙僧
-		Hammer = 3, 
+		Monkey = 1, // 孙悟空
+		
+		
+		Pig = 2, // 猪八戒
+		
+		
+		Hammer = 3, // 沙僧
 	
 	}
 	
@@ -35,17 +35,17 @@ namespace table
 	
 		
 		/// <summary> 
-		///Sample
+		/// Sample
 		/// </summary>
 		public List<SampleDefine> Sample = new List<SampleDefine>(); 
 		
 		/// <summary> 
-		///Vertical
+		/// Vertical
 		/// </summary>
 		public List<VerticalDefine> Vertical = new List<VerticalDefine>(); 
 		
 		/// <summary> 
-		///Exp
+		/// Exp
 		/// </summary>
 		public List<ExpDefine> Exp = new List<ExpDefine>(); 
 	
@@ -332,6 +332,11 @@ namespace table
 						ins.Float = reader.ReadFloat();
                 	}
                 	break; 
+                	case 0x10005:
+                	{
+						ins.Token.Add( reader.ReadInt32() );
+                	}
+                	break; 
                 }
              }
 
@@ -417,32 +422,32 @@ namespace table
 	
 		
 		/// <summary> 
-		///唯一ID
+		/// 唯一ID
 		/// </summary>
 		public long ID = 0; 
 		
 		/// <summary> 
-		///名称
+		/// 名称
 		/// </summary>
 		public string Name = ""; 
 		
 		/// <summary> 
-		///图标ID
+		/// 图标ID
 		/// </summary>
 		public int IconID = 0; 
 		
 		/// <summary> 
-		///攻击率
+		/// 攻击率
 		/// </summary>
 		public float NumericalRate = 0f; 
 		
 		/// <summary> 
-		///物品id
+		/// 物品id
 		/// </summary>
 		public int ItemID = 100; 
 		
 		/// <summary> 
-		///BuffID
+		/// BuffID
 		/// </summary>
 		public List<int> BuffID = new List<int>(); 
 		
@@ -450,22 +455,22 @@ namespace table
 		public Vec2 Pos = new Vec2(); 
 		
 		/// <summary> 
-		///类型
+		/// 类型
 		/// </summary>
 		public ActorType Type = ActorType.Leader; 
 		
 		/// <summary> 
-		///技能ID列表
+		/// 技能ID列表
 		/// </summary>
 		public List<int> SkillID = new List<int>(); 
 		
 		/// <summary> 
-		///单结构解析
+		/// 单结构解析
 		/// </summary>
 		public Prop SingleStruct = new Prop(); 
 		
 		/// <summary> 
-		///字符串结构
+		/// 字符串结构
 		/// </summary>
 		public List<Prop> StrStruct = new List<Prop>(); 
 	
@@ -496,27 +501,30 @@ namespace table
 	
 		
 		/// <summary> 
-		///服务器IP
+		/// 服务器IP
 		/// </summary>
 		public string ServerIP = ""; 
 		
 		/// <summary> 
-		///调试模式
+		/// 调试模式
 		/// </summary>
 		public bool DebugMode = false; 
 		
 		/// <summary> 
-		///客户端人数限制
+		/// 客户端人数限制
 		/// </summary>
 		public int ClientLimit = 0; 
 		
 		/// <summary> 
-		///端
+		/// 端
 		/// </summary>
 		public PeerData Peer = new PeerData(); 
 		
 		
 		public float Float = 0.5f; 
+		
+		
+		public List<int> Token = new List<int>(); 
 	
 	
 
@@ -529,22 +537,22 @@ namespace table
 	
 		
 		/// <summary> 
-		///唯一ID
+		/// 唯一ID
 		/// </summary>
 		public int Level = 0; 
 		
 		/// <summary> 
-		///经验值
+		/// 经验值
 		/// </summary>
 		public int Exp = 0; 
 		
 		/// <summary> 
-		///布尔检查
+		/// 布尔检查
 		/// </summary>
 		public bool BoolChecker = false; 
 		
 		/// <summary> 
-		///类型
+		/// 类型
 		/// </summary>
 		public ActorType Type = ActorType.Leader; 
 	

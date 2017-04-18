@@ -296,6 +296,17 @@
      },
      "Comment": "",
      "Value": 0
+    },
+    {
+     "Name": "Token",
+     "Type": "int32",
+     "Kind": "int32",
+     "IsRepeated": true,
+     "Meta": {
+      "ListSpliter": "|"
+     },
+     "Comment": "",
+     "Value": 0
     }
    ]
   },

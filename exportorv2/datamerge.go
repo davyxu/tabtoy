@@ -36,28 +36,8 @@ func mergeValues(modelData *model.DataModel, tab *model.Table, checker model.Glo
 
 			}
 
-			if vertical {
-
-				node := record.NewNodeByDefine(fv.FieldDef)
-
-				// 结构体要多添加一个节点, 处理repeated 结构体情况
-				if fv.FieldDef.Type == model.FieldType_Struct {
-
-					node.StructRoot = true
-					node = node.AddKey(fv.FieldDef)
-				}
-
-				//log.Debugf("raw: %v  r:%d c: %d", rawValue, self.Row, self.Column)
-
-				if !dataProcessor(checker, fv.FieldDef, fv.RawValue, node) {
-					goto ErrorStop
-				}
-
-			} else {
-
-				if !coloumnProcessor(checker, record, fv.FieldDef, fv.RawValue) {
-					goto ErrorStop
-				}
+			if !coloumnProcessor(checker, record, fv.FieldDef, fv.RawValue) {
+				goto ErrorStop
 			}
 
 		}

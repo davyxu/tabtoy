@@ -136,6 +136,9 @@ message VerticalDefine
 	
 	
 	float Float = 5; 
+	
+	
+	repeated int32 Token = 6; 
 
 }
 

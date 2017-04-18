@@ -9,7 +9,7 @@
 		{ "ID": 104, "Name": "邋遢大王", "NumericalRate": 1, "ItemID": 100, "BuffID":[ 0, 0 ], "Type": 2, "SkillID":[ 0 ] }
 	], 
 	"Vertical":[
-		{ "ServerIP": "192.168.0.1", "DebugMode": true, "ClientLimit": 3000, "Peer": { "Name": "Agent", "Type": "Acceptor" }, "Float": 0.5 }
+		{ "ServerIP": "192.168.0.1", "DebugMode": true, "ClientLimit": 3000, "Peer": { "Name": "Agent", "Type": "Acceptor" }, "Float": 0.5, "Token":[ 1, 2, 3 ] }
 	], 
 	"Exp":[
 		{ "Level": 1, "Exp": 10, "BoolChecker": false, "Type": 3 },

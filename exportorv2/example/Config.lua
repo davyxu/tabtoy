@@ -11,7 +11,7 @@ local tab = {
 	}, 
 
 	Vertical = {
-		{ ServerIP = "192.168.0.1", DebugMode = true, ClientLimit = 3000, Peer = { Name= "Agent", Type= "Acceptor" }, Float = 0.5 	}
+		{ ServerIP = "192.168.0.1", DebugMode = true, ClientLimit = 3000, Peer = { Name= "Agent", Type= "Acceptor" }, Float = 0.5, Token = { 1, 2, 3 } 	}
 	}, 
 
 	Exp = {

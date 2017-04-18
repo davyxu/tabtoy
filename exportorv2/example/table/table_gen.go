@@ -122,6 +122,8 @@ type VerticalDefine struct {
 	Peer *PeerData
 
 	Float float32
+
+	Token []int32
 }
 
 // Defined in table: Exp
