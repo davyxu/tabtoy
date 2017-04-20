@@ -33,6 +33,7 @@ func init() {
 		DataHeader_UseReservedTypeName:                        "[TT607] 数据头: 使用了保留的类型名 例如:表名+'Define'",
 		DataHeader_NotMatch:                                   "[TT608] 数据头: 多个表单使用的数据头描述不一致",
 		DataHeader_FieldNotDefinedInMainTableInMultiTableMode: "[TT609] 数据头: 多表格导出时, 子表中的字段在母表中没有定义",
+		DataHeader_NotMatchInMultiTableMode:                   "[TT610] 数据头: 多表格导出时, 子表中的字段与母表定义不一致",
 		TypeSheet_PragmaParseFailed:                           "[TT701] 类型表: 文件特性解析失败",
 		TypeSheet_TableNameIsEmpty:                            "[TT702] 类型表: 表名(TableName)为空",
 		TypeSheet_PackageIsEmpty:                              "[TT703] 类型表: 包名(Package)为空",

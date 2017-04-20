@@ -37,6 +37,7 @@ const (
 	DataHeader_UseReservedTypeName
 	DataHeader_NotMatch
 	DataHeader_FieldNotDefinedInMainTableInMultiTableMode
+	DataHeader_NotMatchInMultiTableMode
 	TypeSheet_PragmaParseFailed
 	TypeSheet_TableNameIsEmpty
 	TypeSheet_PackageIsEmpty

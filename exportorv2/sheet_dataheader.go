@@ -122,19 +122,39 @@ func (self *DataHeader) RawFieldCount() int {
 	return len(self.rawHeaderFields)
 }
 
-func (self *DataHeader) Equal(other *DataHeader) bool {
+func (self *DataHeader) Equal(other *DataHeader) (string, bool) {
 
 	if len(self.headerFields) != len(other.headerFields) {
-		return false
+		return "field len", false
 	}
 
 	for k, v := range self.headerFields {
 		if !v.Equal(other.headerFields[k]) {
-			return false
+			return v.Name, false
 		}
 	}
 
-	return true
+	return "", true
+}
+
+func (self *DataHeader) AsymmetricEqual(other *DataHeader) (string, bool) {
+
+	for _, otherFD := range other.headerFields {
+
+		if otherFD == nil {
+			continue
+		}
+
+		if thisFD, ok := self.HeaderByName[otherFD.Name]; ok {
+
+			if !thisFD.Equal(otherFD) {
+				return otherFD.Name, false
+			}
+		}
+
+	}
+
+	return "", true
 }
 
 func (self *DataHeader) addHeaderElement(he *DataHeaderElement, localFD *model.FileDescriptor, globalFD *model.FileDescriptor) int {

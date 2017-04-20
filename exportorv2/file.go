@@ -34,7 +34,7 @@ func (self *File) GlobalFileDesc() *model.FileDescriptor {
 
 }
 
-func (self *File) ExportLocalType() bool {
+func (self *File) ExportLocalType(mainFile *File) bool {
 
 	var sheetCount int
 	// 解析类型表
@@ -81,12 +81,21 @@ func (self *File) ExportLocalType() bool {
 				return false
 			}
 
+			if mainFile != nil {
+
+				if fieldName, ok := dataHeader.AsymmetricEqual(mainFile.Header); !ok {
+					log.Errorf("%s main: %s child: %s field: %s", i18n.String(i18n.DataHeader_NotMatchInMultiTableMode), mainFile.FileName, self.FileName, fieldName)
+					return false
+				}
+
+			}
+
 			if self.Header == nil {
 				self.Header = dataHeader
 				headerSheet = dSheet
 			} else {
-				if !self.Header.Equal(dataHeader) {
-					log.Errorf("%s %s!=%s", i18n.String(i18n.DataHeader_NotMatch), headerSheet.Name, dSheet.Name)
+				if fieldName, ok := self.Header.Equal(dataHeader); !ok {
+					log.Errorf("%s %s!=%s field: %s", i18n.String(i18n.DataHeader_NotMatch), headerSheet.Name, dSheet.Name, fieldName)
 					return false
 				}
 			}

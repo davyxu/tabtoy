@@ -33,6 +33,7 @@ func init() {
 		DataHeader_UseReservedTypeName:                        "[TT607] DataHeader: Use reserved type name, like TableName+'Define' ",
 		DataHeader_NotMatch:                                   "[TT608] DataHeader: Multi sheet data header not match",
 		DataHeader_FieldNotDefinedInMainTableInMultiTableMode: "[TT609] DataHeader: Field not defined in main table, in multi table mode",
+		DataHeader_NotMatchInMultiTableMode:                   "[TT610] DataHeader: Sheet data header not match in multi table mode",
 		TypeSheet_PragmaParseFailed:                           "[TT701] TypeSheet: File pragma parse failed",
 		TypeSheet_TableNameIsEmpty:                            "[TT702] TypeSheet: Table name is empty",
 		TypeSheet_PackageIsEmpty:                              "[TT703] TypeSheet: Package is empty",

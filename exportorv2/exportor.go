@@ -48,7 +48,7 @@ func Run(g *printer.Globals) bool {
 			file.GlobalFD = g.FileDescriptor
 
 			// 电子表格数据导出到Table对象
-			if !file.ExportLocalType() {
+			if !file.ExportLocalType(mainMergeFile) {
 				return false
 			}
 
