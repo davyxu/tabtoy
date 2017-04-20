@@ -1,8 +1,6 @@
 package printer
 
 import (
-	"sync"
-
 	"github.com/davyxu/tabtoy/exportorv2/i18n"
 	"github.com/davyxu/tabtoy/exportorv2/model"
 )
@@ -30,7 +28,6 @@ type Globals struct {
 	GlobalIndexes []TableIndex      // 类型信息.全局索引
 	CombineStruct *model.Descriptor // 类型信息.Combine结构体
 
-	guard sync.Mutex
 }
 
 func (self *Globals) PreExport() bool {
@@ -118,10 +115,6 @@ func (self *Globals) AddTypes(localFD *model.FileDescriptor) bool {
 func (self *Globals) AddContent(tab *model.Table) bool {
 
 	localFD := tab.LocalFD
-
-	self.guard.Lock()
-
-	defer self.guard.Unlock()
 
 	if _, ok := self.tableByName[localFD.Name]; ok {
 

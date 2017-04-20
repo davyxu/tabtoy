@@ -12,6 +12,7 @@ func init() {
 		StructParser_UnexpectedSpliter:                        "[TT203] StructParser: Unexpected k-v spliter",
 		StructParser_FieldNotFound:                            "[TT204] StructParser: Field not found",
 		StructParser_DuplicateFieldInCell:                     "[TT205] StructParser: Duplicate field",
+		Run_CacheFile:                                         "Run: Caching file",
 		Run_CollectTypeInfo:                                   "Run: Collect Type Info",
 		Run_ExportSheetData:                                   "Run: Export Sheet Data",
 		Globals_OutputCombineData:                             "Globals: Merge Combined Data",

@@ -7,7 +7,6 @@ import (
 	"github.com/davyxu/tabtoy/exportorv2/i18n"
 	"github.com/davyxu/tabtoy/exportorv2/model"
 	"github.com/davyxu/tabtoy/exportorv2/printer"
-	"github.com/davyxu/tabtoy/util"
 )
 
 func Run(g *printer.Globals) bool {
@@ -16,7 +15,9 @@ func Run(g *printer.Globals) bool {
 		return false
 	}
 
-	fileObjList := make([]interface{}, 0)
+	cachedFile := cacheFile(g)
+
+	fileObjList := make([]*File, 0)
 
 	log.Infof("==========%s==========", i18n.String(i18n.Run_CollectTypeInfo))
 
@@ -31,7 +32,7 @@ func Run(g *printer.Globals) bool {
 
 		for index, fileName := range mergeFileList {
 
-			file := NewFile(fileName)
+			file, _ := cachedFile[fileName]
 
 			if file == nil {
 				return false
@@ -61,6 +62,7 @@ func Run(g *printer.Globals) bool {
 
 				// 只写入主文件的文件列表
 				if file.Header != nil {
+
 					fileObjList = append(fileObjList, file)
 				}
 
@@ -77,10 +79,8 @@ func Run(g *printer.Globals) bool {
 	}
 
 	log.Infof("==========%s==========", i18n.String(i18n.Run_ExportSheetData))
-	// 导出表格
-	if !util.ParallelWorker(fileObjList, false, func(in interface{}) bool {
 
-		file := in.(*File)
+	for _, file := range fileObjList {
 
 		log.Infoln(filepath.Base(file.FileName))
 
@@ -106,15 +106,15 @@ func Run(g *printer.Globals) bool {
 		}
 
 		// 合并所有值到node节点
-		if !mergeValues(dataModel, tab, file, file.IsVertical()) {
+		if !mergeValues(dataModel, tab, file) {
 			return false
 		}
 
 		// 整合类型信息和数据
-		return g.AddContent(tab)
+		if !g.AddContent(tab) {
+			return false
+		}
 
-	}) {
-		return false
 	}
 
 	// 根据各种导出类型, 调用各导出器导出

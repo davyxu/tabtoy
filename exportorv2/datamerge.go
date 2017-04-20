@@ -5,7 +5,7 @@ import (
 	"github.com/davyxu/tabtoy/util"
 )
 
-func mergeValues(modelData *model.DataModel, tab *model.Table, checker model.GlobalChecker, vertical bool) bool {
+func mergeValues(modelData *model.DataModel, tab *model.Table, checker model.GlobalChecker ) bool {
 
 	var currFV *model.FieldValue
 

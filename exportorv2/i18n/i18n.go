@@ -16,6 +16,7 @@ const (
 	StructParser_UnexpectedSpliter
 	StructParser_FieldNotFound
 	StructParser_DuplicateFieldInCell
+	Run_CacheFile
 	Run_CollectTypeInfo
 	Run_ExportSheetData
 	Globals_CombineNameLost
@@ -28,7 +29,6 @@ const (
 	DataSheet_ValueRepeated
 	DataSheet_RowDataSplitedByEmptyLine
 	DataSheet_MustFill
-	DataHeader_StructCellCannotSplit //废除
 	DataHeader_TypeNotFound
 	DataHeader_MetaParseFailed
 	DataHeader_DuplicateFieldName
