@@ -9,6 +9,8 @@ import (
 
 	"github.com/davyxu/tabtoy/exportorv2/i18n"
 	"github.com/davyxu/tabtoy/exportorv2/model"
+	"os"
+	"path/filepath"
 )
 
 type Stream struct {
@@ -31,14 +33,18 @@ func (self *Stream) Printf(format string, args ...interface{}) {
 	self.buf.WriteString(fmt.Sprintf(format, args...))
 }
 
-func (self *Stream) Write(outfile string) bool {
+func (self *Stream) WriteFile(outfile string) error {
+
+	// 自动创建目录
+	os.MkdirAll(filepath.Dir(outfile), 666)
+
 	err := ioutil.WriteFile(outfile, self.buf.Bytes(), 0666)
 	if err != nil {
 		log.Errorf("%s, %v", i18n.String(i18n.Printer_OpenWriteOutputFileFailed), err.Error())
-		return false
+		return err
 	}
 
-	return true
+	return nil
 }
 
 func (self *Stream) WriteInt32(v int32) {

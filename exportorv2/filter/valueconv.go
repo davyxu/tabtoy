@@ -117,8 +117,16 @@ func ConvertValue(fd *model.FieldDescriptor, value string, fileD *model.FileDesc
 			return "", false
 		}
 
-		if !parseStruct(fd, value, fileD, node) {
-			return "", false
+		if value == "" {
+
+			if !fillStructDefaultValue(fd.Complex, fileD, node) {
+				return "", false
+			}
+
+		} else {
+			if !parseStruct(fd, value, fileD, node) {
+				return "", false
+			}
 		}
 
 	default:
@@ -129,4 +137,26 @@ func ConvertValue(fd *model.FieldDescriptor, value string, fileD *model.FileDesc
 	ok = true
 
 	return
+}
+
+// 填充空结构体的默认值
+func fillStructDefaultValue(structD *model.Descriptor, fileD *model.FileDescriptor, node *model.Node) bool {
+
+	for _, fd := range structD.Fields {
+
+		// 没默认值不输出
+		if fd.Meta.GetString("Default") == "" {
+			continue
+		}
+
+		fieldNode := node.AddKey(fd)
+
+		_, ok := ConvertValue(fd, "", fileD, fieldNode)
+		if !ok {
+			return false
+		}
+	}
+
+	return true
+
 }

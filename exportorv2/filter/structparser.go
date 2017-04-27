@@ -118,6 +118,19 @@ func parseStruct(fd *model.FieldDescriptor, value string, fileD *model.FileDescr
 		return false
 	}
 
+	// 结构体中未填的字段如果是Default, 也要输出
+	for _, structField := range fd.Complex.Fields {
+
+		if sfList.Exists(structField) {
+			continue
+		}
+
+		if structField.Meta.GetString("Default") != "" {
+			sfList.Add(structField, structField.Meta.GetString("Default"))
+		}
+
+	}
+
 	// 结构体输出是map顺序, 必须按照定义时的order进行排序, 否则在二进制中顺序是错的
 	sfList.Sort()
 

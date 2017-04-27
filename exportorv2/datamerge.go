@@ -5,6 +5,21 @@ import (
 	"github.com/davyxu/tabtoy/util"
 )
 
+func structFieldHasDefaultValue(structFD *model.FieldDescriptor) bool {
+
+	d := structFD.Complex
+
+	for _, childFD := range d.Fields {
+
+		if childFD.Meta.GetString("Default") != "" {
+			return true
+		}
+
+	}
+
+	return false
+}
+
 func mergeValues(modelData *model.DataModel, tab *model.Table, checker model.GlobalChecker) bool {
 
 	var currFV *model.FieldValue
@@ -17,6 +32,10 @@ func mergeValues(modelData *model.DataModel, tab *model.Table, checker model.Glo
 
 			currFV = fv
 
+			if fv.FieldDef.Name == "SingleStruct" {
+				log.Debugln(fv.FieldDef.Meta.GetString("Default"))
+			}
+
 			// repeated的, 没有填充的, 直接跳过, 不生成数据
 			if fv.RawValue == "" && fv.FieldDef.Meta.GetString("Default") == "" {
 
@@ -24,17 +43,36 @@ func mergeValues(modelData *model.DataModel, tab *model.Table, checker model.Glo
 					goto ErrorStop
 				}
 
-				// 空的, 不重复字段忽略
-				if !fv.FieldDef.IsRepeated {
-					continue
-				}
+				if fv.FieldDef.IsRepeated {
 
-				// 空的, 重复的, 结构体字段忽略
-				if fv.FieldDef.Type == model.FieldType_Struct {
-					continue
-				}
+					if fv.FieldDef.Type == model.FieldType_Struct {
 
-				// 只保留重复的普通字段
+						// 重复的 结构体字段, 且结构体字段没有默认值, 整个不导出
+						if !structFieldHasDefaultValue(fv.FieldDef) {
+							continue
+						}
+
+					} else {
+						// 重复的普通字段导出, 做占位
+
+					}
+
+				} else {
+
+					if fv.FieldDef.Type == model.FieldType_Struct {
+
+						// 不重复的 结构体字段, 且结构体字段没有默认值, 整个不导出
+						if !structFieldHasDefaultValue(fv.FieldDef) {
+							continue
+						}
+
+					} else {
+
+						// 非重复的普通字段不导出
+						continue
+					}
+
+				}
 
 			}
 

@@ -16,7 +16,7 @@ func (self *PrinterContext) Start(g *Globals) bool {
 		return false
 	}
 
-	return bf.Write(self.outFile)
+	return bf.WriteFile(self.outFile) == nil
 }
 
 type Printer interface {
