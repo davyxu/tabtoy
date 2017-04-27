@@ -75,6 +75,14 @@ func (self *{{$.Name}}Table) Load(filename string) error {
 	if err != nil {
 		return err
 	}
+
+	var newTab {{$.Name}}
+
+	// 读取
+	err = json.Unmarshal(data, &newTab)
+	if err != nil {
+		return err
+	}
 	
 	// 清除前通知
 	for _, list := range self.clearFuncByName {
@@ -83,14 +91,8 @@ func (self *{{$.Name}}Table) Load(filename string) error {
 		}
 	}
 
-	// 复位数据
-	self.{{$.Name}} = {{$.Name}}{}
-
-	// 读取
-	err = json.Unmarshal(data, &self.{{$.Name}})
-	if err != nil {
-		return err
-	}
+	// 复制数据
+	self.{{$.Name}} = newTab
 
 	// 生成索引
 	for _, list := range self.indexFuncByName {
