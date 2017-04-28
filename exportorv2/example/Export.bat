@@ -8,6 +8,7 @@
 --go_out=.\Config.go ^
 --type_out=.\Type.json ^
 --combinename=Config ^
+--luaenumintvalue=true ^
 --lan=zh_cn ^
 Globals.xlsx ^
 Sample.xlsx ^

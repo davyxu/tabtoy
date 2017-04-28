@@ -33,8 +33,9 @@ var paramTypeOut = flag.String("type_out", "", "output table types(*.json)")
 var paramCombineStructName = flag.String("combinename", "", "combine struct name, code struct name")
 var paramProtoVersion = flag.Int("protover", 3, "output .proto file version, 2 or 3")
 var paramLanguage = flag.String("lan", "en_us", "set output language")
+var paramLuaEnumIntValue = flag.Bool("luaenumintvalue", false, "use int type in lua enum value")
 
-const Version = "2.8.3"
+const Version = "2.8.4"
 
 func main() {
 
@@ -66,6 +67,7 @@ func main() {
 		g.ParaMode = *paramPara
 		g.CombineStructName = *paramCombineStructName
 		g.ProtoVersion = *paramProtoVersion
+		g.LuaEnumIntValue = *paramLuaEnumIntValue
 
 		if *paramProtoOut != "" {
 			g.AddOutputType("proto", *paramProtoOut)

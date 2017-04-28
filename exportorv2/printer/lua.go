@@ -8,13 +8,18 @@ import (
 	"github.com/davyxu/tabtoy/util"
 )
 
-func valueWrapperLua(t model.FieldType, n *model.Node) string {
+func valueWrapperLua(g *Globals, t model.FieldType, n *model.Node) string {
 
 	switch t {
 	case model.FieldType_String:
 		return util.StringEscape(n.Value)
 	case model.FieldType_Enum:
-		return fmt.Sprintf("\"%s\"", n.Value)
+		if g.LuaEnumIntValue {
+			return fmt.Sprintf("%d", n.EnumValue)
+		} else {
+			return fmt.Sprintf("\"%s\"", n.Value)
+		}
+
 	}
 
 	return n.Value
@@ -39,7 +44,7 @@ func (self *luaPrinter) Run(g *Globals) *Stream {
 			continue
 		}
 
-		if !printTableLua(stream, tab) {
+		if !printTableLua(g, stream, tab) {
 			return nil
 		}
 
@@ -59,7 +64,7 @@ func (self *luaPrinter) Run(g *Globals) *Stream {
 	}
 
 	// 生成枚举
-	if !genLuaEnumCode(stream, g.FileDescriptor) {
+	if !genLuaEnumCode(g, stream, g.FileDescriptor) {
 		return stream
 	}
 
@@ -68,7 +73,7 @@ func (self *luaPrinter) Run(g *Globals) *Stream {
 	return stream
 }
 
-func printTableLua(stream *Stream, tab *model.Table) bool {
+func printTableLua(g *Globals, stream *Stream, tab *model.Table) bool {
 
 	stream.Printf("	%s = {\n", tab.LocalFD.Name)
 
@@ -95,7 +100,7 @@ func printTableLua(stream *Stream, tab *model.Table) bool {
 					// repeated 值序列
 					for arrIndex, valueNode := range node.Child {
 
-						stream.Printf("%s", valueWrapperLua(node.Type, valueNode))
+						stream.Printf("%s", valueWrapperLua(g, node.Type, valueNode))
 
 						// 多个值分割
 						if arrIndex < len(node.Child)-1 {
@@ -107,7 +112,7 @@ func printTableLua(stream *Stream, tab *model.Table) bool {
 					// 单值
 					valueNode := node.Child[0]
 
-					stream.Printf("%s", valueWrapperLua(node.Type, valueNode))
+					stream.Printf("%s", valueWrapperLua(g, node.Type, valueNode))
 
 				}
 
@@ -125,7 +130,7 @@ func printTableLua(stream *Stream, tab *model.Table) bool {
 						// 值节点总是在第一个
 						valueNode := fieldNode.Child[0]
 
-						stream.Printf("%s= %s", fieldNode.Name, valueWrapperLua(fieldNode.Type, valueNode))
+						stream.Printf("%s= %s", fieldNode.Name, valueWrapperLua(g, fieldNode.Type, valueNode))
 
 						// 结构体字段分割
 						if structFieldIndex < len(structNode.Child)-1 {
@@ -176,7 +181,7 @@ func printTableLua(stream *Stream, tab *model.Table) bool {
 }
 
 // 收集需要构建的索引的类型
-func genLuaEnumCode(stream *Stream, globalFile *model.FileDescriptor) bool {
+func genLuaEnumCode(g *Globals, stream *Stream, globalFile *model.FileDescriptor) bool {
 
 	stream.Printf("\ntab.Enum = {\n")
 
@@ -190,7 +195,13 @@ func genLuaEnumCode(stream *Stream, globalFile *model.FileDescriptor) bool {
 		stream.Printf("	%s = {\n", d.Name)
 
 		for _, fd := range d.Fields {
-			stream.Printf("		[\"%s\"] = %d,\n", fd.Name, fd.EnumValue)
+
+			if g.LuaEnumIntValue {
+				stream.Printf("		[%d] = \"%s\",\n", fd.EnumValue, fd.Name)
+			} else {
+				stream.Printf("		[\"%s\"] = %d,\n", fd.Name, fd.EnumValue)
+			}
+
 		}
 
 		stream.Printf("	},\n")

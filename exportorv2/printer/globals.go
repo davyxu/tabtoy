@@ -15,6 +15,7 @@ type Globals struct {
 	InputFileList []interface{}
 	ParaMode      bool
 	ProtoVersion  int
+	LuaEnumIntValue bool
 
 	Printers []*PrinterContext
 
