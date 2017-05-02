@@ -196,9 +196,11 @@ func genLuaEnumCode(g *Globals, stream *Stream, globalFile *model.FileDescriptor
 
 		for _, fd := range d.Fields {
 
-			if g.LuaEnumIntValue {
+			if fd.Meta.GetBool("LuaValueMapperString") {
 				stream.Printf("		[%d] = \"%s\",\n", fd.EnumValue, fd.Name)
-			} else {
+			}
+
+			if fd.Meta.GetBool("LuaStringMapperValue") {
 				stream.Printf("		[\"%s\"] = %d,\n", fd.Name, fd.EnumValue)
 			}
 

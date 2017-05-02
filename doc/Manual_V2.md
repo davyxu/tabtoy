@@ -136,6 +136,15 @@
 	格式: MustFill: true
 	
 	功能: 当一个单元列必须被填充时, 设置此属性
+
+* Lua映射
+    格式: LuaValueMapperString  LuaStringMapperValue
+
+    使用区域: 枚举值
+
+    功能: 将lua输出的枚举值建立值与字符串的映射
+
+    返利: LuaValueMapperString: true  LuaStringMapperValue: true
 	
 * 自定义tag
 
