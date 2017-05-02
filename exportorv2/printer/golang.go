@@ -31,6 +31,15 @@ const (
 	{{$en.Name}}_{{.Name}} {{$en.Name}} = {{.Number}}
 {{end}}
 )
+var (
+{{$en.Name}}MapperValueByName = map[string]int32{ {{range .GoFields}}
+	"{{.Name}}": {{.Number}}, {{end}}
+}
+
+{{$en.Name}}MapperNameByValue = map[int32]string{ {{range .GoFields}}
+	{{.Number}}: "{{.Name}}" , {{end}}
+}
+)
 {{end}}
 
 {{range $a, $strus := .Structs}} 
