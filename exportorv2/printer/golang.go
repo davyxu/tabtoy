@@ -40,6 +40,11 @@ var (
 	{{.Number}}: "{{.Name}}" , {{end}}
 }
 )
+
+func (self {{$en.Name}}) String() string {
+	name, _ := {{$en.Name}}MapperNameByValue[int32(self)]
+	return name
+}
 {{end}}
 
 {{range $a, $strus := .Structs}} 
