@@ -180,6 +180,22 @@ func printTableLua(g *Globals, stream *Stream, tab *model.Table) bool {
 
 }
 
+func anyFieldOutput(d *model.Descriptor) bool {
+	for _, fd := range d.Fields {
+
+		if fd.Meta.GetBool("LuaValueMapperString") {
+			return true
+		}
+
+		if fd.Meta.GetBool("LuaStringMapperValue") {
+			return true
+		}
+
+	}
+
+	return false
+}
+
 // 收集需要构建的索引的类型
 func genLuaEnumCode(g *Globals, stream *Stream, globalFile *model.FileDescriptor) bool {
 
@@ -192,21 +208,27 @@ func genLuaEnumCode(g *Globals, stream *Stream, globalFile *model.FileDescriptor
 			continue
 		}
 
-		stream.Printf("	%s = {\n", d.Name)
+		if anyFieldOutput(d) {
+			stream.Printf("	%s = {\n", d.Name)
 
-		for _, fd := range d.Fields {
+			for _, fd := range d.Fields {
 
-			if fd.Meta.GetBool("LuaValueMapperString") {
-				stream.Printf("		[%d] = \"%s\",\n", fd.EnumValue, fd.Name)
+				if fd.Meta.GetBool("LuaValueMapperString") {
+					stream.Printf("		[%d] = \"%s\",\n", fd.EnumValue, fd.Name)
+				}
+
 			}
 
-			if fd.Meta.GetBool("LuaStringMapperValue") {
-				stream.Printf("		[\"%s\"] = %d,\n", fd.Name, fd.EnumValue)
+			for _, fd := range d.Fields {
+
+				if fd.Meta.GetBool("LuaStringMapperValue") {
+					stream.Printf("		[\"%s\"] = %d,\n", fd.Name, fd.EnumValue)
+				}
+
 			}
 
+			stream.Printf("	},\n")
 		}
-
-		stream.Printf("	},\n")
 
 	}
 
