@@ -34,6 +34,7 @@ var paramCombineStructName = flag.String("combinename", "", "combine struct name
 var paramProtoVersion = flag.Int("protover", 3, "output .proto file version, 2 or 3")
 var paramLanguage = flag.String("lan", "en_us", "set output language")
 var paramLuaEnumIntValue = flag.Bool("luaenumintvalue", false, "use int type in lua enum value")
+var paramLuaTabHeader = flag.String("luatabheader", "", "output string to lua tab header")
 
 const Version = "2.8.4"
 
@@ -68,6 +69,7 @@ func main() {
 		g.CombineStructName = *paramCombineStructName
 		g.ProtoVersion = *paramProtoVersion
 		g.LuaEnumIntValue = *paramLuaEnumIntValue
+		g.LuaTabHeader = *paramLuaTabHeader
 
 		if *paramProtoOut != "" {
 			g.AddOutputType("proto", *paramProtoOut)

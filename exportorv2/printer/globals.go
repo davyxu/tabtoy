@@ -11,11 +11,12 @@ type TableIndex struct {
 }
 
 type Globals struct {
-	Version       string
-	InputFileList []interface{}
-	ParaMode      bool
-	ProtoVersion  int
+	Version         string
+	InputFileList   []interface{}
+	ParaMode        bool
+	ProtoVersion    int
 	LuaEnumIntValue bool
+	LuaTabHeader    string
 
 	Printers []*PrinterContext
 
