@@ -64,10 +64,10 @@ type {{$.Name}}Table struct{
 	{{$.Name}}
 	
 	// 索引函数表
-	indexFuncByName map[string][]func(*{{$.Name}}Table)
+	indexFuncByName map[string][]func(*{{$.Name}}Table) error
 
 	// 清空函数表
-	clearFuncByName map[string][]func(*{{$.Name}}Table)
+	clearFuncByName map[string][]func(*{{$.Name}}Table) error
 	
 	{{range $a, $strus := .IndexedStructs}} {{range .Indexes}}
 	{{$strus.Name}}By{{.Name}} map[{{.KeyType}}]*{{$strus.TypeName}}
@@ -101,7 +101,9 @@ func (self *{{$.Name}}Table) Load(filename string) error {
 	// 清除前通知
 	for _, list := range self.clearFuncByName {
 		for _, v := range list {
-			v(self)
+			if err = v(self); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -111,7 +113,9 @@ func (self *{{$.Name}}Table) Load(filename string) error {
 	// 生成索引
 	for _, list := range self.indexFuncByName {
 		for _, v := range list {
-			v(self)
+			if err = v(self); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -119,7 +123,7 @@ func (self *{{$.Name}}Table) Load(filename string) error {
 }
 
 // 注册外部索引入口, 索引回调, 清空回调
-func (self *{{$.Name}}Table) RegisterIndexEntry(name string, indexCallback func(*{{$.Name}}Table), clearCallback func(*{{$.Name}}Table)) {
+func (self *{{$.Name}}Table) RegisterIndexEntry(name string, indexCallback func(*{{$.Name}}Table) error, clearCallback func(*{{$.Name}}Table)error) {
 
 	indexList, _ := self.indexFuncByName[name]
 	clearList, _ := self.clearFuncByName[name]
@@ -141,10 +145,10 @@ func New{{$.Name}}Table() *{{$.Name}}Table {
 	return &{{$.Name}}Table{
 
 	
-		indexFuncByName: map[string][]func(*{{$.Name}}Table){
+		indexFuncByName: map[string][]func(*{{$.Name}}Table) error{
 		
 		{{range $a, $strus := .IndexedStructs}}
-			"{{$strus.Name}}": {func(tab *{{$.Name}}Table) {
+			"{{$strus.Name}}": {func(tab *{{$.Name}}Table)error {
 				
 				// {{$strus.Name}}
 				for _, def := range tab.{{$strus.Name}} {
@@ -157,21 +161,25 @@ func New{{$.Name}}Table() *{{$.Name}}Table {
 					tab.{{$strus.Name}}By{{.Name}}[def.{{.Name}}] = def{{end}}
 					
 				}
+
+				return nil
 			}},
 		{{end}}
 		
 			
 		},
 		
-		clearFuncByName: map[string][]func(*{{$.Name}}Table){
+		clearFuncByName: map[string][]func(*{{$.Name}}Table)error{
 		
 		{{range $a, $strus := .IndexedStructs}}
-			"{{$strus.Name}}": {func(tab *{{$.Name}}Table) {
+			"{{$strus.Name}}": {func(tab *{{$.Name}}Table) error{
 				
 				// {{$strus.Name}}
 	
 				{{range .Indexes}}
 				tab.{{$strus.Name}}By{{.Name}} = make(map[{{.KeyType}}]*{{$strus.TypeName}}){{end}}
+
+				return nil
 			}},
 		{{end}}
 		
