@@ -5,6 +5,7 @@ import (
 
 	"github.com/davyxu/tabtoy/exportorv2/i18n"
 	"github.com/davyxu/tabtoy/exportorv2/model"
+	"strings"
 )
 
 type typeCell struct {
@@ -113,7 +114,7 @@ func (self *typeModelRoot) ParseData(localFD *model.FileDescriptor, globalFD *mo
 		m.rawFieldType, self.Col = m.getValue("FieldType")
 		self.fieldTypeCol = self.Col
 
-		fieldType, complexType, ok := findFieldType(localFD, globalFD, m.rawFieldType)
+		fieldType, isrepeated, complexType, ok := findFieldType(localFD, globalFD, m.rawFieldType)
 		if !ok {
 			return false
 		}
@@ -124,6 +125,7 @@ func (self *typeModelRoot) ParseData(localFD *model.FileDescriptor, globalFD *mo
 
 		m.fd.Type = fieldType
 		m.fd.Complex = complexType
+		m.fd.IsRepeated = isrepeated
 
 		var rawFieldValue string
 		// 解析值
@@ -192,7 +194,7 @@ func (self *typeModelRoot) SolveUnknownModel(localFD *model.FileDescriptor, glob
 		self.Row = m.row
 		self.Col = self.fieldTypeCol
 
-		fieldType, complexType, ok := findFieldType(localFD, globalFD, m.rawFieldType)
+		fieldType, isrepeatd, complexType, ok := findFieldType(localFD, globalFD, m.rawFieldType)
 		if !ok {
 			return false
 		}
@@ -205,32 +207,35 @@ func (self *typeModelRoot) SolveUnknownModel(localFD *model.FileDescriptor, glob
 
 		m.fd.Type = fieldType
 		m.fd.Complex = complexType
+		m.fd.IsRepeated = isrepeatd
 	}
 
 	return true
 }
 
-func findFieldType(localFD *model.FileDescriptor, globalFD *model.FileDescriptor, rawFieldType string) (model.FieldType, *model.Descriptor, bool) {
+func findFieldType(localFD *model.FileDescriptor,
+	globalFD *model.FileDescriptor,
+	rawFieldType string) (model.FieldType, bool, *model.Descriptor, bool) {
 
 	// 开始在本地symbol中找
 	testFD := localFD
 
 	for {
 
-		fieldType, complexType, ok := findlocalFieldType(testFD, rawFieldType)
+		fieldType, isrepeatd, complexType, ok := findlocalFieldType(testFD, rawFieldType)
 
 		if !ok {
-			return model.FieldType_None, nil, false
+			return model.FieldType_None, isrepeatd, nil, false
 		}
 
 		if fieldType != model.FieldType_None {
-			return fieldType, complexType, true
+			return fieldType, isrepeatd, complexType, true
 		}
 
 		// 已经是全局范围, 说明找不到
 		if testFD == globalFD {
 
-			return model.FieldType_None, nil, true
+			return model.FieldType_None, isrepeatd, nil, true
 		}
 
 		// 找不到就换全局范围找
@@ -240,12 +245,24 @@ func findFieldType(localFD *model.FileDescriptor, globalFD *model.FileDescriptor
 }
 
 // bool表示是否有错
-func findlocalFieldType(localFD *model.FileDescriptor, rawFieldType string) (model.FieldType, *model.Descriptor, bool) {
+func findlocalFieldType(localFD *model.FileDescriptor, rawFieldType string) (model.FieldType, bool, *model.Descriptor, bool) {
+
+	var isrepeated bool
+	var puretype string
+
+	if strings.HasPrefix(rawFieldType, model.RepeatedKeyword) {
+
+		puretype = rawFieldType[model.RepeatedKeywordLen+1:]
+
+		isrepeated = true
+	} else {
+		puretype = rawFieldType
+	}
 
 	// 解析普通类型
-	if ft, ok := model.ParseFieldType(rawFieldType); ok {
+	if ft, ok := model.ParseFieldType(puretype); ok {
 
-		return ft, nil, true
+		return ft, isrepeated, nil, true
 
 	}
 
@@ -256,15 +273,15 @@ func findlocalFieldType(localFD *model.FileDescriptor, rawFieldType string) (mod
 		if desc.Kind != model.DescriptorKind_Enum {
 			log.Errorf("%s, '%s'", i18n.String(i18n.TypeSheet_StructFieldCanNotBeStruct), rawFieldType)
 
-			return model.FieldType_None, nil, false
+			return model.FieldType_None, isrepeated, nil, false
 		}
 
-		return model.FieldType_Enum, desc, true
+		return model.FieldType_Enum, isrepeated, desc, true
 
 	}
 
 	// 没找到类型, 待二次pass
-	return model.FieldType_None, nil, true
+	return model.FieldType_None, isrepeated, nil, true
 
 }
 
