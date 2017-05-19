@@ -69,8 +69,11 @@ type {{$.Name}}Table struct{
 	// 清空函数表
 	clearFuncByName map[string][]func(*{{$.Name}}Table) error
 
-	// 所有索引构建完成回调
-	alldoneFuncList []func(*{{$.Name}}Table) error
+	// 加载前回调
+	preFuncList []func(*{{$.Name}}Table) error
+
+	// 加载后回调
+	postFuncList []func(*{{$.Name}}Table) error
 	
 	{{range $a, $strus := .IndexedStructs}} {{range .Indexes}}
 	{{$strus.Name}}By{{.Name}} map[{{.KeyType}}]*{{$strus.TypeName}}
@@ -100,6 +103,13 @@ func (self *{{$.Name}}Table) Load(filename string) error {
 	if err != nil {
 		return err
 	}
+
+	// 所有加载前的回调
+	for _, v := range self.preFuncList {
+		if err = v(self); err != nil {
+			return err
+		}
+	}
 	
 	// 清除前通知
 	for _, list := range self.clearFuncByName {
@@ -123,7 +133,7 @@ func (self *{{$.Name}}Table) Load(filename string) error {
 	}
 
 	// 所有完成时的回调
-	for _, v := range self.alldoneFuncList {
+	for _, v := range self.postFuncList {
 		if err = v(self); err != nil {
 			return err
 		}
@@ -150,11 +160,17 @@ func (self *{{$.Name}}Table) RegisterIndexEntry(name string, indexCallback func(
 	self.clearFuncByName[name] = clearList
 }
 
+// 注册加载前回调
+func (self *{{$.Name}}Table) RegisterPreEntry(callback func(*{{$.Name}}Table) error) {
+
+	self.preFuncList = append(self.preFuncList, callback)
+}
+
+
 // 注册所有完成时回调
-func (self *{{$.Name}}Table) RegisterDoneEntry(callback func(*{{$.Name}}Table) error) {
+func (self *{{$.Name}}Table) RegisterPostEntry(callback func(*{{$.Name}}Table) error) {
 
-	self.alldoneFuncList = append(self.alldoneFuncList, callback)
-
+	self.postFuncList = append(self.postFuncList, callback)
 }
 
 
