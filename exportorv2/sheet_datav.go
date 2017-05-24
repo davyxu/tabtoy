@@ -69,12 +69,13 @@ func (self *DataSheet) exportColumnMajor(file *File, dataModel *model.DataModel,
 		r, c := self.GetRC()
 
 		line.Add(&model.FieldValue{
-			FieldDef:  fieldDef,
-			RawValue:  rawValue,
-			SheetName: self.Name,
-			FileName:  self.file.FileName,
-			R:         r,
-			C:         c,
+			FieldDef:           fieldDef,
+			RawValue:           rawValue,
+			SheetName:          self.Name,
+			FileName:           self.file.FileName,
+			R:                  r,
+			C:                  c,
+			FieldRepeatedCount: dataHeader.FieldRepeatedCount(fieldDef),
 		})
 
 	}

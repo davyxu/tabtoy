@@ -103,6 +103,23 @@
    ]
   },
   {
+   "Name": "AttackParam",
+   "Fields": [
+    {
+     "Name": "Value",
+     "Type": "int32",
+     "Kind": "int32",
+     "IsRepeated": false,
+     "Meta": {
+      "Alias": "攻击值",
+      "Default": ""
+     },
+     "Comment": "",
+     "Value": 0
+    }
+   ]
+  },
+  {
    "Name": "SampleDefine",
    "Fields": [
     {
@@ -194,6 +211,15 @@
       "ListSpliter": ";"
      },
      "Comment": "技能ID列表",
+     "Value": 0
+    },
+    {
+     "Name": "AttackParam",
+     "Type": "AttackParam",
+     "Kind": "struct",
+     "IsRepeated": false,
+     "Meta": {},
+     "Comment": "攻击参数",
      "Value": 0
     },
     {

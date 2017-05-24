@@ -122,6 +122,18 @@ func (self *DataHeader) RawFieldCount() int {
 	return len(self.rawHeaderFields)
 }
 
+func (self *DataHeader) FieldRepeatedCount(fd *model.FieldDescriptor) (count int) {
+
+	for _, libfd := range self.rawHeaderFields {
+		if libfd == fd {
+			count++
+		}
+	}
+
+	return
+
+}
+
 func (self *DataHeader) Equal(other *DataHeader) (string, bool) {
 
 	if len(self.headerFields) != len(other.headerFields) {

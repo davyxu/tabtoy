@@ -9,12 +9,13 @@ type GlobalChecker interface {
 }
 
 type FieldValue struct {
-	FieldDef  *FieldDescriptor
-	RawValue  string
-	R         int
-	C         int
-	SheetName string
-	FileName  string
+	FieldDef           *FieldDescriptor
+	RawValue           string
+	R                  int
+	C                  int
+	SheetName          string
+	FileName           string
+	FieldRepeatedCount int // repeated拆成多列时, 这样重复列的数量
 }
 
 // 对应record

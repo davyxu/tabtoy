@@ -208,6 +208,24 @@ namespace table
 
 			
 		}
+		static tabtoy.DeserializeHandler<AttackParam> AttackParamDeserializeHandler = new tabtoy.DeserializeHandler<AttackParam>(Deserialize);
+		public static void Deserialize( AttackParam ins, tabtoy.DataReader reader )
+		{
+ 			int tag = -1;
+            while ( -1 != (tag = reader.ReadTag()))
+            {
+                switch (tag)
+                { 
+                	case 0x10000:
+                	{
+						ins.Value = reader.ReadInt32();
+                	}
+                	break; 
+                }
+             }
+
+			
+		}
 		static tabtoy.DeserializeHandler<SampleDefine> SampleDefineDeserializeHandler = new tabtoy.DeserializeHandler<SampleDefine>(Deserialize);
 		public static void Deserialize( SampleDefine ins, tabtoy.DataReader reader )
 		{
@@ -263,10 +281,15 @@ namespace table
                 	break; 
                 	case 0x90009:
                 	{
-						ins.SingleStruct = reader.ReadStruct<Prop>(PropDeserializeHandler);
+						ins.AttackParam = reader.ReadStruct<AttackParam>(AttackParamDeserializeHandler);
                 	}
                 	break; 
                 	case 0x9000a:
+                	{
+						ins.SingleStruct = reader.ReadStruct<Prop>(PropDeserializeHandler);
+                	}
+                	break; 
+                	case 0x9000b:
                 	{
 						ins.StrStruct.Add( reader.ReadStruct<Prop>(PropDeserializeHandler) );
                 	}
@@ -417,6 +440,19 @@ namespace table
 
 	// Defined in table: Sample
 	[System.Serializable]
+	public partial class AttackParam
+	{
+	
+		
+		
+		public int Value = 0; // 攻击值
+	
+	
+
+	} 
+
+	// Defined in table: Sample
+	[System.Serializable]
 	public partial class SampleDefine
 	{
 	
@@ -463,6 +499,11 @@ namespace table
 		/// 技能ID列表
 		/// </summary>
 		public List<int> SkillID = new List<int>(); 
+		
+		/// <summary> 
+		/// 攻击参数
+		/// </summary>
+		public AttackParam AttackParam = new AttackParam(); 
 		
 		/// <summary> 
 		/// 单结构解析

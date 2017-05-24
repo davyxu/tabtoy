@@ -82,6 +82,13 @@ type Prop struct {
 }
 
 // Defined in table: Sample
+type AttackParam struct {
+
+	// 攻击值
+	Value int32
+}
+
+// Defined in table: Sample
 type SampleDefine struct {
 
 	//唯一ID
@@ -109,6 +116,9 @@ type SampleDefine struct {
 
 	//技能ID列表
 	SkillID []int32
+
+	//攻击参数
+	AttackParam *AttackParam
 
 	//单结构解析
 	SingleStruct *Prop
@@ -175,6 +185,12 @@ type ConfigTable struct {
 	// 清空函数表
 	clearFuncByName map[string][]func(*ConfigTable) error
 
+	// 加载前回调
+	preFuncList []func(*ConfigTable) error
+
+	// 加载后回调
+	postFuncList []func(*ConfigTable) error
+
 	SampleByID map[int64]*SampleDefine
 
 	SampleByName map[string]*SampleDefine
@@ -204,6 +220,13 @@ func (self *ConfigTable) Load(filename string) error {
 		return err
 	}
 
+	// 所有加载前的回调
+	for _, v := range self.preFuncList {
+		if err = v(self); err != nil {
+			return err
+		}
+	}
+
 	// 清除前通知
 	for _, list := range self.clearFuncByName {
 		for _, v := range list {
@@ -222,6 +245,13 @@ func (self *ConfigTable) Load(filename string) error {
 			if err = v(self); err != nil {
 				return err
 			}
+		}
+	}
+
+	// 所有完成时的回调
+	for _, v := range self.postFuncList {
+		if err = v(self); err != nil {
+			return err
 		}
 	}
 
@@ -244,6 +274,18 @@ func (self *ConfigTable) RegisterIndexEntry(name string, indexCallback func(*Con
 
 	self.indexFuncByName[name] = indexList
 	self.clearFuncByName[name] = clearList
+}
+
+// 注册加载前回调
+func (self *ConfigTable) RegisterPreEntry(callback func(*ConfigTable) error) {
+
+	self.preFuncList = append(self.preFuncList, callback)
+}
+
+// 注册所有完成时回调
+func (self *ConfigTable) RegisterPostEntry(callback func(*ConfigTable) error) {
+
+	self.postFuncList = append(self.postFuncList, callback)
 }
 
 // 创建一个Config表读取实例

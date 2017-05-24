@@ -68,6 +68,15 @@ message Prop
 }
 
 // Defined in table: Sample
+message AttackParam
+{	
+	
+	// 攻击值
+	int32 Value = 1; 
+
+}
+
+// Defined in table: Sample
 message SampleDefine
 {	
 	
@@ -99,10 +108,13 @@ message SampleDefine
 	repeated int32 SkillID = 9; // 技能ID列表
 	
 	
-	Prop SingleStruct = 10; // 单结构解析
+	AttackParam AttackParam = 10; // 攻击参数
 	
 	
-	repeated Prop StrStruct = 11; // 字符串结构
+	Prop SingleStruct = 11; // 单结构解析
+	
+	
+	repeated Prop StrStruct = 12; // 字符串结构
 
 }
 

@@ -32,10 +32,6 @@ func mergeValues(modelData *model.DataModel, tab *model.Table, checker model.Glo
 
 			currFV = fv
 
-			if fv.FieldDef.Name == "SingleStruct" {
-				log.Debugln(fv.FieldDef.Meta.GetString("Default"))
-			}
-
 			// repeated的, 没有填充的, 直接跳过, 不生成数据
 			if fv.RawValue == "" && fv.FieldDef.Meta.GetString("Default") == "" {
 
@@ -54,6 +50,10 @@ func mergeValues(modelData *model.DataModel, tab *model.Table, checker model.Glo
 
 					} else {
 						// 重复的普通字段导出, 做占位
+
+						if fv.FieldRepeatedCount == 1 && fv.RawValue == "" {
+							continue
+						}
 
 					}
 
