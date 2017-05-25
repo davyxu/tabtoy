@@ -33,9 +33,12 @@ func coloumnProcessor(file model.GlobalChecker, record *model.Record, fd *model.
 				node = node.AddKey(fd)
 			}
 
-			if !dataProcessor(file, fd, rawSingle, node) {
-				return false
+			if raw != "" || structFieldHasDefaultValue(fd) {
+				if !dataProcessor(file, fd, rawSingle, node) {
+					return false
+				}
 			}
+
 		}
 
 	} else { // 普通数据/repeated单元格分多个列

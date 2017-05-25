@@ -9,6 +9,10 @@ func structFieldHasDefaultValue(structFD *model.FieldDescriptor) bool {
 
 	d := structFD.Complex
 
+	if d == nil {
+		return false
+	}
+
 	for _, childFD := range d.Fields {
 
 		if childFD.Meta.GetString("Default") != "" {
@@ -50,10 +54,6 @@ func mergeValues(modelData *model.DataModel, tab *model.Table, checker model.Glo
 
 					} else {
 						// 重复的普通字段导出, 做占位
-
-						if fv.FieldRepeatedCount == 1 && fv.RawValue == "" {
-							continue
-						}
 
 					}
 
