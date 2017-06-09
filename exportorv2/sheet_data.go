@@ -95,30 +95,37 @@ func (self *DataSheet) exportRowMajor(file *File, dataModel *model.DataModel, da
 				return false
 			}
 
-			// 数据大于列头时, 结束这个列
-			if fieldDef == nil {
+			op := self.processLine(fieldDef, line, dataHeader)
+
+			if op == lineOp_Continue {
+				continue
+			} else if op == lineOp_Break {
 				break
 			}
 
-			// #开头表示注释, 跳过
-			if strings.Index(fieldDef.Name, "#") == 0 {
-				continue
+		}
+
+		// 是子表
+		if parentHeader != nil {
+
+			// 遍历母表所有的列头字段
+			for c := 0; c < parentHeader.RawFieldCount(); c++ {
+				fieldDef := parentHeader.RawField(c)
+
+				// 在子表中有对应字段的, 忽略, 只要没有的字段
+				if _, ok := dataHeader.HeaderByName[fieldDef.Name]; ok {
+					continue
+				}
+
+				op := self.processLine(fieldDef, line, dataHeader)
+
+				if op == lineOp_Continue {
+					continue
+				} else if op == lineOp_Break {
+					break
+				}
+
 			}
-
-			rawValue := self.GetCellData(self.Row, self.Column)
-
-			r, c := self.GetRC()
-
-			line.Add(&model.FieldValue{
-				FieldDef:           fieldDef,
-				RawValue:           rawValue,
-				SheetName:          self.Name,
-				FileName:           self.file.FileName,
-				R:                  r,
-				C:                  c,
-				FieldRepeatedCount: dataHeader.FieldRepeatedCount(fieldDef),
-			})
-
 		}
 
 		dataModel.Add(line)
@@ -126,6 +133,40 @@ func (self *DataSheet) exportRowMajor(file *File, dataModel *model.DataModel, da
 	}
 
 	return true
+}
+
+const (
+	lineOp_none = iota
+	lineOp_Break
+	lineOp_Continue
+)
+
+func (self *DataSheet) processLine(fieldDef *model.FieldDescriptor, line *model.LineData, dataHeader *DataHeader) int {
+	// 数据大于列头时, 结束这个列
+	if fieldDef == nil {
+		return lineOp_Break
+	}
+
+	// #开头表示注释, 跳过
+	if strings.Index(fieldDef.Name, "#") == 0 {
+		return lineOp_Continue
+	}
+
+	rawValue := self.GetCellData(self.Row, self.Column)
+
+	r, c := self.GetRC()
+
+	line.Add(&model.FieldValue{
+		FieldDef:           fieldDef,
+		RawValue:           rawValue,
+		SheetName:          self.Name,
+		FileName:           self.file.FileName,
+		R:                  r,
+		C:                  c,
+		FieldRepeatedCount: dataHeader.FieldRepeatedCount(fieldDef),
+	})
+
+	return lineOp_none
 }
 
 // 多表合并时, 要从从表的字段名在主表的表头里做索引
