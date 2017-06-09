@@ -33,7 +33,7 @@ func coloumnProcessor(file model.GlobalChecker, record *model.Record, fd *model.
 				node = node.AddKey(fd)
 			}
 
-			if raw != "" || structFieldHasDefaultValue(fd) {
+			if raw != "" {
 				if !dataProcessor(file, fd, rawSingle, node) {
 					return false
 				}
