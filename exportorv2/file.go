@@ -21,8 +21,9 @@ type File struct {
 	FileName string
 	coreFile *xlsx.File
 
-	dataSheets []*DataSheet
-	Header     *DataHeader
+	dataSheets  []*DataSheet
+	Header      *DataHeader
+	dataHeaders []*DataHeader
 
 	valueRepByKey map[valueRepeatData]bool // 检查单元格值重复map
 
@@ -58,9 +59,6 @@ func (self *File) ExportLocalType(mainFile *File) bool {
 		}
 	}
 
-	// 表头用到的表单
-	var headerSheet *DataSheet
-
 	// 解析表头
 	for _, rawSheet := range self.coreFile.Sheets {
 
@@ -92,14 +90,9 @@ func (self *File) ExportLocalType(mainFile *File) bool {
 
 			if self.Header == nil {
 				self.Header = dataHeader
-				headerSheet = dSheet
-			} else {
-				if fieldName, ok := self.Header.Equal(dataHeader); !ok {
-					log.Errorf("%s %s!=%s field: %s", i18n.String(i18n.DataHeader_NotMatch), headerSheet.Name, dSheet.Name, fieldName)
-					return false
-				}
 			}
 
+			self.dataHeaders = append(self.dataHeaders, dataHeader)
 			self.dataSheets = append(self.dataSheets, dSheet)
 
 		}
@@ -117,11 +110,11 @@ func (self *File) IsVertical() bool {
 
 func (self *File) ExportData(dataModel *model.DataModel, parentHeader *DataHeader) bool {
 
-	for _, d := range self.dataSheets {
+	for index, d := range self.dataSheets {
 
 		log.Infof("            %s", d.Name)
 
-		if !d.Export(self, dataModel, self.Header, parentHeader) {
+		if !d.Export(self, dataModel, self.dataHeaders[index], parentHeader) {
 			return false
 		}
 	}
