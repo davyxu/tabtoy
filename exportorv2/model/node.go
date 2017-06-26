@@ -11,6 +11,8 @@ type Node struct {
 	Raw       []byte
 
 	Child []*Node // 优先遍历值, 再key
+
+	SugguestIgnore bool //  建议忽略, 非repeated的普通字段导出时, 如果原单元格没填, 这个字段为true
 }
 
 func (self *Node) AddValue(value string) *Node {

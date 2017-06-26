@@ -144,12 +144,17 @@ func fillStructDefaultValue(structD *model.Descriptor, fileD *model.FileDescript
 
 	for _, fd := range structD.Fields {
 
-		// 没默认值不输出
-		if fd.Meta.GetString("Default") == "" {
+		// 没默认值不输出, 建议忽略的字段除外, 先导出node, 再在printer中忽略
+		if fd.Meta.GetString("Default") == "" && node.SugguestIgnore {
 			continue
 		}
 
 		fieldNode := node.AddKey(fd)
+
+		// 结构体的值没填, 且没默认值, 建议忽略
+		if fd.Meta.GetString("Default") == "" && node.Value == "" {
+			fieldNode.SugguestIgnore = true
+		}
 
 		_, ok := ConvertValue(fd, "", fileD, fieldNode)
 		if !ok {

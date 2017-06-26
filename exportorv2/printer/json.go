@@ -62,8 +62,19 @@ func printTableJson(bf *Stream, tab *model.Table) bool {
 
 		bf.Printf("		{ ")
 
+		var hasWriteColumn bool
+
 		// 遍历每一列
 		for rootFieldIndex, node := range r.Nodes {
+
+			if node.SugguestIgnore {
+				continue
+			}
+
+			if hasWriteColumn && rootFieldIndex > 0 {
+				bf.Printf(", ")
+				hasWriteColumn = false
+			}
 
 			if node.IsRepeated {
 				bf.Printf("\"%s\":[ ", node.Name)
@@ -103,19 +114,26 @@ func printTableJson(bf *Stream, tab *model.Table) bool {
 					// 结构体开始
 					bf.Printf("{ ")
 
+					var hasWriteField bool
+
 					// 遍历一个结构体的字段
 					for structFieldIndex, fieldNode := range structNode.Child {
+
+						if fieldNode.SugguestIgnore {
+							continue
+						}
+
+						if hasWriteField && structFieldIndex > 0 {
+							bf.Printf(", ")
+							hasWriteField = false
+						}
 
 						// 值节点总是在第一个
 						valueNode := fieldNode.Child[0]
 
 						bf.Printf("\"%s\": %s", fieldNode.Name, valueWrapperJson(fieldNode.Type, valueNode))
 
-						// 结构体字段分割
-						if structFieldIndex < len(structNode.Child)-1 {
-							bf.Printf(", ")
-						}
-
+						hasWriteField = true
 					}
 
 					// 结构体结束
@@ -135,9 +153,7 @@ func printTableJson(bf *Stream, tab *model.Table) bool {
 			}
 
 			// 根字段分割
-			if rootFieldIndex < len(r.Nodes)-1 {
-				bf.Printf(", ")
-			}
+			hasWriteColumn = true
 
 		}
 

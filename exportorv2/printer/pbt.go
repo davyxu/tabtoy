@@ -82,7 +82,9 @@ func printTablePBT(bf *Stream, tab *model.Table) bool {
 					// 单值
 					valueNode := node.Child[0]
 
-					bf.Printf("%s", valueWrapperPbt(node.Type, valueNode))
+					if !node.SugguestIgnore {
+						bf.Printf("%s", valueWrapperPbt(node.Type, valueNode))
+					}
 
 				}
 

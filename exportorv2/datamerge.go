@@ -36,6 +36,7 @@ func mergeValues(modelData *model.DataModel, tab *model.Table, checker model.Glo
 
 			currFV = fv
 
+			var sugguestIgnore bool
 			// repeated的, 没有填充的, 直接跳过, 不生成数据
 			if fv.RawValue == "" && fv.FieldDef.Meta.GetString("Default") == "" {
 
@@ -59,24 +60,29 @@ func mergeValues(modelData *model.DataModel, tab *model.Table, checker model.Glo
 
 				} else {
 
+					if fv.FieldDef.Name == "SingleStruct" {
+						fv.FieldDef = fv.FieldDef
+					}
+
 					if fv.FieldDef.Type == model.FieldType_Struct {
 
 						// 不重复的 结构体字段, 且结构体字段没有默认值, 整个不导出
 						if !structFieldHasDefaultValue(fv.FieldDef) {
-							continue
+
+							sugguestIgnore = true
 						}
 
 					} else {
 
 						// 非重复的普通字段不导出
-						continue
+						sugguestIgnore = true
 					}
 
 				}
 
 			}
 
-			if !coloumnProcessor(checker, record, fv.FieldDef, fv.RawValue) {
+			if !coloumnProcessor(checker, record, fv.FieldDef, fv.RawValue, sugguestIgnore) {
 				goto ErrorStop
 			}
 

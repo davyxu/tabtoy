@@ -3,11 +3,11 @@
 
 local tab = {
 	Sample = {
-		{ ID = 100, Name = "黑猫警长", NumericalRate = 0.6, ItemID = 100, BuffID = { 0, 10 }, Pos = { X= 100, Y= 89 }, Type = 0, SkillID = { 4, 6, 7 }, AttackParam = { Value= 1 }, SingleStruct = { HP= 100, AttackRate= 1.2 }, StrStruct = { { HP= 3, ExType= 0 }, { HP= 10, ExType= 1 } } 	},
-		{ ID = 101, Name = "葫芦\n娃", NumericalRate = 0.8, ItemID = 100, BuffID = { 3, 1 }, Type = 2, SkillID = { 1 }, SingleStruct = { HP= 10 }, StrStruct = { {  } } 	},
-		{ ID = 102, Name = "舒\"克\"", NumericalRate = 0.7, ItemID = 100, BuffID = { 0, 0 }, Type = 3, SkillID = {  }, SingleStruct = { HP= 10 }, StrStruct = { {  } } 	},
-		{ ID = 103, Name = "贝\n塔", ItemID = 100, BuffID = { 0, 0 }, Type = 1, SkillID = {  }, SingleStruct = { HP= 10 }, StrStruct = { {  } } 	},
-		{ ID = 104, Name = "邋遢大王", NumericalRate = 1, ItemID = 100, BuffID = { 0, 0 }, Type = 2, SkillID = {  }, SingleStruct = { HP= 10 }, StrStruct = { {  } } 	}
+		{ ID = 100, Name = "黑猫警长", IconID = 0, NumericalRate = 0.6, ItemID = 100, BuffID = { 0, 10 }, Pos = { X= 100, Y= 89 }, Type = 0, SkillID = { 4, 6, 7 }, AttackParam = { Value= 1 }, SingleStruct = { HP= 100, AttackRate= 1.2 }, StrStruct = { { HP= 3, ExType= 0 }, { HP= 10, ExType= 1 } } 	},
+		{ ID = 101, Name = "葫芦\n娃", IconID = 0, NumericalRate = 0.8, ItemID = 100, BuffID = { 3, 1 }, Pos = {  }, Type = 2, SkillID = { 1 }, AttackParam = {  }, SingleStruct = { HP= 10, AttackRate= 0, ExType= 0 }, StrStruct = { {  } } 	},
+		{ ID = 102, Name = "舒\"克\"", IconID = 0, NumericalRate = 0.7, ItemID = 100, BuffID = { 0, 0 }, Pos = {  }, Type = 3, SkillID = {  }, AttackParam = {  }, SingleStruct = { HP= 10, AttackRate= 0, ExType= 0 }, StrStruct = { {  } } 	},
+		{ ID = 103, Name = "贝\n塔", IconID = 0, NumericalRate = 0, ItemID = 100, BuffID = { 0, 0 }, Pos = {  }, Type = 1, SkillID = {  }, AttackParam = {  }, SingleStruct = { HP= 10, AttackRate= 0, ExType= 0 }, StrStruct = { {  } } 	},
+		{ ID = 104, Name = "邋遢大王", IconID = 0, NumericalRate = 1, ItemID = 100, BuffID = { 0, 0 }, Pos = {  }, Type = 2, SkillID = {  }, AttackParam = {  }, SingleStruct = { HP= 10, AttackRate= 0, ExType= 0 }, StrStruct = { {  } } 	}
 	}, 
 
 	Vertical = {
@@ -16,12 +16,12 @@ local tab = {
 
 	Exp = {
 		{ Level = 1, Exp = 10, BoolChecker = true, Type = 3 	},
-		{ Level = 2, Exp = 30 	},
-		{ Level = 4, BoolChecker = true 	},
-		{ Level = 5, Type = 1 	},
-		{ Level = 6, Exp = 50 	},
+		{ Level = 2, Exp = 30, BoolChecker = false, Type = 0 	},
+		{ Level = 4, Exp = 0, BoolChecker = true, Type = 0 	},
+		{ Level = 5, Exp = 0, BoolChecker = false, Type = 1 	},
+		{ Level = 6, Exp = 50, Type = 0 	},
 		{ Level = 7, Exp = 70, Type = 2 	},
-		{ Level = 8, Exp = 80 	}
+		{ Level = 8, Exp = 80, Type = 0 	}
 	}
 
 }

@@ -42,6 +42,10 @@ func writeTableBinary(tabStream *Stream, tab *model.Table, index int32) bool {
 		// 遍历每一列
 		for _, node := range r.Nodes {
 
+			if node.SugguestIgnore {
+				continue
+			}
+
 			// 子节点数量
 			if node.IsRepeated {
 				rowStream.WriteInt32(int32(len(node.Child)))
@@ -55,6 +59,7 @@ func writeTableBinary(tabStream *Stream, tab *model.Table, index int32) bool {
 					// 写入字段索引
 					rowStream.WriteInt32(node.Tag())
 					rowStream.WriteNodeValue(node.Type, valueNode)
+
 				}
 
 			} else {
@@ -66,6 +71,10 @@ func writeTableBinary(tabStream *Stream, tab *model.Table, index int32) bool {
 
 					// 遍历一个结构体的字段
 					for _, fieldNode := range structNode.Child {
+
+						if fieldNode.SugguestIgnore {
+							continue
+						}
 
 						// 写入字段索引
 						structStream.WriteInt32(fieldNode.Tag())
