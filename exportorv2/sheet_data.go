@@ -178,6 +178,11 @@ func fieldDefGetter(index int, dataHeader, parentHeader *DataHeader) (*model.Fie
 	}
 
 	if parentHeader != nil {
+
+		if strings.Index(fieldDef.Name, "#") == 0 {
+			return fieldDef, true
+		}
+
 		ret, ok := parentHeader.HeaderByName[fieldDef.Name]
 		if !ok {
 			return nil, false

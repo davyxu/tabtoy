@@ -60,10 +60,6 @@ func mergeValues(modelData *model.DataModel, tab *model.Table, checker model.Glo
 
 				} else {
 
-					if fv.FieldDef.Name == "SingleStruct" {
-						fv.FieldDef = fv.FieldDef
-					}
-
 					if fv.FieldDef.Type == model.FieldType_Struct {
 
 						// 不重复的 结构体字段, 且结构体字段没有默认值, 整个不导出
