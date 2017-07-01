@@ -12,7 +12,7 @@ namespace csharptest
             {
                 stream.Position = 0;
 
-                var reader = new tabtoy.DataReader(stream, stream.Length );
+                var reader = new tabtoy.DataReader(stream);
                 
                 if ( !reader.ReadHeader(  ) )
                 {

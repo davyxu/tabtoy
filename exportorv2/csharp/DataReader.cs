@@ -26,6 +26,12 @@ namespace tabtoy
         BinaryReader _reader;
         long _boundPos  = -1;
 
+        public DataReader(Stream stream )
+        {
+            _reader = new BinaryReader(stream);
+            _boundPos = stream.Length;
+        }
+
         public DataReader(Stream stream, long boundpos)
         {
             _reader = new BinaryReader(stream );

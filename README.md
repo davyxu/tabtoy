@@ -150,7 +150,7 @@ tabtoy --mode=exportorv2 --json_out=config.json Table.xlsx
         }
 
         var config = new gamedef.Config();
-        config.Deserialize(reader);
+        table.Config.Deserialize(config, reader);                
 
         // 直接通过下标获取或遍历
         var directFetch = config.Sample[2];
