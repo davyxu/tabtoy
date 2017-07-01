@@ -114,6 +114,11 @@ func (self *File) ExportData(dataModel *model.DataModel, parentHeader *DataHeade
 
 		log.Infof("            %s", d.Name)
 
+		// 多个sheet时, 使用和多文件一样的父级
+		if parentHeader == nil && len(self.dataHeaders) > 1 {
+			parentHeader = self.dataHeaders[0]
+		}
+
 		if !d.Export(self, dataModel, self.dataHeaders[index], parentHeader) {
 			return false
 		}
