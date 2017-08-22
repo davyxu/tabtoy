@@ -21,6 +21,7 @@ func init() {
 		Globals_TableNameDuplicated:                           "[TT303] Globals: Duplicate table name",
 		Globals_DuplicateTypeName:                             "[TT304] Globals: Duplicate type name( table name ?)",
 		File_TypeSheetKeepSingleton:                           "[TT401] File: Type sheet only need ONE in a file",
+		File_TypeSheetNotFound:                                "[TT402] File: @Types sheet not found",
 		DataSheet_ValueConvertError:                           "[TT501] DataSheet: Cell value convert error",
 		DataSheet_ValueRepeated:                               "[TT502] DataSheet: Duplicated cell value",
 		DataSheet_MustFill:                                    "[TT503] DataSheet: cell value must fill",

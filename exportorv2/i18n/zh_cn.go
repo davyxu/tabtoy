@@ -21,6 +21,7 @@ func init() {
 		Globals_TableNameDuplicated:                           "[TT303] 合并: 表名(TableName)重复",
 		Globals_DuplicateTypeName:                             "[TT304] 合并: 重复的类型名(表名?)",
 		File_TypeSheetKeepSingleton:                           "[TT401] 文件: 类型表在一个表中只能有一份",
+		File_TypeSheetNotFound:                                "[TT402] 文件: 类型表(@Types)没有找到",
 		DataSheet_ValueConvertError:                           "[TT501] 数据表: 单元格转换错误",
 		DataSheet_ValueRepeated:                               "[TT502] 数据表: 单元格值重复",
 		DataSheet_RowDataSplitedByEmptyLine:                   "[TT503] 数据表: 空行后依然有数据没有导出",

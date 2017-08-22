@@ -38,6 +38,8 @@ func (self *File) GlobalFileDesc() *model.FileDescriptor {
 func (self *File) ExportLocalType(mainFile *File) bool {
 
 	var sheetCount int
+
+	var typeSheet *TypeSheet
 	// 解析类型表
 	for _, rawSheet := range self.coreFile.Sheets {
 
@@ -47,7 +49,7 @@ func (self *File) ExportLocalType(mainFile *File) bool {
 				return false
 			}
 
-			typeSheet := newTypeSheet(NewSheet(self, rawSheet))
+			typeSheet = newTypeSheet(NewSheet(self, rawSheet))
 
 			// 从cell添加类型
 			if !typeSheet.Parse(self.LocalFD, self.GlobalFD) {
@@ -57,6 +59,11 @@ func (self *File) ExportLocalType(mainFile *File) bool {
 			sheetCount++
 
 		}
+	}
+
+	if typeSheet == nil {
+		log.Errorf("%s", i18n.String(i18n.File_TypeSheetNotFound))
+		return false
 	}
 
 	// 解析表头

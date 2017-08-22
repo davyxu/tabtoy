@@ -25,6 +25,7 @@ const (
 	Globals_OutputCombineData
 	Globals_DuplicateTypeName
 	File_TypeSheetKeepSingleton
+	File_TypeSheetNotFound
 	DataSheet_ValueConvertError
 	DataSheet_ValueRepeated
 	DataSheet_RowDataSplitedByEmptyLine
