@@ -67,7 +67,19 @@ namespace {{.Namespace}}{{$globalIndex:=.Indexes}}{{$verticalFields:=.VerticalFi
 		#endregion
 		#region Deserialize code
 		{{range $.Classes}}
-		static tabtoy.DeserializeHandler<{{.Name}}> {{.Name}}DeserializeHandler = new tabtoy.DeserializeHandler<{{.Name}}>(Deserialize);
+		static tabtoy.DeserializeHandler<{{.Name}}> _{{.Name}}DeserializeHandler;
+		static tabtoy.DeserializeHandler<{{.Name}}> {{.Name}}DeserializeHandler
+		{
+			get
+			{
+				if (_{{.Name}}DeserializeHandler == null )
+				{
+					_{{.Name}}DeserializeHandler = new tabtoy.DeserializeHandler<{{.Name}}>(Deserialize);
+				}
+
+				return _{{.Name}}DeserializeHandler;
+			}
+		}
 		public static void Deserialize( {{.Name}} ins, tabtoy.DataReader reader )
 		{
  			int tag = -1;

@@ -78,7 +78,19 @@ namespace table
 		#endregion
 		#region Deserialize code
 		
-		static tabtoy.DeserializeHandler<Config> ConfigDeserializeHandler = new tabtoy.DeserializeHandler<Config>(Deserialize);
+		static tabtoy.DeserializeHandler<Config> _ConfigDeserializeHandler;
+		static tabtoy.DeserializeHandler<Config> ConfigDeserializeHandler
+		{
+			get
+			{
+				if (_ConfigDeserializeHandler == null )
+				{
+					_ConfigDeserializeHandler = new tabtoy.DeserializeHandler<Config>(Deserialize);
+				}
+
+				return _ConfigDeserializeHandler;
+			}
+		}
 		public static void Deserialize( Config ins, tabtoy.DataReader reader )
 		{
  			int tag = -1;
@@ -107,7 +119,19 @@ namespace table
 			}
 			
 		}
-		static tabtoy.DeserializeHandler<Vec2> Vec2DeserializeHandler = new tabtoy.DeserializeHandler<Vec2>(Deserialize);
+		static tabtoy.DeserializeHandler<Vec2> _Vec2DeserializeHandler;
+		static tabtoy.DeserializeHandler<Vec2> Vec2DeserializeHandler
+		{
+			get
+			{
+				if (_Vec2DeserializeHandler == null )
+				{
+					_Vec2DeserializeHandler = new tabtoy.DeserializeHandler<Vec2>(Deserialize);
+				}
+
+				return _Vec2DeserializeHandler;
+			}
+		}
 		public static void Deserialize( Vec2 ins, tabtoy.DataReader reader )
 		{
  			int tag = -1;
@@ -130,7 +154,19 @@ namespace table
 
 			
 		}
-		static tabtoy.DeserializeHandler<Prop> PropDeserializeHandler = new tabtoy.DeserializeHandler<Prop>(Deserialize);
+		static tabtoy.DeserializeHandler<Prop> _PropDeserializeHandler;
+		static tabtoy.DeserializeHandler<Prop> PropDeserializeHandler
+		{
+			get
+			{
+				if (_PropDeserializeHandler == null )
+				{
+					_PropDeserializeHandler = new tabtoy.DeserializeHandler<Prop>(Deserialize);
+				}
+
+				return _PropDeserializeHandler;
+			}
+		}
 		public static void Deserialize( Prop ins, tabtoy.DataReader reader )
 		{
  			int tag = -1;
@@ -158,7 +194,19 @@ namespace table
 
 			
 		}
-		static tabtoy.DeserializeHandler<AttackParam> AttackParamDeserializeHandler = new tabtoy.DeserializeHandler<AttackParam>(Deserialize);
+		static tabtoy.DeserializeHandler<AttackParam> _AttackParamDeserializeHandler;
+		static tabtoy.DeserializeHandler<AttackParam> AttackParamDeserializeHandler
+		{
+			get
+			{
+				if (_AttackParamDeserializeHandler == null )
+				{
+					_AttackParamDeserializeHandler = new tabtoy.DeserializeHandler<AttackParam>(Deserialize);
+				}
+
+				return _AttackParamDeserializeHandler;
+			}
+		}
 		public static void Deserialize( AttackParam ins, tabtoy.DataReader reader )
 		{
  			int tag = -1;
@@ -176,7 +224,19 @@ namespace table
 
 			
 		}
-		static tabtoy.DeserializeHandler<SampleDefine> SampleDefineDeserializeHandler = new tabtoy.DeserializeHandler<SampleDefine>(Deserialize);
+		static tabtoy.DeserializeHandler<SampleDefine> _SampleDefineDeserializeHandler;
+		static tabtoy.DeserializeHandler<SampleDefine> SampleDefineDeserializeHandler
+		{
+			get
+			{
+				if (_SampleDefineDeserializeHandler == null )
+				{
+					_SampleDefineDeserializeHandler = new tabtoy.DeserializeHandler<SampleDefine>(Deserialize);
+				}
+
+				return _SampleDefineDeserializeHandler;
+			}
+		}
 		public static void Deserialize( SampleDefine ins, tabtoy.DataReader reader )
 		{
  			int tag = -1;
