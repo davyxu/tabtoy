@@ -6,9 +6,9 @@ import (
 	"os"
 
 	"github.com/davyxu/golog"
-	"github.com/davyxu/tabtoy/exportorv2"
-	"github.com/davyxu/tabtoy/exportorv2/i18n"
-	"github.com/davyxu/tabtoy/exportorv2/printer"
+	"github.com/davyxu/tabtoy/v2"
+	"github.com/davyxu/tabtoy/v2/i18n"
+	"github.com/davyxu/tabtoy/v2/printer"
 )
 
 var log *golog.Logger = golog.New("main")
@@ -49,7 +49,7 @@ func main() {
 	}
 
 	switch *paramMode {
-	case "exportorv2":
+	case "exportorv2", "v2":
 
 		g := printer.NewGlobals()
 
@@ -103,7 +103,7 @@ func main() {
 			g.AddOutputType("type", *paramTypeOut)
 		}
 
-		if !exportorv2.Run(g) {
+		if !v2.Run(g) {
 			goto Err
 		}
 	default:

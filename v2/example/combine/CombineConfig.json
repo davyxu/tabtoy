@@ -1,0 +1,9 @@
+{
+	"Tool": "github.com/davyxu/tabtoy",
+	"Version": "2.8.7",
+	"Item":[
+		{ "ID": 1, "UpgradeCost": 100 },
+		{ "ID": 2, "UpgradeCost": 200 },
+		{ "ID": 3, "GenPetID": 80001 },
+		{ "ID": 4, "GenPetID": 7990 }
+	]}
