@@ -1,180 +1,93 @@
 package printer
 
 import (
-	"strconv"
+	"encoding/json"
 
-	"github.com/davyxu/tabtoy/util"
 	"github.com/davyxu/tabtoy/v2/i18n"
 	"github.com/davyxu/tabtoy/v2/model"
 )
 
-func valueWrapperJson(t model.FieldType, node *model.Node) string {
+func init() { RegisterPrinter("json", &jsonPrinter{}) }
 
-	switch t {
-	case model.FieldType_String:
-		return util.StringEscape(node.Value)
-	case model.FieldType_Enum:
-		return strconv.Itoa(int(node.EnumValue))
-	}
-
-	return node.Value
-}
-
-type jsonPrinter struct {
-}
+type jsonPrinter struct{}
 
 func (self *jsonPrinter) Run(g *Globals) *Stream {
-
-	bf := NewStream()
-	bf.Printf("{\n")
-
-	bf.Printf("	\"Tool\": \"github.com/davyxu/tabtoy\",\n")
-	bf.Printf("	\"Version\": \"%s\",\n", g.Version)
-
-	for tabIndex, tab := range g.Tables {
-
+	v := make(map[string]interface{})
+	for _, tab := range g.Tables {
 		if !tab.LocalFD.MatchTag(".json") {
-			log.Infof("%s: %s", i18n.String(i18n.Printer_IgnoredByOutputTag), tab.Name())
+			log.Warnf("%s: %s", i18n.String(i18n.Printer_IgnoredByOutputTag), tab.Name())
 			continue
 		}
 
-		if tabIndex > 0 {
-			bf.Printf(", \n")
-		}
-
-		if !printTableJson(bf, tab) {
+		if !printTableJson(v, tab) {
 			return nil
 		}
-
 	}
 
-	bf.Printf("}")
-
-	return bf
+	buffer := NewStream()
+	b, err := json.Marshal(v)
+	if err != nil {
+		panic(err)
+	}
+	buffer.WriteBytes(b)
+	return buffer
 }
 
-func printTableJson(bf *Stream, tab *model.Table) bool {
-
-	bf.Printf("	\"%s\":[\n", tab.LocalFD.Name)
-
-	// 遍历每一行
-	for rIndex, r := range tab.Recs {
-
-		bf.Printf("		{ ")
-
-		var hasWriteColumn bool
-
-		// 遍历每一列
-		for rootFieldIndex, node := range r.Nodes {
-
+func printTableJson(v map[string]interface{}, tab *model.Table) bool {
+	fields := make([]interface{}, 0)
+	for _, r := range tab.Recs {
+		field := make(map[string]interface{})
+		for _, node := range r.Nodes {
 			if node.SugguestIgnore {
 				continue
 			}
 
-			if hasWriteColumn && rootFieldIndex > 0 {
-				bf.Printf(", ")
-				hasWriteColumn = false
-			}
-
-			if node.IsRepeated {
-				bf.Printf("\"%s\":[ ", node.Name)
-			} else {
-				bf.Printf("\"%s\": ", node.Name)
-			}
-
-			// 普通值
 			if node.Type != model.FieldType_Struct {
-
 				if node.IsRepeated {
-
-					// repeated 值序列
-					for arrIndex, valueNode := range node.Child {
-
-						bf.Printf("%s", valueWrapperJson(node.Type, valueNode))
-
-						// 多个值分割
-						if arrIndex < len(node.Child)-1 {
-							bf.Printf(", ")
-						}
-
+					subField := make([]interface{}, 0)
+					for _, cnode := range node.Child {
+						subField = append(subField, cnode.IValue)
 					}
+					field[node.Name] = subField
 				} else {
-					// 单值
-					valueNode := node.Child[0]
-
-					bf.Printf("%s", valueWrapperJson(node.Type, valueNode))
-
+					field[node.Name] = node.Child[0].IValue
 				}
-
 			} else {
-
-				// 遍历repeated的结构体
-				for structIndex, structNode := range node.Child {
-
-					// 结构体开始
-					bf.Printf("{ ")
-
-					var hasWriteField bool
-
-					// 遍历一个结构体的字段
-					for structFieldIndex, fieldNode := range structNode.Child {
-
-						if fieldNode.SugguestIgnore {
+				if node.IsRepeated {
+					arrField := make([]interface{}, 0)
+					for _, snode := range node.Child {
+						if snode.SugguestIgnore {
 							continue
 						}
-
-						if hasWriteField && structFieldIndex > 0 {
-							bf.Printf(", ")
-							hasWriteField = false
+						vv := make(map[string]interface{})
+						for _, cnode := range snode.Child {
+							if cnode.SugguestIgnore {
+								continue
+							}
+							vv[cnode.Name] = cnode.Child[0].IValue
 						}
-
-						// 值节点总是在第一个
-						valueNode := fieldNode.Child[0]
-
-						bf.Printf("\"%s\": %s", fieldNode.Name, valueWrapperJson(fieldNode.Type, valueNode))
-
-						hasWriteField = true
+						arrField = append(arrField, vv)
 					}
-
-					// 结构体结束
-					bf.Printf(" }")
-
-					// 多个结构体分割
-					if structIndex < len(node.Child)-1 {
-						bf.Printf(", ")
+					field[node.Name] = arrField
+				} else {
+					subField := make(map[string]interface{})
+					for _, snode := range node.Child {
+						if snode.SugguestIgnore {
+							continue
+						}
+						for _, cnode := range snode.Child {
+							if cnode.SugguestIgnore {
+								continue
+							}
+							subField[cnode.Name] = cnode.Child[0].IValue
+						}
 					}
-
+					field[node.Name] = subField
 				}
-
 			}
-
-			if node.IsRepeated {
-				bf.Printf(" ]")
-			}
-
-			// 根字段分割
-			hasWriteColumn = true
-
 		}
-
-		bf.Printf(" }")
-
-		if rIndex < len(tab.Recs)-1 {
-			bf.Printf(",")
-		}
-
-		bf.Printf("\n")
-
+		fields = append(fields, field)
 	}
-
-	bf.Printf("	]")
-
+	v[tab.LocalFD.Name] = fields
 	return true
-
-}
-
-func init() {
-
-	RegisterPrinter("json", &jsonPrinter{})
-
 }
