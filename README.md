@@ -246,7 +246,7 @@ tabtoy --mode=v2 --json_out=CombineConfig.json --combinename=Config Item.xlsx+It
 
 感觉不错请star, 谢谢!
 
-博客: [http://www.cppblog.com/sunicdavy](http://www.cppblog.com/sunicdavy)
+开源讨论群: 527430600
 
 知乎: [http://www.zhihu.com/people/sunicdavy](http://www.zhihu.com/people/sunicdavy)
 
