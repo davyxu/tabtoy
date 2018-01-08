@@ -11,7 +11,7 @@ import (
 	"github.com/davyxu/tabtoy/v2/printer"
 )
 
-var log *golog.Logger = golog.New("main")
+var log = golog.New("main")
 
 // 显示版本号
 var paramVersion = flag.Bool("version", false, "Show version")

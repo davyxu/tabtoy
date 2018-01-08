@@ -93,6 +93,7 @@ namespace table
 		}
 		public static void Deserialize( Config ins, tabtoy.DataReader reader )
 		{
+			
  			int tag = -1;
             while ( -1 != (tag = reader.ReadTag()))
             {
@@ -104,7 +105,7 @@ namespace table
                 	}
                 	break; 
                 }
-             }
+             } 
 
 			
 			// Build Sample Index
@@ -134,6 +135,7 @@ namespace table
 		}
 		public static void Deserialize( Vec2 ins, tabtoy.DataReader reader )
 		{
+			
  			int tag = -1;
             while ( -1 != (tag = reader.ReadTag()))
             {
@@ -150,7 +152,7 @@ namespace table
                 	}
                 	break; 
                 }
-             }
+             } 
 
 			
 		}
@@ -169,6 +171,7 @@ namespace table
 		}
 		public static void Deserialize( Prop ins, tabtoy.DataReader reader )
 		{
+			
  			int tag = -1;
             while ( -1 != (tag = reader.ReadTag()))
             {
@@ -190,7 +193,7 @@ namespace table
                 	}
                 	break; 
                 }
-             }
+             } 
 
 			
 		}
@@ -209,6 +212,7 @@ namespace table
 		}
 		public static void Deserialize( AttackParam ins, tabtoy.DataReader reader )
 		{
+			
  			int tag = -1;
             while ( -1 != (tag = reader.ReadTag()))
             {
@@ -220,7 +224,7 @@ namespace table
                 	}
                 	break; 
                 }
-             }
+             } 
 
 			
 		}
@@ -239,6 +243,7 @@ namespace table
 		}
 		public static void Deserialize( SampleDefine ins, tabtoy.DataReader reader )
 		{
+			
  			int tag = -1;
             while ( -1 != (tag = reader.ReadTag()))
             {
@@ -305,7 +310,7 @@ namespace table
                 	}
                 	break; 
                 }
-             }
+             } 
 
 			
 		}
