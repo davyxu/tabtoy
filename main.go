@@ -11,7 +11,7 @@ import (
 	"github.com/davyxu/tabtoy/v2/printer"
 )
 
-var log *golog.Logger = golog.New("main")
+var log = golog.New("main")
 
 // 显示版本号
 var paramVersion = flag.Bool("version", false, "Show version")
@@ -35,6 +35,8 @@ var paramProtoVersion = flag.Int("protover", 3, "output .proto file version, 2 o
 var paramLanguage = flag.String("lan", "en_us", "set output language")
 var paramLuaEnumIntValue = flag.Bool("luaenumintvalue", false, "use int type in lua enum value")
 var paramLuaTabHeader = flag.String("luatabheader", "", "output string to lua tab header")
+var paramGenCSharpBinarySerializeCode = flag.Bool("cs_gensercode", true, "generate c# binary serialize code, default is true")
+var paramPackageName = flag.String("package", "", "override the package name in table @Types")
 
 const Version = "2.8.8"
 
@@ -70,6 +72,8 @@ func main() {
 		g.ProtoVersion = *paramProtoVersion
 		g.LuaEnumIntValue = *paramLuaEnumIntValue
 		g.LuaTabHeader = *paramLuaTabHeader
+		g.GenCSSerailizeCode = *paramGenCSharpBinarySerializeCode
+		g.PackageName = *paramPackageName
 
 		if *paramProtoOut != "" {
 			g.AddOutputType("proto", *paramProtoOut)

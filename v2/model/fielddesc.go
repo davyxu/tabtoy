@@ -192,6 +192,9 @@ func ParseFieldType(str string) (t FieldType, ok bool) {
 const RepeatedKeyword = "repeated"
 const RepeatedKeywordLen = len(RepeatedKeyword)
 
+const SliceKeyword = "[]"
+const SliceKeywordLen = len(SliceKeyword)
+
 func (self *FieldDescriptor) ParseType(fileD *FileDescriptor, rawstr string) bool {
 
 	var puretype string
@@ -199,6 +202,10 @@ func (self *FieldDescriptor) ParseType(fileD *FileDescriptor, rawstr string) boo
 	if strings.HasPrefix(rawstr, RepeatedKeyword) {
 
 		puretype = rawstr[RepeatedKeywordLen+1:]
+
+		self.IsRepeated = true
+	} else if strings.HasPrefix(rawstr, SliceKeyword) {
+		puretype = rawstr[SliceKeywordLen:]
 
 		self.IsRepeated = true
 	} else {
