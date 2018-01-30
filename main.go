@@ -36,7 +36,7 @@ var paramLanguage = flag.String("lan", "en_us", "set output language")
 var paramLuaEnumIntValue = flag.Bool("luaenumintvalue", false, "use int type in lua enum value")
 var paramLuaTabHeader = flag.String("luatabheader", "", "output string to lua tab header")
 
-const Version = "2.8.7"
+const Version = "2.8.8"
 
 func main() {
 
