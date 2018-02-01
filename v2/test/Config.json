@@ -1,0 +1,10 @@
+{
+	"Tool": "github.com/davyxu/tabtoy",
+	"Version": "2.8.8",
+	"UnitTest":[
+		{ "FloatNumber": 3.14159 },
+		{ "FloatNumber": 4.5 },
+		{ "FloatNumber": 4.6 },
+		{ "FloatNumber": 1.6 },
+		{ "FloatNumber": 5.89 }
+	]}

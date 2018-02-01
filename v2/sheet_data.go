@@ -152,7 +152,13 @@ func (self *DataSheet) processLine(fieldDef *model.FieldDescriptor, line *model.
 		return lineOp_Continue
 	}
 
-	rawValue := self.GetCellData(self.Row, self.Column)
+	var rawValue string
+	// 浮点数按本来的格式输出
+	if fieldDef.Type == model.FieldType_Float {
+		rawValue = self.GetCellDataAsNumeric(self.Row, self.Column)
+	} else {
+		rawValue = self.GetCellData(self.Row, self.Column)
+	}
 
 	r, c := self.GetRC()
 

@@ -1,9 +1,8 @@
 package v2
 
 import (
-	"strings"
-
 	"github.com/tealeg/xlsx"
+	"strings"
 )
 
 // 描述一个表单
@@ -38,6 +37,26 @@ func (self *Sheet) GetCellData(cursor, index int) string {
 	}
 
 	return strings.TrimSpace(r.Cells[index].Value)
+}
+
+func (self *Sheet) GetCellDataAsNumeric(cursor, index int) string {
+
+	if cursor >= len(self.Rows) {
+		return ""
+	}
+
+	r := self.Rows[cursor]
+	for len(r.Cells) <= index {
+		r.AddCell()
+	}
+
+	gn, err := r.Cells[index].GeneralNumeric()
+
+	if err != nil {
+		return ""
+	}
+
+	return gn
 }
 
 // 设置单元格
