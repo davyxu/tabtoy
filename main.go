@@ -38,7 +38,7 @@ var paramLuaTabHeader = flag.String("luatabheader", "", "output string to lua ta
 var paramGenCSharpBinarySerializeCode = flag.Bool("cs_gensercode", true, "generate c# binary serialize code, default is true")
 var paramPackageName = flag.String("package", "", "override the package name in table @Types")
 
-const Version = "2.8.9"
+const Version = "2.8.10"
 
 func main() {
 
