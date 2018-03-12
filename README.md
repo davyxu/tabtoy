@@ -242,6 +242,18 @@ tabtoy --mode=v2 --json_out=CombineConfig.json --combinename=Config Item.xlsx+It
 
 [例子](https://github.com/davyxu/tabtoy/tree/master/v2/example/verticalconfig)
 
+
+# FAQ
+
+## 能够将某些列隐藏不导出?
+
+在列名字前加#即可, 例如: ID 一列不导出, 将第一行的ID列改为#ID即可
+
+同样的, Sheet表单上也支持#,带#开头的表单不会被导出
+
+P.S. 不要将@Types表单加#
+
+
 # 备注
 
 感觉不错请star, 谢谢!

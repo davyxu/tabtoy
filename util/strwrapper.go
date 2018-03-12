@@ -18,12 +18,15 @@ func StringEscape(s string) string {
 		case '"':
 			b = append(b, '\\')
 			b = append(b, '"')
-		case '\x0A':
+		case '\n':
 			b = append(b, '\\')
 			b = append(b, 'n')
-		case '\x0D':
+		case '\r':
 			b = append(b, '\\')
 			b = append(b, 'r')
+		case '\\':
+			b = append(b, '\\')
+			b = append(b, c)
 		default:
 			b = append(b, c)
 		}
