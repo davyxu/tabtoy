@@ -36,7 +36,7 @@ func (self *Stream) Printf(format string, args ...interface{}) {
 func (self *Stream) WriteFile(outfile string) error {
 
 	// 自动创建目录
-	os.MkdirAll(filepath.Dir(outfile), 666)
+	os.MkdirAll(filepath.Dir(outfile), 0755)
 
 	err := ioutil.WriteFile(outfile, self.buf.Bytes(), 0666)
 	if err != nil {
