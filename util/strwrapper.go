@@ -4,6 +4,15 @@ import (
 	"fmt"
 )
 
+func nextIs(s string, index int, c byte) bool {
+
+	if index+1 >= len(s) {
+		return false
+	}
+
+	return s[index+1] == c
+}
+
 func StringEscape(s string) string {
 
 	b := make([]byte, 0)
@@ -25,8 +34,20 @@ func StringEscape(s string) string {
 			b = append(b, '\\')
 			b = append(b, 'r')
 		case '\\':
+
+			var nextChar byte
+			if index+1 < len(s) {
+				nextChar = s[index+1]
+			}
+
 			b = append(b, '\\')
-			b = append(b, c)
+
+			switch nextChar {
+			case 'n', 'r':
+			default:
+				b = append(b, c)
+			}
+
 		default:
 			b = append(b, c)
 		}
