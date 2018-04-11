@@ -2,9 +2,9 @@
 	"Tool": "github.com/davyxu/tabtoy",
 	"Version": "2.8.10",
 	"UnitTest":[
-		{ "FloatNumber": 3.14159, "str": "card\\player_slat_016" },
-		{ "FloatNumber": 4.5, "str": "ret\nnext" },
-		{ "FloatNumber": 4.6, "str": "ret\rnext" },
-		{ "FloatNumber": 1.6 },
-		{ "FloatNumber": 5.89 }
+		{ "FloatNumber": 3.14159, "str": "card\\player_slat_016", "HPByLevel":[ 0.1, 0.2 ] },
+		{ "FloatNumber": 4.5, "str": "ret\nnext", "HPByLevel":[  ] },
+		{ "FloatNumber": 4.6, "str": "ret\rnext", "HPByLevel":[  ] },
+		{ "FloatNumber": 1.6, "HPByLevel":[  ] },
+		{ "FloatNumber": 5.89, "HPByLevel":[  ] }
 	]}

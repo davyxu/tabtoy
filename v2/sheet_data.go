@@ -154,7 +154,7 @@ func (self *DataSheet) processLine(fieldDef *model.FieldDescriptor, line *model.
 
 	var rawValue string
 	// 浮点数按本来的格式输出
-	if fieldDef.Type == model.FieldType_Float {
+	if fieldDef.Type == model.FieldType_Float && !fieldDef.IsRepeated {
 		rawValue = self.GetCellDataAsNumeric(self.Row, self.Column)
 	} else {
 		rawValue = self.GetCellData(self.Row, self.Column)
