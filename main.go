@@ -3,40 +3,59 @@ package main
 import (
 	"flag"
 	"fmt"
-	"os"
-
 	"github.com/davyxu/golog"
 	"github.com/davyxu/tabtoy/v2"
 	"github.com/davyxu/tabtoy/v2/i18n"
 	"github.com/davyxu/tabtoy/v2/printer"
+	"github.com/davyxu/tabtoy/v3"
+	"github.com/davyxu/tabtoy/v3/model"
+	"os"
 )
 
 var log = golog.New("main")
 
-// 显示版本号
-var paramVersion = flag.Bool("version", false, "Show version")
+// 标准参数
+var (
+	// 显示版本号
+	paramVersion = flag.Bool("version", false, "Show version")
 
-// 工作模式
-var paramMode = flag.String("mode", "", "mode: exportorv2")
+	// 工作模式
+	paramMode = flag.String("mode", "", "v2")
 
-// 并发导出,提高导出速度, 输出日志会混乱
-var paramPara = flag.Bool("para", false, "parallel export by your cpu count")
+	// 并发导出,提高导出速度, 输出日志会混乱
+	paramPara = flag.Bool("para", false, "parallel export by your cpu count")
 
-var paramProtoOut = flag.String("proto_out", "", "output protobuf define (*.proto)")
-var paramPbtOut = flag.String("pbt_out", "", "output proto text format (*.pbt)")
-var paramLuaOut = flag.String("lua_out", "", "output lua code (*.lua)")
-var paramJsonOut = flag.String("json_out", "", "output json format (*.json)")
-var paramCSharpOut = flag.String("csharp_out", "", "output c# class and deserialize code (*.cs)")
-var paramGoOut = flag.String("go_out", "", "output golang code (*.go)")
-var paramBinaryOut = flag.String("binary_out", "", "output binary format(*.bin)")
-var paramTypeOut = flag.String("type_out", "", "output table types(*.json)")
-var paramCombineStructName = flag.String("combinename", "Config", "combine struct name, code struct name")
-var paramProtoVersion = flag.Int("protover", 3, "output .proto file version, 2 or 3")
-var paramLanguage = flag.String("lan", "en_us", "set output language")
-var paramLuaEnumIntValue = flag.Bool("luaenumintvalue", false, "use int type in lua enum value")
-var paramLuaTabHeader = flag.String("luatabheader", "", "output string to lua tab header")
-var paramGenCSharpBinarySerializeCode = flag.Bool("cs_gensercode", true, "generate c# binary serialize code, default is true")
-var paramPackageName = flag.String("package", "", "override the package name in table @Types")
+	paramLanguage = flag.String("lan", "en_us", "set output language")
+)
+
+// 文件类型导出
+var (
+	paramPackageName       = flag.String("package", "", "override the package name in table @Types")
+	paramCombineStructName = flag.String("combinename", "Config", "combine struct name, code struct name")
+	paramProtoOut          = flag.String("proto_out", "", "output protobuf define (*.proto)")
+	paramPbtOut            = flag.String("pbt_out", "", "output proto text format (*.pbt)")
+	paramLuaOut            = flag.String("lua_out", "", "output lua code (*.lua)")
+	paramJsonOut           = flag.String("json_out", "", "output json format (*.json)")
+	paramCSharpOut         = flag.String("csharp_out", "", "output c# class and deserialize code (*.cs)")
+	paramGoOut             = flag.String("go_out", "", "output golang code (*.go)")
+	paramBinaryOut         = flag.String("binary_out", "", "output binary format(*.bin)")
+	paramTypeOut           = flag.String("type_out", "", "output table types(*.json)")
+)
+
+// 特殊文件格式参数
+var (
+	paramProtoVersion = flag.Int("protover", 3, "output .proto file version, 2 or 3")
+
+	paramLuaEnumIntValue = flag.Bool("luaenumintvalue", false, "use int type in lua enum value")
+	paramLuaTabHeader    = flag.String("luatabheader", "", "output string to lua tab header")
+
+	paramGenCSharpBinarySerializeCode = flag.Bool("cs_gensercode", true, "generate c# binary serialize code, default is true")
+)
+
+// v3新增
+var (
+	paramSymbolFile = flag.String("symbol", "", "input symbol files describe types")
+)
 
 const Version = "2.8.10"
 
@@ -51,6 +70,20 @@ func main() {
 	}
 
 	switch *paramMode {
+	case "v3":
+
+		var globals model.Globals
+		globals.SymbolFile = *paramSymbolFile
+
+		for _, v := range flag.Args() {
+			globals.InputFileList = append(globals.InputFileList, v)
+		}
+
+		err := v3.Run(&globals)
+		if err != nil {
+			fmt.Println(err)
+		}
+
 	case "exportorv2", "v2":
 
 		g := printer.NewGlobals()
