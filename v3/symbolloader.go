@@ -3,6 +3,7 @@ package v3
 import (
 	"github.com/davyxu/tabtoy/util"
 	"github.com/davyxu/tabtoy/v3/model"
+	"github.com/davyxu/tabtoy/v3/table"
 	"github.com/tealeg/xlsx"
 )
 
@@ -20,7 +21,8 @@ func loadSymbols(globals *model.Globals, fileName string) error {
 			break
 		}
 
-		var objtype model.TypeField
+		var objtype table.TypeField
+
 		objtype.Table = util.GetSheetValueString(sheet, row, 0)
 		objtype.ObjectType = util.GetSheetValueString(sheet, row, 1)
 		objtype.Name = util.GetSheetValueString(sheet, row, 2)

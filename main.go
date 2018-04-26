@@ -8,8 +8,8 @@ import (
 	"github.com/davyxu/tabtoy/v2/i18n"
 	"github.com/davyxu/tabtoy/v2/printer"
 	"github.com/davyxu/tabtoy/v3"
-	"github.com/davyxu/tabtoy/v3/genfile/gosrc"
-	"github.com/davyxu/tabtoy/v3/genfile/json"
+	"github.com/davyxu/tabtoy/v3/gen/gosrc"
+	"github.com/davyxu/tabtoy/v3/gen/json"
 	"github.com/davyxu/tabtoy/v3/model"
 	"os"
 )
@@ -81,6 +81,7 @@ func main() {
 		globals.Version = Version_v3
 		globals.SymbolFile = *paramSymbolFile
 		globals.PackageName = *paramPackageName
+		globals.CombineStructName = *paramCombineStructName
 
 		for _, v := range flag.Args() {
 			globals.InputFileList = append(globals.InputFileList, v)
@@ -92,11 +93,18 @@ func main() {
 		}
 
 		if *paramJsonOut != "" {
-			json.Generate(&globals, *paramJsonOut)
+			err = json.Generate(&globals, *paramJsonOut)
 		}
 
-		if *paramJsonOut != "" {
-			gosrc.Generate(&globals, *paramGoOut)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		if *paramGoOut != "" {
+			err = gosrc.Generate(&globals, *paramGoOut)
+		}
+		if err != nil {
+			fmt.Println(err)
 		}
 
 	case "exportorv2", "v2":

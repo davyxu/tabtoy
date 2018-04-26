@@ -1,14 +1,16 @@
 package model
 
+import "github.com/davyxu/tabtoy/v3/table"
+
 type DataRow []string
 
 type DataTable struct {
-	name   string       // 表名
-	header []*TypeField // 列索引
+	name   string             // 表名
+	header []*table.TypeField // 列索引
 	rows   []DataRow
 }
 
-func (self *DataTable) Header() []*TypeField {
+func (self *DataTable) Header() []*table.TypeField {
 	return self.header
 }
 
@@ -24,7 +26,7 @@ func (self *DataTable) MaxColumns() int {
 	return len(self.header)
 }
 
-func (self *DataTable) AddHeader(types *TypeField) {
+func (self *DataTable) AddHeader(types *table.TypeField) {
 	self.header = append(self.header, types)
 }
 
@@ -47,7 +49,7 @@ func (self *DataTable) GetValue(row, col int) string {
 	return self.rows[row][col]
 }
 
-func (self *DataTable) GetType(col int) *TypeField {
+func (self *DataTable) GetType(col int) *table.TypeField {
 	return self.header[col]
 }
 

@@ -2,14 +2,15 @@ package model
 
 import (
 	"github.com/ahmetb/go-linq"
+	"github.com/davyxu/tabtoy/v3/table"
 	"strconv"
 )
 
 type SymbolTable struct {
-	typeFields []*TypeField // 不是具体的类型
+	typeFields []*table.TypeField // 不是具体的类型
 }
 
-func (self *SymbolTable) AddField(tf *TypeField) {
+func (self *SymbolTable) AddField(tf *table.TypeField) {
 	self.typeFields = append(self.typeFields, tf)
 }
 
@@ -24,12 +25,12 @@ func (self *SymbolTable) IsEnumKind(tableName, objectType string) bool {
 // 匹配枚举值
 func (self *SymbolTable) ResolveEnumValue(tableName, objectType, value string) (ret string) {
 
-	linq.From(self.typeFields).WhereT(func(tf *TypeField) bool {
+	linq.From(self.typeFields).WhereT(func(tf *table.TypeField) bool {
 
 		return tf.Table == tableName &&
 			tf.ObjectType == objectType &&
 			(tf.Name == value || tf.FieldName == value)
-	}).ForEachT(func(types *TypeField) {
+	}).ForEachT(func(types *table.TypeField) {
 
 		ret = types.DefaultValue
 
@@ -41,10 +42,10 @@ func (self *SymbolTable) ResolveEnumValue(tableName, objectType, value string) (
 // 获取所有的结构体名
 func (self *SymbolTable) StructNames() (ret []string) {
 
-	linq.From(self.typeFields).WhereT(func(tf *TypeField) bool {
+	linq.From(self.typeFields).WhereT(func(tf *table.TypeField) bool {
 
 		return tf.DefaultValue == ""
-	}).SelectT(func(tf *TypeField) string {
+	}).SelectT(func(tf *table.TypeField) string {
 
 		return tf.ObjectType
 	}).Distinct().ToSlice(&ret)
@@ -55,10 +56,10 @@ func (self *SymbolTable) StructNames() (ret []string) {
 // 获取所有的枚举名
 func (self *SymbolTable) EnumNames() (ret []string) {
 
-	linq.From(self.typeFields).WhereT(func(tf *TypeField) bool {
+	linq.From(self.typeFields).WhereT(func(tf *table.TypeField) bool {
 
 		return tf.FieldType == "int32" && isNumber(tf.DefaultValue)
-	}).SelectT(func(tf *TypeField) string {
+	}).SelectT(func(tf *table.TypeField) string {
 
 		return tf.ObjectType
 	}).Distinct().ToSlice(&ret)
@@ -69,10 +70,10 @@ func (self *SymbolTable) EnumNames() (ret []string) {
 // 对象在的表名
 func (self *SymbolTable) ObjectAtTable(objName string) (ret string) {
 
-	linq.From(self.typeFields).WhereT(func(tf *TypeField) bool {
+	linq.From(self.typeFields).WhereT(func(tf *table.TypeField) bool {
 
 		return tf.ObjectType == objName
-	}).SelectT(func(tf *TypeField) string {
+	}).SelectT(func(tf *table.TypeField) string {
 
 		return tf.Table
 	}).Distinct().ForEachT(func(name string) {
@@ -85,9 +86,9 @@ func (self *SymbolTable) ObjectAtTable(objName string) (ret string) {
 }
 
 // 对象的所有字段
-func (self *SymbolTable) Fields(objectType string) (ret []*TypeField) {
+func (self *SymbolTable) Fields(objectType string) (ret []*table.TypeField) {
 
-	linq.From(self.typeFields).WhereT(func(tf *TypeField) bool {
+	linq.From(self.typeFields).WhereT(func(tf *table.TypeField) bool {
 
 		return tf.ObjectType == objectType
 	}).ToSlice(&ret)
@@ -96,14 +97,14 @@ func (self *SymbolTable) Fields(objectType string) (ret []*TypeField) {
 }
 
 // 数据表中表头对应类型表
-func (self *SymbolTable) QueryType(tableName, headerName string) (ret *TypeField) {
+func (self *SymbolTable) QueryType(tableName, headerName string) (ret *table.TypeField) {
 
-	linq.From(self.typeFields).WhereT(func(tf *TypeField) bool {
+	linq.From(self.typeFields).WhereT(func(tf *table.TypeField) bool {
 
 		return tf.Table == tableName &&
 			tf.ObjectType == tableName &&
 			(tf.Name == headerName || tf.FieldName == headerName)
-	}).ForEachT(func(types *TypeField) {
+	}).ForEachT(func(types *table.TypeField) {
 
 		ret = types
 

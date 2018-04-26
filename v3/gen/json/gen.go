@@ -10,5 +10,6 @@ func Generate(globals *model.Globals, fileName string) error {
 	return codegen.NewCodeGen("json").
 		RegisterTemplateFunc(codegen.UsefulFunc).
 		RegisterTemplateFunc(UsefulFunc).
-		ParseTemplate(templateText, globals).WriteOutputFile(fileName).Error()
+		ParseTemplate(templateText, globals).
+		WriteOutputFile(fileName).Error()
 }

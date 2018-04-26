@@ -23,9 +23,14 @@ func loadTable(globals *model.Globals, fileName string) error {
 	for _, sheet := range file.Sheets {
 
 		// 读取表头
-		for col := 0; col < sheet.MaxCol; col++ {
+		for col := 0; ; col++ {
 
 			header := util.GetSheetValueString(sheet, 0, col)
+
+			// 空列，终止
+			if header == "" {
+				break
+			}
 
 			t := globals.Symbols.QueryType(tableName, header)
 
@@ -42,9 +47,13 @@ func loadTable(globals *model.Globals, fileName string) error {
 				break
 			}
 
-			for col := 0; col < sheet.MaxCol; col++ {
+			for col := 0; col < tab.MaxColumns(); col++ {
 
 				value := util.GetSheetValueString(sheet, row, col)
+
+				if value == "" {
+					break
+				}
 
 				tab.AddRow(row-1, col, value)
 

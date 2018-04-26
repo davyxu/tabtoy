@@ -27,10 +27,12 @@ var (
 {{range $sn, $objName := $.Symbols.StructNames}}
 // table: {{$.Symbols.ObjectAtTable $objName}}
 type {{$objName}} struct{ {{range $fi,$field := $.Symbols.Fields $objName}}
-	{{$field.FieldName}} {{$field.FieldType}} // {{$field.Name}} {{end}} 
+	{{$field.FieldName}} {{ConverToLanType $field.FieldType "go"}} // {{$field.Name}} {{end}} 
 }
 {{end}}
 
-
-
+// Combine struct
+type {{.CombineStructName}} struct { {{range $ti, $tab := $.Datas}}
+	{{$tab.Name}} []{{$tab.Name}} // table: {{$tab.Name}} {{end}}
+}
 `
