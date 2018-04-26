@@ -3,12 +3,12 @@ package model
 type DataRow []string
 
 type DataTable struct {
-	name   string         // 表名
-	header []*ObjectTypes // 列索引
+	name   string       // 表名
+	header []*TypeField // 列索引
 	rows   []DataRow
 }
 
-func (self *DataTable) Header() []*ObjectTypes {
+func (self *DataTable) Header() []*TypeField {
 	return self.header
 }
 
@@ -24,7 +24,7 @@ func (self *DataTable) MaxColumns() int {
 	return len(self.header)
 }
 
-func (self *DataTable) AddHeader(types *ObjectTypes) {
+func (self *DataTable) AddHeader(types *TypeField) {
 	self.header = append(self.header, types)
 }
 
@@ -47,7 +47,7 @@ func (self *DataTable) GetValue(row, col int) string {
 	return self.rows[row][col]
 }
 
-func (self *DataTable) GetType(col int) *ObjectTypes {
+func (self *DataTable) GetType(col int) *TypeField {
 	return self.header[col]
 }
 

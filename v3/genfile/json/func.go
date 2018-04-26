@@ -21,7 +21,7 @@ func init() {
 		case valueType.FieldType == "string": // 字符串
 			return util.StringEscape(value)
 		case globals.Symbols.IsEnumKind(dataTable.Name(), valueType.FieldType): // 枚举
-			return globals.Symbols.GetEnumValue(dataTable.Name(), valueType.FieldType, value)
+			return globals.Symbols.ResolveEnumValue(dataTable.Name(), valueType.FieldType, value)
 		}
 
 		return value

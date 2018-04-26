@@ -8,6 +8,8 @@ import (
 	"github.com/davyxu/tabtoy/v2/i18n"
 	"github.com/davyxu/tabtoy/v2/printer"
 	"github.com/davyxu/tabtoy/v3"
+	"github.com/davyxu/tabtoy/v3/genfile/gosrc"
+	"github.com/davyxu/tabtoy/v3/genfile/json"
 	"github.com/davyxu/tabtoy/v3/model"
 	"os"
 )
@@ -57,7 +59,10 @@ var (
 	paramSymbolFile = flag.String("symbol", "", "input symbol files describe types")
 )
 
-const Version = "2.8.10"
+const (
+	Version_v2 = "2.8.10"
+	Version_v3 = "3.0.0"
+)
 
 func main() {
 
@@ -65,7 +70,7 @@ func main() {
 
 	// 版本
 	if *paramVersion {
-		fmt.Println(Version)
+		fmt.Printf("%s, %s", Version_v2, Version_v3)
 		return
 	}
 
@@ -73,15 +78,25 @@ func main() {
 	case "v3":
 
 		var globals model.Globals
+		globals.Version = Version_v3
 		globals.SymbolFile = *paramSymbolFile
+		globals.PackageName = *paramPackageName
 
 		for _, v := range flag.Args() {
 			globals.InputFileList = append(globals.InputFileList, v)
 		}
 
-		err := v3.Run(&globals)
+		err := v3.Parse(&globals)
 		if err != nil {
 			fmt.Println(err)
+		}
+
+		if *paramJsonOut != "" {
+			json.Generate(&globals, *paramJsonOut)
+		}
+
+		if *paramJsonOut != "" {
+			gosrc.Generate(&globals, *paramGoOut)
 		}
 
 	case "exportorv2", "v2":
@@ -94,7 +109,7 @@ func main() {
 			}
 		}
 
-		g.Version = Version
+		g.Version = Version_v2
 
 		for _, v := range flag.Args() {
 			g.InputFileList = append(g.InputFileList, v)

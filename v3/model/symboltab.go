@@ -6,32 +6,30 @@ import (
 )
 
 type SymbolTable struct {
-	Types []*ObjectTypes
+	typeFields []*TypeField // 不是具体的类型
 }
 
-func isNumber(s string) bool {
-	_, err := strconv.Atoi(s)
-	return err == nil
+func (self *SymbolTable) AddField(tf *TypeField) {
+	self.typeFields = append(self.typeFields, tf)
 }
 
+// 类型是枚举
 func (self *SymbolTable) IsEnumKind(tableName, objectType string) bool {
 
-	return linq.From(self.Types).WhereT(func(types *ObjectTypes) bool {
-
-		return types.Table == tableName &&
-			types.ObjectType == objectType &&
-			(types.FieldType == "int32" && isNumber(types.DefaultValue)) // 字段类型都为int32，且默认值(枚举值)都
-	}).Count() > 0 // 字段数量
+	return linq.From(self.EnumNames()).WhereT(func(name string) bool {
+		return name == objectType
+	}).Count() == 1
 }
 
-func (self *SymbolTable) GetEnumValue(tableName, objectType, value string) (ret string) {
+// 匹配枚举值
+func (self *SymbolTable) ResolveEnumValue(tableName, objectType, value string) (ret string) {
 
-	linq.From(self.Types).WhereT(func(types *ObjectTypes) bool {
+	linq.From(self.typeFields).WhereT(func(tf *TypeField) bool {
 
-		return types.Table == tableName &&
-			types.ObjectType == objectType &&
-			(types.Name == value || types.FieldName == value)
-	}).ForEachT(func(types *ObjectTypes) {
+		return tf.Table == tableName &&
+			tf.ObjectType == objectType &&
+			(tf.Name == value || tf.FieldName == value)
+	}).ForEachT(func(types *TypeField) {
 
 		ret = types.DefaultValue
 
@@ -40,18 +38,81 @@ func (self *SymbolTable) GetEnumValue(tableName, objectType, value string) (ret 
 	return
 }
 
-func (self *SymbolTable) QueryType(tableName, headerName string) (ret *ObjectTypes) {
+// 获取所有的结构体名
+func (self *SymbolTable) StructNames() (ret []string) {
 
-	linq.From(self.Types).WhereT(func(types *ObjectTypes) bool {
+	linq.From(self.typeFields).WhereT(func(tf *TypeField) bool {
 
-		return types.Table == tableName &&
-			types.ObjectType == tableName &&
-			(types.Name == headerName || types.FieldName == headerName)
-	}).ForEachT(func(types *ObjectTypes) {
+		return tf.DefaultValue == ""
+	}).SelectT(func(tf *TypeField) string {
+
+		return tf.ObjectType
+	}).Distinct().ToSlice(&ret)
+
+	return
+}
+
+// 获取所有的枚举名
+func (self *SymbolTable) EnumNames() (ret []string) {
+
+	linq.From(self.typeFields).WhereT(func(tf *TypeField) bool {
+
+		return tf.FieldType == "int32" && isNumber(tf.DefaultValue)
+	}).SelectT(func(tf *TypeField) string {
+
+		return tf.ObjectType
+	}).Distinct().ToSlice(&ret)
+
+	return
+}
+
+// 对象在的表名
+func (self *SymbolTable) ObjectAtTable(objName string) (ret string) {
+
+	linq.From(self.typeFields).WhereT(func(tf *TypeField) bool {
+
+		return tf.ObjectType == objName
+	}).SelectT(func(tf *TypeField) string {
+
+		return tf.Table
+	}).Distinct().ForEachT(func(name string) {
+
+		ret = name
+
+	})
+
+	return
+}
+
+// 对象的所有字段
+func (self *SymbolTable) Fields(objectType string) (ret []*TypeField) {
+
+	linq.From(self.typeFields).WhereT(func(tf *TypeField) bool {
+
+		return tf.ObjectType == objectType
+	}).ToSlice(&ret)
+
+	return
+}
+
+// 数据表中表头对应类型表
+func (self *SymbolTable) QueryType(tableName, headerName string) (ret *TypeField) {
+
+	linq.From(self.typeFields).WhereT(func(tf *TypeField) bool {
+
+		return tf.Table == tableName &&
+			tf.ObjectType == tableName &&
+			(tf.Name == headerName || tf.FieldName == headerName)
+	}).ForEachT(func(types *TypeField) {
 
 		ret = types
 
 	})
 
 	return
+}
+
+func isNumber(s string) bool {
+	_, err := strconv.Atoi(s)
+	return err == nil
 }

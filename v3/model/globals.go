@@ -1,9 +1,10 @@
 package model
 
 type Globals struct {
+	Version       string
 	SymbolFile    string
 	InputFileList []string
-	OutputFile    string
+	PackageName   string
 
 	Symbols SymbolTable
 

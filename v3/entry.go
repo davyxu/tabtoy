@@ -1,13 +1,10 @@
 package v3
 
 import (
-	"github.com/davyxu/tabtoy/v3/genfile/json"
 	"github.com/davyxu/tabtoy/v3/model"
 )
 
-func Run(globals *model.Globals) error {
-
-	globals.OutputFile = "a.json"
+func Parse(globals *model.Globals) error {
 
 	loadSymbols(globals, globals.SymbolFile)
 
@@ -15,5 +12,5 @@ func Run(globals *model.Globals) error {
 		loadTable(globals, fileName)
 	}
 
-	return json.Generate(globals)
+	return nil
 }

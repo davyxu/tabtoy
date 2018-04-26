@@ -1,6 +1,7 @@
 package model
 
-type ObjectTypes struct {
+// 类型表中的一行描述
+type TypeField struct {
 	Table        string `tab:"表名"`
 	ObjectType   string `tab:"对象类型"`
 	Name         string `tab:"标识名"`

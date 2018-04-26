@@ -20,14 +20,15 @@ func loadSymbols(globals *model.Globals, fileName string) error {
 			break
 		}
 
-		var objtype model.ObjectTypes
+		var objtype model.TypeField
 		objtype.Table = util.GetSheetValueString(sheet, row, 0)
 		objtype.ObjectType = util.GetSheetValueString(sheet, row, 1)
 		objtype.Name = util.GetSheetValueString(sheet, row, 2)
 		objtype.FieldName = util.GetSheetValueString(sheet, row, 3)
 		objtype.FieldType = util.GetSheetValueString(sheet, row, 4)
 		objtype.DefaultValue = util.GetSheetValueString(sheet, row, 5)
-		globals.Symbols.Types = append(globals.Symbols.Types, &objtype)
+
+		globals.Symbols.AddField(&objtype)
 
 	}
 
