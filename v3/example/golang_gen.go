@@ -34,8 +34,14 @@ var (
 
 // table: ExampleData
 type ExampleData struct {
-	ID   int32     // 任务ID
-	Name string    // 名称
-	Rate float32   // 比例
-	Type ActorType // 类型
+	ID    int32     // 任务ID
+	Name  string    // 名称
+	Rate  float32   // 比例
+	Type  ActorType // 类型
+	Skill []int32   // 技能列表
+}
+
+// Combine struct
+type Config struct {
+	ExampleData []ExampleData // table: ExampleData
 }

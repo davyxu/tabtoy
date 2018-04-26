@@ -58,7 +58,7 @@ func (self *SymbolTable) EnumNames() (ret []string) {
 
 	linq.From(self.typeFields).WhereT(func(tf *table.TypeField) bool {
 
-		return tf.FieldType == "int32" && isNumber(tf.DefaultValue)
+		return table.ConverToLanType(tf, "go") == "int32" && isNumber(tf.DefaultValue)
 	}).SelectT(func(tf *table.TypeField) string {
 
 		return tf.ObjectType

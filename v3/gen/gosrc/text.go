@@ -27,7 +27,7 @@ var (
 {{range $sn, $objName := $.Symbols.StructNames}}
 // table: {{$.Symbols.ObjectAtTable $objName}}
 type {{$objName}} struct{ {{range $fi,$field := $.Symbols.Fields $objName}}
-	{{$field.FieldName}} {{ConverToLanType $field.FieldType "go"}} // {{$field.Name}} {{end}} 
+	{{$field.FieldName}} {{ConverToLanType $field "go"}} // {{$field.Name}} {{end}} 
 }
 {{end}}
 

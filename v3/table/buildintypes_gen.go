@@ -11,6 +11,8 @@ type TypeField struct {
 	FieldName    string // 字段名
 	FieldType    string // 字段类型
 	DefaultValue string // 默认值
+	IsArray      bool   // 数组
+	Splitter     string // 切割符
 }
 
 // table: FieldType

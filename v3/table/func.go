@@ -8,11 +8,12 @@ import (
 var UsefulFunc = template.FuncMap{}
 
 // 将定义用的类型，转换为不同语言对应的目标类型
-func ConverToLanType(inputType, lanType string) (ret string) {
+func ConverToLanType(tf *TypeField, lanType string) string {
 
+	var convertedType string
 	linq.From(config.FieldType).WhereT(func(ft FieldType) bool {
 
-		return ft.InputFieldName == inputType
+		return ft.InputFieldName == tf.FieldType
 	}).SelectT(func(ft FieldType) string {
 
 		switch lanType {
@@ -25,10 +26,25 @@ func ConverToLanType(inputType, lanType string) (ret string) {
 		}
 	}).ForEachT(func(typeName string) {
 
-		ret = typeName
+		convertedType = typeName
 	})
 
-	return
+	if convertedType == "" {
+		convertedType = tf.FieldType
+	}
+
+	if tf.IsArray {
+		switch lanType {
+		case "cs":
+			return convertedType + "[]"
+		case "go":
+			return "[]" + convertedType
+		default:
+			panic("unknown lan type: " + lanType)
+		}
+	}
+
+	return convertedType
 }
 
 func init() {

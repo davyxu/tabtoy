@@ -5,6 +5,7 @@ import (
 	"github.com/davyxu/tabtoy/v3/model"
 	"github.com/davyxu/tabtoy/v3/table"
 	"github.com/tealeg/xlsx"
+	"reflect"
 )
 
 func loadSymbols(globals *model.Globals, fileName string) error {
@@ -15,6 +16,19 @@ func loadSymbols(globals *model.Globals, fileName string) error {
 
 	sheet := file.Sheets[0]
 
+	// 探测类型表头长度
+	var maxCol int
+	for {
+		strValue := util.GetSheetValueString(sheet, 0, maxCol)
+
+		// 空列，终止
+		if strValue == "" {
+			break
+		}
+
+		maxCol++
+	}
+
 	for row := 1; ; row++ {
 
 		if util.IsFullRowEmpty(sheet, row) {
@@ -23,13 +37,17 @@ func loadSymbols(globals *model.Globals, fileName string) error {
 
 		var objtype table.TypeField
 
-		objtype.Table = util.GetSheetValueString(sheet, row, 0)
-		objtype.ObjectType = util.GetSheetValueString(sheet, row, 1)
-		objtype.Name = util.GetSheetValueString(sheet, row, 2)
-		objtype.FieldName = util.GetSheetValueString(sheet, row, 3)
-		objtype.FieldType = util.GetSheetValueString(sheet, row, 4)
-		objtype.DefaultValue = util.GetSheetValueString(sheet, row, 5)
+		vobjtype := reflect.ValueOf(&objtype).Elem()
 
+		for col := 0; col < maxCol; col++ {
+
+			strValue := util.GetSheetValueString(sheet, row, col)
+
+			fieldType := vobjtype.Field(col)
+
+			StringToValue(strValue, fieldType.Addr().Interface())
+
+		}
 		globals.Symbols.AddField(&objtype)
 
 	}
