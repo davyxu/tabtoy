@@ -23,12 +23,11 @@ func (self *SymbolTable) IsEnumKind(tableName, objectType string) bool {
 }
 
 // 匹配枚举值
-func (self *SymbolTable) ResolveEnumValue(tableName, objectType, value string) (ret string) {
+func (self *SymbolTable) ResolveEnumValue(objectType, value string) (ret string) {
 
 	linq.From(self.typeFields).WhereT(func(tf *table.TypeField) bool {
 
-		return tf.Table == tableName &&
-			tf.ObjectType == objectType &&
+		return tf.ObjectType == objectType &&
 			(tf.Name == value || tf.FieldName == value)
 	}).ForEachT(func(types *table.TypeField) {
 
@@ -67,24 +66,6 @@ func (self *SymbolTable) EnumNames() (ret []string) {
 	return
 }
 
-// 对象在的表名
-func (self *SymbolTable) ObjectAtTable(objName string) (ret string) {
-
-	linq.From(self.typeFields).WhereT(func(tf *table.TypeField) bool {
-
-		return tf.ObjectType == objName
-	}).SelectT(func(tf *table.TypeField) string {
-
-		return tf.Table
-	}).Distinct().ForEachT(func(name string) {
-
-		ret = name
-
-	})
-
-	return
-}
-
 // 对象的所有字段
 func (self *SymbolTable) Fields(objectType string) (ret []*table.TypeField) {
 
@@ -101,8 +82,7 @@ func (self *SymbolTable) QueryType(tableName, headerName string) (ret *table.Typ
 
 	linq.From(self.typeFields).WhereT(func(tf *table.TypeField) bool {
 
-		return tf.Table == tableName &&
-			tf.ObjectType == tableName &&
+		return tf.ObjectType == tableName &&
 			(tf.Name == headerName || tf.FieldName == headerName)
 	}).ForEachT(func(types *table.TypeField) {
 

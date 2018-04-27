@@ -8,62 +8,48 @@ import (
 	"strings"
 )
 
-func loadTable(globals *model.Globals, fileName string) error {
-	file, err := xlsx.OpenFile(fileName)
-	if err != nil {
-		return err
+func readOneRow(sheet *xlsx.Sheet, tab *model.DataTable, row int) (eachRow model.DataRow) {
+
+	for col := 0; col < tab.HeaderFieldCount(); col++ {
+
+		value := util.GetSheetValueString(sheet, row, col)
+
+		eachRow = append(eachRow, value)
 	}
 
-	// TODO 表名
+	return
+}
+
+func loadTable(fileName string) (tab *model.DataTable, err error) {
+	file, err := xlsx.OpenFile(fileName)
+	if err != nil {
+		return nil, err
+	}
+
+	// TODO 表名默认来自于文件名，当不使用默认规则时，需要准备Pragma表描述对应关系
 	ext := filepath.Ext(fileName)
 	tableName := strings.TrimSuffix(fileName, ext)
 
-	tab := model.NewDataTable(tableName)
-
 	for _, sheet := range file.Sheets {
 
-		// 读取表头
-		for col := 0; ; col++ {
-
-			header := util.GetSheetValueString(sheet, 0, col)
-
-			// 空列，终止
-			if header == "" {
-				break
-			}
-
-			t := globals.Symbols.QueryType(tableName, header)
-
-			if t == nil {
-				panic("types not found:" + header)
-			}
-
-			tab.AddHeader(t)
+		if tab == nil {
+			tab = loadheader(sheet, tableName)
 		}
 
+		// 遍历所有行
 		for row := 1; ; row++ {
 
 			if util.IsFullRowEmpty(sheet, row) {
 				break
 			}
 
-			for col := 0; col < tab.MaxColumns(); col++ {
+			// 读取每一行
+			eachRow := readOneRow(sheet, tab, row)
 
-				value := util.GetSheetValueString(sheet, row, col)
-
-				if value == "" {
-					break
-				}
-
-				tab.AddRow(row-1, col, value)
-
-			}
-
+			tab.AddRow(eachRow)
 		}
 
 	}
 
-	globals.AddData(tab)
-
-	return nil
+	return tab, nil
 }

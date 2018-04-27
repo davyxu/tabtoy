@@ -3,7 +3,6 @@
 // Version: 3.0.0
 package example
 
-// table: ExampleData
 type ActorType int32
 
 const (
@@ -32,7 +31,6 @@ var (
 	}
 )
 
-// table: ExampleData
 type ExampleData struct {
 	ID    int32     // 任务ID
 	Name  string    // 名称

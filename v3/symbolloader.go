@@ -1,55 +1,41 @@
 package v3
 
 import (
-	"github.com/davyxu/tabtoy/util"
 	"github.com/davyxu/tabtoy/v3/model"
 	"github.com/davyxu/tabtoy/v3/table"
-	"github.com/tealeg/xlsx"
 	"reflect"
 )
 
+// 将一行数据解析为具体的类型
+func resolveRowType(rowValue interface{}, row model.DataRow) {
+
+	vobjtype := reflect.ValueOf(rowValue).Elem()
+
+	for col, value := range row {
+
+		fieldType := vobjtype.Field(col)
+
+		StringToValue(value, fieldType.Addr().Interface())
+	}
+}
+
 func loadSymbols(globals *model.Globals, fileName string) error {
-	file, err := xlsx.OpenFile(fileName)
+
+	tab, err := loadTable(fileName)
+
 	if err != nil {
 		return err
 	}
 
-	sheet := file.Sheets[0]
-
-	// 探测类型表头长度
-	var maxCol int
-	for {
-		strValue := util.GetSheetValueString(sheet, 0, maxCol)
-
-		// 空列，终止
-		if strValue == "" {
-			break
-		}
-
-		maxCol++
-	}
-
-	for row := 1; ; row++ {
-
-		if util.IsFullRowEmpty(sheet, row) {
-			break
-		}
+	for row := 0; row < tab.RowCount(); row++ {
 
 		var objtype table.TypeField
 
-		vobjtype := reflect.ValueOf(&objtype).Elem()
+		oneRow := tab.GetDataRow(row)
 
-		for col := 0; col < maxCol; col++ {
+		resolveRowType(&objtype, oneRow)
 
-			strValue := util.GetSheetValueString(sheet, row, col)
-
-			fieldType := vobjtype.Field(col)
-
-			StringToValue(strValue, fieldType.Addr().Interface())
-
-		}
 		globals.Symbols.AddField(&objtype)
-
 	}
 
 	return nil

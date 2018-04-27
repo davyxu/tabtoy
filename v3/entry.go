@@ -6,10 +6,23 @@ import (
 
 func Parse(globals *model.Globals) error {
 
-	loadSymbols(globals, globals.SymbolFile)
+	err := loadSymbols(globals, globals.SymbolFile)
+
+	if err != nil {
+		return err
+	}
 
 	for _, fileName := range globals.InputFileList {
-		loadTable(globals, fileName)
+
+		tab, err := loadTable(fileName)
+
+		if err != nil {
+			return err
+		}
+
+		resolveHeaderFields(tab, globals.Symbols)
+
+		globals.AddData(tab)
 	}
 
 	return nil

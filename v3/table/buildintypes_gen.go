@@ -3,9 +3,30 @@
 // Version: 3.0.0
 package table
 
-// table: TypeField
+type ObjectKind int32
+
+const (
+	ObjectKind_None        = 0 //
+	ObjectKind_TableHeader = 1 // 表头
+	ObjectKind_Enum        = 2 // 枚举
+)
+
+var (
+	ObjectKindMapperValueByName = map[string]int32{
+		"None":        0, //
+		"TableHeader": 1, // 表头
+		"Enum":        2, // 枚举
+	}
+
+	ObjectKindMapperNameByValue = map[int32]string{
+		0: "None",        //
+		1: "TableHeader", // 表头
+		2: "Enum",        // 枚举
+	}
+)
+
 type TypeField struct {
-	Table        string // 表名
+	Kind         string // 种类
 	ObjectType   string // 对象类型
 	Name         string // 标识名
 	FieldName    string // 字段名
@@ -15,7 +36,6 @@ type TypeField struct {
 	Splitter     string // 切割符
 }
 
-// table: FieldType
 type FieldType struct {
 	InputFieldName string // 输入字段
 	GoFieldName    string // Go字段
