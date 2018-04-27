@@ -24,11 +24,11 @@ func loadheader(sheet *xlsx.Sheet, tableName string) *model.DataTable {
 	return model.NewDataTable(tableName, headerRow)
 }
 
-func resolveHeaderFields(tab *model.DataTable, symbols model.SymbolTable) {
+func ResolveHeaderFields(tab *model.DataTable, tableObjectType string, symbols *model.SymbolTable) {
 
 	for _, value := range tab.RawHeader() {
 
-		tf := symbols.QueryType(tab.Name(), value)
+		tf := symbols.FindField(tableObjectType, value)
 		if tf == nil {
 			panic("type not found: " + value)
 		}

@@ -8,7 +8,7 @@ import (
 var UsefulFunc = template.FuncMap{}
 
 // 取类型的默认值
-func FetchDefaultValue(tf *TypeField) (ret string) {
+func FetchDefaultValue(tf *TableField) (ret string) {
 
 	linq.From(BuiltinConfig.FieldType).WhereT(func(ft *FieldType) bool {
 
@@ -22,7 +22,7 @@ func FetchDefaultValue(tf *TypeField) (ret string) {
 }
 
 // 将类型转为对应语言的原始类型
-func LanguagePrimitive(tf *TypeField, lanType string) string {
+func LanguagePrimitive(tf *TableField, lanType string) string {
 	var convertedType string
 	linq.From(BuiltinConfig.FieldType).WhereT(func(ft *FieldType) bool {
 
@@ -50,7 +50,7 @@ func LanguagePrimitive(tf *TypeField, lanType string) string {
 }
 
 // 将定义用的类型，转换为不同语言对应的复合类型
-func LanguageType(tf *TypeField, lanType string) string {
+func LanguageType(tf *TableField, lanType string) string {
 
 	convertedType := LanguagePrimitive(tf, lanType)
 

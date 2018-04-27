@@ -20,7 +20,7 @@ func readOneRow(sheet *xlsx.Sheet, tab *model.DataTable, row int) (eachRow model
 	return
 }
 
-func loadTable(fileName string) (tab *model.DataTable, err error) {
+func LoadTableData(fileName string, mainTab *model.DataTable) (tab *model.DataTable, err error) {
 	file, err := xlsx.OpenFile(fileName)
 	if err != nil {
 		return nil, err
@@ -29,6 +29,10 @@ func loadTable(fileName string) (tab *model.DataTable, err error) {
 	// TODO 表名默认来自于文件名，当不使用默认规则时，需要准备Pragma表描述对应关系
 	ext := filepath.Ext(fileName)
 	tableName := strings.TrimSuffix(fileName, ext)
+
+	if mainTab != nil {
+		tab = mainTab
+	}
 
 	for _, sheet := range file.Sheets {
 

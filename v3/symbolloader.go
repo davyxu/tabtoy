@@ -11,7 +11,7 @@ func matchField(objType reflect.Type, header string) int {
 	for i := 0; i < objType.NumField(); i++ {
 		fd := objType.Field(i)
 
-		if fd.Tag.Get("tab_name") == header {
+		if fd.Tag.Get("tb_name") == header {
 			return i
 		}
 	}
@@ -21,30 +21,32 @@ func matchField(objType reflect.Type, header string) int {
 }
 
 // 将一行数据解析为具体的类型
-func resolveRowType(ret *table.TypeField, tab *model.DataTable, row model.DataRow) {
+func resolveRowTypeByReflect(ret interface{}, tab *model.DataTable, row int) {
 
-	vobjtype := reflect.ValueOf(ret).Elem()
+	vobj := reflect.ValueOf(ret).Elem()
 
 	tobj := reflect.TypeOf(ret).Elem()
+
+	oneRow := tab.GetDataRow(row)
 
 	for col, header := range tab.RawHeader() {
 
 		index := matchField(tobj, header)
 
 		if index == -1 {
-			panic("类型表头找不到")
+			panic("表头数据不匹配" + header)
 		}
 
-		fieldType := vobjtype.Field(index)
+		fieldValue := vobj.Field(index)
 
-		StringToValue(row[col], fieldType.Addr().Interface())
+		RawStringToValue(oneRow[col], fieldValue.Addr().Interface())
 	}
 
 }
 
 func loadSymbols(globals *model.Globals, fileName string) error {
 
-	tab, err := loadTable(fileName)
+	tab, err := LoadTableData(fileName, nil)
 
 	if err != nil {
 		return err
@@ -52,11 +54,9 @@ func loadSymbols(globals *model.Globals, fileName string) error {
 
 	for row := 0; row < tab.RowCount(); row++ {
 
-		var objtype table.TypeField
+		var objtype table.TableField
 
-		oneRow := tab.GetDataRow(row)
-
-		resolveRowType(&objtype, tab, oneRow)
+		resolveRowTypeByReflect(&objtype, tab, row)
 
 		globals.Symbols.AddField(&objtype)
 	}

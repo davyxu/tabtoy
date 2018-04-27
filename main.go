@@ -56,7 +56,9 @@ var (
 
 // v3新增
 var (
-	paramSymbolFile = flag.String("symbol", "", "input symbol files describe types")
+	paramBuiltinSymbolFile = flag.String("builtinsymbol", "", "input builtin symbol files describe types")
+	paramSymbolFile        = flag.String("symbol", "", "input symbol files describe types")
+	paramPragmaFile        = flag.String("pragma", "", "input multi-files configs")
 )
 
 const (
@@ -79,7 +81,9 @@ func main() {
 
 		var globals model.Globals
 		globals.Version = Version_v3
+		globals.BuiltinSymbolFile = *paramBuiltinSymbolFile
 		globals.SymbolFile = *paramSymbolFile
+		globals.PragmaFile = *paramPragmaFile
 		globals.PackageName = *paramPackageName
 		globals.CombineStructName = *paramCombineStructName
 
@@ -90,6 +94,7 @@ func main() {
 		err := v3.Parse(&globals)
 		if err != nil {
 			fmt.Println(err)
+			os.Exit(1)
 		}
 
 		if *paramJsonOut != "" {
@@ -98,6 +103,7 @@ func main() {
 
 		if err != nil {
 			fmt.Println(err)
+			os.Exit(1)
 		}
 
 		if *paramGoOut != "" {
@@ -105,6 +111,7 @@ func main() {
 		}
 		if err != nil {
 			fmt.Println(err)
+			os.Exit(1)
 		}
 
 	case "exportorv2", "v2":

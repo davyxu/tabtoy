@@ -33,12 +33,36 @@ var (
 
 
 
+type TableField struct{ 
+	Kind string `tb_name:"种类"` 
+	ObjectType string `tb_name:"对象类型"` 
+	Name string `tb_name:"标识名"` 
+	FieldName string `tb_name:"字段名"` 
+	FieldType string `tb_name:"字段类型"` 
+	DefaultValue string `tb_name:"默认值"` 
+	IsArray bool `tb_name:"数组"` 
+	Splitter string `tb_name:"切割符"` 
+}
+
+type FieldType struct{ 
+	InputFieldName string `tb_name:"输入字段"` 
+	GoFieldName string `tb_name:"Go字段"` 
+	CSFieldName string `tb_name:"C#字段"` 
+	DefaultValue string `tb_name:"默认值"` 
+}
+
+type TablePragma struct{ 
+	TableName []string `tb_name:"表名"` 
+	TableFileName string `tb_name:"表文件名"` 
+	IsVertical bool `tb_name:"垂直表"` 
+}
+
 type ExampleData struct{ 
-	ID int32 `tab_name:"任务ID"` 
-	Name string `tab_name:"名称"` 
-	Rate float32 `tab_name:"比例"` 
-	Type ActorType `tab_name:"类型"` 
-	Skill []int32 `tab_name:"技能列表"` 
+	ID int32 `tb_name:"任务ID"` 
+	Name string `tb_name:"名称"` 
+	Rate float32 `tb_name:"比例"` 
+	Type ActorType `tb_name:"类型"` 
+	Skill []int32 `tb_name:"技能列表"` 
 }
 
 

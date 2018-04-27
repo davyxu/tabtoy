@@ -10,7 +10,7 @@ import (
 
 var UsefulFunc = template.FuncMap{}
 
-func wrapSingleValue(globals *model.Globals, valueType *table.TypeField, value string) string {
+func wrapSingleValue(globals *model.Globals, valueType *table.TableField, value string) string {
 	switch {
 	case valueType.FieldType == "string": // 字符串
 		return util.StringEscape(value)
@@ -50,6 +50,7 @@ func init() {
 			var sb strings.Builder
 			sb.WriteString("[")
 
+			// 空的单元格，导出空数组，除非强制指定填充默认值
 			if value != "" {
 				for index, elementValue := range strings.Split(value, valueType.Splitter) {
 					if index > 0 {

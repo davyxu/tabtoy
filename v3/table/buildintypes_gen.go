@@ -6,28 +6,28 @@ package table
 
 
 
-type TypeField struct{ 
-	Kind string `tab_name:"种类"` 
-	ObjectType string `tab_name:"对象类型"` 
-	Name string `tab_name:"标识名"` 
-	FieldName string `tab_name:"字段名"` 
-	FieldType string `tab_name:"字段类型"` 
-	DefaultValue string `tab_name:"默认值"` 
-	IsArray bool `tab_name:"数组"` 
-	Splitter string `tab_name:"切割符"` 
+type TableField struct{ 
+	Kind string `tb_name:"种类"` 
+	ObjectType string `tb_name:"对象类型"` 
+	Name string `tb_name:"标识名"` 
+	FieldName string `tb_name:"字段名"` 
+	FieldType string `tb_name:"字段类型"` 
+	DefaultValue string `tb_name:"默认值"` 
+	IsArray bool `tb_name:"数组"` 
+	Splitter string `tb_name:"切割符"` 
 }
 
 type FieldType struct{ 
-	InputFieldName string `tab_name:"输入字段"` 
-	GoFieldName string `tab_name:"Go字段"` 
-	CSFieldName string `tab_name:"C#字段"` 
-	DefaultValue string `tab_name:"默认值"` 
+	InputFieldName string `tb_name:"输入字段"` 
+	GoFieldName string `tb_name:"Go字段"` 
+	CSFieldName string `tb_name:"C#字段"` 
+	DefaultValue string `tb_name:"默认值"` 
 }
 
 type TablePragma struct{ 
-	TableName string `tab_name:"表名"` 
-	TableFileName string `tab_name:"表文件名"` 
-	IsVertical bool `tab_name:"是垂直"` 
+	TableName []string `tb_name:"表名"` 
+	TableFileName string `tb_name:"表文件名"` 
+	IsVertical bool `tb_name:"垂直表"` 
 }
 
 
