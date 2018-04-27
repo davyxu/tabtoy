@@ -8,6 +8,7 @@
 --luaenumintvalue=true ^
 --go_out=.\golang\table\table_gen.go ^
 --json_out=.\golang\Config.json ^
+--cpp_out=.\cpp\cpp\Config.h ^
 --combinename=Config ^
 --lan=zh_cn ^
 Globals.xlsx ^

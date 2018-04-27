@@ -42,6 +42,7 @@ var (
 	paramGoOut             = flag.String("go_out", "", "output golang code (*.go)")
 	paramBinaryOut         = flag.String("binary_out", "", "output binary format(*.bin)")
 	paramTypeOut           = flag.String("type_out", "", "output table types(*.json)")
+	paramCppOut            = flag.String("cpp_out", "", "output c++ format (*.cpp)")
 )
 
 // 特殊文件格式参数
@@ -62,7 +63,7 @@ var (
 )
 
 const (
-	Version_v2 = "2.8.10"
+	Version_v2 = "2.9.1"
 	Version_v3 = "3.0.0"
 )
 
@@ -160,6 +161,10 @@ func main() {
 
 		if *paramGoOut != "" {
 			g.AddOutputType("go", *paramGoOut)
+		}
+
+		if *paramCppOut != "" {
+			g.AddOutputType("cpp", *paramCppOut)
 		}
 
 		if *paramBinaryOut != "" {

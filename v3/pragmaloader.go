@@ -29,6 +29,19 @@ func ParseRow(ret interface{}, tab *model.DataTable, row int) {
 	}
 }
 
+func loadPragmaData(tab *model.DataTable) (pragmaList []*table.TablePragma) {
+
+	for row := 0; row < tab.RowCount(); row++ {
+
+		var pragma table.TablePragma
+		ParseRow(&pragma, tab, row)
+
+		pragmaList = append(pragmaList, &pragma)
+	}
+
+	return
+}
+
 func loadPragma(globals *model.Globals, fileName string) error {
 
 	if fileName == "" {
@@ -43,14 +56,7 @@ func loadPragma(globals *model.Globals, fileName string) error {
 
 	ResolveHeaderFields(tab, "TablePragma", &globals.Symbols)
 
-	var pragmaList []*table.TablePragma
-	for row := 0; row < tab.RowCount(); row++ {
-
-		var pragma table.TablePragma
-		ParseRow(&pragma, tab, row)
-
-		pragmaList = append(pragmaList, &pragma)
-	}
+	pragmaList := loadPragmaData(tab)
 
 	for _, pragma := range pragmaList {
 
