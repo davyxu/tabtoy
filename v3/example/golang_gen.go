@@ -4,6 +4,27 @@
 package example
 
 
+type TableType int32
+const (	
+	TableType_None = 0 //  
+	TableType_DataTable = 1 // 数据表 
+	TableType_SymbolTable = 2 // 符号表 
+)
+
+var (
+	TableTypeMapperValueByName = map[string]int32{ 
+		"None": 0, //  
+		"DataTable": 1, // 数据表 
+		"SymbolTable": 2, // 符号表 
+	}
+
+	TableTypeMapperNameByValue = map[int32]string{ 
+		 0: "None", //  
+		 1: "DataTable", // 数据表 
+		 2: "SymbolTable", // 符号表 
+	}
+)
+
 type ActorType int32
 const (	
 	ActorType_None = 0 //  
@@ -52,8 +73,9 @@ type FieldType struct{
 }
 
 type TablePragma struct{ 
-	TableName []string `tb_name:"表名"` 
-	TableFileName string `tb_name:"表文件名"` 
+	TableType TableType `tb_name:"表类型"` 
+	TableName string `tb_name:"表名"` 
+	TableFileName []string `tb_name:"表文件名"` 
 	IsVertical bool `tb_name:"垂直表"` 
 }
 

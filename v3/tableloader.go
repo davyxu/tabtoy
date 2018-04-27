@@ -4,8 +4,6 @@ import (
 	"github.com/davyxu/tabtoy/util"
 	"github.com/davyxu/tabtoy/v3/model"
 	"github.com/tealeg/xlsx"
-	"path/filepath"
-	"strings"
 )
 
 func readOneRow(sheet *xlsx.Sheet, tab *model.DataTable, row int) (eachRow model.DataRow) {
@@ -20,25 +18,15 @@ func readOneRow(sheet *xlsx.Sheet, tab *model.DataTable, row int) (eachRow model
 	return
 }
 
-func LoadTableData(fileName string, mainTab *model.DataTable) (tab *model.DataTable, err error) {
+func LoadTableData(fileName string, tab *model.DataTable) error {
 	file, err := xlsx.OpenFile(fileName)
 	if err != nil {
-		return nil, err
-	}
-
-	// TODO 表名默认来自于文件名，当不使用默认规则时，需要准备Pragma表描述对应关系
-	ext := filepath.Ext(fileName)
-	tableName := strings.TrimSuffix(fileName, ext)
-
-	if mainTab != nil {
-		tab = mainTab
+		return err
 	}
 
 	for _, sheet := range file.Sheets {
 
-		if tab == nil {
-			tab = loadheader(sheet, tableName)
-		}
+		loadheader(sheet, tab)
 
 		// 遍历所有行
 		for row := 1; ; row++ {
@@ -55,5 +43,5 @@ func LoadTableData(fileName string, mainTab *model.DataTable) (tab *model.DataTa
 
 	}
 
-	return tab, nil
+	return nil
 }

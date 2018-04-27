@@ -80,7 +80,7 @@ func main() {
 	switch *paramMode {
 	case "v3":
 
-		var globals model.Globals
+		globals := model.NewGlobals()
 		globals.Version = Version_v3
 		globals.BuiltinSymbolFile = *paramBuiltinSymbolFile
 		globals.SymbolFile = *paramSymbolFile
@@ -88,18 +88,14 @@ func main() {
 		globals.PackageName = *paramPackageName
 		globals.CombineStructName = *paramCombineStructName
 
-		for _, v := range flag.Args() {
-			globals.InputFileList = append(globals.InputFileList, v)
-		}
-
-		err := v3.Parse(&globals)
+		err := v3.Parse(globals)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}
 
 		if *paramJsonOut != "" {
-			err = json.Generate(&globals, *paramJsonOut)
+			err = json.Generate(globals, *paramJsonOut)
 		}
 
 		if err != nil {
@@ -108,7 +104,7 @@ func main() {
 		}
 
 		if *paramGoOut != "" {
-			err = gosrc.Generate(&globals, *paramGoOut)
+			err = gosrc.Generate(globals, *paramGoOut)
 		}
 		if err != nil {
 			fmt.Println(err)

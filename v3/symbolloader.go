@@ -29,7 +29,7 @@ func resolveRowTypeByReflect(ret interface{}, tab *model.DataTable, row int) {
 
 	oneRow := tab.GetDataRow(row)
 
-	for col, header := range tab.RawHeader() {
+	for col, header := range tab.RawHeader {
 
 		index := matchField(tobj, header)
 
@@ -46,17 +46,18 @@ func resolveRowTypeByReflect(ret interface{}, tab *model.DataTable, row int) {
 
 func loadSymbols(globals *model.Globals, fileName string) error {
 
-	tab, err := LoadTableData(fileName, nil)
+	var symbolTable = model.NewDataTable()
+	err := LoadTableData(fileName, symbolTable)
 
 	if err != nil {
 		return err
 	}
 
-	for row := 0; row < tab.RowCount(); row++ {
+	for row := 0; row < symbolTable.RowCount(); row++ {
 
 		var objtype table.TableField
 
-		resolveRowTypeByReflect(&objtype, tab, row)
+		resolveRowTypeByReflect(&objtype, symbolTable, row)
 
 		globals.Symbols.AddField(&objtype)
 	}

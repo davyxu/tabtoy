@@ -6,7 +6,7 @@ import (
 	"github.com/tealeg/xlsx"
 )
 
-func loadheader(sheet *xlsx.Sheet, tableName string) *model.DataTable {
+func loadheader(sheet *xlsx.Sheet, tab *model.DataTable) {
 	// 读取表头
 	var headerRow model.DataRow
 	for col := 0; ; col++ {
@@ -21,12 +21,12 @@ func loadheader(sheet *xlsx.Sheet, tableName string) *model.DataTable {
 		headerRow = append(headerRow, header)
 	}
 
-	return model.NewDataTable(tableName, headerRow)
+	tab.RawHeader = headerRow
 }
 
 func ResolveHeaderFields(tab *model.DataTable, tableObjectType string, symbols *model.SymbolTable) {
 
-	for _, value := range tab.RawHeader() {
+	for _, value := range tab.RawHeader {
 
 		tf := symbols.FindField(tableObjectType, value)
 		if tf == nil {
@@ -34,7 +34,6 @@ func ResolveHeaderFields(tab *model.DataTable, tableObjectType string, symbols *
 		}
 
 		tab.AddHeaderField(tf)
-
 	}
 
 }

@@ -5,29 +5,20 @@ import "github.com/davyxu/tabtoy/v3/table"
 type DataRow []string
 
 type DataTable struct {
-	name      string // 表名
-	rawHeader DataRow
-	rows      []DataRow
+	Name string // 表名
 
-	headerField []*table.TableField // 列索引
-}
+	Rows []DataRow
 
-// 代码生成专用
-func (self *DataTable) Header() []*table.TableField {
-	return self.headerField
-}
-
-// 代码生成专用
-func (self *DataTable) Rows() []DataRow {
-	return self.rows
+	RawHeader    DataRow
+	HeaderFields []*table.TableField // 列索引
 }
 
 // 根据列头找到该行对应的值
 func (self *DataTable) GetValueByName(row int, name string) (string, *table.TableField) {
 
-	for col, tf := range self.headerField {
+	for col, tf := range self.HeaderFields {
 		if tf.Name == name || tf.FieldName == name {
-			return self.rows[row][col], tf
+			return self.Rows[row][col], tf
 		}
 	}
 
@@ -37,49 +28,38 @@ func (self *DataTable) GetValueByName(row int, name string) (string, *table.Tabl
 // 代码生成专用
 func (self *DataTable) GetValue(row, col int) string {
 
-	return self.rows[row][col]
+	return self.Rows[row][col]
 }
 
 // 代码生成专用
 func (self *DataTable) GetType(col int) *table.TableField {
-	return self.headerField[col]
-}
-
-func (self *DataTable) Name() string {
-	return self.name
-}
-
-func (self *DataTable) RawHeader() DataRow {
-	return self.rawHeader
+	return self.HeaderFields[col]
 }
 
 func (self *DataTable) HeaderFieldCount() int {
-	return len(self.rawHeader)
+	return len(self.RawHeader)
 }
 
 func (self *DataTable) RowCount() int {
-	return len(self.rows)
+	return len(self.Rows)
 }
 
 // 添加表头类型
 func (self *DataTable) AddHeaderField(types *table.TableField) {
-	self.headerField = append(self.headerField, types)
+	self.HeaderFields = append(self.HeaderFields, types)
 }
 
 // 添加行数据
 func (self *DataTable) AddRow(row DataRow) {
 
-	self.rows = append(self.rows, row)
+	self.Rows = append(self.Rows, row)
 }
 
 // 获取一整行数据
 func (self *DataTable) GetDataRow(row int) DataRow {
-	return self.rows[row]
+	return self.Rows[row]
 }
 
-func NewDataTable(name string, rawheader DataRow) *DataTable {
-	return &DataTable{
-		name:      name,
-		rawHeader: rawheader,
-	}
+func NewDataTable() *DataTable {
+	return &DataTable{}
 }

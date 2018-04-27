@@ -57,7 +57,7 @@ func (self *SymbolTable) StructNames() (ret []string) {
 
 	linq.From(self.fields).WhereT(func(tf *table.TableField) bool {
 
-		return tf.DefaultValue == ""
+		return tf.Kind == "表头"
 	}).SelectT(func(tf *table.TableField) string {
 
 		return tf.ObjectType
@@ -105,4 +105,8 @@ func (self *SymbolTable) FindField(objectType, name string) (ret *table.TableFie
 	})
 
 	return
+}
+
+func NewSymbolTable() *SymbolTable {
+	return new(SymbolTable)
 }

@@ -23,6 +23,7 @@ func FetchDefaultValue(tf *TableField) (ret string) {
 
 // 将类型转为对应语言的原始类型
 func LanguagePrimitive(tf *TableField, lanType string) string {
+
 	var convertedType string
 	linq.From(BuiltinConfig.FieldType).WhereT(func(ft *FieldType) bool {
 

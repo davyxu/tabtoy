@@ -10,11 +10,11 @@ go build -v -o ${GOPATH}/bin/tabtoy github.com/davyxu/tabtoy
 # 导出内置的json文件
 ${GOPATH}/bin/tabtoy \
 -mode=v3 \
--builtinsymbol=BuiltinTypes.xlsx \
 -package=table \
+-builtinsymbol=BuiltinTypes.xlsx \
+-pragma=BuiltinPragma.xlsx \
 -go_out=buildintypes_gen.go \
--json_out=BuiltinData.json \
-FieldType.xlsx
+-json_out=BuiltinData.json
 
 # json转go代码嵌入tabtoy
 JSONDATAFILE=jsondata_gen.go

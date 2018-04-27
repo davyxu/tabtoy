@@ -1,6 +1,7 @@
 package v3
 
 import (
+	"github.com/davyxu/tabtoy/v3/model"
 	"github.com/davyxu/tabtoy/v3/table"
 	"reflect"
 	"strconv"
@@ -79,7 +80,7 @@ func RawStringToValue(str string, value interface{}) (error, bool) {
 	return nil, true
 }
 
-func StringToValue(str string, value interface{}, tf *table.TableField) error {
+func StringToValue(str string, value interface{}, tf *table.TableField, symbols *model.SymbolTable) error {
 
 	err, handled := RawStringToValue(str, value)
 	if err != nil || handled {
@@ -114,6 +115,23 @@ func StringToValue(str string, value interface{}, tf *table.TableField) error {
 		}
 
 		vValue.Set(slice)
+
+		return nil
 	}
+
+	if symbols.IsEnumKind(tf.FieldType) {
+
+		enumValue, err := strconv.Atoi(symbols.ResolveEnumValue(tf.FieldType, str))
+		if err != nil {
+			return err
+		}
+		vValue := reflect.Indirect(reflect.ValueOf(value))
+		vValue.SetInt(int64(enumValue))
+
+		return nil
+	}
+
+	panic("unhandled value")
+
 	return nil
 }
