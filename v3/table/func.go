@@ -7,14 +7,27 @@ import (
 
 var UsefulFunc = template.FuncMap{}
 
-// 将定义用的类型，转换为不同语言对应的目标类型
-func ConverToLanType(tf *TypeField, lanType string) string {
+// 取类型的默认值
+func FetchDefaultValue(tf *TypeField) (ret string) {
 
-	var convertedType string
-	linq.From(config.FieldType).WhereT(func(ft FieldType) bool {
+	linq.From(BuiltinConfig.FieldType).WhereT(func(ft *FieldType) bool {
 
 		return ft.InputFieldName == tf.FieldType
-	}).SelectT(func(ft FieldType) string {
+	}).ForEachT(func(ft *FieldType) {
+
+		ret = ft.DefaultValue
+	})
+
+	return
+}
+
+// 将类型转为对应语言的原始类型
+func LanguagePrimitive(tf *TypeField, lanType string) string {
+	var convertedType string
+	linq.From(BuiltinConfig.FieldType).WhereT(func(ft *FieldType) bool {
+
+		return ft.InputFieldName == tf.FieldType
+	}).SelectT(func(ft *FieldType) string {
 
 		switch lanType {
 		case "cs":
@@ -33,6 +46,14 @@ func ConverToLanType(tf *TypeField, lanType string) string {
 		convertedType = tf.FieldType
 	}
 
+	return convertedType
+}
+
+// 将定义用的类型，转换为不同语言对应的复合类型
+func LanguageType(tf *TypeField, lanType string) string {
+
+	convertedType := LanguagePrimitive(tf, lanType)
+
 	if tf.IsArray {
 		switch lanType {
 		case "cs":
@@ -48,5 +69,5 @@ func ConverToLanType(tf *TypeField, lanType string) string {
 }
 
 func init() {
-	UsefulFunc["ConverToLanType"] = ConverToLanType
+	UsefulFunc["LanguageType"] = LanguageType
 }

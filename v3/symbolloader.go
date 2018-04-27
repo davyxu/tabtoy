@@ -6,17 +6,40 @@ import (
 	"reflect"
 )
 
-// 将一行数据解析为具体的类型
-func resolveRowType(rowValue interface{}, row model.DataRow) {
+func matchField(objType reflect.Type, header string) int {
 
-	vobjtype := reflect.ValueOf(rowValue).Elem()
+	for i := 0; i < objType.NumField(); i++ {
+		fd := objType.Field(i)
 
-	for col, value := range row {
-
-		fieldType := vobjtype.Field(col)
-
-		StringToValue(value, fieldType.Addr().Interface())
+		if fd.Tag.Get("tab_name") == header {
+			return i
+		}
 	}
+
+	return -1
+
+}
+
+// 将一行数据解析为具体的类型
+func resolveRowType(ret *table.TypeField, tab *model.DataTable, row model.DataRow) {
+
+	vobjtype := reflect.ValueOf(ret).Elem()
+
+	tobj := reflect.TypeOf(ret).Elem()
+
+	for col, header := range tab.RawHeader() {
+
+		index := matchField(tobj, header)
+
+		if index == -1 {
+			panic("类型表头找不到")
+		}
+
+		fieldType := vobjtype.Field(index)
+
+		StringToValue(row[col], fieldType.Addr().Interface())
+	}
+
 }
 
 func loadSymbols(globals *model.Globals, fileName string) error {
@@ -33,7 +56,7 @@ func loadSymbols(globals *model.Globals, fileName string) error {
 
 		oneRow := tab.GetDataRow(row)
 
-		resolveRowType(&objtype, oneRow)
+		resolveRowType(&objtype, tab, oneRow)
 
 		globals.Symbols.AddField(&objtype)
 	}

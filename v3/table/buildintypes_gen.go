@@ -3,46 +3,35 @@
 // Version: 3.0.0
 package table
 
-type ObjectKind int32
 
-const (
-	ObjectKind_None        = 0 //
-	ObjectKind_TableHeader = 1 // 表头
-	ObjectKind_Enum        = 2 // 枚举
-)
 
-var (
-	ObjectKindMapperValueByName = map[string]int32{
-		"None":        0, //
-		"TableHeader": 1, // 表头
-		"Enum":        2, // 枚举
-	}
 
-	ObjectKindMapperNameByValue = map[int32]string{
-		0: "None",        //
-		1: "TableHeader", // 表头
-		2: "Enum",        // 枚举
-	}
-)
-
-type TypeField struct {
-	Kind         string // 种类
-	ObjectType   string // 对象类型
-	Name         string // 标识名
-	FieldName    string // 字段名
-	FieldType    string // 字段类型
-	DefaultValue string // 默认值
-	IsArray      bool   // 数组
-	Splitter     string // 切割符
+type TypeField struct{ 
+	Kind string `tab_name:"种类"` 
+	ObjectType string `tab_name:"对象类型"` 
+	Name string `tab_name:"标识名"` 
+	FieldName string `tab_name:"字段名"` 
+	FieldType string `tab_name:"字段类型"` 
+	DefaultValue string `tab_name:"默认值"` 
+	IsArray bool `tab_name:"数组"` 
+	Splitter string `tab_name:"切割符"` 
 }
 
-type FieldType struct {
-	InputFieldName string // 输入字段
-	GoFieldName    string // Go字段
-	CSFieldName    string // C#字段
+type FieldType struct{ 
+	InputFieldName string `tab_name:"输入字段"` 
+	GoFieldName string `tab_name:"Go字段"` 
+	CSFieldName string `tab_name:"C#字段"` 
+	DefaultValue string `tab_name:"默认值"` 
 }
+
+type TablePragma struct{ 
+	TableName string `tab_name:"表名"` 
+	TableFileName string `tab_name:"表文件名"` 
+	IsVertical bool `tab_name:"是垂直"` 
+}
+
 
 // Combine struct
-type Config struct {
-	FieldType []FieldType // table: FieldType
+type Config struct { 
+	FieldType []*FieldType // table: FieldType 
 }

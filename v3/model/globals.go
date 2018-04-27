@@ -1,15 +1,15 @@
 package model
 
 type Globals struct {
-	Version           string
-	SymbolFile        string
-	InputFileList     []string
-	PackageName       string
-	CombineStructName string // 包含最终表所有数据的根结构
+	Version           string   // 工具版本号
+	SymbolFile        string   // 符号文件
+	InputFileList     []string // 输入的电子表格文件列表
+	PackageName       string   // 文件生成时的包名
+	CombineStructName string   // 包含最终表所有数据的根结构
 
-	Symbols SymbolTable
+	Symbols SymbolTable // 类型及符号
 
-	Datas []*DataTable
+	Datas []*DataTable // 字符串格式的数据
 }
 
 func (self *Globals) AddData(t *DataTable) {

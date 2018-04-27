@@ -15,7 +15,7 @@ func (self *SymbolTable) AddField(tf *table.TypeField) {
 }
 
 // 类型是枚举
-func (self *SymbolTable) IsEnumKind(tableName, objectType string) bool {
+func (self *SymbolTable) IsEnumKind(objectType string) bool {
 
 	return linq.From(self.EnumNames()).WhereT(func(name string) bool {
 		return name == objectType
@@ -57,7 +57,7 @@ func (self *SymbolTable) EnumNames() (ret []string) {
 
 	linq.From(self.typeFields).WhereT(func(tf *table.TypeField) bool {
 
-		return table.ConverToLanType(tf, "go") == "int32" && isNumber(tf.DefaultValue)
+		return tf.Kind == "枚举"
 	}).SelectT(func(tf *table.TypeField) string {
 
 		return tf.ObjectType

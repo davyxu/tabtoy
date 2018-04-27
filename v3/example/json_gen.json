@@ -2,9 +2,9 @@
 	"@Tool": "github.com/davyxu/tabtoy",
 	"@Version": "3.0.0",	
 	"ExampleData":[ 
-		{ "ID": 100, "Name": "扎克镇", "Rate": 3.14, "Type": 2, "Skill": 1|2| },
-		{ "ID": 200, "Name": "阿努比斯神庙", "Rate": 1.2, "Type": 1, "Skill": 1;2; },
-		{ "ID": 300, "Name": "花村", "Rate": 79.4, "Type": 3, "Skill":  },
-		{ "ID": 400, "Name": "艾兴瓦尔德", "Rate": 0.63, "Type": 4, "Skill":  } 
+		{ "ID": 100, "Name": "扎克镇", "Rate": 3.14, "Type": 2, "Skill": [1,2,0] },
+		{ "ID": 200, "Name": "阿努比斯神庙", "Rate": 1.2, "Type": 1, "Skill": [100,9,86] },
+		{ "ID": 300, "Name": "花村", "Rate": 79.4, "Type": 3, "Skill": [] },
+		{ "ID": 400, "Name": "艾兴瓦尔德", "Rate": 0.63, "Type": 4, "Skill": [] } 
 	]
 }

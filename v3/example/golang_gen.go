@@ -3,43 +3,46 @@
 // Version: 3.0.0
 package example
 
-type ActorType int32
 
-const (
-	ActorType_None    = 0 //
-	ActorType_Pharah  = 1 // 法鸡
-	ActorType_Junkrat = 2 // 狂鼠
-	ActorType_Genji   = 3 // 源氏
-	ActorType_Mercy   = 4 // 天使
+type ActorType int32
+const (	
+	ActorType_None = 0 //  
+	ActorType_Pharah = 1 // 法鸡 
+	ActorType_Junkrat = 2 // 狂鼠 
+	ActorType_Genji = 3 // 源氏 
+	ActorType_Mercy = 4 // 天使 
 )
 
 var (
-	ActorTypeMapperValueByName = map[string]int32{
-		"None":    0, //
-		"Pharah":  1, // 法鸡
-		"Junkrat": 2, // 狂鼠
-		"Genji":   3, // 源氏
-		"Mercy":   4, // 天使
+	ActorTypeMapperValueByName = map[string]int32{ 
+		"None": 0, //  
+		"Pharah": 1, // 法鸡 
+		"Junkrat": 2, // 狂鼠 
+		"Genji": 3, // 源氏 
+		"Mercy": 4, // 天使 
 	}
 
-	ActorTypeMapperNameByValue = map[int32]string{
-		0: "None",    //
-		1: "Pharah",  // 法鸡
-		2: "Junkrat", // 狂鼠
-		3: "Genji",   // 源氏
-		4: "Mercy",   // 天使
+	ActorTypeMapperNameByValue = map[int32]string{ 
+		 0: "None", //  
+		 1: "Pharah", // 法鸡 
+		 2: "Junkrat", // 狂鼠 
+		 3: "Genji", // 源氏 
+		 4: "Mercy", // 天使 
 	}
 )
 
-type ExampleData struct {
-	ID    int32     // 任务ID
-	Name  string    // 名称
-	Rate  float32   // 比例
-	Type  ActorType // 类型
-	Skill []int32   // 技能列表
+
+
+type ExampleData struct{ 
+	ID int32 `tab_name:"任务ID"` 
+	Name string `tab_name:"名称"` 
+	Rate float32 `tab_name:"比例"` 
+	Type ActorType `tab_name:"类型"` 
+	Skill []int32 `tab_name:"技能列表"` 
 }
 
+
 // Combine struct
-type Config struct {
-	ExampleData []ExampleData // table: ExampleData
+type Config struct { 
+	ExampleData []*ExampleData // table: ExampleData 
 }
