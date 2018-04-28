@@ -11,6 +11,8 @@ func Parse(globals *model.Globals) error {
 	if err != nil {
 		return err
 	}
+
+	//globals.Symbols.Print()
 	//
 	//if globals.SymbolFile != "" {
 	//	err = loadSymbols(globals, globals.SymbolFile)
@@ -20,7 +22,7 @@ func Parse(globals *model.Globals) error {
 	//	}
 	//}
 
-	loadPragma(globals, globals.PragmaFile)
+	loadToc(globals, globals.TocFile)
 
 	return nil
 }

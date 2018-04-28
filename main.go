@@ -58,8 +58,7 @@ var (
 // v3新增
 var (
 	paramBuiltinSymbolFile = flag.String("builtinsymbol", "", "input builtin symbol files describe types")
-	paramSymbolFile        = flag.String("symbol", "", "input symbol files describe types")
-	paramPragmaFile        = flag.String("pragma", "", "input multi-files configs")
+	paramTocFile           = flag.String("toc", "", "input multi-files configs")
 )
 
 const (
@@ -83,8 +82,7 @@ func main() {
 		globals := model.NewGlobals()
 		globals.Version = Version_v3
 		globals.BuiltinSymbolFile = *paramBuiltinSymbolFile
-		globals.SymbolFile = *paramSymbolFile
-		globals.PragmaFile = *paramPragmaFile
+		globals.TocFile = *paramTocFile
 		globals.PackageName = *paramPackageName
 		globals.CombineStructName = *paramCombineStructName
 

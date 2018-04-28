@@ -131,7 +131,7 @@ func StringToValue(str string, value interface{}, tf *table.TableField, symbols 
 		return nil
 	}
 
-	panic("unhandled value")
+	panic("unhandled value: " + str)
 
 	return nil
 }
