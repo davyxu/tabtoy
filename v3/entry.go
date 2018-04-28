@@ -68,12 +68,12 @@ func Parse(globals *model.Globals) error {
 	})
 
 	// kv转置
-	for _, kvtab := range kvlist.Datas {
+	for _, kvtab := range kvlist.Data {
 		ResolveHeaderFields(kvtab, "TableField", globals.Symbols)
 		globals.AddDataTable(convertKVToData(globals.Symbols, kvtab))
 	}
 
-	for _, tab := range globals.Datas {
+	for _, tab := range globals.Data {
 		ResolveHeaderFields(tab, tab.Name, globals.Symbols)
 	}
 

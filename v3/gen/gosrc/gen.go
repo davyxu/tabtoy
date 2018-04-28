@@ -13,5 +13,6 @@ func Generate(globals *model.Globals, fileName string) error {
 		RegisterTemplateFunc(table.UsefulFunc).
 		RegisterTemplateFunc(UsefulFunc).
 		ParseTemplate(templateText, globals).
+		//FormatGoCode().
 		WriteOutputFile(fileName).Error()
 }

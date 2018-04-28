@@ -8,7 +8,7 @@ type TableType int32
 const (	
 	TableType_None = 0 //  
 	TableType_Data = 1 // 数据表 
-	TableType_Symbol = 2 // 符号表 
+	TableType_Symbol = 2 // 类型表 
 	TableType_KeyValue = 3 // 键值表 
 )
 
@@ -16,14 +16,14 @@ var (
 	TableTypeMapperValueByName = map[string]int32{ 
 		"None": 0, //  
 		"Data": 1, // 数据表 
-		"Symbol": 2, // 符号表 
+		"Symbol": 2, // 类型表 
 		"KeyValue": 3, // 键值表 
 	}
 
 	TableTypeMapperNameByValue = map[int32]string{ 
 		 0: "None", //  
 		 1: "Data", // 数据表 
-		 2: "Symbol", // 符号表 
+		 2: "Symbol", // 类型表 
 		 3: "KeyValue", // 键值表 
 	}
 )

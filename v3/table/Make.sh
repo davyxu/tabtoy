@@ -12,7 +12,7 @@ ${GOPATH}/bin/tabtoy \
 -mode=v3 \
 -package=table \
 -builtinsymbol=BuiltinTypes.xlsx \
--index=BuiltinToc.xlsx \
+-index=BuiltinIndex.xlsx \
 -go_out=buildintypes_gen.go \
 -json_out=builtindata_gen.json
 

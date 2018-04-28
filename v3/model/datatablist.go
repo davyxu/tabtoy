@@ -1,12 +1,12 @@
 package model
 
 type DataTableList struct {
-	Datas []*DataTable
+	Data []*DataTable
 }
 
 func (self *DataTableList) GetDataTable(name string) *DataTable {
 
-	for _, tab := range self.Datas {
+	for _, tab := range self.Data {
 		if tab.Name == name {
 			return tab
 		}
@@ -16,5 +16,5 @@ func (self *DataTableList) GetDataTable(name string) *DataTable {
 }
 
 func (self *DataTableList) AddDataTable(t *DataTable) {
-	self.Datas = append(self.Datas, t)
+	self.Data = append(self.Data, t)
 }
