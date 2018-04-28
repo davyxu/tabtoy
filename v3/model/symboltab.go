@@ -45,7 +45,7 @@ func (self *SymbolTable) ResolveEnumValue(objectType, value string) (ret string)
 			(tf.Name == value || tf.FieldName == value)
 	}).ForEachT(func(types *table.TableField) {
 
-		ret = types.DefaultValue
+		ret = types.Value
 
 	})
 

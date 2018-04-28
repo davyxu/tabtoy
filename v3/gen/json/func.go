@@ -36,8 +36,35 @@ func wrapSingleValue(globals *model.Globals, valueType *table.TableField, value 
 
 }
 
+func WrapValue(globals *model.Globals, value string, valueType *table.TableField) string {
+	if valueType.IsArray && valueType.Splitter != "" {
+
+		var sb strings.Builder
+		sb.WriteString("[")
+
+		// 空的单元格，导出空数组，除非强制指定填充默认值
+		if value != "" {
+			for index, elementValue := range strings.Split(value, valueType.Splitter) {
+				if index > 0 {
+					sb.WriteString(",")
+				}
+				sb.WriteString(wrapSingleValue(globals, valueType, elementValue))
+			}
+		}
+
+		sb.WriteString("]")
+
+		return sb.String()
+
+	} else {
+		return wrapSingleValue(globals, valueType, value)
+	}
+
+	return value
+}
+
 func init() {
-	UsefulFunc["WrapJsonValue"] = func(globals *model.Globals, dataTable *model.DataTable, row, col int) (ret string) {
+	UsefulFunc["WrapTabValue"] = func(globals *model.Globals, dataTable *model.DataTable, row, col int) (ret string) {
 
 		// 单元格的值
 		value := dataTable.GetValue(row, col)
@@ -45,29 +72,7 @@ func init() {
 		// 表头的类型
 		valueType := dataTable.GetType(col)
 
-		if valueType.IsArray && valueType.Splitter != "" {
-
-			var sb strings.Builder
-			sb.WriteString("[")
-
-			// 空的单元格，导出空数组，除非强制指定填充默认值
-			if value != "" {
-				for index, elementValue := range strings.Split(value, valueType.Splitter) {
-					if index > 0 {
-						sb.WriteString(",")
-					}
-					sb.WriteString(wrapSingleValue(globals, valueType, elementValue))
-				}
-			}
-
-			sb.WriteString("]")
-
-			return sb.String()
-
-		} else {
-			return wrapSingleValue(globals, valueType, value)
-		}
-
-		return value
+		return WrapValue(globals, value, valueType)
 	}
+
 }

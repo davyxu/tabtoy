@@ -34,7 +34,7 @@ func resolveRowTypeByReflect(ret interface{}, tab *model.DataTable, row int) {
 		index := matchField(tobj, header)
 
 		if index == -1 {
-			panic("表头数据不匹配" + header)
+			panic("表头数据不匹配:" + header)
 		}
 
 		fieldValue := vobj.Field(index)

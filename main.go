@@ -58,7 +58,7 @@ var (
 // v3新增
 var (
 	paramBuiltinSymbolFile = flag.String("builtinsymbol", "", "input builtin symbol files describe types")
-	paramTocFile           = flag.String("toc", "", "input multi-files configs")
+	paramIndexFile         = flag.String("index", "", "input multi-files configs")
 )
 
 const (
@@ -82,7 +82,7 @@ func main() {
 		globals := model.NewGlobals()
 		globals.Version = Version_v3
 		globals.BuiltinSymbolFile = *paramBuiltinSymbolFile
-		globals.TocFile = *paramTocFile
+		globals.IndexFile = *paramIndexFile
 		globals.PackageName = *paramPackageName
 		globals.CombineStructName = *paramCombineStructName
 

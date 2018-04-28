@@ -9,16 +9,16 @@ package {{.PackageName}}
 {{range $sn, $objName := $.Symbols.EnumNames}}
 type {{$objName}} int32
 const (	{{range $fi,$field := $.Symbols.Fields $objName}}
-	{{$objName}}_{{$field.FieldName}} = {{$field.DefaultValue}} // {{$field.Name}} {{end}}
+	{{$objName}}_{{$field.FieldName}} = {{$field.Value}} // {{$field.Name}} {{end}}
 )
 
 var (
 	{{$objName}}MapperValueByName = map[string]int32{ {{range $fi,$field := $.Symbols.Fields $objName}}
-		"{{$field.FieldName}}": {{$field.DefaultValue}}, // {{$field.Name}} {{end}}
+		"{{$field.FieldName}}": {{$field.Value}}, // {{$field.Name}} {{end}}
 	}
 
 	{{$objName}}MapperNameByValue = map[int32]string{ {{range $fi,$field := $.Symbols.Fields $objName}}
-		 {{$field.DefaultValue}}: "{{$field.FieldName}}", // {{$field.Name}} {{end}}
+		 {{$field.Value}}: "{{$field.FieldName}}", // {{$field.Name}} {{end}}
 	}
 )
 {{end}}
