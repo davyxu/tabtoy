@@ -1,7 +1,7 @@
 package v3
 
 import (
-	"github.com/davyxu/tabtoy/util"
+	"github.com/davyxu/tabtoy/v3/helper"
 	"github.com/davyxu/tabtoy/v3/model"
 	"github.com/tealeg/xlsx"
 )
@@ -10,7 +10,7 @@ func readOneRow(sheet *xlsx.Sheet, tab *model.DataTable, row int) (eachRow model
 
 	for col := 0; col < tab.HeaderFieldCount(); col++ {
 
-		value := util.GetSheetValueString(sheet, row, col)
+		value := helper.GetSheetValueString(sheet, row, col)
 
 		eachRow = append(eachRow, value)
 	}
@@ -31,7 +31,7 @@ func LoadTableData(fileName string, tab *model.DataTable) error {
 		// 遍历所有行
 		for row := 1; ; row++ {
 
-			if util.IsFullRowEmpty(sheet, row) {
+			if helper.IsFullRowEmpty(sheet, row) {
 				break
 			}
 

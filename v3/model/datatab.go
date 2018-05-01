@@ -4,8 +4,19 @@ import "github.com/davyxu/tabtoy/v3/table"
 
 type DataRow []string
 
+func (self DataRow) Exists(value string) bool {
+	for _, v := range self {
+		if v == value {
+			return true
+		}
+	}
+
+	return false
+}
+
 type DataTable struct {
-	Name string // 表名
+	Name     string // 表名
+	FileName string
 
 	Rows []DataRow
 

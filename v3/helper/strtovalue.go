@@ -1,4 +1,4 @@
-package v3
+package helper
 
 import (
 	"github.com/davyxu/tabtoy/v3/model"
@@ -91,7 +91,7 @@ func StringToValue(str string, value interface{}, tf *table.TableField, symbols 
 		panic("unsupport type: " + reflect.TypeOf(value).Elem().Name())
 	}
 
-	if tf.IsArray && tf.Splitter != "" {
+	if tf.IsArray() {
 
 		tValue := reflect.TypeOf(value).Elem()
 		vValue := reflect.Indirect(reflect.ValueOf(value))
@@ -100,7 +100,7 @@ func StringToValue(str string, value interface{}, tf *table.TableField, symbols 
 			panic("require slice" + str)
 		}
 
-		splitedData := strings.Split(str, tf.Splitter)
+		splitedData := strings.Split(str, tf.ArraySplitter)
 
 		slice := reflect.MakeSlice(tValue, len(splitedData), len(splitedData))
 
@@ -134,27 +134,4 @@ func StringToValue(str string, value interface{}, tf *table.TableField, symbols 
 	panic("unhandled value: " + str)
 
 	return nil
-}
-
-// 将一行数据解析为具体的类型
-func ParseRow(ret interface{}, tab *model.DataTable, row int, symbols *model.SymbolTable) {
-
-	vobj := reflect.ValueOf(ret).Elem()
-
-	tobj := reflect.TypeOf(ret).Elem()
-
-	for _, header := range tab.RawHeader {
-
-		value, tf := tab.GetValueByName(row, header)
-
-		index := matchField(tobj, header)
-
-		if index == -1 {
-			panic("表头数据不匹配" + header)
-		}
-
-		fieldValue := vobj.Field(index)
-
-		StringToValue(value, fieldValue.Addr().Interface(), tf, symbols)
-	}
 }

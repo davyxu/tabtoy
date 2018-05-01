@@ -33,4 +33,11 @@ type {{$objName}} struct{ {{range $fi,$field := $.Symbols.Fields $objName}}
 type {{.CombineStructName}} struct { {{range $ti, $tab := $.Data}}
 	{{$tab.Name}} []*{{$tab.Name}} // table: {{$tab.Name}} {{end}}
 }
+
+//{{range $ti, $name := $.KeyValueTypeNames}} table: {{$name}}
+func (self*{{$.CombineStructName}}) GetKeyValue_{{$name}}() *{{$name}}{
+	return self.{{$name}}[0]
+}
+{{end}}
+
 `

@@ -55,7 +55,7 @@ func LanguageType(tf *TableField, lanType string) string {
 
 	convertedType := LanguagePrimitive(tf, lanType)
 
-	if tf.IsArray {
+	if tf.IsArray() {
 		switch lanType {
 		case "cs":
 			return convertedType + "[]"

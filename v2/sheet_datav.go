@@ -45,7 +45,7 @@ func (self *DataSheet) exportColumnMajor(file *File, dataModel *model.DataModel,
 			if meetEmptyLine && !warningAfterEmptyLineDataOnce {
 				r, _ := self.GetRC()
 
-				log.Warnf("%s %s|%s(%s)", i18n.String(i18n.DataSheet_RowDataSplitedByEmptyLine), self.file.FileName, self.Name, util.ConvR1C1toA1(r, 1))
+				log.Warnf("%s %s|%s(%s)", i18n.String(i18n.DataSheet_RowDataSplitedByEmptyLine), self.file.FileName, self.Name, util.R1C1ToA1(r, 1))
 
 				warningAfterEmptyLineDataOnce = true
 			}

@@ -37,14 +37,14 @@ func wrapSingleValue(globals *model.Globals, valueType *table.TableField, value 
 }
 
 func WrapValue(globals *model.Globals, value string, valueType *table.TableField) string {
-	if valueType.IsArray && valueType.Splitter != "" {
+	if valueType.IsArray() {
 
 		var sb strings.Builder
 		sb.WriteString("[")
 
 		// 空的单元格，导出空数组，除非强制指定填充默认值
 		if value != "" {
-			for index, elementValue := range strings.Split(value, valueType.Splitter) {
+			for index, elementValue := range strings.Split(value, valueType.ArraySplitter) {
 				if index > 0 {
 					sb.WriteString(",")
 				}

@@ -14,16 +14,21 @@ func init() {
 
 		var sb strings.Builder
 
-		sb.WriteString("`")
+		var kv []string
 
-		sb.WriteString(fmt.Sprintf("tb_name:\"%s\"", fieldType.Name))
-		//
-		//if fieldType.Splitter != "" {
-		//	sb.WriteString(" ")
-		//	sb.WriteString(fmt.Sprintf("tb_splitter:\"%s\"", fieldType.Splitter))
-		//}
+		if fieldType.Name != "" {
+			kv = append(kv, fmt.Sprintf("tb_name:\"%s\"", fieldType.Name))
+		}
 
-		sb.WriteString("`")
+		if len(kv) > 0 {
+			sb.WriteString("`")
+
+			for _, s := range kv {
+				sb.WriteString(s)
+			}
+
+			sb.WriteString("`")
+		}
 
 		return sb.String()
 	}

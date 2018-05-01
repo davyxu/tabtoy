@@ -95,7 +95,7 @@ ErrorStop:
 		return false
 	}
 
-	log.Errorf("%s|%s(%s)", currFV.FileName, currFV.SheetName, util.ConvR1C1toA1(currFV.R, currFV.C))
+	log.Errorf("%s|%s(%s)", currFV.FileName, currFV.SheetName, util.R1C1ToA1(currFV.R, currFV.C))
 	return false
 
 }

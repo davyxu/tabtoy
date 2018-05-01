@@ -106,7 +106,7 @@ ErrorStop:
 
 	r, c := sheet.GetRC()
 
-	log.Errorf("%s|%s(%s)", sheet.file.FileName, sheet.Name, util.ConvR1C1toA1(r, c))
+	log.Errorf("%s|%s(%s)", sheet.file.FileName, sheet.Name, util.R1C1ToA1(r, c))
 	return false
 }
 

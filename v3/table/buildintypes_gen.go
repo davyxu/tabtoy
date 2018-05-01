@@ -4,26 +4,26 @@
 package table
 
 
-type TableType int32
+type TableMode int32
 const (	
-	TableType_None = 0 //  
-	TableType_Data = 1 // 数据表 
-	TableType_Symbol = 2 // 类型表 
-	TableType_KeyValue = 3 // 键值表 
+	TableMode_None = 0 //  
+	TableMode_Data = 1 // 数据表 
+	TableMode_Type = 2 // 类型表 
+	TableMode_KeyValue = 3 // 键值表 
 )
 
 var (
-	TableTypeMapperValueByName = map[string]int32{ 
+	TableModeMapperValueByName = map[string]int32{ 
 		"None": 0, //  
 		"Data": 1, // 数据表 
-		"Symbol": 2, // 类型表 
+		"Type": 2, // 类型表 
 		"KeyValue": 3, // 键值表 
 	}
 
-	TableTypeMapperNameByValue = map[int32]string{ 
+	TableModeMapperNameByValue = map[int32]string{ 
 		 0: "None", //  
 		 1: "Data", // 数据表 
-		 2: "Symbol", // 类型表 
+		 2: "Type", // 类型表 
 		 3: "KeyValue", // 键值表 
 	}
 )
@@ -37,8 +37,7 @@ type TableField struct{
 	FieldName string `tb_name:"字段名"` 
 	FieldType string `tb_name:"字段类型"` 
 	Value string `tb_name:"值"` 
-	IsArray bool `tb_name:"数组"` 
-	Splitter string `tb_name:"切割符"` 
+	ArraySplitter string `tb_name:"数组切割"` 
 }
 
 type FieldType struct{ 
@@ -49,14 +48,27 @@ type FieldType struct{
 }
 
 type TablePragma struct{ 
-	TableType TableType `tb_name:"表类型"` 
-	TableName string `tb_name:"表名"` 
+	TableMode TableMode `tb_name:"模式"` 
+	TableType string `tb_name:"表类型"` 
 	TableFileName string `tb_name:"表文件名"` 
-	IsVertical bool `tb_name:"垂直表"` 
+}
+
+type ErrorID struct{ 
+	FileError string  
+	HeaderNotMatchFieldName string  
+	HeaderFieldNotDefined string  
 }
 
 
 // Combine struct
 type Config struct { 
 	FieldType []*FieldType // table: FieldType 
+	ErrorID []*ErrorID // table: ErrorID 
 }
+
+// table: ErrorID
+func (self*Config) GetKeyValue_ErrorID() *ErrorID{
+	return self.ErrorID[0]
+}
+
+

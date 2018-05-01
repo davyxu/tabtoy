@@ -71,7 +71,7 @@ func (self *DataSheet) exportRowMajor(file *File, dataModel *model.DataModel, da
 			if meetEmptyLine && !warningAfterEmptyLineDataOnce {
 				r, _ := self.GetRC()
 
-				log.Warnf("%s %s|%s(%s)", i18n.String(i18n.DataSheet_RowDataSplitedByEmptyLine), self.file.FileName, self.Name, util.ConvR1C1toA1(r, 1))
+				log.Warnf("%s %s|%s(%s)", i18n.String(i18n.DataSheet_RowDataSplitedByEmptyLine), self.file.FileName, self.Name, util.R1C1ToA1(r, 1))
 
 				warningAfterEmptyLineDataOnce = true
 			}
@@ -91,7 +91,7 @@ func (self *DataSheet) exportRowMajor(file *File, dataModel *model.DataModel, da
 			fieldDef, ok := fieldDefGetter(self.Column, dataHeader, parentHeader)
 
 			if !ok {
-				log.Errorf("%s %s|%s(%s)", i18n.String(i18n.DataHeader_FieldNotDefinedInMainTableInMultiTableMode), self.file.FileName, self.Name, util.ConvR1C1toA1(self.Row+1, self.Column+1))
+				log.Errorf("%s %s|%s(%s)", i18n.String(i18n.DataHeader_FieldNotDefinedInMainTableInMultiTableMode), self.file.FileName, self.Name, util.R1C1ToA1(self.Row+1, self.Column+1))
 				return false
 			}
 

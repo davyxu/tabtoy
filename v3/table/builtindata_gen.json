@@ -13,5 +13,8 @@
 		{ "InputFieldName": "float64", "GoFieldName": "float64", "CSFieldName": "double", "DefaultValue": "0" },
 		{ "InputFieldName": "bool", "GoFieldName": "bool", "CSFieldName": "bool", "DefaultValue": "false" },
 		{ "InputFieldName": "string", "GoFieldName": "string", "CSFieldName": "string", "DefaultValue": "" } 
+	],
+	"ErrorID":[ 
+		{ "FileError": "文件错误", "HeaderNotMatchFieldName": "表头与字段不匹配", "HeaderFieldNotDefined": "表头字段未定义" } 
 	]
 }

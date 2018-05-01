@@ -67,6 +67,6 @@ func index2Alphabet(number int) string {
 }
 
 // r,c都是base1
-func ConvR1C1toA1(r, c int) string {
+func R1C1ToA1(r, c int) string {
 	return fmt.Sprintf("%s%d", index2Alphabet(c), r)
 }

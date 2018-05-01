@@ -9,6 +9,7 @@ func convertKVToData(symbols *model.SymbolTable, kvtab *model.DataTable) (ret *m
 
 	ret = model.NewDataTable()
 	ret.Name = kvtab.Name
+	ret.FileName = kvtab.FileName
 
 	var oneRow model.DataRow
 	for row := range kvtab.Rows {
@@ -16,8 +17,7 @@ func convertKVToData(symbols *model.SymbolTable, kvtab *model.DataTable) (ret *m
 		fieldName, _ := kvtab.GetValueByName(row, "字段名")
 		fieldType, _ := kvtab.GetValueByName(row, "字段类型")
 		name, _ := kvtab.GetValueByName(row, "标识名")
-		isArray, _ := kvtab.GetValueByName(row, "数组")
-		splitter, _ := kvtab.GetValueByName(row, "切割符")
+		arraySplitter, _ := kvtab.GetValueByName(row, "数组切割")
 
 		var tf table.TableField
 		tf.Kind = "表头"
@@ -25,8 +25,7 @@ func convertKVToData(symbols *model.SymbolTable, kvtab *model.DataTable) (ret *m
 		tf.Name = name
 		tf.FieldName = fieldName
 		tf.FieldType = fieldType
-		RawStringToValue(isArray, &tf.IsArray)
-		tf.Splitter = splitter
+		tf.ArraySplitter = arraySplitter
 		symbols.AddField(&tf)
 
 		value, _ := kvtab.GetValueByName(row, "值")

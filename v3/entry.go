@@ -1,14 +1,27 @@
 package v3
 
 import (
+	"github.com/davyxu/tabtoy/v3/helper"
 	"github.com/davyxu/tabtoy/v3/model"
 	"github.com/davyxu/tabtoy/v3/table"
 )
 
 func Parse(globals *model.Globals) error {
 
+	defer func() {
+
+		switch err := recover().(type) {
+		case *helper.ErrorObject:
+			log.Errorf("%s", err.Error())
+		case nil:
+		default:
+			panic(err)
+		}
+
+	}()
+
 	// TODO 更好的内建读取
-	err := loadSymbols(globals, globals.BuiltinSymbolFile)
+	err := LoadSymbols(globals, globals.BuiltinSymbolFile)
 
 	if err != nil {
 		return err
@@ -16,10 +29,12 @@ func Parse(globals *model.Globals) error {
 
 	var kvlist model.DataTableList
 
-	LoadIndex(globals, globals.IndexFile, func(pragma *table.TablePragma) error {
+	LoadIndex(globals, globals.IndexFile)
 
-		switch pragma.TableType {
-		case table.TableType_Data:
+	for _, pragma := range globals.IndexList {
+
+		switch pragma.TableMode {
+		case table.TableMode_Data:
 
 			tabName := getTableName(pragma)
 
@@ -28,6 +43,7 @@ func Parse(globals *model.Globals) error {
 			if dataTable == nil {
 				dataTable = model.NewDataTable()
 				dataTable.Name = tabName
+				dataTable.FileName = pragma.TableFileName
 				globals.AddDataTable(dataTable)
 			}
 
@@ -37,14 +53,14 @@ func Parse(globals *model.Globals) error {
 				return err
 			}
 
-		case table.TableType_Symbol:
+		case table.TableMode_Type:
 
-			err = loadSymbols(globals, pragma.TableFileName)
+			err = LoadSymbols(globals, pragma.TableFileName)
 
 			if err != nil {
 				return err
 			}
-		case table.TableType_KeyValue:
+		case table.TableMode_KeyValue:
 
 			tabName := getTableName(pragma)
 
@@ -53,6 +69,7 @@ func Parse(globals *model.Globals) error {
 			if kvtab == nil {
 				kvtab = model.NewDataTable()
 				kvtab.Name = tabName
+				kvtab.FileName = pragma.TableFileName
 				kvlist.AddDataTable(kvtab)
 			}
 
@@ -61,11 +78,8 @@ func Parse(globals *model.Globals) error {
 			if err != nil {
 				return err
 			}
-
 		}
-
-		return nil
-	})
+	}
 
 	// kv转置
 	for _, kvtab := range kvlist.Data {
