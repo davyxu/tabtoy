@@ -4,10 +4,10 @@ type DataTableList struct {
 	Data []*DataTable
 }
 
-func (self *DataTableList) GetDataTable(name string) *DataTable {
+func (self *DataTableList) GetDataTable(headerType string) *DataTable {
 
 	for _, tab := range self.Data {
-		if tab.Name == name {
+		if tab.HeaderType == headerType {
 			return tab
 		}
 	}

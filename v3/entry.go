@@ -27,30 +27,26 @@ func Parse(globals *model.Globals) error {
 		return err
 	}
 
-	var kvlist model.DataTableList
+	var kvList, dataList model.DataTableList
 
 	LoadIndex(globals, globals.IndexFile)
 
 	for _, pragma := range globals.IndexList {
 
+		fillTableType(pragma)
+
 		switch pragma.TableMode {
 		case table.TableMode_Data:
 
-			tabName := getTableName(pragma)
-
-			dataTable := globals.GetDataTable(tabName)
-
-			if dataTable == nil {
-				dataTable = model.NewDataTable()
-				dataTable.Name = tabName
-				dataTable.FileName = pragma.TableFileName
-				globals.AddDataTable(dataTable)
-			}
-
-			err = LoadTableData(pragma.TableFileName, dataTable)
+			tablist, err := LoadTableData(pragma.TableFileName, pragma.TableType)
 
 			if err != nil {
 				return err
+			}
+
+			for _, tab := range tablist {
+				ResolveHeaderFields(tab, tab.HeaderType, globals.Symbols)
+				dataList.AddDataTable(tab)
 			}
 
 		case table.TableMode_Type:
@@ -62,34 +58,33 @@ func Parse(globals *model.Globals) error {
 			}
 		case table.TableMode_KeyValue:
 
-			tabName := getTableName(pragma)
-
-			kvtab := kvlist.GetDataTable(tabName)
-
-			if kvtab == nil {
-				kvtab = model.NewDataTable()
-				kvtab.Name = tabName
-				kvtab.FileName = pragma.TableFileName
-				kvlist.AddDataTable(kvtab)
-			}
-
-			err = LoadTableData(pragma.TableFileName, kvtab)
+			tablist, err := LoadTableData(pragma.TableFileName, pragma.TableType)
 
 			if err != nil {
 				return err
 			}
+
+			for _, tab := range tablist {
+				// 输入数据是按TableField格式写的，为了共享TableField字段
+				ResolveHeaderFields(tab, "TableField", globals.Symbols)
+
+				kvList.AddDataTable(tab)
+			}
 		}
 	}
 
-	// kv转置
-	for _, kvtab := range kvlist.Data {
-		ResolveHeaderFields(kvtab, "TableField", globals.Symbols)
-		globals.AddDataTable(convertKVToData(globals.Symbols, kvtab))
+	// 合并所有的KV表行
+	var mergedKV model.DataTableList
+	mergeData(&kvList, &mergedKV, globals.Symbols)
+
+	// 完整KV表转置为普通数据表
+	for _, kvtab := range mergedKV.Data {
+		ResolveHeaderFields(kvtab, kvtab.HeaderType, globals.Symbols)
+		dataList.AddDataTable(transposeKVtoData(globals.Symbols, kvtab))
 	}
 
-	for _, tab := range globals.Data {
-		ResolveHeaderFields(tab, tab.Name, globals.Symbols)
-	}
+	// 合并所有的数据表
+	mergeData(&dataList, &globals.DataTableList, globals.Symbols)
 
 	return nil
 }

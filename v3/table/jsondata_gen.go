@@ -18,6 +18,6 @@ const builtinJson = `
 		{ "InputFieldName": "string", "GoFieldName": "string", "CSFieldName": "string", "DefaultValue": "" } 
 	],
 	"ErrorID":[ 
-		{ "FileError": "文件错误", "HeaderNotMatchFieldName": "表头与字段不匹配", "HeaderFieldNotDefined": "表头字段未定义" } 
+		{ "HeaderNotMatchFieldName": "表头与字段不匹配", "HeaderFieldNotDefined": "表头字段未定义", "DuplicateHeaderField": "表头字段重复", "DuplicateKVField": "键值表字段重复" } 
 	]
 }`

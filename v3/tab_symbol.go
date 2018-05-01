@@ -8,22 +8,23 @@ import (
 
 func LoadSymbols(globals *model.Globals, fileName string) error {
 
-	var symbolTable = model.NewDataTable()
-	symbolTable.FileName = fileName
-	symbolTable.Name = "TableField"
-	err := LoadTableData(fileName, symbolTable)
+	tabs, err := LoadTableData(fileName, "TableField")
 
 	if err != nil {
 		return err
 	}
 
-	for row := 0; row < symbolTable.RowCount(); row++ {
+	for _, tab := range tabs {
 
-		var objtype table.TableField
+		for row := 0; row < tab.RowCount(); row++ {
 
-		helper.ResolveRowByReflect(&objtype, symbolTable, row)
+			var objtype table.TableField
 
-		globals.Symbols.AddField(&objtype)
+			helper.ResolveRowByReflect(&objtype, tab, row)
+
+			globals.Symbols.AddField(&objtype)
+		}
+
 	}
 
 	return nil

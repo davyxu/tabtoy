@@ -2,6 +2,7 @@ package model
 
 import "github.com/davyxu/tabtoy/v3/table"
 
+// TODO 每一行记录来源的文件和Sheet表，方便追踪问题
 type DataRow []string
 
 func (self DataRow) Exists(value string) bool {
@@ -15,7 +16,10 @@ func (self DataRow) Exists(value string) bool {
 }
 
 type DataTable struct {
-	Name     string // 表名
+	HeaderType string // 表名，Index表里定义的类型
+
+	OriginalHeaderType string // HeaderFields对应的ObjectType，KV表为TableField
+
 	FileName string
 
 	Rows []DataRow
@@ -58,6 +62,21 @@ func (self *DataTable) RowCount() int {
 // 添加表头类型
 func (self *DataTable) AddHeaderField(types *table.TableField) {
 	self.HeaderFields = append(self.HeaderFields, types)
+}
+
+func (self *DataTable) HeaderFieldByName(name string) (*table.TableField, int) {
+
+	if name == "" {
+		return nil, -1
+	}
+
+	for col, f := range self.HeaderFields {
+		if f.Name == name || f.FieldName == name {
+			return f, col
+		}
+	}
+
+	return nil, -1
 }
 
 // 添加行数据

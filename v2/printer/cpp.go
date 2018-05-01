@@ -111,7 +111,7 @@ namespace {{.Namespace}}{{$globalIndex:=.Indexes}}{{$verticalFields:=.VerticalFi
 			{
 				auto element = ins.{{$row.FieldDescriptor.Name}}_[i];
 				{{range $b, $key := .IndexKeys}}
-				ins._{{$row.FieldDescriptor.Name}}By{{$key.Name}}.emplace(std::make_pair(element.{{$key.Name}}_, element));
+				ins._{{$row.FieldDescriptor.Name}}By{{$key.HeaderType}}.emplace(std::make_pair(element.{{$key.HeaderType}}_, element));
 				{{end}}
 			}
 			{{end}}

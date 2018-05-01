@@ -28,7 +28,7 @@ type {{$en.Name}} int32
 const (	
 {{range .GoFields}}
 	{{.Comment}}
-	{{$en.Name}}_{{.Name}} {{$en.Name}} = {{.Number}}
+	{{$en.Name}}_{{.HeaderType}} {{$en.HeaderType}} = {{.Number}}
 {{end}}
 )
 var (
@@ -76,13 +76,13 @@ type {{$.Name}}Table struct{
 	postFuncList []func(*{{$.Name}}Table) error
 	
 	{{range $a, $strus := .IndexedStructs}} {{range .Indexes}}
-	{{$strus.Name}}By{{.Name}} map[{{.KeyType}}]*{{$strus.TypeName}}
+	{{$strus.Name}}By{{.HeaderType}} map[{{.KeyType}}]*{{$strus.TypeName}}
 	{{end}} {{end}}
 }
 
 {{range .VerticalFields}}
 {{.Comment}}
-func (self *{{$.Name}}Table) Get{{.Name}}( ) {{.ElementTypeString}} {
+func (self *{{$.Name}}Table) Get{{.HeaderType}}( ) {{.ElementTypeString}} {
 	return self.{{.Name}}[0]
 }
 {{end}}
@@ -143,7 +143,7 @@ func (self *{{$.Name}}Table) Load(filename string) error {
 }
 
 // 注册外部索引入口, 索引回调, 清空回调
-func (self *{{$.Name}}Table) RegisterIndexEntry(name string, indexCallback func(*{{$.Name}}Table) error, clearCallback func(*{{$.Name}}Table)error) {
+func (self *{{$.Name}}Table) RegisterIndexEntry(name string, indexCallback func(*{{$.HeaderType}}Table) error, clearCallback func(*{{$.HeaderType}}Table)error) {
 
 	indexList, _ := self.indexFuncByName[name]
 	clearList, _ := self.clearFuncByName[name]
@@ -161,38 +161,38 @@ func (self *{{$.Name}}Table) RegisterIndexEntry(name string, indexCallback func(
 }
 
 // 注册加载前回调
-func (self *{{$.Name}}Table) RegisterPreEntry(callback func(*{{$.Name}}Table) error) {
+func (self *{{$.Name}}Table) RegisterPreEntry(callback func(*{{$.HeaderType}}Table) error) {
 
 	self.preFuncList = append(self.preFuncList, callback)
 }
 
 
 // 注册所有完成时回调
-func (self *{{$.Name}}Table) RegisterPostEntry(callback func(*{{$.Name}}Table) error) {
+func (self *{{$.Name}}Table) RegisterPostEntry(callback func(*{{$.HeaderType}}Table) error) {
 
 	self.postFuncList = append(self.postFuncList, callback)
 }
 
 
 // 创建一个{{$.Name}}表读取实例
-func New{{$.Name}}Table() *{{$.Name}}Table {
+func New{{$.Name}}Table() *{{$.HeaderType}}Table {
 	return &{{$.Name}}Table{
 
 	
 		indexFuncByName: map[string][]func(*{{$.Name}}Table) error{
 		
 		{{range $a, $strus := .IndexedStructs}}
-			"{{$strus.Name}}": {func(tab *{{$.Name}}Table)error {
+			"{{$strus.Name}}": {func(tab *{{$.HeaderType}}Table)error {
 				
 				// {{$strus.Name}}
 				for _, def := range tab.{{$strus.Name}} {
 					{{range .Indexes}}
-					if _, ok := tab.{{$strus.Name}}By{{.Name}}[def.{{.Name}}]; ok {
-						panic(fmt.Sprintf("duplicate index in {{$strus.Name}}By{{.Name}}: %v", def.{{.Name}}))
+					if _, ok := tab.{{$strus.Name}}By{{.HeaderType}}[def.{{.HeaderType}}]; ok {
+						panic(fmt.Sprintf("duplicate index in {{$strus.Name}}By{{.HeaderType}}: %v", def.{{.HeaderType}}))
 					}
 					{{end}}		
 					{{range .Indexes}}
-					tab.{{$strus.Name}}By{{.Name}}[def.{{.Name}}] = def{{end}}
+					tab.{{$strus.Name}}By{{.HeaderType}}[def.{{.HeaderType}}] = def{{end}}
 					
 				}
 
@@ -206,12 +206,12 @@ func New{{$.Name}}Table() *{{$.Name}}Table {
 		clearFuncByName: map[string][]func(*{{$.Name}}Table)error{
 		
 		{{range $a, $strus := .IndexedStructs}}
-			"{{$strus.Name}}": {func(tab *{{$.Name}}Table) error{
+			"{{$strus.Name}}": {func(tab *{{$.HeaderType}}Table) error{
 				
 				// {{$strus.Name}}
 	
 				{{range .Indexes}}
-				tab.{{$strus.Name}}By{{.Name}} = make(map[{{.KeyType}}]*{{$strus.TypeName}}){{end}}
+				tab.{{$strus.Name}}By{{.HeaderType}} = make(map[{{.KeyType}}]*{{$strus.TypeName}}){{end}}
 
 				return nil
 			}},
@@ -222,7 +222,7 @@ func New{{$.Name}}Table() *{{$.Name}}Table {
 		
 
 		{{range $a, $strus := .IndexedStructs}} {{range .Indexes}}
-		{{$strus.Name}}By{{.Name}} : make(map[{{.KeyType}}]*{{$strus.TypeName}}),
+		{{$strus.Name}}By{{.HeaderType}} : make(map[{{.KeyType}}]*{{$strus.TypeName}}),
 		{{end}} {{end}}
 		
 	}

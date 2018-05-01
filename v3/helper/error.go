@@ -24,7 +24,12 @@ func getErrorDesc(id string) string {
 
 		fd := tobj.Field(i)
 		if fd.Name == id {
-			return vobj.Field(i).String()
+			final := vobj.Field(i).String()
+			if final == "" {
+				return id
+			}
+
+			return final
 		}
 
 	}

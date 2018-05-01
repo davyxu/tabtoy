@@ -1,14 +1,16 @@
 package v3
 
 import (
+	"github.com/davyxu/tabtoy/v3/helper"
 	"github.com/davyxu/tabtoy/v3/model"
 	"github.com/davyxu/tabtoy/v3/table"
 )
 
-func convertKVToData(symbols *model.SymbolTable, kvtab *model.DataTable) (ret *model.DataTable) {
+func transposeKVtoData(symbols *model.SymbolTable, kvtab *model.DataTable) (ret *model.DataTable) {
 
 	ret = model.NewDataTable()
-	ret.Name = kvtab.Name
+	ret.HeaderType = kvtab.HeaderType
+	ret.OriginalHeaderType = kvtab.HeaderType
 	ret.FileName = kvtab.FileName
 
 	var oneRow model.DataRow
@@ -21,11 +23,18 @@ func convertKVToData(symbols *model.SymbolTable, kvtab *model.DataTable) (ret *m
 
 		var tf table.TableField
 		tf.Kind = "表头"
-		tf.ObjectType = kvtab.Name
+		tf.ObjectType = kvtab.HeaderType
+
 		tf.Name = name
+
 		tf.FieldName = fieldName
 		tf.FieldType = fieldType
 		tf.ArraySplitter = arraySplitter
+
+		if symbols.FindField(tf.ObjectType, tf.FieldName) != nil {
+			helper.ReportError("DuplicateKVField", helper.Location(kvtab.FileName, row, 0))
+		}
+
 		symbols.AddField(&tf)
 
 		value, _ := kvtab.GetValueByName(row, "值")

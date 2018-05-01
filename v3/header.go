@@ -18,10 +18,6 @@ func loadheader(sheet *xlsx.Sheet, tab *model.DataTable) {
 			break
 		}
 
-		//if headerRow.Exists(header) {
-		//	panic("Duplicate header value")
-		//}
-
 		headerRow = append(headerRow, header)
 	}
 
@@ -30,6 +26,7 @@ func loadheader(sheet *xlsx.Sheet, tab *model.DataTable) {
 
 func ResolveHeaderFields(tab *model.DataTable, tableObjectType string, symbols *model.SymbolTable) {
 
+	tab.OriginalHeaderType = tableObjectType
 	for col, value := range tab.RawHeader {
 
 		tf := symbols.FindField(tableObjectType, value)

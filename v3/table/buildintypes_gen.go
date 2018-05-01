@@ -54,9 +54,10 @@ type TablePragma struct{
 }
 
 type ErrorID struct{ 
-	FileError string  
 	HeaderNotMatchFieldName string  
 	HeaderFieldNotDefined string  
+	DuplicateHeaderField string  
+	DuplicateKVField string  
 }
 
 

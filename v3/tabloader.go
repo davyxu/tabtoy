@@ -18,13 +18,19 @@ func readOneRow(sheet *xlsx.Sheet, tab *model.DataTable, row int) (eachRow model
 	return
 }
 
-func LoadTableData(fileName string, tab *model.DataTable) error {
+func LoadTableData(fileName, headerType string) (ret []*model.DataTable, err error) {
 	file, err := xlsx.OpenFile(fileName)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	for _, sheet := range file.Sheets {
+
+		tab := model.NewDataTable()
+		tab.HeaderType = headerType
+		tab.FileName = fileName
+
+		ret = append(ret, tab)
 
 		loadheader(sheet, tab)
 
@@ -43,5 +49,5 @@ func LoadTableData(fileName string, tab *model.DataTable) error {
 
 	}
 
-	return nil
+	return
 }

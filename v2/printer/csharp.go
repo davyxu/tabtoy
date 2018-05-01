@@ -67,14 +67,14 @@ namespace {{.Namespace}}{{$globalIndex:=.Indexes}}{{$verticalFields:=.VerticalFi
 		#endregion
 		#region Deserialize code
 		{{range $.Classes}}
-		static tabtoy.DeserializeHandler<{{.Name}}> _{{.Name}}DeserializeHandler;
-		static tabtoy.DeserializeHandler<{{.Name}}> {{.Name}}DeserializeHandler
+		static tabtoy.DeserializeHandler<{{.Name}}> _{{.HeaderType}}DeserializeHandler;
+		static tabtoy.DeserializeHandler<{{.Name}}> {{.HeaderType}}DeserializeHandler
 		{
 			get
 			{
 				if (_{{.Name}}DeserializeHandler == null )
 				{
-					_{{.Name}}DeserializeHandler = new tabtoy.DeserializeHandler<{{.Name}}>(Deserialize);
+					_{{.Name}}DeserializeHandler = new tabtoy.DeserializeHandler<{{.HeaderType}}>(Deserialize);
 				}
 
 				return _{{.Name}}DeserializeHandler;
@@ -102,7 +102,7 @@ namespace {{.Namespace}}{{$globalIndex:=.Indexes}}{{$verticalFields:=.VerticalFi
 			{
 				var element = ins.{{$row.FieldDescriptor.Name}}[i];
 				{{range $b, $key := .IndexKeys}}
-				ins._{{$row.FieldDescriptor.Name}}By{{$key.Name}}.Add(element.{{$key.Name}}, element);
+				ins._{{$row.FieldDescriptor.Name}}By{{$key.HeaderType}}.Add(element.{{$key.HeaderType}}, element);
 				{{end}}
 			}
 			{{end}}

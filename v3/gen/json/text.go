@@ -4,7 +4,7 @@ package json
 const templateText = `{
 	"@Tool": "github.com/davyxu/tabtoy",
 	"@Version": "{{.Version}}",	{{range $di, $tab := .Data}}
-	"{{$tab.Name}}":[ {{range $row,$rowData := $tab.Rows}}
+	"{{$tab.HeaderType}}":[ {{range $row,$rowData := $tab.Rows}}
 		{ {{range $col, $headType := $tab.HeaderFields}}"{{$headType.FieldName}}": {{WrapTabValue $ $tab $row $col}}{{GenJsonTailComma $col $tab.HeaderFields}} {{end}}}{{GenJsonTailComma $row $tab.Rows}}{{end}} 
 	]{{GenJsonTailComma $di $.Data}}{{end}}
 }`

@@ -27,32 +27,30 @@ func LoadIndex(globals *model.Globals, fileName string) error {
 		return nil
 	}
 
-	var indexTab = model.NewDataTable()
-	indexTab.FileName = fileName
-	indexTab.Name = "TablePragma"
-
-	err := LoadTableData(fileName, indexTab)
+	tabs, err := LoadTableData(fileName, "TablePragma")
 
 	if err != nil {
 		return err
 	}
 
-	ResolveHeaderFields(indexTab, "TablePragma", globals.Symbols)
+	for _, tab := range tabs {
 
-	globals.IndexList = loadIndexData(indexTab, globals.Symbols)
+		ResolveHeaderFields(tab, "TablePragma", globals.Symbols)
+
+		globals.IndexList = loadIndexData(tab, globals.Symbols)
+	}
 
 	return nil
 }
 
 // 表名空时，从文件名推断
-func getTableName(pragma *table.TablePragma) string {
+func fillTableType(pragma *table.TablePragma) {
 
 	if pragma.TableType == "" {
 
 		_, name := filepath.Split(pragma.TableFileName)
 
-		return strings.TrimSuffix(name, filepath.Ext(pragma.TableFileName))
-	} else {
-		return pragma.TableType
+		pragma.TableType = strings.TrimSuffix(name, filepath.Ext(pragma.TableFileName))
 	}
+
 }
