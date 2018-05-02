@@ -19,9 +19,9 @@ func wrapSingleValue(globals *model.Globals, valueType *table.TableField, value 
 	case valueType.FieldType == "bool":
 
 		switch value {
-		case "是", "yes", "YES", "1":
+		case "是", "yes", "YES", "1", "true", "TRUE", "True":
 			return "true"
-		case "否", "no", "NO", "0", "":
+		case "否", "no", "NO", "0", "false", "FALSE", "False":
 			return "false"
 		}
 

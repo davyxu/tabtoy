@@ -8,7 +8,7 @@ import (
 	"os"
 )
 
-func v2Entry() {
+func V2Entry() {
 	g := printer.NewGlobals()
 
 	if *paramLanguage != "" {

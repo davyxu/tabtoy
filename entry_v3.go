@@ -4,19 +4,16 @@ import (
 	"flag"
 	"fmt"
 	"github.com/davyxu/tabtoy/v3"
+	"github.com/davyxu/tabtoy/v3/gen"
 	"github.com/davyxu/tabtoy/v3/gen/gosrc"
 	"github.com/davyxu/tabtoy/v3/gen/json"
 	"github.com/davyxu/tabtoy/v3/helper"
 	"github.com/davyxu/tabtoy/v3/model"
-	"io/ioutil"
 	"os"
-	"path/filepath"
 )
 
-type V3GenFunc func(globals *model.Globals) (data []byte, err error)
-
 type V3GenEntry struct {
-	f    V3GenFunc
+	f    gen.GenFunc
 	name *string
 }
 
@@ -31,13 +28,14 @@ var (
 	}
 )
 
-func v3Entry() {
+func V3Entry() {
 	globals := model.NewGlobals()
 	globals.Version = Version_v3
 	globals.BuiltinSymbolFile = *paramBuiltinSymbolFile
 	globals.IndexFile = *paramIndexFile
 	globals.PackageName = *paramPackageName
 	globals.CombineStructName = *paramCombineStructName
+	globals.Para = *paramPara
 
 	// 内建build时，输出所有内置symbols
 	if globals.BuiltinSymbolFile == "BuiltinTypes.xlsx" {
@@ -63,10 +61,10 @@ func v3Entry() {
 			fmt.Println(err)
 			os.Exit(1)
 		} else {
-			os.MkdirAll(filepath.Dir(filename), 0755)
 
 			fmt.Println(filename)
-			err = ioutil.WriteFile(filename, data, 0666)
+
+			err = helper.WriteFile(filename, data)
 
 			if err != nil {
 				fmt.Println(err)

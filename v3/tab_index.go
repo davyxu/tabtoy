@@ -21,13 +21,13 @@ func loadIndexData(tab *model.DataTable, symbols *model.SymbolTable) (pragmaList
 	return
 }
 
-func LoadIndex(globals *model.Globals, indexGetter FileGetter, fileName string) error {
+func LoadIndexTable(globals *model.Globals, indexGetter FileGetter, fileName string) error {
 
 	if fileName == "" {
 		return nil
 	}
 
-	tabs, err := LoadTableData(indexGetter, fileName, "TablePragma")
+	tabs, err := LoadDataTable(indexGetter, fileName, "TablePragma")
 
 	if err != nil {
 		return err

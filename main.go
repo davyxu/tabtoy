@@ -26,9 +26,9 @@ func main() {
 
 	switch *paramMode {
 	case "v3":
-		v3Entry()
+		V3Entry()
 	case "exportorv2", "v2":
-		v2Entry()
+		V2Entry()
 	default:
 		fmt.Println("--mode not specify")
 		os.Exit(1)

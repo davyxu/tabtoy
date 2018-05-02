@@ -11,13 +11,14 @@ type FileGetter interface {
 	GetFile(filename string) (*xlsx.File, error)
 }
 
-func Compile(globals *model.Globals, indexGetter FileGetter) error {
+func Compile(globals *model.Globals, indexGetter FileGetter) (ret error) {
 
 	defer func() {
 
 		switch err := recover().(type) {
 		case *helper.ErrorObject:
 			log.Errorf("%s", err.Error())
+			ret = err
 		case nil:
 		default:
 			panic(err)
@@ -26,7 +27,7 @@ func Compile(globals *model.Globals, indexGetter FileGetter) error {
 	}()
 
 	// TODO 更好的内建读取
-	err := LoadSymbols(globals, indexGetter, globals.BuiltinSymbolFile, true)
+	err := LoadTypeTable(globals, indexGetter, globals.BuiltinSymbolFile, true)
 
 	if err != nil {
 		return err
@@ -34,16 +35,24 @@ func Compile(globals *model.Globals, indexGetter FileGetter) error {
 
 	var kvList, dataList model.DataTableList
 
-	LoadIndex(globals, indexGetter, globals.IndexFile)
+	LoadIndexTable(globals, indexGetter, globals.IndexFile)
 
-	// 缓冲文件
-	loader := helper.NewAsyncFileLoader()
+	var loader FileGetter
 
-	for _, pragma := range globals.IndexList {
-		loader.AddFile(pragma.TableFileName)
+	if globals.Para {
+		// 缓冲文件
+		asyncLoader := helper.NewAsyncFileLoader()
+
+		for _, pragma := range globals.IndexList {
+			asyncLoader.AddFile(pragma.TableFileName)
+		}
+
+		asyncLoader.Commit()
+
+		loader = asyncLoader
+	} else {
+		loader = indexGetter
 	}
-
-	loader.Commit()
 
 	for _, pragma := range globals.IndexList {
 
@@ -52,7 +61,7 @@ func Compile(globals *model.Globals, indexGetter FileGetter) error {
 		switch pragma.TableMode {
 		case table.TableMode_Data:
 
-			tablist, err := LoadTableData(loader, pragma.TableFileName, pragma.TableType)
+			tablist, err := LoadDataTable(loader, pragma.TableFileName, pragma.TableType)
 
 			if err != nil {
 				return err
@@ -65,23 +74,21 @@ func Compile(globals *model.Globals, indexGetter FileGetter) error {
 
 		case table.TableMode_Type:
 
-			err = LoadSymbols(globals, loader, pragma.TableFileName, false)
+			err = LoadTypeTable(globals, loader, pragma.TableFileName, false)
 
 			if err != nil {
 				return err
 			}
 		case table.TableMode_KeyValue:
 
-			tablist, err := LoadTableData(loader, pragma.TableFileName, pragma.TableType)
+			tablist, err := LoadDataTable(loader, pragma.TableFileName, pragma.TableType)
 
 			if err != nil {
 				return err
 			}
 
 			for _, tab := range tablist {
-				// 输入数据是按TableField格式写的，为了共享TableField字段
 				ResolveHeaderFields(tab, "TableKeyValue", globals.Symbols)
-
 				kvList.AddDataTable(tab)
 			}
 		}
