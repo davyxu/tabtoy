@@ -6,7 +6,7 @@ import (
 	"github.com/davyxu/tabtoy/v3/table"
 )
 
-func LoadSymbols(globals *model.Globals, indexGetter FileGetter, fileName string) error {
+func LoadSymbols(globals *model.Globals, indexGetter FileGetter, fileName string, builtin bool) error {
 
 	tabs, err := LoadTableData(indexGetter, fileName, "TableField")
 
@@ -28,6 +28,8 @@ func LoadSymbols(globals *model.Globals, indexGetter FileGetter, fileName string
 			var objtype table.TableField
 
 			helper.ParseRow(&objtype, tab, row, &symbolTab)
+
+			objtype.IsBuiltin = builtin
 
 			globals.Symbols.AddField(&objtype)
 		}

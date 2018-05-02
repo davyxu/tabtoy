@@ -8,7 +8,7 @@ import (
 
 func readOneRow(sheet *xlsx.Sheet, tab *model.DataTable, row int) (eachRow model.DataRow) {
 
-	for col := 0; col < tab.HeaderFieldCount(); col++ {
+	for col := range tab.RawHeader {
 
 		value := helper.GetSheetValueString(sheet, row, col)
 

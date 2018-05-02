@@ -16,6 +16,7 @@ type TableField struct {
 	FieldType     string    `tb_name:"字段类型"`
 	Value         string    `tb_name:"值"`
 	ArraySplitter string    `tb_name:"数组切割"`
+	IsBuiltin     bool
 }
 
 func (self *TableField) IsArray() bool {
@@ -33,4 +34,10 @@ var CoreSymbols = []*TableField{
 	{Kind: TableKind_HeaderStruct, ObjectType: "TableField", Name: "字段类型", FieldName: "FieldType", FieldType: "string"},
 	{Kind: TableKind_HeaderStruct, ObjectType: "TableField", Name: "值", FieldName: "Value", FieldType: "string"},
 	{Kind: TableKind_HeaderStruct, ObjectType: "TableField", Name: "数组切割", FieldName: "ArraySplitter", FieldType: "string"},
+}
+
+func init() {
+	for _, symbol := range CoreSymbols {
+		symbol.IsBuiltin = true
+	}
 }

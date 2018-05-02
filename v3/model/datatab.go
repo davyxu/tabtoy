@@ -20,16 +20,6 @@ func (self *Cell) String() string {
 
 type DataRow []Cell
 
-func (self DataRow) Exists(value string) bool {
-	for _, v := range self {
-		if v.Value == value {
-			return true
-		}
-	}
-
-	return false
-}
-
 type DataTable struct {
 	HeaderType string // 表名，Index表里定义的类型
 
@@ -66,10 +56,6 @@ func (self *DataTable) GetValue(row, col int) string {
 // 代码生成专用
 func (self *DataTable) GetType(col int) *table.TableField {
 	return self.HeaderFields[col]
-}
-
-func (self *DataTable) HeaderFieldCount() int {
-	return len(self.RawHeader)
 }
 
 func (self *DataTable) RowCount() int {

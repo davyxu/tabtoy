@@ -26,7 +26,7 @@ func Compile(globals *model.Globals, indexGetter FileGetter) error {
 	}()
 
 	// TODO 更好的内建读取
-	err := LoadSymbols(globals, indexGetter, globals.BuiltinSymbolFile)
+	err := LoadSymbols(globals, indexGetter, globals.BuiltinSymbolFile, true)
 
 	if err != nil {
 		return err
@@ -65,7 +65,7 @@ func Compile(globals *model.Globals, indexGetter FileGetter) error {
 
 		case table.TableMode_Type:
 
-			err = LoadSymbols(globals, loader, pragma.TableFileName)
+			err = LoadSymbols(globals, loader, pragma.TableFileName, false)
 
 			if err != nil {
 				return err
