@@ -2,7 +2,6 @@ package helper
 
 import (
 	"fmt"
-	"github.com/davyxu/tabtoy/util"
 	"github.com/davyxu/tabtoy/v3/table"
 	"reflect"
 	"strings"
@@ -43,6 +42,9 @@ func (self *ErrorObject) Error() string {
 	var sb strings.Builder
 
 	sb.WriteString(getErrorDesc(self.s))
+	sb.WriteString("(")
+	sb.WriteString(self.s)
+	sb.WriteString(")")
 	sb.WriteString(" ")
 
 	for _, c := range self.context {
@@ -59,9 +61,4 @@ func ReportError(s string, context ...interface{}) *ErrorObject {
 		s:       s,
 		context: context,
 	})
-}
-
-func Location(filename string, row, col int) string {
-
-	return fmt.Sprintf("%s(%s)", filename, util.R1C1ToA1(row+1, col+1))
 }

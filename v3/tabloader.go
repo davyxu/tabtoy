@@ -12,7 +12,13 @@ func readOneRow(sheet *xlsx.Sheet, tab *model.DataTable, row int) (eachRow model
 
 		value := helper.GetSheetValueString(sheet, row, col)
 
-		eachRow = append(eachRow, value)
+		eachRow = append(eachRow, model.Cell{
+			Value: value,
+			Row:   row,
+			Col:   col,
+			File:  tab.FileName,
+			Sheet: tab.SheetName,
+		})
 	}
 
 	return
@@ -29,6 +35,7 @@ func LoadTableData(fileName, headerType string) (ret []*model.DataTable, err err
 		tab := model.NewDataTable()
 		tab.HeaderType = headerType
 		tab.FileName = fileName
+		tab.SheetName = sheet.Name
 
 		ret = append(ret, tab)
 

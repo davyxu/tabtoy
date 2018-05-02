@@ -43,7 +43,7 @@ func mergeData(inputList, outputList *model.DataTableList, symbols *model.Symbol
 			oneRow := make(model.DataRow, len(outputTab.HeaderFields))
 
 			// 遍历输入数据的每一列
-			for col, value := range rowData {
+			for col, cell := range rowData {
 
 				// 输入的列头
 				headerField := inputTab.HeaderFields[col]
@@ -53,10 +53,10 @@ func mergeData(inputList, outputList *model.DataTableList, symbols *model.Symbol
 
 				if headerField.IsArray() {
 
-					oneRow[OutputCol] = combineArrayValue(oneRow[OutputCol], value, headerField.ArraySplitter)
+					oneRow[OutputCol].Value = combineArrayValue(oneRow[OutputCol].Value, cell.Value, headerField.ArraySplitter)
 
 				} else {
-					oneRow[OutputCol] = value
+					oneRow[OutputCol] = cell
 				}
 			}
 

@@ -12,6 +12,7 @@ func transposeKVtoData(symbols *model.SymbolTable, kvtab *model.DataTable) (ret 
 	ret.HeaderType = kvtab.HeaderType
 	ret.OriginalHeaderType = kvtab.HeaderType
 	ret.FileName = kvtab.FileName
+	ret.SheetName = kvtab.SheetName
 
 	var oneRow model.DataRow
 	for row := range kvtab.Rows {
@@ -25,21 +26,21 @@ func transposeKVtoData(symbols *model.SymbolTable, kvtab *model.DataTable) (ret 
 		tf.Kind = "表头"
 		tf.ObjectType = kvtab.HeaderType
 
-		tf.Name = name
+		tf.Name = name.Value
 
-		tf.FieldName = fieldName
-		tf.FieldType = fieldType
-		tf.ArraySplitter = arraySplitter
-
-		if symbols.FindField(tf.ObjectType, tf.FieldName) != nil {
-			helper.ReportError("DuplicateKVField", helper.Location(kvtab.FileName, row, 0))
-		}
-
-		symbols.AddField(&tf)
+		tf.FieldName = fieldName.Value
+		tf.FieldType = fieldType.Value
+		tf.ArraySplitter = arraySplitter.Value
 
 		value, _ := kvtab.GetValueByName(row, "值")
 
 		oneRow = append(oneRow, value)
+
+		if symbols.FindField(tf.ObjectType, tf.FieldName) != nil {
+			helper.ReportError("DuplicateKVField", fieldName.String())
+		}
+
+		symbols.AddField(&tf)
 
 		ret.AddHeaderField(&tf)
 	}

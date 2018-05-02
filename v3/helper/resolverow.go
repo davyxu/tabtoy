@@ -30,15 +30,15 @@ func ResolveRowByReflect(ret interface{}, tab *model.DataTable, row int) {
 
 	for col, header := range tab.RawHeader {
 
-		index := matchField(tobj, header)
+		index := matchField(tobj, header.Value)
 
 		if index == -1 {
-			ReportError("HeaderNotMatchFieldName", header, Location(tab.FileName, 0, col))
+			ReportError("HeaderNotMatchFieldName", header, header.String())
 		}
 
 		fieldValue := vobj.Field(index)
 
-		RawStringToValue(oneRow[col], fieldValue.Addr().Interface())
+		RawStringToValue(oneRow[col].Value, fieldValue.Addr().Interface())
 	}
 
 }
@@ -50,18 +50,18 @@ func ParseRow(ret interface{}, tab *model.DataTable, row int, symbols *model.Sym
 
 	tobj := reflect.TypeOf(ret).Elem()
 
-	for col, header := range tab.RawHeader {
+	for _, header := range tab.RawHeader {
 
-		value, tf := tab.GetValueByName(row, header)
+		cell, tf := tab.GetValueByName(row, header.Value)
 
-		index := matchField(tobj, header)
+		index := matchField(tobj, header.Value)
 
 		if index == -1 {
-			ReportError("HeaderNotMatchFieldName", header, Location(tab.FileName, 0, col))
+			ReportError("HeaderNotMatchFieldName", header.String())
 		}
 
 		fieldValue := vobj.Field(index)
 
-		StringToValue(value, fieldValue.Addr().Interface(), tf, symbols)
+		StringToValue(cell.Value, fieldValue.Addr().Interface(), tf, symbols)
 	}
 }

@@ -11,14 +11,20 @@ func loadheader(sheet *xlsx.Sheet, tab *model.DataTable) {
 	var headerRow model.DataRow
 	for col := 0; ; col++ {
 
-		header := helper.GetSheetValueString(sheet, 0, col)
+		headerValue := helper.GetSheetValueString(sheet, 0, col)
 
 		// 空列，终止
-		if header == "" {
+		if headerValue == "" {
 			break
 		}
 
-		headerRow = append(headerRow, header)
+		headerRow = append(headerRow, model.Cell{
+			Value: headerValue,
+			Col:   col,
+			Row:   0,
+			File:  tab.FileName,
+			Sheet: sheet.Name,
+		})
 	}
 
 	tab.RawHeader = headerRow
@@ -27,11 +33,11 @@ func loadheader(sheet *xlsx.Sheet, tab *model.DataTable) {
 func ResolveHeaderFields(tab *model.DataTable, tableObjectType string, symbols *model.SymbolTable) {
 
 	tab.OriginalHeaderType = tableObjectType
-	for col, value := range tab.RawHeader {
+	for _, cell := range tab.RawHeader {
 
-		tf := symbols.FindField(tableObjectType, value)
+		tf := symbols.FindField(tableObjectType, cell.Value)
 		if tf == nil {
-			helper.ReportError("HeaderFieldNotDefined", value, helper.Location(tab.FileName, 0, col))
+			helper.ReportError("HeaderFieldNotDefined", cell.String())
 		}
 
 		tab.AddHeaderField(tf)

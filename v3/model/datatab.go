@@ -1,13 +1,28 @@
 package model
 
-import "github.com/davyxu/tabtoy/v3/table"
+import (
+	"fmt"
+	"github.com/davyxu/tabtoy/util"
+	"github.com/davyxu/tabtoy/v3/table"
+)
 
-// TODO 每一行记录来源的文件和Sheet表，方便追踪问题
-type DataRow []string
+type Cell struct {
+	Value string
+	Row   int // base 0
+	Col   int // base 0
+	File  string
+	Sheet string
+}
+
+func (self *Cell) String() string {
+	return fmt.Sprintf("%s|%s(%s)", self.File, self.Sheet, util.R1C1ToA1(self.Row+1, self.Col+1))
+}
+
+type DataRow []Cell
 
 func (self DataRow) Exists(value string) bool {
 	for _, v := range self {
-		if v == value {
+		if v.Value == value {
 			return true
 		}
 	}
@@ -22,6 +37,8 @@ type DataTable struct {
 
 	FileName string
 
+	SheetName string
+
 	Rows []DataRow
 
 	RawHeader    DataRow
@@ -29,7 +46,7 @@ type DataTable struct {
 }
 
 // 根据列头找到该行对应的值
-func (self *DataTable) GetValueByName(row int, name string) (string, *table.TableField) {
+func (self *DataTable) GetValueByName(row int, name string) (Cell, *table.TableField) {
 
 	for col, tf := range self.HeaderFields {
 		if tf.Name == name || tf.FieldName == name {
@@ -37,13 +54,13 @@ func (self *DataTable) GetValueByName(row int, name string) (string, *table.Tabl
 		}
 	}
 
-	return "", nil
+	return Cell{}, nil
 }
 
 // 代码生成专用
 func (self *DataTable) GetValue(row, col int) string {
 
-	return self.Rows[row][col]
+	return self.Rows[row][col].Value
 }
 
 // 代码生成专用
