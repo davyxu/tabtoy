@@ -31,7 +31,7 @@ func (self *SymbolTable) AddField(tf *table.TableField) {
 // 类型是枚举
 func (self *SymbolTable) IsEnumKind(objectType string) bool {
 
-	return linq.From(self.EnumNames(true)).WhereT(func(name string) bool {
+	return linq.From(self.rawEnumNames(true)).WhereT(func(name string) bool {
 		return name == objectType
 	}).Count() == 1
 }
@@ -52,13 +52,26 @@ func (self *SymbolTable) ResolveEnumValue(objectType, value string) (ret string)
 	return
 }
 
-// 获取所有的结构体名
+func (self *SymbolTable) EnumNames() (ret []string) {
+
+	return self.rawEnumNames(UseAllBuiltinSymbols)
+}
+
 func (self *SymbolTable) StructNames() (ret []string) {
+
+	return self.rawStructNames(UseAllBuiltinSymbols)
+}
+
+// 获取所有的结构体名
+func (self *SymbolTable) rawStructNames(all bool) (ret []string) {
 
 	linq.From(self.fields).WhereT(func(tf *table.TableField) bool {
 
-		return tf.Kind == table.TableKind_HeaderStruct && !tf.IsBuiltin
-		//return tf.Kind == "表头"
+		if !all && tf.IsBuiltin {
+			return false
+		}
+
+		return tf.Kind == table.TableKind_HeaderStruct
 	}).SelectT(func(tf *table.TableField) string {
 
 		return tf.ObjectType
@@ -68,7 +81,7 @@ func (self *SymbolTable) StructNames() (ret []string) {
 }
 
 // 获取所有的枚举名
-func (self *SymbolTable) EnumNames(all bool) (ret []string) {
+func (self *SymbolTable) rawEnumNames(all bool) (ret []string) {
 
 	linq.From(self.fields).WhereT(func(tf *table.TableField) bool {
 
@@ -77,7 +90,6 @@ func (self *SymbolTable) EnumNames(all bool) (ret []string) {
 		}
 
 		return tf.Kind == table.TableKind_Enum
-		//return tf.Kind == "枚举"
 	}).SelectT(func(tf *table.TableField) string {
 
 		return tf.ObjectType
@@ -116,3 +128,5 @@ func (self *SymbolTable) FindField(objectType, name string) (ret *table.TableFie
 func NewSymbolTable() *SymbolTable {
 	return new(SymbolTable)
 }
+
+var UseAllBuiltinSymbols bool

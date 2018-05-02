@@ -39,6 +39,11 @@ func v3Entry() {
 	globals.PackageName = *paramPackageName
 	globals.CombineStructName = *paramCombineStructName
 
+	// 内建build时，输出所有内置symbols
+	if globals.BuiltinSymbolFile == "BuiltinTypes.xlsx" {
+		model.UseAllBuiltinSymbols = true
+	}
+
 	err := v3.Compile(globals, new(helper.SyncFileLoader))
 
 	if err != nil {
