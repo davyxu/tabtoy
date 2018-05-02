@@ -57,7 +57,8 @@ func (self *SymbolTable) StructNames() (ret []string) {
 
 	linq.From(self.fields).WhereT(func(tf *table.TableField) bool {
 
-		return tf.Kind == "表头"
+		return tf.Kind == table.TableKind_HeaderStruct
+		//return tf.Kind == "表头"
 	}).SelectT(func(tf *table.TableField) string {
 
 		return tf.ObjectType
@@ -71,7 +72,8 @@ func (self *SymbolTable) EnumNames() (ret []string) {
 
 	linq.From(self.fields).WhereT(func(tf *table.TableField) bool {
 
-		return tf.Kind == "枚举"
+		return tf.Kind == table.TableKind_Enum
+		//return tf.Kind == "枚举"
 	}).SelectT(func(tf *table.TableField) string {
 
 		return tf.ObjectType

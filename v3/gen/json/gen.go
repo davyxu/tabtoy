@@ -5,11 +5,13 @@ import (
 	"github.com/davyxu/tabtoy/v3/model"
 )
 
-func Generate(globals *model.Globals, fileName string) error {
+func Generate(globals *model.Globals) (data []byte, err error) {
 
-	return codegen.NewCodeGen("json").
+	err = codegen.NewCodeGen("json").
 		RegisterTemplateFunc(codegen.UsefulFunc).
 		RegisterTemplateFunc(UsefulFunc).
 		ParseTemplate(templateText, globals).
-		WriteOutputFile(fileName).Error()
+		WriteBytes(&data).Error()
+
+	return
 }

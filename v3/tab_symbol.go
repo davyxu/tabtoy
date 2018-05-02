@@ -6,21 +6,28 @@ import (
 	"github.com/davyxu/tabtoy/v3/table"
 )
 
-func LoadSymbols(globals *model.Globals, fileName string) error {
+func LoadSymbols(globals *model.Globals, indexGetter FileGetter, fileName string) error {
 
-	tabs, err := LoadTableData(fileName, "TableField")
+	tabs, err := LoadTableData(indexGetter, fileName, "TableField")
 
 	if err != nil {
 		return err
 	}
 
+	var symbolTab model.SymbolTable
+	for _, symbol := range table.CoreSymbols {
+		symbolTab.AddField(symbol)
+	}
+
 	for _, tab := range tabs {
+
+		ResolveHeaderFields(tab, "TableField", &symbolTab)
 
 		for row := 0; row < tab.RowCount(); row++ {
 
 			var objtype table.TableField
 
-			helper.ResolveRowByReflect(&objtype, tab, row)
+			helper.ParseRow(&objtype, tab, row, &symbolTab)
 
 			globals.Symbols.AddField(&objtype)
 		}

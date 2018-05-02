@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func RawStringToValue(str string, value interface{}) (error, bool) {
+func strToPrimitive(str string, value interface{}) (error, bool) {
 	switch raw := value.(type) {
 	case *int32:
 		v, err := strconv.ParseInt(str, 10, 32)
@@ -82,7 +82,7 @@ func RawStringToValue(str string, value interface{}) (error, bool) {
 
 func StringToValue(str string, value interface{}, tf *table.TableField, symbols *model.SymbolTable) error {
 
-	err, handled := RawStringToValue(str, value)
+	err, handled := strToPrimitive(str, value)
 	if err != nil || handled {
 		return err
 	}
@@ -107,7 +107,7 @@ func StringToValue(str string, value interface{}, tf *table.TableField, symbols 
 		for index, strValue := range splitedData {
 
 			elemElem := slice.Index(index)
-			err, handled = RawStringToValue(strValue, elemElem.Addr().Interface())
+			err, handled = strToPrimitive(strValue, elemElem.Addr().Interface())
 			if err != nil {
 				return err
 			}

@@ -23,7 +23,8 @@ func transposeKVtoData(symbols *model.SymbolTable, kvtab *model.DataTable) (ret 
 		arraySplitter, _ := kvtab.GetValueByName(row, "数组切割")
 
 		var tf table.TableField
-		tf.Kind = "表头"
+		tf.Kind = table.TableKind_HeaderStruct
+		//tf.Kind = "表头"
 		tf.ObjectType = kvtab.HeaderType
 
 		tf.Name = name.Value

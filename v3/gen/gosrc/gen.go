@@ -6,13 +6,15 @@ import (
 	"github.com/davyxu/tabtoy/v3/table"
 )
 
-func Generate(globals *model.Globals, fileName string) error {
+func Generate(globals *model.Globals) (data []byte, err error) {
 
-	return codegen.NewCodeGen("gosrc").
+	err = codegen.NewCodeGen("gosrc").
 		RegisterTemplateFunc(codegen.UsefulFunc).
 		RegisterTemplateFunc(table.UsefulFunc).
 		RegisterTemplateFunc(UsefulFunc).
 		ParseTemplate(templateText, globals).
-		//FormatGoCode().
-		WriteOutputFile(fileName).Error()
+		FormatGoCode().
+		WriteBytes(&data).Error()
+
+	return
 }

@@ -4,9 +4,14 @@ import (
 	"github.com/davyxu/tabtoy/v3/helper"
 	"github.com/davyxu/tabtoy/v3/model"
 	"github.com/davyxu/tabtoy/v3/table"
+	"github.com/tealeg/xlsx"
 )
 
-func Parse(globals *model.Globals) error {
+type FileGetter interface {
+	GetFile(filename string) (*xlsx.File, error)
+}
+
+func Compile(globals *model.Globals, indexGetter FileGetter) error {
 
 	defer func() {
 
@@ -21,7 +26,7 @@ func Parse(globals *model.Globals) error {
 	}()
 
 	// TODO 更好的内建读取
-	err := LoadSymbols(globals, globals.BuiltinSymbolFile)
+	err := LoadSymbols(globals, indexGetter, globals.BuiltinSymbolFile)
 
 	if err != nil {
 		return err
@@ -29,7 +34,16 @@ func Parse(globals *model.Globals) error {
 
 	var kvList, dataList model.DataTableList
 
-	LoadIndex(globals, globals.IndexFile)
+	LoadIndex(globals, indexGetter, globals.IndexFile)
+
+	// 缓冲文件
+	loader := helper.NewAsyncFileLoader()
+
+	for _, pragma := range globals.IndexList {
+		loader.AddFile(pragma.TableFileName)
+	}
+
+	loader.Commit()
 
 	for _, pragma := range globals.IndexList {
 
@@ -38,7 +52,7 @@ func Parse(globals *model.Globals) error {
 		switch pragma.TableMode {
 		case table.TableMode_Data:
 
-			tablist, err := LoadTableData(pragma.TableFileName, pragma.TableType)
+			tablist, err := LoadTableData(loader, pragma.TableFileName, pragma.TableType)
 
 			if err != nil {
 				return err
@@ -51,14 +65,14 @@ func Parse(globals *model.Globals) error {
 
 		case table.TableMode_Type:
 
-			err = LoadSymbols(globals, pragma.TableFileName)
+			err = LoadSymbols(globals, loader, pragma.TableFileName)
 
 			if err != nil {
 				return err
 			}
 		case table.TableMode_KeyValue:
 
-			tablist, err := LoadTableData(pragma.TableFileName, pragma.TableType)
+			tablist, err := LoadTableData(loader, pragma.TableFileName, pragma.TableType)
 
 			if err != nil {
 				return err
@@ -66,7 +80,7 @@ func Parse(globals *model.Globals) error {
 
 			for _, tab := range tablist {
 				// 输入数据是按TableField格式写的，为了共享TableField字段
-				ResolveHeaderFields(tab, "TableField", globals.Symbols)
+				ResolveHeaderFields(tab, "TableKeyValue", globals.Symbols)
 
 				kvList.AddDataTable(tab)
 			}

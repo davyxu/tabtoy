@@ -15,7 +15,7 @@ type Cell struct {
 }
 
 func (self *Cell) String() string {
-	return fmt.Sprintf("%s|%s(%s)", self.File, self.Sheet, util.R1C1ToA1(self.Row+1, self.Col+1))
+	return fmt.Sprintf("'%s' %s|%s(%s)", self.Value, self.File, self.Sheet, util.R1C1ToA1(self.Row+1, self.Col+1))
 }
 
 type DataRow []Cell

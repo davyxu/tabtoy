@@ -24,8 +24,8 @@ func readOneRow(sheet *xlsx.Sheet, tab *model.DataTable, row int) (eachRow model
 	return
 }
 
-func LoadTableData(fileName, headerType string) (ret []*model.DataTable, err error) {
-	file, err := xlsx.OpenFile(fileName)
+func LoadTableData(filegetter FileGetter, fileName, headerType string) (ret []*model.DataTable, err error) {
+	file, err := filegetter.GetFile(fileName)
 	if err != nil {
 		return nil, err
 	}

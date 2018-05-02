@@ -3,73 +3,66 @@
 // Version: 3.0.0
 package table
 
-
 type TableMode int32
-const (	
-	TableMode_None = 0 //  
-	TableMode_Data = 1 // 数据表 
-	TableMode_Type = 2 // 类型表 
-	TableMode_KeyValue = 3 // 键值表 
+
+const (
+	TableMode_None     = 0 //
+	TableMode_Data     = 1 // 数据表
+	TableMode_Type     = 2 // 类型表
+	TableMode_KeyValue = 3 // 键值表
 )
 
 var (
-	TableModeMapperValueByName = map[string]int32{ 
-		"None": 0, //  
-		"Data": 1, // 数据表 
-		"Type": 2, // 类型表 
-		"KeyValue": 3, // 键值表 
+	TableModeMapperValueByName = map[string]int32{
+		"None":     0, //
+		"Data":     1, // 数据表
+		"Type":     2, // 类型表
+		"KeyValue": 3, // 键值表
 	}
 
-	TableModeMapperNameByValue = map[int32]string{ 
-		 0: "None", //  
-		 1: "Data", // 数据表 
-		 2: "Type", // 类型表 
-		 3: "KeyValue", // 键值表 
+	TableModeMapperNameByValue = map[int32]string{
+		0: "None",     //
+		1: "Data",     // 数据表
+		2: "Type",     // 类型表
+		3: "KeyValue", // 键值表
 	}
 )
 
-
-
-type TableField struct{ 
-	Kind string `tb_name:"种类"` 
-	ObjectType string `tb_name:"对象类型"` 
-	Name string `tb_name:"标识名"` 
-	FieldName string `tb_name:"字段名"` 
-	FieldType string `tb_name:"字段类型"` 
-	Value string `tb_name:"值"` 
-	ArraySplitter string `tb_name:"数组切割"` 
+type FieldType struct {
+	InputFieldName string `tb_name:"输入字段"`
+	GoFieldName    string `tb_name:"Go字段"`
+	CSFieldName    string `tb_name:"C#字段"`
+	DefaultValue   string `tb_name:"默认值"`
 }
 
-type FieldType struct{ 
-	InputFieldName string `tb_name:"输入字段"` 
-	GoFieldName string `tb_name:"Go字段"` 
-	CSFieldName string `tb_name:"C#字段"` 
-	DefaultValue string `tb_name:"默认值"` 
+type TablePragma struct {
+	TableMode     TableMode `tb_name:"模式"`
+	TableType     string    `tb_name:"表类型"`
+	TableFileName string    `tb_name:"表文件名"`
 }
 
-type TablePragma struct{ 
-	TableMode TableMode `tb_name:"模式"` 
-	TableType string `tb_name:"表类型"` 
-	TableFileName string `tb_name:"表文件名"` 
+type TableKeyValue struct {
+	FieldName     string `tb_name:"字段名"`
+	FieldType     string `tb_name:"字段类型"`
+	Name          string `tb_name:"标识名"`
+	Value         string `tb_name:"值"`
+	ArraySplitter string `tb_name:"数组切割"`
 }
 
-type ErrorID struct{ 
-	HeaderNotMatchFieldName string  
-	HeaderFieldNotDefined string  
-	DuplicateHeaderField string  
-	DuplicateKVField string  
+type ErrorID struct {
+	HeaderNotMatchFieldName string
+	HeaderFieldNotDefined   string
+	DuplicateHeaderField    string
+	DuplicateKVField        string
 }
-
 
 // Combine struct
-type Config struct { 
-	FieldType []*FieldType // table: FieldType 
-	ErrorID []*ErrorID // table: ErrorID 
+type Config struct {
+	FieldType []*FieldType // table: FieldType
+	ErrorID   []*ErrorID   // table: ErrorID
 }
 
 // table: ErrorID
-func (self*Config) GetKeyValue_ErrorID() *ErrorID{
+func (self *Config) GetKeyValue_ErrorID() *ErrorID {
 	return self.ErrorID[0]
 }
-
-

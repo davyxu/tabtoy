@@ -3,107 +3,101 @@
 // Version: 3.0.0
 package example
 
-
 type TableMode int32
-const (	
-	TableMode_None = 0 //  
-	TableMode_Data = 1 // 数据表 
-	TableMode_Type = 2 // 类型表 
-	TableMode_KeyValue = 3 // 键值表 
+
+const (
+	TableMode_None     = 0 //
+	TableMode_Data     = 1 // 数据表
+	TableMode_Type     = 2 // 类型表
+	TableMode_KeyValue = 3 // 键值表
 )
 
 var (
-	TableModeMapperValueByName = map[string]int32{ 
-		"None": 0, //  
-		"Data": 1, // 数据表 
-		"Type": 2, // 类型表 
-		"KeyValue": 3, // 键值表 
+	TableModeMapperValueByName = map[string]int32{
+		"None":     0, //
+		"Data":     1, // 数据表
+		"Type":     2, // 类型表
+		"KeyValue": 3, // 键值表
 	}
 
-	TableModeMapperNameByValue = map[int32]string{ 
-		 0: "None", //  
-		 1: "Data", // 数据表 
-		 2: "Type", // 类型表 
-		 3: "KeyValue", // 键值表 
+	TableModeMapperNameByValue = map[int32]string{
+		0: "None",     //
+		1: "Data",     // 数据表
+		2: "Type",     // 类型表
+		3: "KeyValue", // 键值表
 	}
 )
 
 type ActorType int32
-const (	
-	ActorType_None = 0 //  
-	ActorType_Pharah = 1 // 法鸡 
-	ActorType_Junkrat = 2 // 狂鼠 
-	ActorType_Genji = 3 // 源氏 
-	ActorType_Mercy = 4 // 天使 
+
+const (
+	ActorType_None    = 0 //
+	ActorType_Pharah  = 1 // 法鸡
+	ActorType_Junkrat = 2 // 狂鼠
+	ActorType_Genji   = 3 // 源氏
+	ActorType_Mercy   = 4 // 天使
 )
 
 var (
-	ActorTypeMapperValueByName = map[string]int32{ 
-		"None": 0, //  
-		"Pharah": 1, // 法鸡 
-		"Junkrat": 2, // 狂鼠 
-		"Genji": 3, // 源氏 
-		"Mercy": 4, // 天使 
+	ActorTypeMapperValueByName = map[string]int32{
+		"None":    0, //
+		"Pharah":  1, // 法鸡
+		"Junkrat": 2, // 狂鼠
+		"Genji":   3, // 源氏
+		"Mercy":   4, // 天使
 	}
 
-	ActorTypeMapperNameByValue = map[int32]string{ 
-		 0: "None", //  
-		 1: "Pharah", // 法鸡 
-		 2: "Junkrat", // 狂鼠 
-		 3: "Genji", // 源氏 
-		 4: "Mercy", // 天使 
+	ActorTypeMapperNameByValue = map[int32]string{
+		0: "None",    //
+		1: "Pharah",  // 法鸡
+		2: "Junkrat", // 狂鼠
+		3: "Genji",   // 源氏
+		4: "Mercy",   // 天使
 	}
 )
 
-
-
-type TableField struct{ 
-	Kind string `tb_name:"种类"` 
-	ObjectType string `tb_name:"对象类型"` 
-	Name string `tb_name:"标识名"` 
-	FieldName string `tb_name:"字段名"` 
-	FieldType string `tb_name:"字段类型"` 
-	Value string `tb_name:"值"` 
-	ArraySplitter string `tb_name:"数组切割"` 
+type FieldType struct {
+	InputFieldName string `tb_name:"输入字段"`
+	GoFieldName    string `tb_name:"Go字段"`
+	CSFieldName    string `tb_name:"C#字段"`
+	DefaultValue   string `tb_name:"默认值"`
 }
 
-type FieldType struct{ 
-	InputFieldName string `tb_name:"输入字段"` 
-	GoFieldName string `tb_name:"Go字段"` 
-	CSFieldName string `tb_name:"C#字段"` 
-	DefaultValue string `tb_name:"默认值"` 
+type TablePragma struct {
+	TableMode     TableMode `tb_name:"模式"`
+	TableType     string    `tb_name:"表类型"`
+	TableFileName string    `tb_name:"表文件名"`
 }
 
-type TablePragma struct{ 
-	TableMode TableMode `tb_name:"模式"` 
-	TableType string `tb_name:"表类型"` 
-	TableFileName string `tb_name:"表文件名"` 
+type TableKeyValue struct {
+	FieldName     string `tb_name:"字段名"`
+	FieldType     string `tb_name:"字段类型"`
+	Name          string `tb_name:"标识名"`
+	Value         string `tb_name:"值"`
+	ArraySplitter string `tb_name:"数组切割"`
 }
 
-type ExampleData struct{ 
-	ID int32 `tb_name:"任务ID"` 
-	Name string `tb_name:"名称"` 
-	Rate float32 `tb_name:"比例"` 
-	Type ActorType `tb_name:"类型"` 
-	Skill []int32 `tb_name:"技能列表"` 
+type ExampleData struct {
+	ID    int32     `tb_name:"任务ID"`
+	Name  string    `tb_name:"名称"`
+	Rate  float32   `tb_name:"比例"`
+	Type  ActorType `tb_name:"类型"`
+	Skill []int32   `tb_name:"技能列表"`
 }
 
-type ExampleKV struct{ 
-	ServerIP string `tb_name:"服务器IP"` 
-	ServerPort uint16 `tb_name:"服务器端口"` 
-	GroupID []int32 `tb_name:"分组"` 
+type ExampleKV struct {
+	ServerIP   string  `tb_name:"服务器IP"`
+	ServerPort uint16  `tb_name:"服务器端口"`
+	GroupID    []int32 `tb_name:"分组"`
 }
-
 
 // Combine struct
-type Config struct { 
-	ExampleData []*ExampleData // table: ExampleData 
-	ExampleKV []*ExampleKV // table: ExampleKV 
+type Config struct {
+	ExampleData []*ExampleData // table: ExampleData
+	ExampleKV   []*ExampleKV   // table: ExampleKV
 }
 
 // table: ExampleKV
-func (self*Config) GetKeyValue_ExampleKV() *ExampleKV{
+func (self *Config) GetKeyValue_ExampleKV() *ExampleKV {
 	return self.ExampleKV[0]
 }
-
-
