@@ -54,6 +54,7 @@ type ErrorID struct {
 	HeaderFieldNotDefined   string
 	DuplicateHeaderField    string
 	DuplicateKVField        string
+	UnknownFieldType        string
 }
 
 // Combine struct

@@ -80,7 +80,7 @@ func strToPrimitive(str string, value interface{}) (error, bool) {
 	return nil, true
 }
 
-func StringToValue(str string, value interface{}, tf *table.TableField, symbols *model.SymbolTable) error {
+func StringToValue(str string, value interface{}, tf *table.TableField, symbols *model.TypeTable) error {
 
 	err, handled := strToPrimitive(str, value)
 	if err != nil || handled {

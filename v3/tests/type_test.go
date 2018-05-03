@@ -4,7 +4,26 @@ import (
 	"testing"
 )
 
-func TestType(t *testing.T) {
+func TestTypeDefineOrder(t *testing.T) {
+
+	mf := NewMemFile()
+	indexSheet := mf.Create("Index.xlsx")
+
+	WriteIndexTableHeader(indexSheet)
+	WriteRowValues(indexSheet, "类型表", "", "Type.xlsx")
+
+	typeSheet := mf.Create("Type.xlsx")
+	WriteTypeTableHeader(typeSheet)
+	WriteRowValues(typeSheet, "表头", "TestData", "枚举", "Enum", "TestEnum", "", "")
+	WriteRowValues(typeSheet, "枚举", "TestEnum", "", "None", "int", "", "0")
+
+	if err := VerifyType(mf, ``); err != nil {
+		t.Error(err)
+		t.FailNow()
+	}
+}
+
+func TestComplete(t *testing.T) {
 
 	mf := NewMemFile()
 	indexSheet := mf.Create("Index.xlsx")
@@ -23,7 +42,18 @@ func TestType(t *testing.T) {
 	WriteRowValues(dataSheet, "整形", "字符串", "布尔")
 	WriteRowValues(dataSheet, "100", "\"hello\"", "true")
 
-	if err := Run(mf); err != nil {
+	if err := VerifyLauncherJson(mf, `
+{
+	"TestData": [
+		{
+			"Int": 100,
+			"String": "\"hello\"",
+			"Bool": true
+		}
+	]
+}
+
+`); err != nil {
 		t.Error(err)
 		t.FailNow()
 	}

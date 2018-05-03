@@ -6,7 +6,7 @@ import (
 	"github.com/davyxu/tabtoy/v3"
 	"github.com/davyxu/tabtoy/v3/gen"
 	"github.com/davyxu/tabtoy/v3/gen/gosrc"
-	"github.com/davyxu/tabtoy/v3/gen/json"
+	"github.com/davyxu/tabtoy/v3/gen/jsondata"
 	"github.com/davyxu/tabtoy/v3/helper"
 	"github.com/davyxu/tabtoy/v3/model"
 	"os"
@@ -24,7 +24,7 @@ var (
 
 	v3GenList = []V3GenEntry{
 		{gosrc.Generate, paramGoOut},
-		{json.Generate, paramJsonOut},
+		{jsondata.Generate, paramJsonOut},
 	}
 )
 

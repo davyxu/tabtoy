@@ -1,4 +1,4 @@
-package json
+package jsondata
 
 import (
 	"github.com/davyxu/tabtoy/util"
@@ -14,8 +14,8 @@ func wrapSingleValue(globals *model.Globals, valueType *table.TableField, value 
 	switch {
 	case valueType.FieldType == "string": // 字符串
 		return util.StringEscape(value)
-	case globals.Symbols.IsEnumKind(valueType.FieldType): // 枚举
-		return globals.Symbols.ResolveEnumValue(valueType.FieldType, value)
+	case globals.Types.IsEnumKind(valueType.FieldType): // 枚举
+		return globals.Types.ResolveEnumValue(valueType.FieldType, value)
 	case valueType.FieldType == "bool":
 
 		switch value {

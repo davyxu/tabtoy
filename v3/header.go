@@ -30,12 +30,12 @@ func loadheader(sheet *xlsx.Sheet, tab *model.DataTable) {
 	tab.RawHeader = headerRow
 }
 
-func ResolveHeaderFields(tab *model.DataTable, tableObjectType string, symbols *model.SymbolTable) {
+func ResolveHeaderFields(tab *model.DataTable, tableObjectType string, symbols *model.TypeTable) {
 
 	tab.OriginalHeaderType = tableObjectType
 	for _, cell := range tab.RawHeader {
 
-		tf := symbols.FindField(tableObjectType, cell.Value)
+		tf := symbols.FieldByName(tableObjectType, cell.Value)
 		if tf == nil {
 			helper.ReportError("HeaderFieldNotDefined", cell.String())
 		}

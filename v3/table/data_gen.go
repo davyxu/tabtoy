@@ -1,6 +1,6 @@
 package table
 
-const builtinJson = `
+const coreConfig = `
 {
 	"@Tool": "github.com/davyxu/tabtoy",
 	"@Version": "3.0.0",	
@@ -18,6 +18,6 @@ const builtinJson = `
 		{ "InputFieldName": "string", "GoFieldName": "string", "CSFieldName": "string", "DefaultValue": "" } 
 	],
 	"ErrorID":[ 
-		{ "HeaderNotMatchFieldName": "表头与字段不匹配", "HeaderFieldNotDefined": "表头字段未定义", "DuplicateHeaderField": "表头字段重复", "DuplicateKVField": "键值表字段重复" } 
+		{ "HeaderNotMatchFieldName": "表头与字段不匹配", "HeaderFieldNotDefined": "表头字段未定义", "DuplicateHeaderField": "表头字段重复", "DuplicateKVField": "键值表字段重复", "UnknownFieldType": "未知字段类型" } 
 	]
 }`

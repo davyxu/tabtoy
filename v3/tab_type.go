@@ -6,7 +6,7 @@ import (
 	"github.com/davyxu/tabtoy/v3/table"
 )
 
-var coreSymbols model.SymbolTable
+var coreSymbols model.TypeTable
 
 func init() {
 
@@ -27,7 +27,7 @@ func LoadTypeTable(globals *model.Globals, indexGetter FileGetter, fileName stri
 
 		ResolveHeaderFields(tab, "TableField", &coreSymbols)
 
-		for row := 0; row < tab.RowCount(); row++ {
+		for row := 0; row < len(tab.Rows); row++ {
 
 			var objtype table.TableField
 
@@ -35,7 +35,7 @@ func LoadTypeTable(globals *model.Globals, indexGetter FileGetter, fileName stri
 
 			objtype.IsBuiltin = builtin
 
-			globals.Symbols.AddField(&objtype)
+			globals.Types.AddField(&objtype)
 		}
 
 	}

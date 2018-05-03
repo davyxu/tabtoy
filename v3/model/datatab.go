@@ -35,18 +35,6 @@ type DataTable struct {
 	HeaderFields []*table.TableField // 列索引
 }
 
-// 根据列头找到该行对应的值
-func (self *DataTable) GetValueByName(row int, name string) (Cell, *table.TableField) {
-
-	for col, tf := range self.HeaderFields {
-		if tf.Name == name || tf.FieldName == name {
-			return self.Rows[row][col], tf
-		}
-	}
-
-	return Cell{}, nil
-}
-
 // 代码生成专用
 func (self *DataTable) GetValue(row, col int) string {
 
@@ -58,16 +46,7 @@ func (self *DataTable) GetType(col int) *table.TableField {
 	return self.HeaderFields[col]
 }
 
-func (self *DataTable) RowCount() int {
-	return len(self.Rows)
-}
-
-// 添加表头类型
-func (self *DataTable) AddHeaderField(types *table.TableField) {
-	self.HeaderFields = append(self.HeaderFields, types)
-}
-
-func (self *DataTable) HeaderFieldByName(name string) (*table.TableField, int) {
+func (self *DataTable) GetTypeByName(name string) (*table.TableField, int) {
 
 	if name == "" {
 		return nil, -1
@@ -82,15 +61,28 @@ func (self *DataTable) HeaderFieldByName(name string) (*table.TableField, int) {
 	return nil, -1
 }
 
+// 根据列头找到该行对应的值
+func (self *DataTable) GetValueByName(row int, name string) (Cell, *table.TableField) {
+
+	hf, col := self.GetTypeByName(name)
+
+	if hf == nil {
+		return Cell{}, nil
+	}
+
+	return self.Rows[row][col], hf
+
+}
+
+// 添加表头类型
+func (self *DataTable) AddHeaderField(types *table.TableField) {
+	self.HeaderFields = append(self.HeaderFields, types)
+}
+
 // 添加行数据
 func (self *DataTable) AddRow(row DataRow) {
 
 	self.Rows = append(self.Rows, row)
-}
-
-// 获取一整行数据
-func (self *DataTable) GetDataRow(row int) DataRow {
-	return self.Rows[row]
 }
 
 func NewDataTable() *DataTable {

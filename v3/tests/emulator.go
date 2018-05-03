@@ -1,18 +1,20 @@
 package tests
 
 import (
+	"encoding/json"
+	"errors"
 	"github.com/davyxu/tabtoy/v3"
 	"github.com/davyxu/tabtoy/v3/gen"
 	"github.com/davyxu/tabtoy/v3/gen/gosrc"
-	"github.com/davyxu/tabtoy/v3/gen/json"
+	"github.com/davyxu/tabtoy/v3/gen/jsondata"
 	"github.com/davyxu/tabtoy/v3/helper"
 	"github.com/davyxu/tabtoy/v3/model"
 	"io/ioutil"
 	"path/filepath"
+	"reflect"
 )
 
-func Run(indexGetter v3.FileGetter) error {
-
+func newGlobal() *model.Globals {
 	globals := model.NewGlobals()
 	globals.Version = "testver"
 	globals.BuiltinSymbolFile = "../table/BuiltinTypes.xlsx"
@@ -20,6 +22,30 @@ func Run(indexGetter v3.FileGetter) error {
 	globals.PackageName = "main"
 	globals.CombineStructName = "Config"
 	globals.Para = false
+
+	return globals
+}
+
+func VerifyType(indexGetter v3.FileGetter, expectJson string) error {
+
+	globals := newGlobal()
+
+	err := v3.Compile(globals, indexGetter)
+
+	if err != nil {
+		return err
+	}
+
+	appJson := globals.Types.ToJSON()
+
+	globals.Types.Print()
+
+	return compareJson(appJson, []byte(expectJson))
+}
+
+func VerifyLauncherJson(indexGetter v3.FileGetter, expectJson string) error {
+
+	globals := newGlobal()
 
 	err := v3.Compile(globals, indexGetter)
 
@@ -35,7 +61,7 @@ func Run(indexGetter v3.FileGetter) error {
 
 	configFileName := filepath.Join(dir, "config.json")
 
-	if err := genFile(globals, configFileName, json.Generate); err != nil {
+	if err := genFile(globals, configFileName, jsondata.Generate); err != nil {
 		return err
 	}
 
@@ -45,7 +71,12 @@ func Run(indexGetter v3.FileGetter) error {
 		return err
 	}
 
-	return compileLauncher(filepath.Join(dir, "launcher.go"), configFileName, tableFileName)
+	appJson, err := compileLauncher(filepath.Join(dir, "launcher.go"), configFileName, tableFileName)
+	if err != nil {
+		return err
+	}
+
+	return compareJson(appJson, []byte(expectJson))
 }
 
 func genFile(globals *model.Globals, filename string, genFunc gen.GenFunc) error {
@@ -57,4 +88,25 @@ func genFile(globals *model.Globals, filename string, genFunc gen.GenFunc) error
 	}
 
 	return helper.WriteFile(filename, data)
+}
+
+func compareJson(a, b []byte) error {
+
+	var mapA, mapB map[string]interface{}
+
+	err := json.Unmarshal(a, &mapA)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(b, &mapB)
+	if err != nil {
+		return err
+	}
+
+	if !reflect.DeepEqual(mapA, mapB) {
+		return errors.New("json no match")
+	}
+
+	return nil
 }

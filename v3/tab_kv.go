@@ -6,7 +6,7 @@ import (
 	"github.com/davyxu/tabtoy/v3/table"
 )
 
-func transposeKVtoData(symbols *model.SymbolTable, kvtab *model.DataTable) (ret *model.DataTable) {
+func transposeKVtoData(symbols *model.TypeTable, kvtab *model.DataTable) (ret *model.DataTable) {
 
 	ret = model.NewDataTable()
 	ret.HeaderType = kvtab.HeaderType
@@ -37,7 +37,7 @@ func transposeKVtoData(symbols *model.SymbolTable, kvtab *model.DataTable) (ret 
 
 		oneRow = append(oneRow, value)
 
-		if symbols.FindField(tf.ObjectType, tf.FieldName) != nil {
+		if symbols.FieldByName(tf.ObjectType, tf.FieldName) != nil {
 			helper.ReportError("DuplicateKVField", fieldName.String())
 		}
 

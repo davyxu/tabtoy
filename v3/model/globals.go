@@ -13,11 +13,11 @@ type Globals struct {
 	CombineStructName string // 包含最终表所有数据的根结构
 	Para              bool   // 并发读取文件
 
-	Symbols *SymbolTable // 类型及符号
+	Types *TypeTable // 类型及符号
 
 	IndexList []*table.TablePragma
 
-	DataTableList // 字符串格式的数据
+	DataTableList // 字符串格式的数据表
 }
 
 func (self *Globals) KeyValueTypeNames() (ret []string) {
@@ -34,6 +34,6 @@ func (self *Globals) KeyValueTypeNames() (ret []string) {
 
 func NewGlobals() *Globals {
 	return &Globals{
-		Symbols: NewSymbolTable(),
+		Types: NewSymbolTable(),
 	}
 }

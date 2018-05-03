@@ -8,9 +8,9 @@ import (
 	"strings"
 )
 
-func loadIndexData(tab *model.DataTable, symbols *model.SymbolTable) (pragmaList []*table.TablePragma) {
+func loadIndexData(tab *model.DataTable, symbols *model.TypeTable) (pragmaList []*table.TablePragma) {
 
-	for row := 0; row < tab.RowCount(); row++ {
+	for row := 0; row < len(tab.Rows); row++ {
 
 		var pragma table.TablePragma
 		helper.ParseRow(&pragma, tab, row, symbols)
@@ -35,9 +35,9 @@ func LoadIndexTable(globals *model.Globals, indexGetter FileGetter, fileName str
 
 	for _, tab := range tabs {
 
-		ResolveHeaderFields(tab, "TablePragma", globals.Symbols)
+		ResolveHeaderFields(tab, "TablePragma", globals.Types)
 
-		globals.IndexList = loadIndexData(tab, globals.Symbols)
+		globals.IndexList = loadIndexData(tab, globals.Types)
 	}
 
 	return nil

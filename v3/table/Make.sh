@@ -13,13 +13,13 @@ ${GOPATH}/bin/tabtoy \
 -package=table \
 -builtinsymbol=BuiltinTypes.xlsx \
 -index=BuiltinIndex.xlsx \
--go_out=buildintypes_gen.go \
--json_out=builtindata_gen.json
+-go_out=types_gen.go \
+-json_out=data_gen.json
 
 # json转go代码嵌入tabtoy
-JSONDATAFILE=jsondata_gen.go
+JSONDATAFILE=data_gen.go
 echo "package table" > ${JSONDATAFILE}
-echo "const builtinJson = \`" >> ${JSONDATAFILE}
-cat builtindata_gen.json >> ${JSONDATAFILE}
+echo "const coreConfig = \`" >> ${JSONDATAFILE}
+cat data_gen.json >> ${JSONDATAFILE}
 echo "\`" >> ${JSONDATAFILE}
 gofmt -s -w ${JSONDATAFILE}

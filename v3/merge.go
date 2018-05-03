@@ -7,7 +7,7 @@ import (
 )
 
 // 将不同文件/Sheet/KV转换的表，按照表头类型合并数据输出
-func mergeData(inputList, outputList *model.DataTableList, symbols *model.SymbolTable) {
+func mergeData(inputList, outputList *model.DataTableList, symbols *model.TypeTable) {
 
 	for _, inputTab := range inputList.Data {
 
@@ -25,7 +25,7 @@ func mergeData(inputList, outputList *model.DataTableList, symbols *model.Symbol
 			var headerFields []*table.TableField
 
 			// 原始表头类型为解析
-			headerFields = symbols.Fields(inputTab.OriginalHeaderType)
+			headerFields = symbols.AllFieldByName(inputTab.OriginalHeaderType)
 
 			if headerFields == nil {
 				panic("表头找不到!" + inputTab.OriginalHeaderType)
@@ -49,7 +49,7 @@ func mergeData(inputList, outputList *model.DataTableList, symbols *model.Symbol
 				headerField := inputTab.HeaderFields[col]
 
 				// 用输入的表头名在输出的表头中找
-				_, OutputCol := outputTab.HeaderFieldByName(headerField.FieldName)
+				_, OutputCol := outputTab.GetTypeByName(headerField.FieldName)
 
 				if headerField.IsArray() {
 

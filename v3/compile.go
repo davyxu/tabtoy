@@ -1,6 +1,7 @@
 package v3
 
 import (
+	"github.com/davyxu/tabtoy/v3/checker"
 	"github.com/davyxu/tabtoy/v3/helper"
 	"github.com/davyxu/tabtoy/v3/model"
 	"github.com/davyxu/tabtoy/v3/table"
@@ -68,7 +69,10 @@ func Compile(globals *model.Globals, indexGetter FileGetter) (ret error) {
 			}
 
 			for _, tab := range tablist {
-				ResolveHeaderFields(tab, tab.HeaderType, globals.Symbols)
+				ResolveHeaderFields(tab, tab.HeaderType, globals.Types)
+
+				checker.CheckTypes(tab, globals.Types)
+
 				dataList.AddDataTable(tab)
 			}
 
@@ -88,7 +92,10 @@ func Compile(globals *model.Globals, indexGetter FileGetter) (ret error) {
 			}
 
 			for _, tab := range tablist {
-				ResolveHeaderFields(tab, "TableKeyValue", globals.Symbols)
+				ResolveHeaderFields(tab, "TableKeyValue", globals.Types)
+
+				checker.CheckTypes(tab, globals.Types)
+
 				kvList.AddDataTable(tab)
 			}
 		}
@@ -96,16 +103,16 @@ func Compile(globals *model.Globals, indexGetter FileGetter) (ret error) {
 
 	// 合并所有的KV表行
 	var mergedKV model.DataTableList
-	mergeData(&kvList, &mergedKV, globals.Symbols)
+	mergeData(&kvList, &mergedKV, globals.Types)
 
 	// 完整KV表转置为普通数据表
 	for _, kvtab := range mergedKV.Data {
-		ResolveHeaderFields(kvtab, kvtab.HeaderType, globals.Symbols)
-		dataList.AddDataTable(transposeKVtoData(globals.Symbols, kvtab))
+		ResolveHeaderFields(kvtab, kvtab.HeaderType, globals.Types)
+		dataList.AddDataTable(transposeKVtoData(globals.Types, kvtab))
 	}
 
 	// 合并所有的数据表
-	mergeData(&dataList, &globals.DataTableList, globals.Symbols)
+	mergeData(&dataList, &globals.DataTableList, globals.Types)
 
 	return nil
 }

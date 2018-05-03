@@ -20,7 +20,7 @@ func matchField(objType reflect.Type, header string) int {
 }
 
 // 将一行数据解析为具体的类型
-func ParseRow(ret interface{}, tab *model.DataTable, row int, symbols *model.SymbolTable) {
+func ParseRow(ret interface{}, tab *model.DataTable, row int, symbols *model.TypeTable) {
 
 	vobj := reflect.ValueOf(ret).Elem()
 

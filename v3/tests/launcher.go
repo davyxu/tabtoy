@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func compileLauncher(launcherFile, configFile, tableFile string) error {
+func compileLauncher(launcherFile, configFile, tableFile string) ([]byte, error) {
 
 	m := struct {
 		ConfigFile string
@@ -61,18 +61,16 @@ func main() {
 
 	if err != nil {
 		fmt.Println(string(data))
-		return err
+		return nil, err
 	}
 
 	cmd := exec.Command("go", "run", launcherFile, tableFile)
 
 	output, err := cmd.CombinedOutput()
 
-	fmt.Println("go launcher:", string(output))
-
 	if err != nil {
-
-		return err
+		return nil, err
 	}
-	return nil
+
+	return output, nil
 }
