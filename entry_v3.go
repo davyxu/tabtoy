@@ -2,13 +2,13 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"github.com/davyxu/tabtoy/v3"
 	"github.com/davyxu/tabtoy/v3/gen"
 	"github.com/davyxu/tabtoy/v3/gen/gosrc"
 	"github.com/davyxu/tabtoy/v3/gen/jsondata"
 	"github.com/davyxu/tabtoy/v3/helper"
 	"github.com/davyxu/tabtoy/v3/model"
+	"github.com/davyxu/tabtoy/v3/report"
 	"os"
 )
 
@@ -45,7 +45,7 @@ func V3Entry() {
 	err := v3.Compile(globals, new(helper.SyncFileLoader))
 
 	if err != nil {
-		fmt.Println(err)
+		report.Log.Errorln(err)
 		os.Exit(1)
 	}
 
@@ -58,16 +58,16 @@ func V3Entry() {
 		filename := *entry.name
 
 		if data, err := entry.f(globals); err != nil {
-			fmt.Println(err)
+			report.Log.Errorln(err)
 			os.Exit(1)
 		} else {
 
-			fmt.Println(filename)
+			report.Log.Infoln(filename)
 
 			err = helper.WriteFile(filename, data)
 
 			if err != nil {
-				fmt.Println(err)
+				report.Log.Errorln(err)
 				os.Exit(1)
 			}
 

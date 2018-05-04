@@ -2,6 +2,7 @@ package helper
 
 import (
 	"github.com/davyxu/tabtoy/v3/model"
+	"github.com/davyxu/tabtoy/v3/report"
 	"reflect"
 )
 
@@ -33,7 +34,7 @@ func ParseRow(ret interface{}, tab *model.DataTable, row int, symbols *model.Typ
 		index := matchField(tobj, header.Value)
 
 		if index == -1 {
-			ReportError("HeaderNotMatchFieldName", header.String())
+			report.ReportError("HeaderNotMatchFieldName", header.String())
 		}
 
 		fieldValue := vobj.Field(index)

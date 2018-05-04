@@ -55,6 +55,8 @@ type ErrorID struct {
 	DuplicateHeaderField    string
 	DuplicateKVField        string
 	UnknownFieldType        string
+	DuplicateTypeFieldName  string
+	EnumValueEmpty          string
 }
 
 // Combine struct

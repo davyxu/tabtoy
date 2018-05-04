@@ -1,8 +1,8 @@
 package v3
 
 import (
-	"github.com/davyxu/tabtoy/v3/helper"
 	"github.com/davyxu/tabtoy/v3/model"
+	"github.com/davyxu/tabtoy/v3/report"
 	"github.com/davyxu/tabtoy/v3/table"
 )
 
@@ -38,10 +38,10 @@ func transposeKVtoData(symbols *model.TypeTable, kvtab *model.DataTable) (ret *m
 		oneRow = append(oneRow, value)
 
 		if symbols.FieldByName(tf.ObjectType, tf.FieldName) != nil {
-			helper.ReportError("DuplicateKVField", fieldName.String())
+			report.ReportError("DuplicateKVField", fieldName.String())
 		}
 
-		symbols.AddField(&tf)
+		symbols.AddField(&tf, kvtab, row)
 
 		ret.AddHeaderField(&tf)
 	}

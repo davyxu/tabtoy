@@ -7,17 +7,19 @@ import (
 	"github.com/davyxu/tabtoy/v3/table"
 )
 
+type TypeData struct {
+	Type *table.TableField
+	Tab  *DataTable // 类型引用的表
+	Row  int        // 类型引用的原始数据(DataTable)中的行
+}
+
 type TypeTable struct {
-	Fields []*table.TableField // 不是具体的类型
+	fields []*TypeData
 }
 
 func (self *TypeTable) ToJSON() []byte {
 
-	data, _ := json.MarshalIndent(&struct {
-		Fields []*table.TableField
-	}{
-		Fields: self.UserFields(),
-	}, "", "\t")
+	data, _ := json.MarshalIndent(self.AllFields(), "", "\t")
 
 	return data
 }
@@ -27,20 +29,31 @@ func (self *TypeTable) Print() {
 	fmt.Println(string(self.ToJSON()))
 }
 
-func (self *TypeTable) AddField(tf *table.TableField) {
+// refData，类型表对应源表的位置信息
+func (self *TypeTable) AddField(tf *table.TableField, data *DataTable, row int) {
 
 	if self.FieldByName(tf.ObjectType, tf.FieldName) != nil {
 		panic("Duplicate table field: " + tf.FieldName)
 	}
 
-	self.Fields = append(self.Fields, tf)
+	self.fields = append(self.fields, &TypeData{
+		Tab:  data,
+		Type: tf,
+		Row:  row,
+	})
 }
 
-//
-func (self *TypeTable) UserFields() (ret []*table.TableField) {
+func (self *TypeTable) Raw() []*TypeData {
+	return self.fields
+}
 
-	linq.From(self.Fields).WhereT(func(tf *table.TableField) bool {
-		return !tf.IsBuiltin
+func (self *TypeTable) AllFields() (ret []*table.TableField) {
+
+	linq.From(self.fields).WhereT(func(td *TypeData) bool {
+		return !td.Type.IsBuiltin
+	}).SelectT(func(td *TypeData) interface{} {
+
+		return td.Type
 	}).ToSlice(&ret)
 
 	return
@@ -57,13 +70,13 @@ func (self *TypeTable) IsEnumKind(objectType string) bool {
 // 匹配枚举值
 func (self *TypeTable) ResolveEnumValue(objectType, value string) (ret string) {
 
-	linq.From(self.Fields).WhereT(func(tf *table.TableField) bool {
+	linq.From(self.fields).WhereT(func(td *TypeData) bool {
 
-		return tf.ObjectType == objectType &&
-			(tf.Name == value || tf.FieldName == value)
-	}).ForEachT(func(types *table.TableField) {
+		return td.Type.ObjectType == objectType &&
+			(td.Type.Name == value || td.Type.FieldName == value)
+	}).ForEachT(func(td *TypeData) {
 
-		ret = types.Value
+		ret = td.Type.Value
 
 	})
 
@@ -83,16 +96,18 @@ func (self *TypeTable) StructNames() (ret []string) {
 // 获取所有的结构体名
 func (self *TypeTable) rawStructNames(all bool) (ret []string) {
 
-	linq.From(self.Fields).WhereT(func(tf *table.TableField) bool {
+	linq.From(self.fields).WhereT(func(td *TypeData) bool {
+
+		tf := td.Type
 
 		if !all && tf.IsBuiltin {
 			return false
 		}
 
 		return tf.Kind == table.TableKind_HeaderStruct
-	}).SelectT(func(tf *table.TableField) string {
+	}).SelectT(func(td *TypeData) string {
 
-		return tf.ObjectType
+		return td.Type.ObjectType
 	}).Distinct().ToSlice(&ret)
 
 	return
@@ -101,16 +116,18 @@ func (self *TypeTable) rawStructNames(all bool) (ret []string) {
 // 获取所有的枚举名
 func (self *TypeTable) rawEnumNames(all bool) (ret []string) {
 
-	linq.From(self.Fields).WhereT(func(tf *table.TableField) bool {
+	linq.From(self.fields).WhereT(func(td *TypeData) bool {
+
+		tf := td.Type
 
 		if !all && tf.IsBuiltin {
 			return false
 		}
 
 		return tf.Kind == table.TableKind_Enum
-	}).SelectT(func(tf *table.TableField) string {
+	}).SelectT(func(td *TypeData) string {
 
-		return tf.ObjectType
+		return td.Type.ObjectType
 	}).Distinct().ToSlice(&ret)
 
 	return
@@ -119,9 +136,12 @@ func (self *TypeTable) rawEnumNames(all bool) (ret []string) {
 // 对象的所有字段
 func (self *TypeTable) AllFieldByName(objectType string) (ret []*table.TableField) {
 
-	linq.From(self.Fields).WhereT(func(tf *table.TableField) bool {
+	linq.From(self.fields).WhereT(func(td *TypeData) bool {
 
-		return tf.ObjectType == objectType
+		return td.Type.ObjectType == objectType
+	}).SelectT(func(td *TypeData) *table.TableField {
+
+		return td.Type
 	}).ToSlice(&ret)
 
 	return
@@ -130,13 +150,15 @@ func (self *TypeTable) AllFieldByName(objectType string) (ret []*table.TableFiel
 // 数据表中表头对应类型表
 func (self *TypeTable) FieldByName(objectType, name string) (ret *table.TableField) {
 
-	linq.From(self.Fields).WhereT(func(tf *table.TableField) bool {
+	linq.From(self.fields).WhereT(func(td *TypeData) bool {
+
+		tf := td.Type
 
 		return tf.ObjectType == objectType &&
 			(tf.Name == name || tf.FieldName == name)
-	}).ForEachT(func(types *table.TableField) {
+	}).ForEachT(func(td *TypeData) {
 
-		ret = types
+		ret = td.Type
 
 	})
 
@@ -145,9 +167,9 @@ func (self *TypeTable) FieldByName(objectType, name string) (ret *table.TableFie
 
 func (self *TypeTable) ObjectExists(objectType string) bool {
 
-	return linq.From(self.Fields).WhereT(func(tf *table.TableField) bool {
+	return linq.From(self.fields).WhereT(func(td *TypeData) bool {
 
-		return tf.ObjectType == objectType
+		return td.Type.ObjectType == objectType
 	}).Count() > 0
 }
 

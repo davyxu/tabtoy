@@ -20,6 +20,10 @@ func (self *Cell) String() string {
 
 type DataRow []Cell
 
+func (self DataRow) IsEmpty() bool {
+	return len(self) == 0
+}
+
 type DataTable struct {
 	HeaderType string // 表名，Index表里定义的类型
 

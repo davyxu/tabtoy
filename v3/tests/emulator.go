@@ -40,6 +40,10 @@ func VerifyType(indexGetter v3.FileGetter, expectJson string) error {
 
 	globals.Types.Print()
 
+	if expectJson == "" {
+		return nil
+	}
+
 	return compareJson(appJson, []byte(expectJson))
 }
 

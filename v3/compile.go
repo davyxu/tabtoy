@@ -1,9 +1,10 @@
 package v3
 
 import (
-	"github.com/davyxu/tabtoy/v3/checker"
+	"fmt"
 	"github.com/davyxu/tabtoy/v3/helper"
 	"github.com/davyxu/tabtoy/v3/model"
+	"github.com/davyxu/tabtoy/v3/report"
 	"github.com/davyxu/tabtoy/v3/table"
 	"github.com/tealeg/xlsx"
 )
@@ -17,8 +18,8 @@ func Compile(globals *model.Globals, indexGetter FileGetter) (ret error) {
 	defer func() {
 
 		switch err := recover().(type) {
-		case *helper.ErrorObject:
-			log.Errorf("%s", err.Error())
+		case *report.ErrorObject:
+			fmt.Printf("%s", err.Error())
 			ret = err
 		case nil:
 		default:
@@ -28,7 +29,7 @@ func Compile(globals *model.Globals, indexGetter FileGetter) (ret error) {
 	}()
 
 	// TODO 更好的内建读取
-	err := LoadTypeTable(globals, indexGetter, globals.BuiltinSymbolFile, true)
+	err := LoadTypeTable(globals.Types, indexGetter, globals.BuiltinSymbolFile, true)
 
 	if err != nil {
 		return err
@@ -71,14 +72,14 @@ func Compile(globals *model.Globals, indexGetter FileGetter) (ret error) {
 			for _, tab := range tablist {
 				ResolveHeaderFields(tab, tab.HeaderType, globals.Types)
 
-				checker.CheckTypes(tab, globals.Types)
+				CheckHeaderTypes(tab, globals.Types)
 
 				dataList.AddDataTable(tab)
 			}
 
 		case table.TableMode_Type:
 
-			err = LoadTypeTable(globals, loader, pragma.TableFileName, false)
+			err = LoadTypeTable(globals.Types, loader, pragma.TableFileName, false)
 
 			if err != nil {
 				return err
@@ -94,12 +95,14 @@ func Compile(globals *model.Globals, indexGetter FileGetter) (ret error) {
 			for _, tab := range tablist {
 				ResolveHeaderFields(tab, "TableKeyValue", globals.Types)
 
-				checker.CheckTypes(tab, globals.Types)
+				CheckHeaderTypes(tab, globals.Types)
 
 				kvList.AddDataTable(tab)
 			}
 		}
 	}
+
+	CheckTypeTable(globals.Types)
 
 	// 合并所有的KV表行
 	var mergedKV model.DataTableList

@@ -1,4 +1,4 @@
-package helper
+package report
 
 import (
 	"fmt"
@@ -33,8 +33,7 @@ func getErrorDesc(id string) string {
 
 	}
 
-	panic("ErrorID not found: " + id)
-
+	return ""
 }
 
 func (self *ErrorObject) Error() string {
