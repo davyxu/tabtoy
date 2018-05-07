@@ -52,8 +52,7 @@ func LoadTypeTable(typeTab *model.TypeTable, indexGetter FileGetter, fileName st
 	return nil
 }
 
-func CheckTypeTable(typeTab *model.TypeTable) {
-
+func typeTable_CheckEnumValueEmpty(typeTab *model.TypeTable) {
 	linq.From(typeTab.Raw()).WhereT(func(td *model.TypeData) bool {
 
 		return td.Type.Kind == table.TableKind_Enum && td.Type.Value == ""
@@ -63,5 +62,55 @@ func CheckTypeTable(typeTab *model.TypeTable) {
 
 		report.ReportError("EnumValueEmpty", cell.String())
 	})
+}
 
+func typeTable_CheckDuplicateEnumValue(typeTab *model.TypeTable) {
+
+	type NameValuePair struct {
+		Name  string
+		Value string
+	}
+
+	checker := map[NameValuePair]*model.TypeData{}
+
+	for _, td := range typeTab.Raw() {
+
+		if td.Type.IsBuiltin || td.Type.Kind != table.TableKind_Enum {
+			continue
+		}
+
+		key := NameValuePair{td.Type.ObjectType, td.Type.Value}
+
+		if _, ok := checker[key]; ok {
+
+			cell, _ := td.Tab.GetValueByName(td.Row, "值")
+
+			report.ReportError("DuplicateEnumValue", cell.String())
+		}
+
+		checker[key] = td
+	}
+}
+
+func checkValueType(typeDataTab *model.DataTable) {
+
+	//for row := range typeDataTab.Rows {
+	//
+	//	for col := range typeDataTab.RawHeader {
+	//
+	//		value := typeDataTab.GetValue(row, col)
+	//
+	//		valueType := typeDataTab.GetType(col)
+	//
+	//	}
+	//
+	//}
+
+}
+
+func CheckTypeTable(typeTab *model.TypeTable) {
+
+	typeTable_CheckEnumValueEmpty(typeTab)
+
+	typeTable_CheckDuplicateEnumValue(typeTab)
 }

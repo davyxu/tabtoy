@@ -12,6 +12,7 @@ import (
 	"io/ioutil"
 	"path/filepath"
 	"reflect"
+	"testing"
 )
 
 func newGlobal() *model.Globals {
@@ -26,6 +27,16 @@ func newGlobal() *model.Globals {
 	return globals
 }
 
+func VerifyError(t *testing.T, indexGetter v3.FileGetter, expectError string) {
+	globals := newGlobal()
+
+	err := v3.Compile(globals, indexGetter)
+
+	if err == nil || err.Error() != expectError {
+		t.FailNow()
+	}
+}
+
 func VerifyType(indexGetter v3.FileGetter, expectJson string) error {
 
 	globals := newGlobal()
@@ -37,8 +48,6 @@ func VerifyType(indexGetter v3.FileGetter, expectJson string) error {
 	}
 
 	appJson := globals.Types.ToJSON()
-
-	globals.Types.Print()
 
 	if expectJson == "" {
 		return nil

@@ -18,7 +18,7 @@ func Compile(globals *model.Globals, indexGetter FileGetter) (ret error) {
 	defer func() {
 
 		switch err := recover().(type) {
-		case *report.ErrorObject:
+		case *report.TableError:
 			fmt.Printf("%s", err.Error())
 			ret = err
 		case nil:

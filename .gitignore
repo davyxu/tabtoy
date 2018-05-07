@@ -194,3 +194,4 @@ exportorv2/example/lua/luadll.dll
 v2/example/lua/*.dll
 v2/example/cpp/.vs
 *.db
+v3/table/data_gen.json

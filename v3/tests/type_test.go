@@ -4,6 +4,22 @@ import (
 	"testing"
 )
 
+func TestDuplicateTypeFieldName(t *testing.T) {
+
+	mf := NewMemFile()
+	indexSheet := mf.Create("Index.xlsx")
+
+	WriteIndexTableHeader(indexSheet)
+	WriteRowValues(indexSheet, "类型表", "", "Type.xlsx")
+
+	typeSheet := mf.Create("Type.xlsx")
+	WriteTypeTableHeader(typeSheet)
+	WriteRowValues(typeSheet, "表头", "SumeHead", "某种类型", "None", "int", "", "")
+	WriteRowValues(typeSheet, "表头", "SumeHead", "某种类型", "None", "int", "", "")
+
+	VerifyError(t, mf, "TableError.DuplicateTypeFieldName 类型表字段重复 | 'None' @Type.xlsx|Sheet1(D3)")
+}
+
 func TestEnumValueEmpty(t *testing.T) {
 
 	mf := NewMemFile()
@@ -15,12 +31,24 @@ func TestEnumValueEmpty(t *testing.T) {
 	typeSheet := mf.Create("Type.xlsx")
 	WriteTypeTableHeader(typeSheet)
 	WriteRowValues(typeSheet, "枚举", "ActorType", "", "None", "int", "", "")
-	WriteRowValues(typeSheet, "枚举", "ActorType", "法鸡", "Pharah", "int", "", "")
 
-	if err := VerifyType(mf, ``); err != nil {
-		t.Error(err)
-		t.FailNow()
-	}
+	VerifyError(t, mf, "TableError.EnumValueEmpty 枚举值空 | '' @Type.xlsx|Sheet1(G2)")
+}
+
+func TestDuplicateEnumValue(t *testing.T) {
+
+	mf := NewMemFile()
+	indexSheet := mf.Create("Index.xlsx")
+
+	WriteIndexTableHeader(indexSheet)
+	WriteRowValues(indexSheet, "类型表", "", "Type.xlsx")
+
+	typeSheet := mf.Create("Type.xlsx")
+	WriteTypeTableHeader(typeSheet)
+	WriteRowValues(typeSheet, "枚举", "ActorType", "", "None", "int", "", "1")
+	WriteRowValues(typeSheet, "枚举", "ActorType", "", "Arch", "int", "", "1")
+
+	VerifyError(t, mf, "TableError.DuplicateEnumValue 枚举值重复 | '1' @Type.xlsx|Sheet1(G3)")
 }
 
 func TestTypeDefineOrder(t *testing.T) {

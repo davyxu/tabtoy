@@ -7,8 +7,8 @@ import (
 	"strings"
 )
 
-type ErrorObject struct {
-	s string
+type TableError struct {
+	ID string
 
 	context []interface{}
 }
@@ -36,28 +36,31 @@ func getErrorDesc(id string) string {
 	return ""
 }
 
-func (self *ErrorObject) Error() string {
+func (self *TableError) Error() string {
 
 	var sb strings.Builder
 
-	sb.WriteString(getErrorDesc(self.s))
-	sb.WriteString("(")
-	sb.WriteString(self.s)
-	sb.WriteString(")")
+	sb.WriteString("TableError.")
+	sb.WriteString(self.ID)
 	sb.WriteString(" ")
+	sb.WriteString(getErrorDesc(self.ID))
+	sb.WriteString(" | ")
 
-	for _, c := range self.context {
+	for index, c := range self.context {
+		if index > 0 {
+			sb.WriteString(" ")
+		}
+
 		sb.WriteString(fmt.Sprintf("%+v", c))
-		sb.WriteString(" ")
 	}
 
 	return sb.String()
 }
 
-func ReportError(s string, context ...interface{}) *ErrorObject {
+func ReportError(id string, context ...interface{}) *TableError {
 
-	panic(&ErrorObject{
-		s:       s,
+	panic(&TableError{
+		ID:      id,
 		context: context,
 	})
 }
