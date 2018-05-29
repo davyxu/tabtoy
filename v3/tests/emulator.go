@@ -15,7 +15,15 @@ import (
 	"testing"
 )
 
-func newGlobal() *model.Globals {
+type TableEmulator struct {
+	G *model.Globals
+	T *testing.T
+
+	helper.MemFile
+}
+
+func NewTableEmulator(t *testing.T) *TableEmulator {
+
 	globals := model.NewGlobals()
 	globals.Version = "testver"
 	globals.BuiltinSymbolFile = "../table/BuiltinTypes.xlsx"
@@ -24,30 +32,33 @@ func newGlobal() *model.Globals {
 	globals.CombineStructName = "Config"
 	globals.Para = false
 
-	return globals
+	memfile := helper.NewMemFile()
+
+	globals.TableGetter = memfile
+	globals.IndexGetter = memfile
+
+	return &TableEmulator{G: globals, T: t, MemFile: memfile}
 }
 
-func VerifyError(t *testing.T, indexGetter v3.FileGetter, expectError string) {
-	globals := newGlobal()
+func (self *TableEmulator) VerifyError(expectError string) {
 
-	err := v3.Compile(globals, indexGetter)
+	err := v3.Compile(self.G)
 
 	if err == nil || err.Error() != expectError {
-		t.FailNow()
+		self.T.Logf("Expect '%s' got '%s'", expectError, err.Error())
+		self.T.FailNow()
 	}
 }
 
-func VerifyType(indexGetter v3.FileGetter, expectJson string) error {
+func (self *TableEmulator) VerifyType(expectJson string) error {
 
-	globals := newGlobal()
-
-	err := v3.Compile(globals, indexGetter)
+	err := v3.Compile(self.G)
 
 	if err != nil {
 		return err
 	}
 
-	appJson := globals.Types.ToJSON()
+	appJson := self.G.Types.ToJSON()
 
 	println(string(appJson))
 
@@ -58,11 +69,9 @@ func VerifyType(indexGetter v3.FileGetter, expectJson string) error {
 	return compareJson(appJson, []byte(expectJson))
 }
 
-func VerifyLauncherJson(indexGetter v3.FileGetter, expectJson string) error {
+func (self *TableEmulator) VerifyLauncherJson(expectJson string) error {
 
-	globals := newGlobal()
-
-	err := v3.Compile(globals, indexGetter)
+	err := v3.Compile(self.G)
 
 	if err != nil {
 		return err
@@ -76,13 +85,13 @@ func VerifyLauncherJson(indexGetter v3.FileGetter, expectJson string) error {
 
 	configFileName := filepath.Join(dir, "config.json")
 
-	if err := genFile(globals, configFileName, jsondata.Generate); err != nil {
+	if err := genFile(self.G, configFileName, jsondata.Generate); err != nil {
 		return err
 	}
 
 	tableFileName := filepath.Join(dir, "table.go")
 
-	if err := genFile(globals, tableFileName, gosrc.Generate); err != nil {
+	if err := genFile(self.G, tableFileName, gosrc.Generate); err != nil {
 		return err
 	}
 
