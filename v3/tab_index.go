@@ -1,7 +1,6 @@
 package v3
 
 import (
-	"github.com/davyxu/tabtoy/v3/helper"
 	"github.com/davyxu/tabtoy/v3/model"
 	"github.com/davyxu/tabtoy/v3/table"
 	"path/filepath"
@@ -13,7 +12,7 @@ func loadIndexData(tab *model.DataTable, symbols *model.TypeTable) (pragmaList [
 	for row := 0; row < len(tab.Rows); row++ {
 
 		var pragma table.TablePragma
-		helper.ParseRow(&pragma, tab, row, symbols)
+		model.ParseRow(&pragma, tab, row, symbols)
 
 		pragmaList = append(pragmaList, &pragma)
 	}
@@ -21,13 +20,13 @@ func loadIndexData(tab *model.DataTable, symbols *model.TypeTable) (pragmaList [
 	return
 }
 
-func LoadIndexTable(globals *model.Globals, indexGetter FileGetter, fileName string) error {
+func LoadIndexTable(globals *model.Globals, fileName string) error {
 
 	if fileName == "" {
 		return nil
 	}
 
-	tabs, err := LoadDataTable(indexGetter, fileName, "TablePragma")
+	tabs, err := LoadDataTable(globals.IndexGetter, fileName, "TablePragma")
 
 	if err != nil {
 		return err

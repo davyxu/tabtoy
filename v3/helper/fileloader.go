@@ -6,6 +6,10 @@ import (
 	"sync"
 )
 
+type FileGetter interface {
+	GetFile(filename string) (*xlsx.File, error)
+}
+
 type SyncFileLoader struct {
 }
 

@@ -19,7 +19,7 @@ type V3GenEntry struct {
 
 // v3新增
 var (
-	paramBuiltinSymbolFile = flag.String("builtinsymbol", "", "input builtin symbol files describe types")
+	paramBuiltinSymbolFile = flag.Bool("builtinsymbol", false, "builtin symbols visible in table types")
 	paramIndexFile         = flag.String("index", "", "input multi-files configs")
 
 	v3GenList = []V3GenEntry{
@@ -31,18 +31,31 @@ var (
 func V3Entry() {
 	globals := model.NewGlobals()
 	globals.Version = Version_v3
-	globals.BuiltinSymbolFile = *paramBuiltinSymbolFile
+
+	model.BuiltinSymbolsVisible = *paramBuiltinSymbolFile
 	globals.IndexFile = *paramIndexFile
 	globals.PackageName = *paramPackageName
 	globals.CombineStructName = *paramCombineStructName
 	globals.Para = *paramPara
 
-	// 内建build时，输出所有内置symbols
-	if globals.BuiltinSymbolFile == "BuiltinTypes.xlsx" {
-		model.UseAllBuiltinSymbols = true
+	globals.IndexGetter = new(helper.SyncFileLoader)
+
+	if globals.Para {
+		// 缓冲文件
+		asyncLoader := helper.NewAsyncFileLoader()
+
+		for _, pragma := range globals.IndexList {
+			asyncLoader.AddFile(pragma.TableFileName)
+		}
+
+		asyncLoader.Commit()
+
+		globals.TableGetter = asyncLoader
+	} else {
+		globals.TableGetter = globals.IndexGetter
 	}
 
-	err := v3.Compile(globals, new(helper.SyncFileLoader))
+	err := v3.Compile(globals)
 
 	if err != nil {
 		report.Log.Errorln(err)

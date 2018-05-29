@@ -11,7 +11,7 @@ go build -v -o ${GOPATH}/bin/tabtoy github.com/davyxu/tabtoy
 ${GOPATH}/bin/tabtoy \
 -mode=v3 \
 -package=table \
--builtinsymbol=BuiltinTypes.xlsx \
+-builtinsymbol \
 -index=BuiltinIndex.xlsx \
 -go_out=types_gen.go \
 -json_out=data_gen.json

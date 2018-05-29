@@ -14,7 +14,7 @@ const coreConfig = `
 		{ "InputFieldName": "double", "GoFieldName": "float64", "CSFieldName": "double", "DefaultValue": "0" },
 		{ "InputFieldName": "float32", "GoFieldName": "float32", "CSFieldName": "float", "DefaultValue": "0" },
 		{ "InputFieldName": "float64", "GoFieldName": "float64", "CSFieldName": "double", "DefaultValue": "0" },
-		{ "InputFieldName": "bool", "GoFieldName": "bool", "CSFieldName": "bool", "DefaultValue": "false" },
+		{ "InputFieldName": "bool", "GoFieldName": "bool", "CSFieldName": "bool", "DefaultValue": "FALSE" },
 		{ "InputFieldName": "string", "GoFieldName": "string", "CSFieldName": "string", "DefaultValue": "" } 
 	],
 	"ErrorID":[ 

@@ -17,7 +17,7 @@ func init() {
 	}
 }
 
-func LoadTypeTable(typeTab *model.TypeTable, indexGetter FileGetter, fileName string, builtin bool) error {
+func LoadTypeTable(typeTab *model.TypeTable, indexGetter helper.FileGetter, fileName string, builtin bool) error {
 
 	tabs, err := LoadDataTable(indexGetter, fileName, "TableField")
 
@@ -33,7 +33,7 @@ func LoadTypeTable(typeTab *model.TypeTable, indexGetter FileGetter, fileName st
 
 			var objtype table.TableField
 
-			helper.ParseRow(&objtype, tab, row, &coreSymbols)
+			model.ParseRow(&objtype, tab, row, &coreSymbols)
 
 			objtype.IsBuiltin = builtin
 

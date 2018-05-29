@@ -7,5 +7,5 @@ import (
 var Log = golog.New("tabtoy2")
 
 func init() {
-	Log.SetFlag(0)
+	Log.SetParts()
 }

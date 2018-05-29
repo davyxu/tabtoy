@@ -2,24 +2,18 @@ package v3
 
 import (
 	"fmt"
-	"github.com/davyxu/tabtoy/v3/helper"
 	"github.com/davyxu/tabtoy/v3/model"
 	"github.com/davyxu/tabtoy/v3/report"
 	"github.com/davyxu/tabtoy/v3/table"
-	"github.com/tealeg/xlsx"
 )
 
-type FileGetter interface {
-	GetFile(filename string) (*xlsx.File, error)
-}
-
-func Compile(globals *model.Globals, indexGetter FileGetter) (ret error) {
+func Compile(globals *model.Globals) (ret error) {
 
 	defer func() {
 
 		switch err := recover().(type) {
 		case *report.TableError:
-			fmt.Printf("%s", err.Error())
+			fmt.Printf("%s\n", err.Error())
 			ret = err
 		case nil:
 		default:
@@ -28,42 +22,26 @@ func Compile(globals *model.Globals, indexGetter FileGetter) (ret error) {
 
 	}()
 
-	// TODO 更好的内建读取
-	err := LoadTypeTable(globals.Types, indexGetter, globals.BuiltinSymbolFile, true)
+	err := LoadTypeTable(globals.Types, table.BuiltinTypes, "BuiltinTypes.xlsx", true)
 
 	if err != nil {
 		return err
 	}
 
+	LoadIndexTable(globals, globals.IndexFile)
+
 	var kvList, dataList model.DataTableList
 
-	LoadIndexTable(globals, indexGetter, globals.IndexFile)
-
-	var loader FileGetter
-
-	if globals.Para {
-		// 缓冲文件
-		asyncLoader := helper.NewAsyncFileLoader()
-
-		for _, pragma := range globals.IndexList {
-			asyncLoader.AddFile(pragma.TableFileName)
-		}
-
-		asyncLoader.Commit()
-
-		loader = asyncLoader
-	} else {
-		loader = indexGetter
-	}
-
+	// 遍历索引里的每一行配置
 	for _, pragma := range globals.IndexList {
 
+		// 自动填充表项
 		fillTableType(pragma)
 
 		switch pragma.TableMode {
 		case table.TableMode_Data:
 
-			tablist, err := LoadDataTable(loader, pragma.TableFileName, pragma.TableType)
+			tablist, err := LoadDataTable(globals.TableGetter, pragma.TableFileName, pragma.TableType)
 
 			if err != nil {
 				return err
@@ -79,14 +57,14 @@ func Compile(globals *model.Globals, indexGetter FileGetter) (ret error) {
 
 		case table.TableMode_Type:
 
-			err = LoadTypeTable(globals.Types, loader, pragma.TableFileName, false)
+			err = LoadTypeTable(globals.Types, globals.TableGetter, pragma.TableFileName, false)
 
 			if err != nil {
 				return err
 			}
 		case table.TableMode_KeyValue:
 
-			tablist, err := LoadDataTable(loader, pragma.TableFileName, pragma.TableType)
+			tablist, err := LoadDataTable(globals.TableGetter, pragma.TableFileName, pragma.TableType)
 
 			if err != nil {
 				return err

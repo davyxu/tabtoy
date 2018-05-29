@@ -1,7 +1,6 @@
-package helper
+package model
 
 import (
-	"github.com/davyxu/tabtoy/v3/model"
 	"github.com/davyxu/tabtoy/v3/table"
 	"reflect"
 	"strconv"
@@ -80,7 +79,7 @@ func strToPrimitive(str string, value interface{}) (error, bool) {
 	return nil, true
 }
 
-func StringToValue(str string, value interface{}, tf *table.TableField, symbols *model.TypeTable) error {
+func StringToValue(str string, value interface{}, tf *table.TableField, symbols *TypeTable) error {
 
 	err, handled := strToPrimitive(str, value)
 	if err != nil || handled {

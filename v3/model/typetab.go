@@ -85,12 +85,12 @@ func (self *TypeTable) ResolveEnumValue(objectType, value string) (ret string) {
 
 func (self *TypeTable) EnumNames() (ret []string) {
 
-	return self.rawEnumNames(UseAllBuiltinSymbols)
+	return self.rawEnumNames(BuiltinSymbolsVisible)
 }
 
 func (self *TypeTable) StructNames() (ret []string) {
 
-	return self.rawStructNames(UseAllBuiltinSymbols)
+	return self.rawStructNames(BuiltinSymbolsVisible)
 }
 
 // 获取所有的结构体名
@@ -177,4 +177,4 @@ func NewSymbolTable() *TypeTable {
 	return new(TypeTable)
 }
 
-var UseAllBuiltinSymbols bool
+var BuiltinSymbolsVisible bool

@@ -2,6 +2,7 @@ package model
 
 import (
 	"github.com/ahmetb/go-linq"
+	"github.com/davyxu/tabtoy/v3/helper"
 	"github.com/davyxu/tabtoy/v3/table"
 )
 
@@ -18,6 +19,9 @@ type Globals struct {
 	IndexList []*table.TablePragma
 
 	DataTableList // 字符串格式的数据表
+
+	IndexGetter helper.FileGetter
+	TableGetter helper.FileGetter
 }
 
 func (self *Globals) KeyValueTypeNames() (ret []string) {

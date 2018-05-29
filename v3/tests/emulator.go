@@ -49,6 +49,8 @@ func VerifyType(indexGetter v3.FileGetter, expectJson string) error {
 
 	appJson := globals.Types.ToJSON()
 
+	println(string(appJson))
+
 	if expectJson == "" {
 		return nil
 	}

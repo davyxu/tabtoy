@@ -1,7 +1,6 @@
-package helper
+package model
 
 import (
-	"github.com/davyxu/tabtoy/v3/model"
 	"github.com/davyxu/tabtoy/v3/report"
 	"reflect"
 )
@@ -21,7 +20,7 @@ func matchField(objType reflect.Type, header string) int {
 }
 
 // 将一行数据解析为具体的类型
-func ParseRow(ret interface{}, tab *model.DataTable, row int, symbols *model.TypeTable) {
+func ParseRow(ret interface{}, tab *DataTable, row int, symbols *TypeTable) {
 
 	vobj := reflect.ValueOf(ret).Elem()
 
