@@ -30,7 +30,7 @@ type {{$objName}} struct{ {{range $fi,$field := $.Types.AllFieldByName $objName}
 {{end}}
 
 // Combine struct
-type {{.CombineStructName}} struct { {{range $ti, $tab := $.Data}}
+type {{.CombineStructName}} struct { {{range $ti, $tab := $.Datas.AllTables}}
 	{{$tab.HeaderType}} []*{{$tab.HeaderType}} // table: {{$tab.HeaderType}} {{end}}
 }
 

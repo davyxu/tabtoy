@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	"github.com/davyxu/tabtoy/v3"
+	"github.com/davyxu/tabtoy/v3/compiler"
 	"github.com/davyxu/tabtoy/v3/gen"
 	"github.com/davyxu/tabtoy/v3/gen/gosrc"
 	"github.com/davyxu/tabtoy/v3/gen/jsondata"
@@ -28,18 +28,9 @@ var (
 	}
 )
 
-func V3Entry() {
-	globals := model.NewGlobals()
-	globals.Version = Version_v3
-
-	model.BuiltinSymbolsVisible = *paramBuiltinSymbolFile
-	globals.IndexFile = *paramIndexFile
-	globals.PackageName = *paramPackageName
-	globals.CombineStructName = *paramCombineStructName
-	globals.Para = *paramPara
-
+func selectFileLoader(globals *model.Globals, para bool) {
 	globals.IndexGetter = new(helper.SyncFileLoader)
-
+	globals.Para = para
 	if globals.Para {
 		// 缓冲文件
 		asyncLoader := helper.NewAsyncFileLoader()
@@ -54,14 +45,9 @@ func V3Entry() {
 	} else {
 		globals.TableGetter = globals.IndexGetter
 	}
+}
 
-	err := v3.Compile(globals)
-
-	if err != nil {
-		report.Log.Errorln(err)
-		os.Exit(1)
-	}
-
+func GenFile(globals *model.Globals) error {
 	for _, entry := range v3GenList {
 
 		if *entry.name == "" {
@@ -71,8 +57,7 @@ func V3Entry() {
 		filename := *entry.name
 
 		if data, err := entry.f(globals); err != nil {
-			report.Log.Errorln(err)
-			os.Exit(1)
+			return err
 		} else {
 
 			report.Log.Infoln(filename)
@@ -80,10 +65,41 @@ func V3Entry() {
 			err = helper.WriteFile(filename, data)
 
 			if err != nil {
-				report.Log.Errorln(err)
-				os.Exit(1)
+				return err
 			}
 
 		}
 	}
+
+	return nil
+}
+
+func V3Entry() {
+	globals := model.NewGlobals()
+	globals.Version = Version_v3
+
+	model.BuiltinSymbolsVisible = *paramBuiltinSymbolFile
+	globals.IndexFile = *paramIndexFile
+	globals.PackageName = *paramPackageName
+	globals.CombineStructName = *paramCombineStructName
+
+	selectFileLoader(globals, *paramPara)
+
+	var err error
+
+	err = compiler.Compile(globals)
+
+	if err != nil {
+		goto Exit
+	}
+
+	err = GenFile(globals)
+	if err != nil {
+		goto Exit
+	}
+
+	return
+Exit:
+	report.Log.Errorln(err)
+	os.Exit(1)
 }

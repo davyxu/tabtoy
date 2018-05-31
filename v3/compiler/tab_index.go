@@ -1,4 +1,4 @@
-package v3
+package compiler
 
 import (
 	"github.com/davyxu/tabtoy/v3/model"

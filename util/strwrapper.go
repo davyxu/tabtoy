@@ -4,15 +4,6 @@ import (
 	"fmt"
 )
 
-func nextIs(s string, index int, c byte) bool {
-
-	if index+1 >= len(s) {
-		return false
-	}
-
-	return s[index+1] == c
-}
-
 func StringEscape(s string) string {
 
 	b := make([]byte, 0)

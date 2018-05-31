@@ -19,7 +19,7 @@ func TestDuplicateTypeFieldName(t *testing.T) {
 	helper.WriteRowValues(typeSheet, "表头", "SumeHead", "某种类型", "None", "int", "", "")
 	helper.WriteRowValues(typeSheet, "表头", "SumeHead", "某种类型", "None", "int", "", "")
 
-	emu.VerifyError("TableError.DuplicateTypeFieldName 类型表字段重复 | 'None' @Type.xlsx|Default(D3)")
+	emu.MustGotError("TableError.DuplicateTypeFieldName 类型表字段重复 | 'None' @Type.xlsx|Default(D3)")
 }
 
 // 多表中的类型字段重复
@@ -40,7 +40,7 @@ func TestDuplicateTypeFieldNameInMultiTypesTable(t *testing.T) {
 	helper.WriteTypeTableHeader(typeSheet2)
 	helper.WriteRowValues(typeSheet2, "表头", "SumeHead", "某种类型", "None", "int", "", "")
 
-	emu.VerifyError("TableError.DuplicateTypeFieldName 类型表字段重复 | 'None' @Type2.xlsx|Default(D2)")
+	emu.MustGotError("TableError.DuplicateTypeFieldName 类型表字段重复 | 'None' @Type2.xlsx|Default(D2)")
 }
 
 // 不填枚举值报错
@@ -56,7 +56,7 @@ func TestEnumValueEmpty(t *testing.T) {
 	helper.WriteTypeTableHeader(typeSheet)
 	helper.WriteRowValues(typeSheet, "枚举", "ActorType", "", "None", "int", "", "")
 
-	emu.VerifyError("TableError.EnumValueEmpty 枚举值空 | '' @Type.xlsx|Default(G2)")
+	emu.MustGotError("TableError.EnumValueEmpty 枚举值空 | '' @Type.xlsx|Default(G2)")
 }
 
 // 枚举值重复报错
@@ -73,7 +73,7 @@ func TestDuplicateEnumValue(t *testing.T) {
 	helper.WriteRowValues(typeSheet, "枚举", "ActorType", "", "None", "int", "", "1")
 	helper.WriteRowValues(typeSheet, "枚举", "ActorType", "", "Arch", "int", "", "1")
 
-	emu.VerifyError("TableError.DuplicateEnumValue 枚举值重复 | '1' @Type.xlsx|Default(G3)")
+	emu.MustGotError("TableError.DuplicateEnumValue 枚举值重复 | '1' @Type.xlsx|Default(G3)")
 }
 
 //func TestTypeDefineOrder(t *testing.T) {
@@ -111,24 +111,28 @@ func TestComplete(t *testing.T) {
 	helper.WriteRowValues(typeSheet, "表头", "TestData", "整形", "Int", "int", "", "")
 	helper.WriteRowValues(typeSheet, "表头", "TestData", "字符串", "String", "string", "", "")
 	helper.WriteRowValues(typeSheet, "表头", "TestData", "布尔", "Bool", "bool", "", "")
+	helper.WriteRowValues(typeSheet, "表头", "TestData", "浮点", "Float", "float", "", "")
+	helper.WriteRowValues(typeSheet, "表头", "TestData", "整形数组", "IntList", "int", "|", "")
 
 	dataSheet := emu.Create("TestData.xlsx")
-	helper.WriteRowValues(dataSheet, "整形", "字符串", "布尔")
-	helper.WriteRowValues(dataSheet, "100", "\"hello\"", "true")
+	helper.WriteRowValues(dataSheet, "整形", "字符串", "布尔", "浮点", "整形数组")
+	helper.WriteRowValues(dataSheet, "100", "\"hello\"", "true", "3.14159", "1|2|3")
 
-	if err := emu.VerifyLauncherJson(`
+	emu.VerifyGoTypeAndJson(`
 {
 	"TestData": [
 		{
 			"Int": 100,
 			"String": "\"hello\"",
-			"Bool": true
+			"Bool": true,
+			"Float": 3.14159,
+			"IntList": [
+				1,
+				2,
+				3
+			]
 		}
 	]
 }
-
-`); err != nil {
-		t.Error(err)
-		t.FailNow()
-	}
+`)
 }

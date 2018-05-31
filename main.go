@@ -29,6 +29,8 @@ func main() {
 		V3Entry()
 	case "exportorv2", "v2":
 		V2Entry()
+	case "v2tov3":
+		V2ToV3Entry()
 	default:
 		fmt.Println("--mode not specify")
 		os.Exit(1)

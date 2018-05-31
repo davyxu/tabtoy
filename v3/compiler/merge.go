@@ -1,4 +1,4 @@
-package v3
+package compiler
 
 import (
 	"github.com/davyxu/tabtoy/v3/model"
@@ -9,7 +9,7 @@ import (
 // 将不同文件/Sheet/KV转换的表，按照表头类型合并数据输出
 func mergeData(inputList, outputList *model.DataTableList, symbols *model.TypeTable) {
 
-	for _, inputTab := range inputList.Data {
+	for _, inputTab := range inputList.AllTables() {
 
 		var outputTab *model.DataTable
 

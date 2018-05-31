@@ -1,12 +1,12 @@
 package model
 
 type DataTableList struct {
-	Data []*DataTable
+	data []*DataTable
 }
 
 func (self *DataTableList) GetDataTable(headerType string) *DataTable {
 
-	for _, tab := range self.Data {
+	for _, tab := range self.data {
 		if tab.HeaderType == headerType {
 			return tab
 		}
@@ -16,5 +16,8 @@ func (self *DataTableList) GetDataTable(headerType string) *DataTable {
 }
 
 func (self *DataTableList) AddDataTable(t *DataTable) {
-	self.Data = append(self.Data, t)
+	self.data = append(self.data, t)
+}
+func (self *DataTableList) AllTables() []*DataTable {
+	return self.data
 }

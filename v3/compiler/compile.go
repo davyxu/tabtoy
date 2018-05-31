@@ -1,4 +1,4 @@
-package v3
+package compiler
 
 import (
 	"fmt"
@@ -87,13 +87,13 @@ func Compile(globals *model.Globals) (ret error) {
 	mergeData(&kvList, &mergedKV, globals.Types)
 
 	// 完整KV表转置为普通数据表
-	for _, kvtab := range mergedKV.Data {
+	for _, kvtab := range mergedKV.AllTables() {
 		ResolveHeaderFields(kvtab, kvtab.HeaderType, globals.Types)
 		dataList.AddDataTable(transposeKVtoData(globals.Types, kvtab))
 	}
 
 	// 合并所有的数据表
-	mergeData(&dataList, &globals.DataTableList, globals.Types)
+	mergeData(&dataList, &globals.Datas, globals.Types)
 
 	return nil
 }
