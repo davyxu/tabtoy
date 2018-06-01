@@ -2,7 +2,7 @@ package tests
 
 import (
 	"encoding/json"
-	"github.com/davyxu/tabtoy/v3"
+	"github.com/davyxu/tabtoy/v3/compiler"
 	"github.com/davyxu/tabtoy/v3/gen"
 	"github.com/davyxu/tabtoy/v3/gen/gosrc"
 	"github.com/davyxu/tabtoy/v3/gen/jsondata"
@@ -18,7 +18,7 @@ type TableEmulator struct {
 	G *model.Globals
 	T *testing.T
 
-	helper.MemFile
+	*helper.MemFile
 }
 
 func NewTableEmulator(t *testing.T) *TableEmulator {
@@ -35,12 +35,15 @@ func NewTableEmulator(t *testing.T) *TableEmulator {
 	globals.TableGetter = memfile
 	globals.IndexGetter = memfile
 
-	return &TableEmulator{G: globals, T: t, MemFile: memfile}
+	return &TableEmulator{
+		G:       globals,
+		T:       t,
+		MemFile: memfile}
 }
 
 func (self *TableEmulator) MustGotError(expectError string) {
 
-	err := v3.Compile(self.G)
+	err := compiler.Compile(self.G)
 
 	if err == nil || err.Error() != expectError {
 		self.T.Logf("Expect '%s' got '%s'", expectError, err.Error())
@@ -54,12 +57,13 @@ func (self *TableEmulator) VerifyType(expectJson string) {
 
 	defer func() {
 		if err != nil {
+			self.T.Error(err)
 			self.T.FailNow()
 		}
 
 	}()
 
-	err = v3.Compile(self.G)
+	err = compiler.Compile(self.G)
 
 	if err != nil {
 		return
@@ -85,18 +89,56 @@ func (self *TableEmulator) VerifyType(expectJson string) {
 	}
 }
 
+func (self *TableEmulator) VerifyData(expectJson string) {
+
+	var err error
+
+	defer func() {
+		if err != nil {
+			self.T.Error(err)
+			self.T.FailNow()
+		}
+
+	}()
+
+	err = compiler.Compile(self.G)
+
+	if err != nil {
+		return
+	}
+
+	var appJson []byte
+	appJson, err = jsondata.Generate(self.G)
+
+	if err != nil {
+		return
+	}
+
+	var result bool
+	result, err = compareJson(appJson, []byte(expectJson))
+	if err != nil {
+		return
+	}
+
+	if !result {
+		self.T.Logf("Expect '%s' got '%s'", appJson, expectJson)
+		self.T.FailNow()
+	}
+}
+
 func (self *TableEmulator) VerifyGoTypeAndJson(expectJson string) {
 
 	var err error
 
 	defer func() {
 		if err != nil {
+			self.T.Error(err)
 			self.T.FailNow()
 		}
 
 	}()
 
-	err = v3.Compile(self.G)
+	err = compiler.Compile(self.G)
 
 	if err != nil {
 		return

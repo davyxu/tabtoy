@@ -4,24 +4,31 @@ import (
 	"github.com/davyxu/tabtoy/v3/helper"
 	"github.com/davyxu/tabtoy/v3/model"
 	"github.com/tealeg/xlsx"
+	"strings"
 )
 
-func readOneRow(sheet *xlsx.Sheet, tab *model.DataTable, row int) (eachRow model.DataRow) {
+func readOneRow(sheet *xlsx.Sheet, tab *model.DataTable, row int, eachRow *model.DataRow) bool {
 
-	for col := range tab.RawHeader {
+	for _, headerCell := range tab.RawHeader {
 
-		value := helper.GetSheetValueString(sheet, row, col)
+		// 取列头所在列和当前行交叉的单元格
+		value := helper.GetSheetValueString(sheet, row, headerCell.Col)
 
-		eachRow = append(eachRow, model.Cell{
+		// 首列带#时，本行忽略
+		if headerCell.Col == 0 && strings.HasPrefix(value, "#") {
+			return false
+		}
+
+		*eachRow = append(*eachRow, model.Cell{
 			Value: value,
 			Row:   row,
-			Col:   col,
+			Col:   headerCell.Col,
 			File:  tab.FileName,
 			Sheet: tab.SheetName,
 		})
 	}
 
-	return
+	return true
 }
 
 func LoadDataTable(filegetter helper.FileGetter, fileName, headerType string) (ret []*model.DataTable, err error) {
@@ -49,9 +56,10 @@ func LoadDataTable(filegetter helper.FileGetter, fileName, headerType string) (r
 			}
 
 			// 读取每一行
-			eachRow := readOneRow(sheet, tab, row)
-
-			tab.AddRow(eachRow)
+			var eachRow model.DataRow
+			if readOneRow(sheet, tab, row, &eachRow) {
+				tab.AddRow(eachRow)
+			}
 		}
 
 	}

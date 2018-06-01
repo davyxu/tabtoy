@@ -4,11 +4,34 @@ import (
 	"github.com/davyxu/golexer"
 	"github.com/davyxu/tabtoy/v2tov3/model"
 	"github.com/davyxu/tabtoy/v3/helper"
+	"github.com/davyxu/tabtoy/v3/table"
 	"github.com/tealeg/xlsx"
 	"strings"
 )
 
-func procTypes(globals *model.Globals, sheet *xlsx.Sheet, tabPragma *golexer.KVPair) error {
+func ExportTypes(globals *model.Globals) error {
+
+	for _, oft := range globals.SourceTypes {
+
+		var disableKind string
+		if oft.Kind == table.TableKind_None {
+			disableKind = "#"
+		}
+
+		helper.WriteRowValues(globals.TargetTypesSheet,
+			disableKind+oft.Kind.String(),
+			oft.ObjectType,
+			oft.Name,
+			oft.FieldName,
+			oft.FieldType,
+			oft.ArraySplitter,
+			oft.Value)
+	}
+
+	return nil
+}
+
+func importTypes(globals *model.Globals, sheet *xlsx.Sheet, tabPragma *golexer.KVPair) error {
 
 	pragma := helper.GetSheetValueString(sheet, 0, 0)
 
@@ -35,42 +58,30 @@ func procTypes(globals *model.Globals, sheet *xlsx.Sheet, tabPragma *golexer.KVP
 			oft.FieldType = oft.FieldType[2:]
 		}
 
-		fieldValue := helper.GetSheetValueString(sheet, row, 3)
+		oft.Value = helper.GetSheetValueString(sheet, row, 3)
 
-		oft.Comment = helper.GetSheetValueString(sheet, row, 4)
-
-		// 默认值
-		//defaultValue := helper.GetSheetValueString(sheet, row, 5)
+		oft.Name = helper.GetSheetValueString(sheet, row, 4)
 
 		// V3无需添加数组前缀
 
 		// 元信息
-		meta := helper.GetSheetValueString(sheet, row, 6)
+		meta := helper.GetSheetValueString(sheet, row, 5)
 
 		kvpair := golexer.NewKVPair()
 		if err := kvpair.Parse(meta); err != nil {
 			continue
 		}
 
-		if fieldValue == "" {
-			oft.IsStruct = true
+		if oft.Value == "" {
+			oft.Kind = table.TableKind_None
 
-			globals.SourceTypes = append(globals.SourceTypes, oft)
-
-			//log.Warnf("v3不再支持结构体，忽略结构 %s", oft.ObjectType)
+			globals.AddSourceType(oft)
 			continue
 		}
 
-		oft.IsArray = true
+		oft.Kind = table.TableKind_Enum
 
-		globals.SourceTypes = append(globals.SourceTypes, oft)
-
-		helper.WriteRowValues(globals.TargetTypesSheet,
-			"枚举",
-			oft.ObjectType,
-			oft.Comment,
-			oft.FieldName,
-			oft.FieldType, "", "")
+		globals.AddSourceType(oft)
 	}
 
 	return nil

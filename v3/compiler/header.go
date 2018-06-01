@@ -6,6 +6,7 @@ import (
 	"github.com/davyxu/tabtoy/v3/report"
 	"github.com/davyxu/tabtoy/v3/table"
 	"github.com/tealeg/xlsx"
+	"strings"
 )
 
 func CheckHeaderTypes(tab *model.DataTable, types *model.TypeTable) {
@@ -35,6 +36,10 @@ func loadheader(sheet *xlsx.Sheet, tab *model.DataTable) {
 		if headerValue == "" {
 			break
 		}
+		// 列头带#时，本列忽略
+		if strings.HasPrefix(headerValue, "#") {
+			continue
+		}
 
 		headerRow = append(headerRow, model.Cell{
 			Value: headerValue,
@@ -56,6 +61,7 @@ func ResolveHeaderFields(tab *model.DataTable, tableObjectType string, symbols *
 		tf := symbols.FieldByName(tableObjectType, cell.Value)
 		if tf == nil {
 			report.ReportError("HeaderFieldNotDefined", cell.String())
+
 		}
 
 		tab.AddHeaderField(tf)

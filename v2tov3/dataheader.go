@@ -4,11 +4,12 @@ import (
 	"github.com/davyxu/golexer"
 	"github.com/davyxu/tabtoy/v2tov3/model"
 	"github.com/davyxu/tabtoy/v3/helper"
+	"github.com/davyxu/tabtoy/v3/table"
 	"github.com/tealeg/xlsx"
 	"strings"
 )
 
-func procDataHeader(globals *model.Globals, sourceSheet, targetSheet *xlsx.Sheet, tableName string) (headerList []model.ObjectFieldType) {
+func importDataHeader(globals *model.Globals, sourceSheet, targetSheet *xlsx.Sheet, tableName string) (headerList []model.ObjectFieldType) {
 
 	headerRow := targetSheet.AddRow()
 
@@ -17,6 +18,7 @@ func procDataHeader(globals *model.Globals, sourceSheet, targetSheet *xlsx.Sheet
 
 		var oft model.ObjectFieldType
 		oft.ObjectType = tableName + "Define"
+		oft.Kind = table.TableKind_HeaderStruct
 
 		oft.FieldName = helper.GetSheetValueString(sourceSheet, 0, col)
 
@@ -27,11 +29,6 @@ func procDataHeader(globals *model.Globals, sourceSheet, targetSheet *xlsx.Sheet
 
 		oft.FieldType = helper.GetSheetValueString(sourceSheet, 1, col)
 
-		if strings.HasPrefix(oft.FieldType, "[]") {
-			oft.FieldType = oft.FieldType[2:]
-			oft.IsArray = true
-		}
-
 		// 元信息
 		meta := helper.GetSheetValueString(sourceSheet, 2, col)
 
@@ -40,27 +37,28 @@ func procDataHeader(globals *model.Globals, sourceSheet, targetSheet *xlsx.Sheet
 			continue
 		}
 
-		oft.Comment = helper.GetSheetValueString(sourceSheet, 3, col)
+		if strings.HasPrefix(oft.FieldType, "[]") {
+			oft.FieldType = oft.FieldType[2:]
+			oft.ArraySplitter = oft.Meta.GetString("ListSpliter")
+		}
+
+		oft.Name = helper.GetSheetValueString(sourceSheet, 3, col)
 
 		var disabledForV3 string
 
 		// 添加V3表头
-		if globals.TypeIsStruct(oft.FieldType) {
+		if globals.TypeIsNoneKind(oft.FieldType) {
 			disabledForV3 = "#"
 		}
 
-		headerRow.AddCell().SetValue(disabledForV3 + oft.Comment)
+		// 新表的表头加列
+		headerRow.AddCell().SetValue(disabledForV3 + oft.Name)
 
-		helper.WriteRowValues(globals.TargetTypesSheet,
-			disabledForV3+"表头",
-			oft.ObjectType,
-			oft.Comment,
-			oft.FieldName,
-			oft.FieldType,
-			oft.Meta.GetString("ListSpliter"),
-			"")
+		// 拆分字段填充的数组
+		if !globals.SourceTypeExists(oft.ObjectType, oft.FieldName) {
 
-		globals.SourceTypes = append(globals.SourceTypes, oft)
+			globals.AddSourceType(oft)
+		}
 
 		headerList = append(headerList, oft)
 	}

@@ -7,23 +7,23 @@ type TableMode int32
 
 const (
 	TableMode_None     = 0 //
-	TableMode_Data     = 1 // 数据表
-	TableMode_Type     = 2 // 类型表
+	TableMode_Type     = 1 // 类型表
+	TableMode_Data     = 2 // 数据表
 	TableMode_KeyValue = 3 // 键值表
 )
 
 var (
 	TableModeMapperValueByName = map[string]int32{
 		"None":     0, //
-		"Data":     1, // 数据表
-		"Type":     2, // 类型表
+		"Type":     1, // 类型表
+		"Data":     2, // 数据表
 		"KeyValue": 3, // 键值表
 	}
 
 	TableModeMapperNameByValue = map[int32]string{
 		0: "None",     //
-		1: "Data",     // 数据表
-		2: "Type",     // 类型表
+		1: "Type",     // 类型表
+		2: "Data",     // 数据表
 		3: "KeyValue", // 键值表
 	}
 )

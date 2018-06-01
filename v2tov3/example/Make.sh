@@ -14,3 +14,10 @@ ${GOPATH}/bin/tabtoy -mode=v2tov3 \
 -upout=${OutputTableDir} \
 ${InputTableDir}/Globals.xlsx \
 ${InputTableDir}/Sample.xlsx
+
+
+${GOPATH}/bin/tabtoy -mode=v3 \
+-index=Index.xlsx \
+-go_out=golang_gen.go \
+-json_out=json_gen.json \
+-package=example

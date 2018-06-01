@@ -9,12 +9,12 @@ import (
 func TestDuplicateTypeFieldName(t *testing.T) {
 
 	emu := NewTableEmulator(t)
-	indexSheet := emu.Create("Index.xlsx")
+	indexSheet := emu.CreateDefault("Index.xlsx")
 
 	helper.WriteIndexTableHeader(indexSheet)
 	helper.WriteRowValues(indexSheet, "类型表", "", "Type.xlsx")
 
-	typeSheet := emu.Create("Type.xlsx")
+	typeSheet := emu.CreateDefault("Type.xlsx")
 	helper.WriteTypeTableHeader(typeSheet)
 	helper.WriteRowValues(typeSheet, "表头", "SumeHead", "某种类型", "None", "int", "", "")
 	helper.WriteRowValues(typeSheet, "表头", "SumeHead", "某种类型", "None", "int", "", "")
@@ -26,17 +26,17 @@ func TestDuplicateTypeFieldName(t *testing.T) {
 func TestDuplicateTypeFieldNameInMultiTypesTable(t *testing.T) {
 
 	emu := NewTableEmulator(t)
-	indexSheet := emu.Create("Index.xlsx")
+	indexSheet := emu.CreateDefault("Index.xlsx")
 
 	helper.WriteIndexTableHeader(indexSheet)
 	helper.WriteRowValues(indexSheet, "类型表", "", "Type1.xlsx")
 	helper.WriteRowValues(indexSheet, "类型表", "", "Type2.xlsx")
 
-	typeSheet1 := emu.Create("Type1.xlsx")
+	typeSheet1 := emu.CreateDefault("Type1.xlsx")
 	helper.WriteTypeTableHeader(typeSheet1)
 	helper.WriteRowValues(typeSheet1, "表头", "SumeHead", "某种类型", "None", "int", "", "")
 
-	typeSheet2 := emu.Create("Type2.xlsx")
+	typeSheet2 := emu.CreateDefault("Type2.xlsx")
 	helper.WriteTypeTableHeader(typeSheet2)
 	helper.WriteRowValues(typeSheet2, "表头", "SumeHead", "某种类型", "None", "int", "", "")
 
@@ -47,12 +47,12 @@ func TestDuplicateTypeFieldNameInMultiTypesTable(t *testing.T) {
 func TestEnumValueEmpty(t *testing.T) {
 
 	emu := NewTableEmulator(t)
-	indexSheet := emu.Create("Index.xlsx")
+	indexSheet := emu.CreateDefault("Index.xlsx")
 
 	helper.WriteIndexTableHeader(indexSheet)
 	helper.WriteRowValues(indexSheet, "类型表", "", "Type.xlsx")
 
-	typeSheet := emu.Create("Type.xlsx")
+	typeSheet := emu.CreateDefault("Type.xlsx")
 	helper.WriteTypeTableHeader(typeSheet)
 	helper.WriteRowValues(typeSheet, "枚举", "ActorType", "", "None", "int", "", "")
 
@@ -63,12 +63,12 @@ func TestEnumValueEmpty(t *testing.T) {
 func TestDuplicateEnumValue(t *testing.T) {
 
 	emu := NewTableEmulator(t)
-	indexSheet := emu.Create("Index.xlsx")
+	indexSheet := emu.CreateDefault("Index.xlsx")
 
 	helper.WriteIndexTableHeader(indexSheet)
 	helper.WriteRowValues(indexSheet, "类型表", "", "Type.xlsx")
 
-	typeSheet := emu.Create("Type.xlsx")
+	typeSheet := emu.CreateDefault("Type.xlsx")
 	helper.WriteTypeTableHeader(typeSheet)
 	helper.WriteRowValues(typeSheet, "枚举", "ActorType", "", "None", "int", "", "1")
 	helper.WriteRowValues(typeSheet, "枚举", "ActorType", "", "Arch", "int", "", "1")
@@ -79,12 +79,12 @@ func TestDuplicateEnumValue(t *testing.T) {
 //func TestTypeDefineOrder(t *testing.T) {
 //
 //	mf := NewMemFile()
-//	indexSheet := emu.Create("Index.xlsx")
+//	indexSheet := emu.CreateDefault("Index.xlsx")
 //
 //	helper.WriteIndexTableHeader(indexSheet)
 //	helper.WriteRowValues(indexSheet, "类型表", "", "Type.xlsx")
 //
-//	typeSheet := emu.Create("Type.xlsx")
+//	typeSheet := emu.CreateDefault("Type.xlsx")
 //	helper.WriteTypeTableHeader(typeSheet)
 //	helper.WriteRowValues(typeSheet, "表头", "TestData", "角色类型", "Type", "ActorType", "", "")
 //	helper.WriteRowValues(typeSheet, "枚举", "ActorType", "", "None", "int", "", "0")
@@ -100,13 +100,13 @@ func TestDuplicateEnumValue(t *testing.T) {
 func TestComplete(t *testing.T) {
 
 	emu := NewTableEmulator(t)
-	indexSheet := emu.Create("Index.xlsx")
+	indexSheet := emu.CreateDefault("Index.xlsx")
 
 	helper.WriteIndexTableHeader(indexSheet)
 	helper.WriteRowValues(indexSheet, "类型表", "", "Type.xlsx")
 	helper.WriteRowValues(indexSheet, "数据表", "", "TestData.xlsx")
 
-	typeSheet := emu.Create("Type.xlsx")
+	typeSheet := emu.CreateDefault("Type.xlsx")
 	helper.WriteTypeTableHeader(typeSheet)
 	helper.WriteRowValues(typeSheet, "表头", "TestData", "整形", "Int", "int", "", "")
 	helper.WriteRowValues(typeSheet, "表头", "TestData", "字符串", "String", "string", "", "")
@@ -114,7 +114,7 @@ func TestComplete(t *testing.T) {
 	helper.WriteRowValues(typeSheet, "表头", "TestData", "浮点", "Float", "float", "", "")
 	helper.WriteRowValues(typeSheet, "表头", "TestData", "整形数组", "IntList", "int", "|", "")
 
-	dataSheet := emu.Create("TestData.xlsx")
+	dataSheet := emu.CreateDefault("TestData.xlsx")
 	helper.WriteRowValues(dataSheet, "整形", "字符串", "布尔", "浮点", "整形数组")
 	helper.WriteRowValues(dataSheet, "100", "\"hello\"", "true", "3.14159", "1|2|3")
 

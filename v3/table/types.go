@@ -8,6 +8,18 @@ const (
 	TableKind_Enum         = 2 // 枚举
 )
 
+func (self TableKind) String() string {
+
+	switch self {
+	case TableKind_HeaderStruct:
+		return "表头"
+	case TableKind_Enum:
+		return "枚举"
+	default:
+		return "未知"
+	}
+}
+
 type TableField struct {
 	Kind          TableKind `tb_name:"种类"`
 	ObjectType    string    `tb_name:"对象类型"`

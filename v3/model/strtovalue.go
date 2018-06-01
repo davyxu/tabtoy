@@ -49,12 +49,16 @@ func StringToValue(str string, value interface{}, tf *table.TableField, symbols 
 
 	if symbols.IsEnumKind(tf.FieldType) {
 
-		enumValue, err := strconv.Atoi(symbols.ResolveEnumValue(tf.FieldType, str))
-		if err != nil {
-			return err
+		enumValueStr := symbols.ResolveEnumValue(tf.FieldType, str)
+
+		if enumValueStr != "" {
+			enumValue, err := strconv.Atoi(enumValueStr)
+			if err != nil {
+				return err
+			}
+			vValue := reflect.Indirect(reflect.ValueOf(value))
+			vValue.SetInt(int64(enumValue))
 		}
-		vValue := reflect.Indirect(reflect.ValueOf(value))
-		vValue.SetInt(int64(enumValue))
 
 		return nil
 	}

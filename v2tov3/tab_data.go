@@ -7,7 +7,7 @@ import (
 	"github.com/tealeg/xlsx"
 )
 
-func procDatas(globals *model.Globals, sourceSheet, targetSheet *xlsx.Sheet, headerList []model.ObjectFieldType) error {
+func importDatas(globals *model.Globals, sourceSheet, targetSheet *xlsx.Sheet, headerList []model.ObjectFieldType) error {
 
 	var row, col int
 
@@ -25,7 +25,7 @@ func procDatas(globals *model.Globals, sourceSheet, targetSheet *xlsx.Sheet, hea
 
 			targetCell := rowData.AddCell()
 
-			if header.IsArray {
+			if header.IsArray() {
 				targetCell.SetValue(sourceCell.Value)
 				continue
 			}

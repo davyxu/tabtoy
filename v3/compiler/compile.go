@@ -1,7 +1,6 @@
 package compiler
 
 import (
-	"fmt"
 	"github.com/davyxu/tabtoy/v3/model"
 	"github.com/davyxu/tabtoy/v3/report"
 	"github.com/davyxu/tabtoy/v3/table"
@@ -13,7 +12,6 @@ func Compile(globals *model.Globals) (ret error) {
 
 		switch err := recover().(type) {
 		case *report.TableError:
-			fmt.Printf("%s\n", err.Error())
 			ret = err
 		case nil:
 		default:
@@ -35,12 +33,8 @@ func Compile(globals *model.Globals) (ret error) {
 	// 遍历索引里的每一行配置
 	for _, pragma := range globals.IndexList {
 
-		// 自动填充表项
-		fillTableType(pragma)
-
 		switch pragma.TableMode {
 		case table.TableMode_Data:
-
 			tablist, err := LoadDataTable(globals.TableGetter, pragma.TableFileName, pragma.TableType)
 
 			if err != nil {
@@ -63,7 +57,6 @@ func Compile(globals *model.Globals) (ret error) {
 				return err
 			}
 		case table.TableMode_KeyValue:
-
 			tablist, err := LoadDataTable(globals.TableGetter, pragma.TableFileName, pragma.TableType)
 
 			if err != nil {
@@ -77,6 +70,7 @@ func Compile(globals *model.Globals) (ret error) {
 
 				kvList.AddDataTable(tab)
 			}
+
 		}
 	}
 

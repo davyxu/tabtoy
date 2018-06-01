@@ -6,7 +6,6 @@ import (
 	"github.com/davyxu/tabtoy/v2tov3/model"
 	"github.com/davyxu/tabtoy/v3/helper"
 	"os"
-	"path/filepath"
 )
 
 var (
@@ -15,31 +14,17 @@ var (
 
 func V2ToV3Entry() {
 
-	globals := &model.Globals{
-		TargetDatas: helper.NewMemFile(),
-	}
+	globals := model.NewGlobals()
 
 	globals.TableGetter = new(helper.SyncFileLoader)
 
 	globals.SourceFileList = flag.Args()
+	globals.OutputDir = *paramUpgradeOut
 
 	if err := v2tov3.Upgrade(globals); err != nil {
 		log.Errorln(err)
 		os.Exit(1)
 		return
-	}
-
-	if *paramUpgradeOut != "" {
-
-		for fileName, file := range globals.TargetDatas {
-
-			fullFileName := filepath.Join(*paramUpgradeOut, "Upgraded_"+fileName)
-
-			log.Infoln(fullFileName)
-
-			file.Save(fullFileName)
-		}
-
 	}
 
 }
