@@ -9,10 +9,23 @@ type Cell struct {
 	Value string
 	Row   int // base 0
 	Col   int // base 0
-	File  string
-	Sheet string
+	Table *DataTable
+}
+
+func (self *Cell) CopyFrom(c *Cell) {
+	self.Value = c.Value
+	self.Row = c.Row
+	self.Col = c.Col
+	self.Table = c.Table
 }
 
 func (self *Cell) String() string {
-	return fmt.Sprintf("'%s' @%s|%s(%s)", self.Value, self.File, self.Sheet, util.R1C1ToA1(self.Row+1, self.Col+1))
+
+	var file, sheet string
+	if self.Table != nil {
+		file = self.Table.FileName
+		sheet = self.Table.SheetName
+	}
+
+	return fmt.Sprintf("'%s' @%s|%s(%s)", self.Value, file, sheet, util.R1C1ToA1(self.Row+1, self.Col+1))
 }

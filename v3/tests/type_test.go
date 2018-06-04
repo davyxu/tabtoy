@@ -97,7 +97,7 @@ func TestDuplicateEnumValue(t *testing.T) {
 //	}
 //}
 
-func TestComplete(t *testing.T) {
+func TestBasicType(t *testing.T) {
 
 	emu := NewTableEmulator(t)
 	indexSheet := emu.CreateDefault("Index.xlsx")

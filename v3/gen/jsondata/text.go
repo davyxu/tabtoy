@@ -4,7 +4,7 @@ package jsondata
 const templateText = `{
 	"@Tool": "github.com/davyxu/tabtoy",
 	"@Version": "{{.Version}}",	{{range $di, $tab := .Datas.AllTables}}
-	"{{$tab.HeaderType}}":[ {{range $row,$rowData := $tab.Rows}}
-		{ {{range $col, $headType := $tab.HeaderFields}}"{{$headType.FieldName}}": {{WrapTabValue $ $tab $row $col}}{{GenJsonTailComma $col $tab.HeaderFields}} {{end}}}{{GenJsonTailComma $row $tab.Rows}}{{end}} 
+	"{{$tab.HeaderType}}":[ {{range $unusedrow,$row := $tab.DataIndexs}}
+		{ {{range $col, $header := $tab.Headers}}"{{$header.TypeInfo.FieldName}}": {{WrapTabValue $ $tab $row $col}}{{GenJsonTailComma $col $tab.Headers}} {{end}}}{{GenJsonTailComma $row $tab.Rows}}{{end}} 
 	]{{GenJsonTailComma $di $.Datas.AllTables}}{{end}}
 }`

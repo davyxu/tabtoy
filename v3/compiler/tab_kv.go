@@ -14,17 +14,23 @@ func transposeKVtoData(symbols *model.TypeTable, kvtab *model.DataTable) (ret *m
 	ret.FileName = kvtab.FileName
 	ret.SheetName = kvtab.SheetName
 
-	var oneRow model.DataRow
-	for row := range kvtab.Rows {
+	// 添加表头
+	ret.AddRow()
 
-		fieldName, _ := kvtab.GetValueByName(row, "字段名")
-		fieldType, _ := kvtab.GetValueByName(row, "字段类型")
-		name, _ := kvtab.GetValueByName(row, "标识名")
-		arraySplitter, _ := kvtab.GetValueByName(row, "数组切割")
+	// 添加数据行
+	ret.AddRow()
+
+	// 遍历KV表的每一行
+	for row := 1; row < len(kvtab.Rows); row++ {
+
+		fieldName := kvtab.GetValueByName(row, "字段名")
+		fieldType := kvtab.GetValueByName(row, "字段类型")
+		name := kvtab.GetValueByName(row, "标识名")
+
+		arraySplitter := kvtab.GetValueByName(row, "数组切割")
 
 		var tf table.TableField
 		tf.Kind = table.TableKind_HeaderStruct
-		//tf.Kind = "表头"
 		tf.ObjectType = kvtab.HeaderType
 
 		tf.Name = name.Value
@@ -33,21 +39,26 @@ func transposeKVtoData(symbols *model.TypeTable, kvtab *model.DataTable) (ret *m
 		tf.FieldType = fieldType.Value
 		tf.ArraySplitter = arraySplitter.Value
 
-		value, _ := kvtab.GetValueByName(row, "值")
-
-		oneRow = append(oneRow, value)
-
 		if symbols.FieldByName(tf.ObjectType, tf.FieldName) != nil {
 			report.ReportError("DuplicateKVField", fieldName.String())
 		}
 
 		symbols.AddField(&tf, kvtab, row)
 
-		ret.AddHeaderField(&tf)
-	}
+		// 输出表的表头原始数据
+		headerCell := ret.AddCell(0)
+		headerCell.Value = fieldName.Value
 
-	// KV只有一行，列是原表的行
-	ret.AddRow(oneRow)
+		header := ret.MustGetHeader(headerCell.Col)
+		header.Cell.Value = fieldName.Value
+		header.TypeInfo = &tf
+
+		inputValueCell := kvtab.GetValueByName(row, "值")
+
+		outputValueCell := ret.AddCell(1)
+		outputValueCell.CopyFrom(inputValueCell)
+
+	}
 
 	return
 }

@@ -20,15 +20,19 @@ func Compile(globals *model.Globals) (ret error) {
 
 	}()
 
+	//report.Log.Debugln("\n加载内建类型表:")
 	err := LoadTypeTable(globals.Types, table.BuiltinTypes, "BuiltinTypes.xlsx", true)
 
 	if err != nil {
 		return err
 	}
 
+	//report.Log.Debugln("\n加载索引表:")
 	LoadIndexTable(globals, globals.IndexFile)
 
 	var kvList, dataList model.DataTableList
+
+	report.Log.Debugln("\n加载表:")
 
 	// 遍历索引里的每一行配置
 	for _, pragma := range globals.IndexList {
@@ -46,6 +50,7 @@ func Compile(globals *model.Globals) (ret error) {
 
 				CheckHeaderTypes(tab, globals.Types)
 
+				report.Log.Debugln(tab.String())
 				dataList.AddDataTable(tab)
 			}
 
@@ -64,10 +69,12 @@ func Compile(globals *model.Globals) (ret error) {
 			}
 
 			for _, tab := range tablist {
+
 				ResolveHeaderFields(tab, "TableKeyValue", globals.Types)
 
 				CheckHeaderTypes(tab, globals.Types)
 
+				report.Log.Debugln(tab.String())
 				kvList.AddDataTable(tab)
 			}
 
@@ -76,18 +83,27 @@ func Compile(globals *model.Globals) (ret error) {
 
 	CheckTypeTable(globals.Types)
 
+	report.Log.Debugln("\n合并KV数据表:")
+
 	// 合并所有的KV表行
 	var mergedKV model.DataTableList
 	mergeData(&kvList, &mergedKV, globals.Types)
 
 	// 完整KV表转置为普通数据表
-	for _, kvtab := range mergedKV.AllTables() {
-		ResolveHeaderFields(kvtab, kvtab.HeaderType, globals.Types)
-		dataList.AddDataTable(transposeKVtoData(globals.Types, kvtab))
+	for _, tab := range mergedKV.AllTables() {
+
+		dataList.AddDataTable(transposeKVtoData(globals.Types, tab))
 	}
+
+	report.Log.Debugln("\n合并所有数据表:")
 
 	// 合并所有的数据表
 	mergeData(&dataList, &globals.Datas, globals.Types)
+
+	report.Log.Debugln("\n完成:")
+	for _, tab := range globals.Datas.AllTables() {
+		report.Log.Debugln(tab.String())
+	}
 
 	return nil
 }

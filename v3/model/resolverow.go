@@ -26,19 +26,24 @@ func ParseRow(ret interface{}, tab *DataTable, row int, symbols *TypeTable) {
 
 	tobj := reflect.TypeOf(ret).Elem()
 
-	for _, header := range tab.RawHeader {
+	for _, header := range tab.Headers {
 
-		cell, tf := tab.GetValueByName(row, header.Value)
+		valueCell := tab.GetValueByName(row, header.Cell.Value)
 
-		index := matchField(tobj, header.Value)
+		if valueCell == nil {
+			report.Log.Errorln("空")
+			continue
+		}
+
+		index := matchField(tobj, header.Cell.Value)
 
 		if index == -1 {
-			report.ReportError("HeaderNotMatchFieldName", header.String())
+			report.ReportError("HeaderNotMatchFieldName", header.Cell.String())
 		}
 
 		fieldValue := vobj.Field(index)
 
-		if err := StringToValue(cell.Value, fieldValue.Addr().Interface(), tf, symbols); err != nil {
+		if err := StringToValue(valueCell.Value, fieldValue.Addr().Interface(), header.TypeInfo, symbols); err != nil {
 			panic(err)
 		}
 	}

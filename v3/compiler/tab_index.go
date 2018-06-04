@@ -10,7 +10,7 @@ import (
 
 func loadIndexData(tab *model.DataTable, symbols *model.TypeTable) (pragmaList []*table.TablePragma) {
 
-	for row := 0; row < len(tab.Rows); row++ {
+	for row := 1; row < len(tab.Rows); row++ {
 
 		var pragma table.TablePragma
 		model.ParseRow(&pragma, tab, row, symbols)

@@ -7,25 +7,20 @@ import (
 	"strings"
 )
 
-func readOneRow(sheet *xlsx.Sheet, tab *model.DataTable, row int, eachRow *model.DataRow) bool {
+func readOneRow(sheet *xlsx.Sheet, tab *model.DataTable, row int) bool {
 
-	for _, headerCell := range tab.RawHeader {
+	for _, header := range tab.Headers {
 
 		// 取列头所在列和当前行交叉的单元格
-		value := helper.GetSheetValueString(sheet, row, headerCell.Col)
+		value := helper.GetSheetValueString(sheet, row, header.Cell.Col)
 
 		// 首列带#时，本行忽略
-		if headerCell.Col == 0 && strings.HasPrefix(value, "#") {
+		if header.Cell.Col == 0 && strings.HasPrefix(value, "#") {
 			return false
 		}
 
-		*eachRow = append(*eachRow, model.Cell{
-			Value: value,
-			Row:   row,
-			Col:   headerCell.Col,
-			File:  tab.FileName,
-			Sheet: tab.SheetName,
-		})
+		cell := tab.MustGetCell(row, header.Cell.Col)
+		cell.Value = value
 	}
 
 	return true
@@ -48,18 +43,15 @@ func LoadDataTable(filegetter helper.FileGetter, fileName, headerType string) (r
 
 		loadheader(sheet, tab)
 
-		// 遍历所有行
-		for row := 1; ; row++ {
+		// 遍历所有数据行
+		for row := 0; ; row++ {
 
 			if helper.IsFullRowEmpty(sheet, row) {
 				break
 			}
 
 			// 读取每一行
-			var eachRow model.DataRow
-			if readOneRow(sheet, tab, row, &eachRow) {
-				tab.AddRow(eachRow)
-			}
+			readOneRow(sheet, tab, row)
 		}
 
 	}

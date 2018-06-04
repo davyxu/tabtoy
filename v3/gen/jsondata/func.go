@@ -66,13 +66,15 @@ func WrapValue(globals *model.Globals, value string, valueType *table.TableField
 func init() {
 	UsefulFunc["WrapTabValue"] = func(globals *model.Globals, dataTable *model.DataTable, row, col int) (ret string) {
 
-		// 单元格的值
-		value := dataTable.GetValue(row, col)
+		valueCell := dataTable.GetCell(row, col)
 
-		// 表头的类型
-		valueType := dataTable.GetType(col)
+		header := dataTable.HeaderByColumn(col)
 
-		return WrapValue(globals, value, valueType)
+		if header == nil || valueCell == nil || header.TypeInfo == nil {
+			return ""
+		}
+
+		return WrapValue(globals, valueCell.Value, header.TypeInfo)
 	}
 
 }

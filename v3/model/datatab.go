@@ -1,15 +1,11 @@
 package model
 
 import (
-	"github.com/davyxu/tabtoy/v3/table"
+	"fmt"
+	"strings"
 )
 
-type DataRow []Cell
-
-func (self DataRow) IsEmpty() bool {
-	return len(self) == 0
-}
-
+// 表格的完整数据，表头有屏蔽时，对应行值为空
 type DataTable struct {
 	HeaderType string // 表名，Index表里定义的类型
 
@@ -19,60 +15,146 @@ type DataTable struct {
 
 	SheetName string
 
-	Rows []DataRow
+	Rows []*DataRow // 0下标为表头数据
 
-	RawHeader    DataRow
-	HeaderFields []*table.TableField // 列索引
+	Headers []*HeaderField
 }
 
-// 代码生成专用
-func (self *DataTable) GetValue(row, col int) string {
+// 模板用，排除表头的数据索引
+func (self *DataTable) DataIndexs() (ret []int) {
 
-	return self.Rows[row][col].Value
-}
-
-// 代码生成专用
-func (self *DataTable) GetType(col int) *table.TableField {
-	return self.HeaderFields[col]
-}
-
-func (self *DataTable) GetTypeByName(name string) (*table.TableField, int) {
-
-	if name == "" {
-		return nil, -1
+	ret = make([]int, len(self.Rows)-1)
+	for i := 0; i < len(self.Rows)-1; i++ {
+		ret[i] = i + 1
 	}
 
-	for col, f := range self.HeaderFields {
-		if f.Name == name || f.FieldName == name {
-			return f, col
+	return
+}
+
+func (self *DataTable) String() string {
+
+	var sb strings.Builder
+	sb.WriteString("====DataTable====\n")
+	sb.WriteString(fmt.Sprintf("HeaderType: %s\n", self.HeaderType))
+	sb.WriteString(fmt.Sprintf("OriginalHeaderType: %s\n", self.OriginalHeaderType))
+	sb.WriteString(fmt.Sprintf("FileName: %s\n", self.FileName))
+	sb.WriteString(fmt.Sprintf("SheetName: %s\n", self.SheetName))
+
+	// 遍历所有行
+	for row, rowData := range self.Rows {
+
+		sb.WriteString(fmt.Sprintf("%d ", row))
+
+		// 遍历一行中的所有列值
+		for index, cell := range rowData.Cells() {
+
+			if index > 0 {
+				sb.WriteString("/")
+			}
+
+			sb.WriteString(cell.Value)
+
+		}
+
+		sb.WriteString("\n")
+	}
+
+	return sb.String()
+}
+
+func (self *DataTable) MustGetHeader(col int) (header *HeaderField) {
+
+	for len(self.Headers) <= col {
+		self.Headers = append(self.Headers, &HeaderField{
+			Cell: &Cell{
+				Col: len(self.Headers),
+			},
+		})
+	}
+
+	return self.HeaderByColumn(col)
+}
+
+func (self *DataTable) HeaderByColumn(col int) *HeaderField {
+
+	return self.Headers[col]
+}
+
+func (self *DataTable) HeaderByName(name string) *HeaderField {
+	for _, header := range self.Headers {
+
+		if header.TypeInfo == nil {
+			continue
+		}
+
+		if header.TypeInfo.Name == name || header.TypeInfo.FieldName == name {
+			return header
 		}
 	}
 
-	return nil, -1
+	return nil
+}
+
+func (self *DataTable) AddRow() (row int) {
+
+	row = len(self.Rows)
+
+	self.Rows = append(self.Rows, newDataRow(row, self))
+
+	return
+}
+
+func (self *DataTable) AddCell(row int) *Cell {
+
+	if row >= len(self.Rows) {
+		return nil
+	}
+
+	rowData := self.Rows[row]
+
+	return rowData.AddCell()
+}
+
+func (self *DataTable) MustGetCell(row, col int) *Cell {
+
+	for len(self.Rows) <= row {
+		self.AddRow()
+	}
+
+	rowData := self.Rows[row]
+	for len(rowData.cells) <= col {
+		rowData.AddCell()
+	}
+
+	return rowData.Cell(col)
+}
+
+// 代码生成专用
+func (self *DataTable) GetCell(row, col int) *Cell {
+
+	if row >= len(self.Rows) {
+		return nil
+	}
+
+	rowData := self.Rows[row]
+
+	if col >= len(rowData.cells) {
+		return nil
+	}
+
+	return rowData.Cell(col)
 }
 
 // 根据列头找到该行对应的值
-func (self *DataTable) GetValueByName(row int, name string) (Cell, *table.TableField) {
+func (self *DataTable) GetValueByName(row int, name string) *Cell {
 
-	hf, col := self.GetTypeByName(name)
+	header := self.HeaderByName(name)
 
-	if hf == nil {
-		return Cell{}, nil
+	if header == nil {
+		return nil
 	}
 
-	return self.Rows[row][col], hf
-
-}
-
-// 添加表头类型
-func (self *DataTable) AddHeaderField(types *table.TableField) {
-	self.HeaderFields = append(self.HeaderFields, types)
-}
-
-// 添加行数据
-func (self *DataTable) AddRow(row DataRow) {
-
-	self.Rows = append(self.Rows, row)
+	return self.GetCell(row, header.Cell.Col)
 }
 
 func NewDataTable() *DataTable {
