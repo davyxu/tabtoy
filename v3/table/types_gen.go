@@ -58,6 +58,7 @@ type ErrorID struct {
 	DuplicateTypeFieldName  string
 	EnumValueEmpty          string
 	DuplicateEnumValue      string
+	InvalidTypeTable        string
 }
 
 // Combine struct

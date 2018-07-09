@@ -41,7 +41,12 @@ func LoadTypeTable(typeTab *model.TypeTable, indexGetter helper.FileGetter, file
 
 				cell := tab.GetValueByName(row, "字段名")
 
-				report.ReportError("DuplicateTypeFieldName", cell.String())
+				if cell != nil {
+					report.ReportError("DuplicateTypeFieldName", cell.String())
+				} else {
+					report.ReportError("InvalidTypeTable", objtype.ObjectType, objtype.FieldName)
+				}
+
 			}
 
 			typeTab.AddField(&objtype, tab, row)

@@ -31,7 +31,6 @@ func ParseRow(ret interface{}, tab *DataTable, row int, symbols *TypeTable) {
 		valueCell := tab.GetValueByName(row, header.Cell.Value)
 
 		if valueCell == nil {
-			report.Log.Errorln("空")
 			continue
 		}
 

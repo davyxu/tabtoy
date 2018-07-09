@@ -50,7 +50,6 @@ func Compile(globals *model.Globals) (ret error) {
 
 				CheckHeaderTypes(tab, globals.Types)
 
-				report.Log.Debugln(tab.String())
 				dataList.AddDataTable(tab)
 			}
 
@@ -73,8 +72,6 @@ func Compile(globals *model.Globals) (ret error) {
 				ResolveHeaderFields(tab, "TableKeyValue", globals.Types)
 
 				CheckHeaderTypes(tab, globals.Types)
-
-				report.Log.Debugln(tab.String())
 				kvList.AddDataTable(tab)
 			}
 
@@ -101,9 +98,9 @@ func Compile(globals *model.Globals) (ret error) {
 	mergeData(&dataList, &globals.Datas, globals.Types)
 
 	report.Log.Debugln("\n完成:")
-	for _, tab := range globals.Datas.AllTables() {
-		report.Log.Debugln(tab.String())
-	}
+	//for _, tab := range globals.Datas.AllTables() {
+	//	report.Log.Debugln(tab.String())
+	//}
 
 	return nil
 }

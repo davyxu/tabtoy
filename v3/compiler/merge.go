@@ -2,7 +2,6 @@ package compiler
 
 import (
 	"github.com/davyxu/tabtoy/v3/model"
-	"github.com/davyxu/tabtoy/v3/report"
 	"strings"
 )
 
@@ -10,8 +9,6 @@ import (
 func mergeData(inputList, outputList *model.DataTableList, symbols *model.TypeTable) {
 
 	for _, inputTab := range inputList.AllTables() {
-
-		report.Log.Debugln(inputTab.String())
 
 		var outputTab *model.DataTable
 
