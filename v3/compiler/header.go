@@ -66,10 +66,7 @@ func ResolveHeaderFields(tab *model.DataTable, tableObjectType string, symbols *
 
 		tf := symbols.FieldByName(tableObjectType, header.Cell.Value)
 		if tf == nil {
-			//symbols.Print()
-
 			report.ReportError("HeaderFieldNotDefined", header.Cell.String())
-
 		}
 
 		// 解析好的类型

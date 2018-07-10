@@ -21,10 +21,18 @@ type DataTable struct {
 }
 
 // 模板用，排除表头的数据索引
-func (self *DataTable) DataIndexs() (ret []int) {
+func (self *DataTable) DataRowIndex() (ret []int) {
 
-	ret = make([]int, len(self.Rows)-1)
-	for i := 0; i < len(self.Rows)-1; i++ {
+	numRows := len(self.Rows)
+
+	if numRows == 0 {
+		return
+	}
+
+	ret = make([]int, numRows-1)
+
+	// 排除表头数据
+	for i := 0; i < numRows-1; i++ {
 		ret[i] = i + 1
 	}
 
@@ -76,6 +84,10 @@ func (self *DataTable) MustGetHeader(col int) (header *HeaderField) {
 }
 
 func (self *DataTable) HeaderByColumn(col int) *HeaderField {
+
+	if col >= len(self.Headers) {
+		return nil
+	}
 
 	return self.Headers[col]
 }

@@ -17,16 +17,16 @@ type TypeTable struct {
 	fields []*TypeData
 }
 
-func (self *TypeTable) ToJSON() []byte {
+func (self *TypeTable) ToJSON(all bool) []byte {
 
-	data, _ := json.MarshalIndent(self.AllFields(true), "", "\t")
+	data, _ := json.MarshalIndent(self.AllFields(all), "", "\t")
 
 	return data
 }
 
-func (self *TypeTable) Print() {
+func (self *TypeTable) Print(all bool) {
 
-	fmt.Println(string(self.ToJSON()))
+	fmt.Println(string(self.ToJSON(all)))
 }
 
 // refData，类型表对应源表的位置信息

@@ -34,8 +34,8 @@ func TestDisableDataRow(t *testing.T) {
 	"@Tool": "github.com/davyxu/tabtoy",
 	"@Version": "testver",	
 	"TestData":[ 
-		{ "Int": 100, "String": "\"hello1\"", "Bool": true, "Float": 0 },
-		{ "Int": 200, "String": "\"hello2\"", "Bool": false, "Float": 0 },
+		{ "Int": 100, "String": "\"hello1\"", "Bool": false, "Float": 0 },
+		{ "Int": 200, "String": "\"hello2\"", "Bool": true, "Float": 0 },
 		{ "Int": 400, "String": "\"hello4\"", "Bool": false, "Float": 0 } 
 	]
 }

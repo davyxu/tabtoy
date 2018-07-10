@@ -33,7 +33,9 @@ func LoadTypeTable(typeTab *model.TypeTable, indexGetter helper.FileGetter, file
 
 			var objtype table.TableField
 
-			model.ParseRow(&objtype, tab, row, &coreSymbols)
+			if !model.ParseRow(&objtype, tab, row, &coreSymbols) {
+				continue
+			}
 
 			objtype.IsBuiltin = builtin
 
@@ -44,7 +46,7 @@ func LoadTypeTable(typeTab *model.TypeTable, indexGetter helper.FileGetter, file
 				if cell != nil {
 					report.ReportError("DuplicateTypeFieldName", cell.String())
 				} else {
-					report.ReportError("InvalidTypeTable", objtype.ObjectType, objtype.FieldName)
+					report.ReportError("InvalidTypeTable", objtype.ObjectType, objtype.FieldName, tab.FileName)
 				}
 
 			}

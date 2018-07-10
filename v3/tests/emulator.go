@@ -11,6 +11,7 @@ import (
 	"io/ioutil"
 	"path/filepath"
 	"reflect"
+	"runtime"
 	"testing"
 )
 
@@ -53,6 +54,8 @@ func (self *TableEmulator) MustGotError(expectError string) {
 
 func (self *TableEmulator) VerifyType(expectJson string) {
 
+	runtime.GOMAXPROCS(1)
+
 	var err error
 
 	defer func() {
@@ -69,17 +72,16 @@ func (self *TableEmulator) VerifyType(expectJson string) {
 		return
 	}
 
-	appJson := self.G.Types.ToJSON()
-
-	println(string(appJson))
+	appJson := self.G.Types.ToJSON(false)
 
 	if expectJson == "" {
 		return
 	}
 
 	var result bool
-	result, err = compareJson(appJson, []byte(expectJson))
+	result, err = compareArrayJson(appJson, []byte(expectJson))
 	if err != nil {
+		self.T.Logf("InvalidJson '%s'", string(appJson))
 		return
 	}
 
@@ -90,6 +92,8 @@ func (self *TableEmulator) VerifyType(expectJson string) {
 }
 
 func (self *TableEmulator) VerifyData(expectJson string) {
+
+	runtime.GOMAXPROCS(1)
 
 	var err error
 
@@ -115,13 +119,14 @@ func (self *TableEmulator) VerifyData(expectJson string) {
 	}
 
 	var result bool
-	result, err = compareJson(appJson, []byte(expectJson))
+	result, err = compareKVJson(appJson, []byte(expectJson))
 	if err != nil {
+		self.T.Logf("InvalidJson '%s'", string(appJson))
 		return
 	}
 
 	if !result {
-		self.T.Logf("Expect '%s' got '%s'", appJson, expectJson)
+		self.T.Logf("Expect '%s' got '%s'", expectJson, appJson)
 		self.T.FailNow()
 	}
 }
@@ -170,7 +175,7 @@ func (self *TableEmulator) VerifyGoTypeAndJson(expectJson string) {
 	}
 
 	var result bool
-	result, err = compareJson(appJson, []byte(expectJson))
+	result, err = compareKVJson(appJson, []byte(expectJson))
 	if err != nil {
 		return
 	}
@@ -192,9 +197,30 @@ func genFile(globals *model.Globals, filename string, genFunc gen.GenFunc) error
 	return helper.WriteFile(filename, data)
 }
 
-func compareJson(a, b []byte) (bool, error) {
+func compareKVJson(a, b []byte) (bool, error) {
 
 	var mapA, mapB map[string]interface{}
+
+	err := json.Unmarshal(a, &mapA)
+	if err != nil {
+		return false, err
+	}
+
+	err = json.Unmarshal(b, &mapB)
+	if err != nil {
+		return false, err
+	}
+
+	if !reflect.DeepEqual(mapA, mapB) {
+		return false, nil
+	}
+
+	return true, nil
+}
+
+func compareArrayJson(a, b []byte) (bool, error) {
+
+	var mapA, mapB []interface{}
 
 	err := json.Unmarshal(a, &mapA)
 	if err != nil {

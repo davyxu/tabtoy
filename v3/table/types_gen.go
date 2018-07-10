@@ -59,6 +59,7 @@ type ErrorID struct {
 	EnumValueEmpty          string
 	DuplicateEnumValue      string
 	InvalidTypeTable        string
+	HeaderTypeNotFound      string
 }
 
 // Combine struct

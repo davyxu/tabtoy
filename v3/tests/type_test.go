@@ -136,3 +136,46 @@ func TestBasicType(t *testing.T) {
 }
 `)
 }
+
+// 禁用索引表和类型表的行
+func TestDisableIndexAndTypeRow(t *testing.T) {
+
+	emu := NewTableEmulator(t)
+
+	emu.CreateDefault("TestData1.xlsx")
+	emu.CreateDefault("TestData3.xlsx")
+
+	indexSheet := emu.CreateDefault("Index.xlsx")
+
+	helper.WriteIndexTableHeader(indexSheet)
+	helper.WriteRowValues(indexSheet, "类型表", "", "Type.xlsx")
+	helper.WriteRowValues(indexSheet, "数据表", "", "TestData1.xlsx")
+	helper.WriteRowValues(indexSheet, "#数据表", "", "TestData2.xlsx")
+	helper.WriteRowValues(indexSheet, "数据表", "", "TestData3.xlsx")
+
+	typeSheet := emu.CreateDefault("Type.xlsx")
+	helper.WriteTypeTableHeader(typeSheet)
+	helper.WriteRowValues(typeSheet, "表头", "TestData1", "整形", "Int", "int", "", "")
+	helper.WriteRowValues(typeSheet, "#表头", "TestData2", "布尔", "Bool", "bool", "", "")
+	helper.WriteRowValues(typeSheet, "表头", "TestData3", "字符串", "String", "string", "", "")
+
+	emu.VerifyType(`
+[
+	{
+		"Kind": 1,
+		"ObjectType": "TestData1",
+		"Name": "整形",
+		"FieldName": "Int",
+		"FieldType": "int"
+	},
+	{
+
+		"Kind": 1,
+		"ObjectType": "TestData3",
+		"Name": "字符串",
+		"FieldName": "String",
+		"FieldType": "string"
+	}
+]
+`)
+}

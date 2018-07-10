@@ -64,17 +64,24 @@ func WrapValue(globals *model.Globals, value string, valueType *table.TableField
 }
 
 func init() {
-	UsefulFunc["WrapTabValue"] = func(globals *model.Globals, dataTable *model.DataTable, row, col int) (ret string) {
+	UsefulFunc["WrapTabValue"] = func(globals *model.Globals, dataTable *model.DataTable, allHeaders []*table.TableField, row, col int) (ret string) {
 
-		valueCell := dataTable.GetCell(row, col)
+		// 找到完整的表头（按完整表头遍历）
+		header := allHeaders[col]
 
-		header := dataTable.HeaderByColumn(col)
-
-		if header == nil || valueCell == nil || header.TypeInfo == nil {
+		if header == nil {
 			return ""
 		}
 
-		return WrapValue(globals, valueCell.Value, header.TypeInfo)
+		// 在单元格找到值
+		valueCell := dataTable.GetCell(row, col)
+
+		if valueCell != nil {
+			return WrapValue(globals, valueCell.Value, header)
+		} else {
+			// 这个表中没有这列数据
+			return WrapValue(globals, "", header)
+		}
 	}
 
 }

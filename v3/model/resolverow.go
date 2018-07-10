@@ -20,11 +20,16 @@ func matchField(objType reflect.Type, header string) int {
 }
 
 // 将一行数据解析为具体的类型
-func ParseRow(ret interface{}, tab *DataTable, row int, symbols *TypeTable) {
+func ParseRow(ret interface{}, tab *DataTable, row int, symbols *TypeTable) bool {
 
 	vobj := reflect.ValueOf(ret).Elem()
 
 	tobj := reflect.TypeOf(ret).Elem()
+
+	// 这一行可能被注释
+	if tab.GetCell(row, 0) == nil {
+		return false
+	}
 
 	for _, header := range tab.Headers {
 
@@ -46,4 +51,6 @@ func ParseRow(ret interface{}, tab *DataTable, row int, symbols *TypeTable) {
 			panic(err)
 		}
 	}
+
+	return true
 }

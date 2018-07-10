@@ -2,6 +2,7 @@ package compiler
 
 import (
 	"github.com/davyxu/tabtoy/v3/model"
+	"github.com/davyxu/tabtoy/v3/report"
 	"strings"
 )
 
@@ -25,7 +26,7 @@ func mergeData(inputList, outputList *model.DataTableList, symbols *model.TypeTa
 			headerFields := symbols.AllFieldByName(inputTab.OriginalHeaderType)
 
 			if headerFields == nil {
-				panic("表头找不到!" + inputTab.OriginalHeaderType)
+				report.ReportError("HeaderTypeNotFound", inputTab.OriginalHeaderType)
 			}
 
 			// 将完整的表头添加到输出表的表头中

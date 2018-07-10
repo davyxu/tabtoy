@@ -1,6 +1,7 @@
 package helper
 
 import (
+	"errors"
 	"github.com/tealeg/xlsx"
 )
 
@@ -51,7 +52,7 @@ func (self *MemFile) GetFile(filename string) (*xlsx.File, error) {
 		return f.File, nil
 	}
 
-	return nil, nil
+	return nil, errors.New("file not found: " + filename)
 }
 
 func NewMemFile() *MemFile {
