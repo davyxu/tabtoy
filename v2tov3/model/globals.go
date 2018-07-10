@@ -23,6 +23,13 @@ type Globals struct {
 	OutputDir string
 }
 
+func (self *Globals) AddTableByFile(tableFileName, tableName string, file *xlsx.File) {
+
+	tableFileName = filepath.Base(tableFileName)
+
+	self.TargetTables.AddFile(tableFileName, file).TableName = tableName
+}
+
 func (self *Globals) AddTable(tableFileName, tableName string) *xlsx.File {
 
 	targetFile := xlsx.NewFile()
@@ -45,7 +52,19 @@ func (self *Globals) SourceTypeExists(objectTypeName, fieldName string) bool {
 	return false
 }
 
+func (self *Globals) ObjectTypeByName(objectTypeName string) *ObjectFieldType {
+	for _, ft := range self.SourceTypes {
+
+		if ft.ObjectType == objectTypeName {
+			return &ft
+		}
+	}
+
+	return nil
+}
+
 func (self *Globals) AddSourceType(oft ObjectFieldType) {
+
 	self.SourceTypes = append(self.SourceTypes, oft)
 }
 

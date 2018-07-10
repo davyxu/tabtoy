@@ -97,6 +97,11 @@ func loadDatas(globals *model.Globals, sourceFile, targetFile *xlsx.File, tabPra
 
 			headerList := importDataHeader(globals, sourceSheet, targetSheet, tabPragma.GetString("TableName"))
 
+			// 空表
+			if len(headerList) == 0 {
+				return nil
+			}
+
 			if err := importDatas(globals, sourceSheet, targetSheet, headerList); err != nil {
 				return err
 			}
@@ -118,9 +123,14 @@ func loadTable(globals *model.Globals, fileName string) error {
 
 	loadTypes(globals, sourceFile, tabPragma)
 
-	targetFile := globals.AddTable(fileName, tabPragma.GetString("TableName"))
+	targetFile := xlsx.NewFile()
 
 	loadDatas(globals, sourceFile, targetFile, tabPragma)
+
+	// 空表不输出
+	if len(targetFile.Sheets) > 0 && len(targetFile.Sheets[0].Rows) > 0 {
+		globals.AddTableByFile(fileName, tabPragma.GetString("TableName"), targetFile)
+	}
 
 	return nil
 }

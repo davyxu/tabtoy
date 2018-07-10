@@ -11,7 +11,7 @@ import (
 
 func importDataHeader(globals *model.Globals, sourceSheet, targetSheet *xlsx.Sheet, tableName string) (headerList []model.ObjectFieldType) {
 
-	headerRow := targetSheet.AddRow()
+	var headerRow *xlsx.Row
 
 	// 遍历所有行
 	for col := 0; ; col++ {
@@ -27,6 +27,10 @@ func importDataHeader(globals *model.Globals, sourceSheet, targetSheet *xlsx.She
 			break
 		}
 
+		if headerRow == nil {
+			headerRow = targetSheet.AddRow()
+		}
+
 		oft.FieldType = helper.GetSheetValueString(sourceSheet, 1, col)
 
 		// 元信息
@@ -40,6 +44,10 @@ func importDataHeader(globals *model.Globals, sourceSheet, targetSheet *xlsx.She
 		if strings.HasPrefix(oft.FieldType, "[]") {
 			oft.FieldType = oft.FieldType[2:]
 			oft.ArraySplitter = oft.Meta.GetString("ListSpliter")
+
+			if oft.ArraySplitter == "" {
+				log.Warnln("array list no ListSpliter:", oft.FieldName, oft.ObjectType)
+			}
 		}
 
 		oft.Name = helper.GetSheetValueString(sourceSheet, 3, col)
@@ -51,6 +59,17 @@ func importDataHeader(globals *model.Globals, sourceSheet, targetSheet *xlsx.She
 			disabledForV3 = "#"
 		}
 
+		// 结构体等类型，标记为nong，输出为#
+		if !model.IsNativeType(oft.FieldType) {
+
+			targetOft := globals.ObjectTypeByName(oft.FieldType)
+			// 类型已经被前置定义，且不是枚举（那就是结构体）时，标记为空，后面不会被使用
+			if targetOft != nil && targetOft.Kind != table.TableKind_Enum {
+				oft.Kind = table.TableKind_None
+			}
+
+		}
+
 		// 新表的表头加列
 		headerRow.AddCell().SetValue(disabledForV3 + oft.Name)
 
@@ -58,6 +77,7 @@ func importDataHeader(globals *model.Globals, sourceSheet, targetSheet *xlsx.She
 		if !globals.SourceTypeExists(oft.ObjectType, oft.FieldName) {
 
 			globals.AddSourceType(oft)
+
 		}
 
 		headerList = append(headerList, oft)

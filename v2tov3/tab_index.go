@@ -27,7 +27,7 @@ func ExportIndexTable(globals *model.Globals) error {
 			mode = "数据表"
 		}
 
-		helper.WriteRowValues(globals.TargetIndexSheet, mode, data.TableName, markFileNameUpgrade(data.FileName)+data.FileName)
+		helper.WriteRowValues(globals.TargetIndexSheet, mode, data.TableName+"Define", markFileNameUpgrade(data.FileName)+data.FileName)
 
 		return true
 	})

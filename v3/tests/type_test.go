@@ -76,6 +76,40 @@ func TestDuplicateEnumValue(t *testing.T) {
 	emu.MustGotError("TableError.DuplicateEnumValue 枚举值重复 | '1' @Type.xlsx|Default(G3)")
 }
 
+// 枚举值
+func TestEnumValue(t *testing.T) {
+
+	emu := NewTableEmulator(t)
+	indexSheet := emu.CreateDefault("Index.xlsx")
+
+	helper.WriteIndexTableHeader(indexSheet)
+	helper.WriteRowValues(indexSheet, "类型表", "", "Type.xlsx")
+	helper.WriteRowValues(indexSheet, "数据表", "", "TestData.xlsx")
+
+	typeSheet := emu.CreateDefault("Type.xlsx")
+	helper.WriteTypeTableHeader(typeSheet)
+	helper.WriteRowValues(typeSheet, "枚举", "ActorType", "", "None", "int", "", "0")
+	helper.WriteRowValues(typeSheet, "枚举", "ActorType", "", "Arch", "int", "", "1")
+
+	helper.WriteRowValues(typeSheet, "表头", "TestData", "角色类型", "Type", "ActorType", "", "")
+
+	dataSheet := emu.CreateDefault("TestData.xlsx")
+	helper.WriteRowValues(dataSheet, "角色类型")
+	helper.WriteRowValues(dataSheet, "None")
+	helper.WriteRowValues(dataSheet, "Arch")
+
+	emu.VerifyData(`
+{
+	"@Tool": "github.com/davyxu/tabtoy",
+	"@Version": "testver",	
+	"TestData":[ 
+		{ "Type": 0 },
+		{ "Type": 1 } 
+	]
+}
+`)
+}
+
 //func TestTypeDefineOrder(t *testing.T) {
 //
 //	mf := NewMemFile()

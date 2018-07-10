@@ -77,6 +77,7 @@ func init() {
 		valueCell := dataTable.GetCell(row, col)
 
 		if valueCell != nil {
+
 			return WrapValue(globals, valueCell.Value, header)
 		} else {
 			// 这个表中没有这列数据

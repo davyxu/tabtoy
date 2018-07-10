@@ -40,7 +40,7 @@ func importTypes(globals *model.Globals, sheet *xlsx.Sheet, tabPragma *golexer.K
 	}
 
 	// 遍历所有行
-	for row := 4; ; row++ {
+	for row := 3; ; row++ {
 
 		var oft model.ObjectFieldType
 

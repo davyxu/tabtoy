@@ -35,6 +35,7 @@ func loadVariantTables(globals *model.Globals, kvList, dataList *model.DataTable
 			if err != nil {
 				return err
 			}
+
 		case table.TableMode_KeyValue:
 			tablist, err := LoadDataTable(globals.TableGetter, pragma.TableFileName, pragma.TableType)
 
