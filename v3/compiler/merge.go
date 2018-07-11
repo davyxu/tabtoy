@@ -96,12 +96,7 @@ func mergeData(inputList, outputList *model.DataTableList, symbols *model.TypeTa
 
 				if inputHeader.TypeInfo.IsArray() {
 
-					outputCell.Value = combineArrayValue(outputCell.Value, inputCell.Value, inputHeader.TypeInfo.ArraySplitter)
-
-					// TODO 数值来源于多个表格，应该都记录
-					outputCell.Table = inputCell.Table
-					outputCell.Row = inputCell.Row
-					outputCell.Col = inputCell.Col
+					combineArrayCell(outputCell, inputCell, inputHeader.TypeInfo.ArraySplitter)
 
 				} else {
 					outputCell.CopyFrom(inputCell)
@@ -112,24 +107,40 @@ func mergeData(inputList, outputList *model.DataTableList, symbols *model.TypeTa
 	}
 }
 
-func combineArrayValue(oldValue, newValue, splitter string) string {
-	var oldvalues, newvalues []string
-
-	if oldValue != "" {
-		oldvalues = strings.Split(oldValue, splitter)
-	}
-
-	if newValue != "" {
-		newvalues = strings.Split(newValue, splitter)
-	}
+func combineArrayCell(ouputCell, inputCell *model.Cell, splitter string) {
 
 	var sb strings.Builder
-	for index, str := range append(oldvalues, newvalues...) {
-		if index > 0 {
+
+	var valueCount int
+
+	tail := ouputCell
+
+	// 把之前的格子的值合并为字符串
+	for c := ouputCell.Next; c != nil; c = c.Next {
+
+		tail = c
+
+		if valueCount > 0 {
 			sb.WriteString(splitter)
 		}
-		sb.WriteString(str)
+
+		sb.WriteString(c.Value)
+		valueCount++
 	}
 
-	return sb.String()
+	for _, value := range strings.Split(inputCell.Value, splitter) {
+
+		if valueCount > 0 {
+			sb.WriteString(splitter)
+		}
+
+		sb.WriteString(value)
+		valueCount++
+	}
+
+	ouputCell.Value = sb.String()
+
+	tail.Next = &model.Cell{}
+	tail.Next.CopyFrom(inputCell)
+
 }

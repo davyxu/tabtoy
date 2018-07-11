@@ -2,10 +2,10 @@
 	"@Tool": "github.com/davyxu/tabtoy",
 	"@Version": "3.0.0",	
 	"SampleDefine":[ 
-		{ "ID": 100, "Name": "黑猫警长", "IconID": 0, "NumericalRate": 0.6, "ItemID": 0, "BuffID": [10], "Type": 0, "SkillID": [4,6,7] },
+		{ "ID": 100, "Name": "黑猫警长", "IconID": 0, "NumericalRate": 0.6, "ItemID": 0, "BuffID": [0,10], "Type": 0, "SkillID": [4,6,7] },
 		{ "ID": 101, "Name": "葫芦\n娃", "IconID": 0, "NumericalRate": 0.8, "ItemID": 0, "BuffID": [3,1], "Type": 2, "SkillID": [1] },
-		{ "ID": 102, "Name": "舒\"克\"", "IconID": 0, "NumericalRate": 0.7, "ItemID": 0, "BuffID": [], "Type": 3, "SkillID": [] },
-		{ "ID": 103, "Name": "贝\n塔", "IconID": 0, "NumericalRate": 0, "ItemID": 0, "BuffID": [], "Type": 1, "SkillID": [] },
-		{ "ID": 104, "Name": "邋遢大王", "IconID": 0, "NumericalRate": 1, "ItemID": 0, "BuffID": [], "Type": 2, "SkillID": [] } 
+		{ "ID": 102, "Name": "舒\"克\"", "IconID": 0, "NumericalRate": 0.7, "ItemID": 0, "BuffID": [0,0], "Type": 3, "SkillID": [] },
+		{ "ID": 103, "Name": "贝\n塔", "IconID": 0, "NumericalRate": 0, "ItemID": 0, "BuffID": [0,0], "Type": 1, "SkillID": [] },
+		{ "ID": 104, "Name": "邋遢大王", "IconID": 0, "NumericalRate": 1, "ItemID": 0, "BuffID": [0,0], "Type": 2, "SkillID": [] } 
 	]
 }

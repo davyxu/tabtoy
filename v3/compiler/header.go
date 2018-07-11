@@ -55,10 +55,21 @@ func loadheader(sheet *xlsx.Sheet, tab *model.DataTable) {
 
 }
 
+func headerValueExists(offset int, name string, headers []*model.HeaderField) bool {
+
+	for i := offset; i < len(headers); i++ {
+		if headers[i].Cell.Value == name {
+			return true
+		}
+	}
+
+	return false
+}
+
 func ResolveHeaderFields(tab *model.DataTable, tableObjectType string, symbols *model.TypeTable) {
 
 	tab.OriginalHeaderType = tableObjectType
-	for _, header := range tab.Headers {
+	for index, header := range tab.Headers {
 
 		if header.Cell.Value == "" {
 			continue
@@ -67,6 +78,10 @@ func ResolveHeaderFields(tab *model.DataTable, tableObjectType string, symbols *
 		tf := symbols.FieldByName(tableObjectType, header.Cell.Value)
 		if tf == nil {
 			report.ReportError("HeaderFieldNotDefined", header.Cell.String())
+		}
+
+		if headerValueExists(index+1, header.Cell.Value, tab.Headers) && !tf.IsArray() {
+			report.ReportError("DuplicateHeaderField", header.Cell.String())
 		}
 
 		// 解析好的类型
