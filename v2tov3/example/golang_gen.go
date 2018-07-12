@@ -40,8 +40,6 @@ type SampleDefine struct {
 }
 
 // Combine struct
-type Config struct {
+type Table struct {
 	SampleDefine []*SampleDefine // table: SampleDefine
 }
-
-//

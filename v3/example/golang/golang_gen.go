@@ -46,12 +46,12 @@ type ExampleKV struct {
 }
 
 // Combine struct
-type Config struct {
+type Table struct {
 	ExampleData []*ExampleData // table: ExampleData
 	ExampleKV   []*ExampleKV   // table: ExampleKV
 }
 
 // table: ExampleKV
-func (self *Config) GetKeyValue_ExampleKV() *ExampleKV {
+func (self *Table) GetKeyValue_ExampleKV() *ExampleKV {
 	return self.ExampleKV[0]
 }

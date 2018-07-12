@@ -20,14 +20,14 @@ func Compile(globals *model.Globals) (ret error) {
 
 	}()
 
-	report.Log.Debugln("\n加载内建类型表:")
+	report.Log.Debugln("Loading Builtin Types... ")
 	err := LoadTypeTable(globals.Types, table.BuiltinTypes, "BuiltinTypes.xlsx", true)
 
 	if err != nil {
 		return err
 	}
 
-	report.Log.Debugln("\n加载索引表:")
+	report.Log.Debugf("Loading Index file: '%s'... ", globals.IndexFile)
 	err = LoadIndexTable(globals, globals.IndexFile)
 
 	if err != nil {
@@ -43,27 +43,27 @@ func Compile(globals *model.Globals) (ret error) {
 		return err
 	}
 
-	report.Log.Debugln("\n检查类型表:")
+	report.Log.Debugln("Checking types...")
 	CheckTypeTable(globals.Types)
 
-	report.Log.Debugln("\n合并KV数据表:")
+	if kvList.Count() > 0 {
+		report.Log.Debugln("Merge key-value tables...")
 
-	// 合并所有的KV表行
-	var mergedKV model.DataTableList
-	mergeData(&kvList, &mergedKV, globals.Types)
+		// 合并所有的KV表行
+		var mergedKV model.DataTableList
+		mergeData(&kvList, &mergedKV, globals.Types)
 
-	// 完整KV表转置为普通数据表
-	for _, tab := range mergedKV.AllTables() {
+		// 完整KV表转置为普通数据表
+		for _, tab := range mergedKV.AllTables() {
 
-		dataList.AddDataTable(transposeKVtoData(globals.Types, tab))
+			dataList.AddDataTable(transposeKVtoData(globals.Types, tab))
+		}
 	}
 
-	report.Log.Debugln("\n合并数据表:")
+	report.Log.Debugln("Merge data tables...")
 
 	// 合并所有的数据表
 	mergeData(&dataList, &globals.Datas, globals.Types)
-
-	report.Log.Debugln("\n完成:")
 
 	return nil
 }

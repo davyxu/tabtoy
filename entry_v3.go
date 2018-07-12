@@ -93,6 +93,7 @@ func V3Entry() {
 		goto Exit
 	}
 
+	report.Log.Debugln("Generate files...")
 	err = GenFile(globals)
 	if err != nil {
 		goto Exit

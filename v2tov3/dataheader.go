@@ -27,6 +27,11 @@ func importDataHeader(globals *model.Globals, sourceSheet, targetSheet *xlsx.She
 			break
 		}
 
+		// 列头中带有#的，特别是最后一行
+		if strings.HasPrefix(oft.FieldName, "#") {
+			continue
+		}
+
 		if headerRow == nil {
 			headerRow = targetSheet.AddRow()
 		}
@@ -51,6 +56,11 @@ func importDataHeader(globals *model.Globals, sourceSheet, targetSheet *xlsx.She
 		}
 
 		oft.Name = helper.GetSheetValueString(sourceSheet, 3, col)
+
+		if oft.Name == "" {
+			log.Warnf("v2的字段注释为空, %s | %s", oft.FieldName, tableName)
+			oft.Name = oft.FieldName
+		}
 
 		var disabledForV3 string
 

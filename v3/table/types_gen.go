@@ -63,12 +63,12 @@ type ErrorID struct {
 }
 
 // Combine struct
-type Config struct {
+type Table struct {
 	FieldType []*FieldType // table: FieldType
 	ErrorID   []*ErrorID   // table: ErrorID
 }
 
 // table: ErrorID
-func (self *Config) GetKeyValue_ErrorID() *ErrorID {
+func (self *Table) GetKeyValue_ErrorID() *ErrorID {
 	return self.ErrorID[0]
 }

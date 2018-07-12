@@ -34,10 +34,11 @@ type {{.CombineStructName}} struct { {{range $ti, $tab := $.Datas.AllTables}}
 	{{$tab.HeaderType}} []*{{$tab.HeaderType}} // table: {{$tab.HeaderType}} {{end}}
 }
 
+{{if $.HasKeyValueTypes}}
 //{{range $ti, $name := $.KeyValueTypeNames}} table: {{$name}}
 func (self*{{$.CombineStructName}}) GetKeyValue_{{$name}}() *{{$name}}{
 	return self.{{$name}}[0]
 }
-{{end}}
+{{end}}{{end}}
 
 `

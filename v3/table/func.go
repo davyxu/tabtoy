@@ -10,7 +10,7 @@ var UsefulFunc = template.FuncMap{}
 // 取类型的默认值
 func FetchDefaultValue(tf *TableField) (ret string) {
 
-	linq.From(CoreConfig.FieldType).WhereT(func(ft *FieldType) bool {
+	linq.From(Model.FieldType).WhereT(func(ft *FieldType) bool {
 
 		return ft.InputFieldName == tf.FieldType
 	}).ForEachT(func(ft *FieldType) {
@@ -25,7 +25,7 @@ func FetchDefaultValue(tf *TableField) (ret string) {
 func LanguagePrimitive(tf *TableField, lanType string) string {
 
 	var convertedType string
-	linq.From(CoreConfig.FieldType).WhereT(func(ft *FieldType) bool {
+	linq.From(Model.FieldType).WhereT(func(ft *FieldType) bool {
 
 		return ft.InputFieldName == tf.FieldType
 	}).SelectT(func(ft *FieldType) string {
@@ -71,7 +71,7 @@ func LanguageType(tf *TableField, lanType string) string {
 
 func PrimitiveExists(fieldType string) bool {
 
-	return linq.From(CoreConfig.FieldType).WhereT(func(ft *FieldType) bool {
+	return linq.From(Model.FieldType).WhereT(func(ft *FieldType) bool {
 
 		return ft.InputFieldName == fieldType
 	}).Count() > 0

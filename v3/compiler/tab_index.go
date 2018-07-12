@@ -60,7 +60,16 @@ func LoadIndexTable(globals *model.Globals, fileName string) error {
 		a := pragmaList[i]
 		b := pragmaList[j]
 
-		return a.TableMode < b.TableMode
+		if a.TableMode != b.TableMode {
+			return a.TableMode < b.TableMode
+		}
+
+		if a.TableType != b.TableType {
+			return a.TableType < b.TableType
+		}
+
+		return a.TableFileName < b.TableFileName
+
 	})
 
 	globals.IndexList = pragmaList

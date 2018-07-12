@@ -44,7 +44,7 @@ func LoadTypeTable(typeTab *model.TypeTable, indexGetter helper.FileGetter, file
 				cell := tab.GetValueByName(row, "字段名")
 
 				if cell != nil {
-					report.ReportError("DuplicateTypeFieldName", cell.String())
+					report.ReportError("DuplicateTypeFieldName", cell.String(), objtype.ObjectType, objtype.FieldName)
 				} else {
 					report.ReportError("InvalidTypeTable", objtype.ObjectType, objtype.FieldName, tab.FileName)
 				}
@@ -97,22 +97,6 @@ func typeTable_CheckDuplicateEnumValue(typeTab *model.TypeTable) {
 
 		checker[key] = td
 	}
-}
-
-func checkValueType(typeDataTab *model.DataTable) {
-
-	//for row := range typeDataTab.Rows {
-	//
-	//	for col := range typeDataTab.RawHeader {
-	//
-	//		value := typeDataTab.GetValue(row, col)
-	//
-	//		valueType := typeDataTab.GetType(col)
-	//
-	//	}
-	//
-	//}
-
 }
 
 func CheckTypeTable(typeTab *model.TypeTable) {

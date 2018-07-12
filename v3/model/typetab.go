@@ -141,6 +141,10 @@ func (self *TypeTable) rawEnumNames(all bool) (ret []string) {
 // 对象的所有字段
 func (self *TypeTable) AllFieldByName(objectType string) (ret []*table.TableField) {
 
+	if objectType == "ServiceClusterDefine" {
+		objectType = "ServiceClusterDefine"
+	}
+
 	linq.From(self.fields).WhereT(func(td *TypeData) bool {
 
 		return td.Type.ObjectType == objectType

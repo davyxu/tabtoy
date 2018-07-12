@@ -21,3 +21,7 @@ func (self *DataTableList) AddDataTable(t *DataTable) {
 func (self *DataTableList) AllTables() []*DataTable {
 	return self.data
 }
+
+func (self *DataTableList) Count() int {
+	return len(self.data)
+}

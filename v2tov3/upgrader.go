@@ -23,17 +23,20 @@ func Upgrade(globals *model.Globals) error {
 
 		for _, mergeFile := range strings.Split(inputFile, "+") {
 
+			log.Infof("加载v2表 %s...", mergeFile)
 			if err := loadTable(globals, mergeFile); err != nil {
 				return err
 			}
 		}
 	}
 
+	log.Infoln("导出v3索引表 ...")
 	err = ExportIndexTable(globals)
 	if err != nil {
 		return err
 	}
 
+	log.Infoln("导出v3类型表 ...")
 	err = ExportTypes(globals)
 
 	if err != nil {
@@ -43,23 +46,12 @@ func Upgrade(globals *model.Globals) error {
 	return WriteOutput(globals)
 }
 
-func markFileNameUpgrade(filename string) string {
-
-	if filename != "Index.xlsx" && filename != "Type.xlsx" {
-		return "Upgraded_"
-	}
-
-	return ""
-}
-
 func WriteOutput(globals *model.Globals) (ret error) {
 	log.Debugln("输出v3表格:")
 
 	globals.TargetTables.VisitAllTable(func(data *helper.MemFileData) bool {
 
-		upgradeStr := markFileNameUpgrade(data.FileName)
-
-		fullFileName := filepath.Join(globals.OutputDir, upgradeStr+data.FileName)
+		fullFileName := filepath.Join(globals.OutputDir, data.FileName)
 
 		log.Infoln("\t", fullFileName)
 
@@ -74,12 +66,12 @@ func WriteOutput(globals *model.Globals) (ret error) {
 	return
 }
 
-func loadTypes(globals *model.Globals, sourceFile *xlsx.File, tabPragma *golexer.KVPair) error {
+func loadTypes(globals *model.Globals, sourceFile *xlsx.File, tabPragma *golexer.KVPair, fileName string) error {
 	for _, sourceSheet := range sourceFile.Sheets {
 
 		if sourceSheet.Name == "@Types" {
 
-			if err := importTypes(globals, sourceSheet, tabPragma); err != nil {
+			if err := importTypes(globals, sourceSheet, tabPragma, fileName); err != nil {
 				return err
 			}
 		}
@@ -89,7 +81,7 @@ func loadTypes(globals *model.Globals, sourceFile *xlsx.File, tabPragma *golexer
 	return nil
 }
 
-func loadDatas(globals *model.Globals, sourceFile, targetFile *xlsx.File, tabPragma *golexer.KVPair) error {
+func loadDatas(globals *model.Globals, sourceFile, targetFile *xlsx.File, tabPragma *golexer.KVPair, fileName string) error {
 	for _, sourceSheet := range sourceFile.Sheets {
 
 		if sourceSheet.Name != "@Types" {
@@ -102,7 +94,7 @@ func loadDatas(globals *model.Globals, sourceFile, targetFile *xlsx.File, tabPra
 				return nil
 			}
 
-			if err := importDatas(globals, sourceSheet, targetSheet, headerList); err != nil {
+			if err := importDatas(sourceSheet, targetSheet, headerList, fileName); err != nil {
 				return err
 			}
 
@@ -121,11 +113,19 @@ func loadTable(globals *model.Globals, fileName string) error {
 
 	tabPragma := golexer.NewKVPair()
 
-	loadTypes(globals, sourceFile, tabPragma)
+	err = loadTypes(globals, sourceFile, tabPragma, fileName)
+
+	if err != nil {
+		return err
+	}
 
 	targetFile := xlsx.NewFile()
 
-	loadDatas(globals, sourceFile, targetFile, tabPragma)
+	err = loadDatas(globals, sourceFile, targetFile, tabPragma, fileName)
+
+	if err != nil {
+		return err
+	}
 
 	// 空表不输出
 	if len(targetFile.Sheets) > 0 && len(targetFile.Sheets[0].Rows) > 0 {

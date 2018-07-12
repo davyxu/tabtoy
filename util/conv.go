@@ -42,7 +42,7 @@ func StringToPrimitive(str string, value interface{}) (error, bool) {
 		switch str {
 		case "是":
 			v = true
-		case "否":
+		case "否", "":
 			v = false
 		default:
 			v, err = strconv.ParseBool(str)

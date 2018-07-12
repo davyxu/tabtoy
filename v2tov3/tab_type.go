@@ -1,6 +1,8 @@
 package v2tov3
 
 import (
+	"errors"
+	"fmt"
 	"github.com/davyxu/golexer"
 	"github.com/davyxu/tabtoy/v2tov3/model"
 	"github.com/davyxu/tabtoy/v3/helper"
@@ -31,7 +33,7 @@ func ExportTypes(globals *model.Globals) error {
 	return nil
 }
 
-func importTypes(globals *model.Globals, sheet *xlsx.Sheet, tabPragma *golexer.KVPair) error {
+func importTypes(globals *model.Globals, sheet *xlsx.Sheet, tabPragma *golexer.KVPair, fileName string) error {
 
 	pragma := helper.GetSheetValueString(sheet, 0, 0)
 
@@ -74,14 +76,18 @@ func importTypes(globals *model.Globals, sheet *xlsx.Sheet, tabPragma *golexer.K
 
 		if oft.Value == "" {
 			oft.Kind = table.TableKind_None
-
-			globals.AddSourceType(oft)
-			continue
+		} else {
+			oft.Kind = table.TableKind_Enum
 		}
 
-		oft.Kind = table.TableKind_Enum
+		if globals.SourceTypeExists(oft.ObjectType, oft.FieldName) {
 
-		globals.AddSourceType(oft)
+			return errors.New(fmt.Sprintf("重复定义的类型 %s %s @ %s", oft.ObjectType, oft.FieldName, fileName))
+
+		} else {
+			globals.AddSourceType(oft)
+		}
+
 	}
 
 	return nil

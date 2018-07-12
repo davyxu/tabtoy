@@ -24,6 +24,10 @@ type Globals struct {
 
 }
 
+func (self *Globals) HasKeyValueTypes() bool {
+	return len(self.KeyValueTypeNames()) > 0
+}
+
 func (self *Globals) KeyValueTypeNames() (ret []string) {
 
 	linq.From(self.IndexList).WhereT(func(pragma *table.TablePragma) bool {

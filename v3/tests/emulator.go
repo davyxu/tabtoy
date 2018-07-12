@@ -46,7 +46,12 @@ func (self *TableEmulator) MustGotError(expectError string) {
 
 	err := compiler.Compile(self.G)
 
-	if err == nil || err.Error() != expectError {
+	if err == nil {
+		self.T.Logf("Expect error '%s'", expectError)
+		self.T.FailNow()
+	}
+
+	if err.Error() != expectError {
 		self.T.Logf("Expect '%s' got '%s'", expectError, err.Error())
 		self.T.FailNow()
 	}
@@ -181,7 +186,7 @@ func (self *TableEmulator) VerifyGoTypeAndJson(expectJson string) {
 	}
 
 	if !result {
-		self.T.Logf("Expect '%s' got '%s'", appJson, expectJson)
+		self.T.Logf("Expect '%s' got '%s'", expectJson, appJson)
 		self.T.FailNow()
 	}
 }

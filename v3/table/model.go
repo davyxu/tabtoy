@@ -5,7 +5,7 @@ import (
 )
 
 var (
-	CoreConfig Config // 内嵌数据
+	Model Table // 内嵌数据
 
 	CoreSymbols = []*TableField{
 		{Kind: TableKind_Enum, ObjectType: "TableKind", Name: "", FieldName: "None", FieldType: "int", Value: "0"},
@@ -22,7 +22,7 @@ var (
 )
 
 func init() {
-	err := json.Unmarshal([]byte(coreConfig), &CoreConfig)
+	err := json.Unmarshal([]byte(coreConfig), &Model)
 	if err != nil {
 		panic(err)
 	}

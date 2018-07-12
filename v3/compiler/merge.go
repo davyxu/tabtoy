@@ -6,6 +6,34 @@ import (
 	"strings"
 )
 
+func createOutputTable(symbols *model.TypeTable, inputTab *model.DataTable) *model.DataTable {
+	outputTab := model.NewDataTable()
+	outputTab.HeaderType = inputTab.HeaderType
+	outputTab.OriginalHeaderType = inputTab.OriginalHeaderType
+
+	// 原始表头类型为解析
+	headerFields := symbols.AllFieldByName(inputTab.OriginalHeaderType)
+
+	if headerFields == nil {
+		report.ReportError("HeaderTypeNotFound", inputTab.OriginalHeaderType)
+	}
+
+	// 将完整的表头添加到输出表的表头中
+	for col, tf := range headerFields {
+
+		outputHeader := outputTab.MustGetHeader(col)
+		outputHeader.Cell.Value = tf.Name
+		outputHeader.Cell.Col = col
+		outputHeader.Cell.Row = 0
+		outputHeader.TypeInfo = tf
+
+		headerCell := outputTab.MustGetCell(0, col)
+		headerCell.Value = tf.Name
+	}
+
+	return outputTab
+}
+
 // 将不同文件/Sheet/KV转换的表，按照表头类型合并数据输出
 func mergeData(inputList, outputList *model.DataTableList, symbols *model.TypeTable) {
 
@@ -18,37 +46,7 @@ func mergeData(inputList, outputList *model.DataTableList, symbols *model.TypeTa
 
 		// 为输入表头创建唯一的表数据
 		if outputTab == nil {
-			outputTab = model.NewDataTable()
-			outputTab.HeaderType = inputTab.HeaderType
-			outputTab.OriginalHeaderType = inputTab.OriginalHeaderType
-
-			// 原始表头类型为解析
-			headerFields := symbols.AllFieldByName(inputTab.OriginalHeaderType)
-
-			if headerFields == nil {
-				report.ReportError("HeaderTypeNotFound", inputTab.OriginalHeaderType)
-			}
-
-			// 将完整的表头添加到输出表的表头中
-			for col, tf := range headerFields {
-
-				// 将输入表表头源信息复制
-				inputHeader := inputTab.HeaderByName(tf.Name)
-
-				if inputHeader == nil {
-					continue
-				}
-
-				outputHeader := outputTab.MustGetHeader(col)
-				outputHeader.Cell.Value = tf.Name
-				outputHeader.Cell.Col = col
-				outputHeader.Cell.Row = 0
-				outputHeader.TypeInfo = tf
-
-				headerCell := outputTab.MustGetCell(0, col)
-				headerCell.Value = tf.Name
-
-			}
+			outputTab = createOutputTable(symbols, inputTab)
 
 			outputList.AddDataTable(outputTab)
 		}
@@ -84,7 +82,7 @@ func mergeData(inputList, outputList *model.DataTableList, symbols *model.TypeTa
 				outputHeader := outputTab.HeaderByName(inputHeader.TypeInfo.FieldName)
 
 				if outputHeader == nil {
-					panic("输入的列头名在输出表头中找不到")
+					panic("输入的列头名在输出表头中找不到:" + inputHeader.TypeInfo.FieldName)
 				}
 
 				// 取输出表的最后的一行和对应表头的列单元格

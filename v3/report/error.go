@@ -15,7 +15,7 @@ type TableError struct {
 
 func getErrorDesc(id string) string {
 
-	errobj := table.CoreConfig.GetKeyValue_ErrorID()
+	errobj := table.Model.GetKeyValue_ErrorID()
 	tobj := reflect.TypeOf(errobj).Elem()
 	vobj := reflect.ValueOf(errobj).Elem()
 
