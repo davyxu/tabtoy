@@ -19,7 +19,7 @@ func TestDuplicateTypeFieldName(t *testing.T) {
 	helper.WriteRowValues(typeSheet, "表头", "SumeHead", "某种类型", "None", "int", "", "")
 	helper.WriteRowValues(typeSheet, "表头", "SumeHead", "某种类型", "None", "int", "", "")
 
-	emu.MustGotError("TableError.DuplicateTypeFieldName 类型表字段重复 | 'None' @Type.xlsx|Default(D3)")
+	emu.MustGotError("TableError.DuplicateTypeFieldName 类型表字段重复 | 'None' @Type.xlsx|Default(D3) SumeHead None")
 }
 
 // 多表中的类型字段重复
@@ -40,7 +40,7 @@ func TestDuplicateTypeFieldNameInMultiTypesTable(t *testing.T) {
 	helper.WriteTypeTableHeader(typeSheet2)
 	helper.WriteRowValues(typeSheet2, "表头", "SumeHead", "某种类型", "None", "int", "", "")
 
-	emu.MustGotError("TableError.DuplicateTypeFieldName 类型表字段重复 | 'None' @Type2.xlsx|Default(D2)")
+	emu.MustGotError("TableError.DuplicateTypeFieldName 类型表字段重复 | 'None' @Type2.xlsx|Default(D2) SumeHead None")
 }
 
 // 不填枚举值报错

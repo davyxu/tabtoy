@@ -19,8 +19,7 @@ type V3GenEntry struct {
 
 // v3新增
 var (
-	paramBuiltinSymbolFile = flag.Bool("builtinsymbol", false, "builtin symbols visible in table types")
-	paramIndexFile         = flag.String("index", "", "input multi-files configs")
+	paramIndexFile = flag.String("index", "", "input multi-files configs")
 
 	v3GenList = []V3GenEntry{
 		{gosrc.Generate, paramGoOut},
@@ -78,7 +77,6 @@ func V3Entry() {
 	globals := model.NewGlobals()
 	globals.Version = Version_v3
 
-	model.BuiltinSymbolsVisible = *paramBuiltinSymbolFile
 	globals.IndexFile = *paramIndexFile
 	globals.PackageName = *paramPackageName
 	globals.CombineStructName = *paramCombineStructName

@@ -30,9 +30,9 @@ func WriteRowValues(sheet *xlsx.Sheet, valueList ...interface{}) {
 
 	row := sheet.AddRow()
 
-	if sheet.MaxCol != 0 && sheet.MaxCol != len(valueList) {
-		panic("diff col count")
-	}
+	//if sheet.MaxCol != 0 && sheet.MaxCol != len(valueList) {
+	//	panic("diff col count")
+	//}
 
 	for _, value := range valueList {
 

@@ -2,8 +2,6 @@ package report
 
 import (
 	"fmt"
-	"github.com/davyxu/tabtoy/v3/table"
-	"reflect"
 	"strings"
 )
 
@@ -15,22 +13,8 @@ type TableError struct {
 
 func getErrorDesc(id string) string {
 
-	errobj := table.Model.GetKeyValue_ErrorID()
-	tobj := reflect.TypeOf(errobj).Elem()
-	vobj := reflect.ValueOf(errobj).Elem()
-
-	for i := 0; i < tobj.NumField(); i++ {
-
-		fd := tobj.Field(i)
-		if fd.Name == id {
-			final := vobj.Field(i).String()
-			if final == "" {
-				return id
-			}
-
-			return final
-		}
-
+	if lan, ok := ErrorByID[id]; ok {
+		return lan.CHS
 	}
 
 	return ""

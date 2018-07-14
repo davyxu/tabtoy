@@ -1,12 +1,6 @@
 package table
 
-import (
-	"encoding/json"
-)
-
 var (
-	Model Table // 内嵌数据
-
 	CoreSymbols = []*TableField{
 		{Kind: TableKind_Enum, ObjectType: "TableKind", Name: "", FieldName: "None", FieldType: "int", Value: "0"},
 		{Kind: TableKind_Enum, ObjectType: "TableKind", Name: "表头", FieldName: "HeaderStruct", FieldType: "int", Value: "1"},
@@ -22,10 +16,6 @@ var (
 )
 
 func init() {
-	err := json.Unmarshal([]byte(coreConfig), &Model)
-	if err != nil {
-		panic(err)
-	}
 
 	for _, symbol := range CoreSymbols {
 		symbol.IsBuiltin = true

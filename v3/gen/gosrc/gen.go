@@ -3,7 +3,6 @@ package gosrc
 import (
 	"github.com/davyxu/protoplus/codegen"
 	"github.com/davyxu/tabtoy/v3/model"
-	"github.com/davyxu/tabtoy/v3/report"
 	"github.com/davyxu/tabtoy/v3/table"
 )
 
@@ -21,7 +20,6 @@ func Generate(globals *model.Globals) (data []byte, err error) {
 
 	err = cg.FormatGoCode().Error()
 	if err != nil {
-		report.Log.Infoln(string(cg.Code()))
 		return
 	}
 
