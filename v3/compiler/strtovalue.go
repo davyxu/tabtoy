@@ -1,14 +1,14 @@
-package model
+package compiler
 
 import (
 	"github.com/davyxu/tabtoy/util"
-	"github.com/davyxu/tabtoy/v3/table"
+	"github.com/davyxu/tabtoy/v3/model"
 	"reflect"
 	"strconv"
 	"strings"
 )
 
-func StringToValue(str string, value interface{}, tf *table.TableField, symbols *TypeTable) error {
+func StringToValue(str string, value interface{}, tf *model.TypeDefine, symbols *model.TypeTable) error {
 
 	err, handled := util.StringToPrimitive(str, value)
 	if err != nil || handled {

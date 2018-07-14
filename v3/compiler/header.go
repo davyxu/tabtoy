@@ -4,7 +4,6 @@ import (
 	"github.com/davyxu/tabtoy/v3/helper"
 	"github.com/davyxu/tabtoy/v3/model"
 	"github.com/davyxu/tabtoy/v3/report"
-	"github.com/davyxu/tabtoy/v3/table"
 	"github.com/tealeg/xlsx"
 	"strings"
 )
@@ -18,7 +17,7 @@ func CheckHeaderTypes(tab *model.DataTable, types *model.TypeTable) {
 		}
 
 		// 原始类型检查
-		if !table.PrimitiveExists(header.TypeInfo.FieldType) &&
+		if !model.PrimitiveExists(header.TypeInfo.FieldType) &&
 			!types.ObjectExists(header.TypeInfo.FieldType) { // 对象检查
 
 			report.ReportError("UnknownFieldType", header.Cell.String())

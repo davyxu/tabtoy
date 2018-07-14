@@ -5,21 +5,11 @@ import (
 	"github.com/davyxu/tabtoy/v3/helper"
 	"github.com/davyxu/tabtoy/v3/model"
 	"github.com/davyxu/tabtoy/v3/report"
-	"github.com/davyxu/tabtoy/v3/table"
 )
-
-var coreSymbols model.TypeTable
-
-func init() {
-
-	for _, symbol := range table.CoreSymbols {
-		coreSymbols.AddField(symbol, nil, 0)
-	}
-}
 
 func LoadTypeTable(typeTab *model.TypeTable, indexGetter helper.FileGetter, fileName string, builtin bool) error {
 
-	tabs, err := LoadDataTable(indexGetter, fileName, "TableField")
+	tabs, err := LoadDataTable(indexGetter, fileName, "TypeDefine")
 
 	if err != nil {
 		return err
@@ -27,13 +17,13 @@ func LoadTypeTable(typeTab *model.TypeTable, indexGetter helper.FileGetter, file
 
 	for _, tab := range tabs {
 
-		ResolveHeaderFields(tab, "TableField", &coreSymbols)
+		ResolveHeaderFields(tab, "TypeDefine", typeTab)
 
 		for row := 1; row < len(tab.Rows); row++ {
 
-			var objtype table.TableField
+			var objtype model.TypeDefine
 
-			if !model.ParseRow(&objtype, tab, row, &coreSymbols) {
+			if !ParseRow(&objtype, tab, row, typeTab) {
 				continue
 			}
 
@@ -62,7 +52,7 @@ func LoadTypeTable(typeTab *model.TypeTable, indexGetter helper.FileGetter, file
 func typeTable_CheckEnumValueEmpty(typeTab *model.TypeTable) {
 	linq.From(typeTab.Raw()).WhereT(func(td *model.TypeData) bool {
 
-		return td.Type.Kind == table.TableKind_Enum && td.Type.Value == ""
+		return td.Define.Kind == model.TypeUsage_Enum && td.Define.Value == ""
 	}).ForEachT(func(td *model.TypeData) {
 
 		cell := td.Tab.GetValueByName(td.Row, "值")
@@ -82,11 +72,11 @@ func typeTable_CheckDuplicateEnumValue(typeTab *model.TypeTable) {
 
 	for _, td := range typeTab.Raw() {
 
-		if td.Type.IsBuiltin || td.Type.Kind != table.TableKind_Enum {
+		if td.Define.IsBuiltin || td.Define.Kind != model.TypeUsage_Enum {
 			continue
 		}
 
-		key := NameValuePair{td.Type.ObjectType, td.Type.Value}
+		key := NameValuePair{td.Define.ObjectType, td.Define.Value}
 
 		if _, ok := checker[key]; ok {
 

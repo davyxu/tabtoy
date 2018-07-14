@@ -3,7 +3,6 @@ package compiler
 import (
 	"github.com/davyxu/tabtoy/v3/model"
 	"github.com/davyxu/tabtoy/v3/report"
-	"github.com/davyxu/tabtoy/v3/table"
 )
 
 func transposeKVtoData(symbols *model.TypeTable, kvtab *model.DataTable) (ret *model.DataTable) {
@@ -29,8 +28,8 @@ func transposeKVtoData(symbols *model.TypeTable, kvtab *model.DataTable) (ret *m
 
 		arraySplitter := kvtab.GetValueByName(row, "数组切割")
 
-		var tf table.TableField
-		tf.Kind = table.TableKind_HeaderStruct
+		var tf model.TypeDefine
+		tf.Kind = model.TypeUsage_HeaderStruct
 		tf.ObjectType = kvtab.HeaderType
 
 		tf.Name = name.Value

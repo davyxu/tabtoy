@@ -2,7 +2,7 @@ package model
 
 import (
 	"github.com/davyxu/tabtoy/v3/helper"
-	"github.com/davyxu/tabtoy/v3/table"
+	"github.com/davyxu/tabtoy/v3/model"
 	"github.com/tealeg/xlsx"
 	"path/filepath"
 )
@@ -78,7 +78,7 @@ func (self *Globals) PrintTypes() {
 
 func (self *Globals) TypeIsNoneKind(objectTypeName string) bool {
 	for _, oft := range self.SourceTypes {
-		if oft.ObjectType == objectTypeName && oft.Kind == table.TableKind_None {
+		if oft.ObjectType == objectTypeName && oft.Kind == model.TypeUsage_None {
 			return true
 		}
 	}

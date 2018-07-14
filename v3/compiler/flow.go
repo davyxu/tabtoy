@@ -3,7 +3,6 @@ package compiler
 import (
 	"github.com/davyxu/tabtoy/v3/model"
 	"github.com/davyxu/tabtoy/v3/report"
-	"github.com/davyxu/tabtoy/v3/table"
 )
 
 func Compile(globals *model.Globals) (ret error) {
@@ -20,15 +19,17 @@ func Compile(globals *model.Globals) (ret error) {
 
 	}()
 
-	report.Log.Debugln("Loading Builtin Types... ")
-	err := LoadTypeTable(globals.Types, table.BuiltinTypes, "BuiltinTypes.xlsx", true)
+	//report.Log.Debugln("Loading Builtin Types... ")
+	//err := LoadTypeTable(globals.Types, model.BuiltinTypes, "BuiltinTypes.xlsx", true)
+	//
+	//if err != nil {
+	//	return err
+	//}
 
-	if err != nil {
-		return err
-	}
+	model.InitBuiltinTypes(globals.Types)
 
 	report.Log.Debugf("Loading Index file: '%s'... ", globals.IndexFile)
-	err = LoadIndexTable(globals, globals.IndexFile)
+	err := LoadIndexTable(globals, globals.IndexFile)
 
 	if err != nil {
 		return err

@@ -2,7 +2,7 @@ package gosrc
 
 import (
 	"fmt"
-	"github.com/davyxu/tabtoy/v3/table"
+	"github.com/davyxu/tabtoy/v3/model"
 	"strings"
 	"text/template"
 )
@@ -10,7 +10,7 @@ import (
 var UsefulFunc = template.FuncMap{}
 
 func init() {
-	UsefulFunc["GoTabTag"] = func(fieldType *table.TableField) string {
+	UsefulFunc["GoTabTag"] = func(fieldType *model.TypeDefine) string {
 
 		var sb strings.Builder
 

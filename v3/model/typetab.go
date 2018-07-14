@@ -4,13 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/ahmetb/go-linq"
-	"github.com/davyxu/tabtoy/v3/table"
 )
 
 type TypeData struct {
-	Type *table.TableField
-	Tab  *DataTable // 类型引用的表
-	Row  int        // 类型引用的原始数据(DataTable)中的行
+	Define *TypeDefine
+	Tab    *DataTable // 类型引用的表
+	Row    int        // 类型引用的原始数据(DataTable)中的行
 }
 
 type TypeTable struct {
@@ -30,16 +29,16 @@ func (self *TypeTable) Print(all bool) {
 }
 
 // refData，类型表对应源表的位置信息
-func (self *TypeTable) AddField(tf *table.TableField, data *DataTable, row int) {
+func (self *TypeTable) AddField(tf *TypeDefine, data *DataTable, row int) {
 
 	if self.FieldByName(tf.ObjectType, tf.FieldName) != nil {
 		panic("Duplicate table field: " + tf.FieldName)
 	}
 
 	self.fields = append(self.fields, &TypeData{
-		Tab:  data,
-		Type: tf,
-		Row:  row,
+		Tab:    data,
+		Define: tf,
+		Row:    row,
 	})
 }
 
@@ -47,18 +46,18 @@ func (self *TypeTable) Raw() []*TypeData {
 	return self.fields
 }
 
-func (self *TypeTable) AllFields(all bool) (ret []*table.TableField) {
+func (self *TypeTable) AllFields(all bool) (ret []*TypeDefine) {
 
 	linq.From(self.fields).WhereT(func(td *TypeData) bool {
 
-		if !all && td.Type.IsBuiltin {
+		if !all && td.Define.IsBuiltin {
 			return false
 		}
 
 		return true
 	}).SelectT(func(td *TypeData) interface{} {
 
-		return td.Type
+		return td.Define
 	}).ToSlice(&ret)
 
 	return
@@ -77,11 +76,11 @@ func (self *TypeTable) ResolveEnumValue(objectType, value string) (ret string) {
 
 	linq.From(self.fields).WhereT(func(td *TypeData) bool {
 
-		return td.Type.ObjectType == objectType &&
-			(td.Type.Name == value || td.Type.FieldName == value)
+		return td.Define.ObjectType == objectType &&
+			(td.Define.Name == value || td.Define.FieldName == value)
 	}).ForEachT(func(td *TypeData) {
 
-		ret = td.Type.Value
+		ret = td.Define.Value
 
 	})
 
@@ -103,16 +102,16 @@ func (self *TypeTable) rawStructNames(all bool) (ret []string) {
 
 	linq.From(self.fields).WhereT(func(td *TypeData) bool {
 
-		tf := td.Type
+		tf := td.Define
 
 		if !all && tf.IsBuiltin {
 			return false
 		}
 
-		return tf.Kind == table.TableKind_HeaderStruct
+		return tf.Kind == TypeUsage_HeaderStruct
 	}).SelectT(func(td *TypeData) string {
 
-		return td.Type.ObjectType
+		return td.Define.ObjectType
 	}).Distinct().ToSlice(&ret)
 
 	return
@@ -123,51 +122,47 @@ func (self *TypeTable) rawEnumNames(all bool) (ret []string) {
 
 	linq.From(self.fields).WhereT(func(td *TypeData) bool {
 
-		tf := td.Type
+		tf := td.Define
 
 		if !all && tf.IsBuiltin {
 			return false
 		}
 
-		return tf.Kind == table.TableKind_Enum
+		return tf.Kind == TypeUsage_Enum
 	}).SelectT(func(td *TypeData) string {
 
-		return td.Type.ObjectType
+		return td.Define.ObjectType
 	}).Distinct().ToSlice(&ret)
 
 	return
 }
 
 // 对象的所有字段
-func (self *TypeTable) AllFieldByName(objectType string) (ret []*table.TableField) {
-
-	if objectType == "ServiceClusterDefine" {
-		objectType = "ServiceClusterDefine"
-	}
+func (self *TypeTable) AllFieldByName(objectType string) (ret []*TypeDefine) {
 
 	linq.From(self.fields).WhereT(func(td *TypeData) bool {
 
-		return td.Type.ObjectType == objectType
-	}).SelectT(func(td *TypeData) *table.TableField {
+		return td.Define.ObjectType == objectType
+	}).SelectT(func(td *TypeData) *TypeDefine {
 
-		return td.Type
+		return td.Define
 	}).ToSlice(&ret)
 
 	return
 }
 
 // 数据表中表头对应类型表
-func (self *TypeTable) FieldByName(objectType, name string) (ret *table.TableField) {
+func (self *TypeTable) FieldByName(objectType, name string) (ret *TypeDefine) {
 
 	linq.From(self.fields).WhereT(func(td *TypeData) bool {
 
-		tf := td.Type
+		tf := td.Define
 
 		return tf.ObjectType == objectType &&
 			(tf.Name == name || tf.FieldName == name)
 	}).ForEachT(func(td *TypeData) {
 
-		ret = td.Type
+		ret = td.Define
 
 	})
 
@@ -178,7 +173,7 @@ func (self *TypeTable) ObjectExists(objectType string) bool {
 
 	return linq.From(self.fields).WhereT(func(td *TypeData) bool {
 
-		return td.Type.ObjectType == objectType
+		return td.Define.ObjectType == objectType
 	}).Count() > 0
 }
 

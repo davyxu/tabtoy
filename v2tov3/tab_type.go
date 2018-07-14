@@ -6,7 +6,7 @@ import (
 	"github.com/davyxu/golexer"
 	"github.com/davyxu/tabtoy/v2tov3/model"
 	"github.com/davyxu/tabtoy/v3/helper"
-	"github.com/davyxu/tabtoy/v3/table"
+	v3model "github.com/davyxu/tabtoy/v3/model"
 	"github.com/tealeg/xlsx"
 	"strings"
 )
@@ -16,7 +16,7 @@ func ExportTypes(globals *model.Globals) error {
 	for _, oft := range globals.SourceTypes {
 
 		var disableKind string
-		if oft.Kind == table.TableKind_None {
+		if oft.Kind == v3model.TypeUsage_None {
 			disableKind = "#"
 		}
 
@@ -75,9 +75,9 @@ func importTypes(globals *model.Globals, sheet *xlsx.Sheet, tabPragma *golexer.K
 		}
 
 		if oft.Value == "" {
-			oft.Kind = table.TableKind_None
+			oft.Kind = v3model.TypeUsage_None
 		} else {
-			oft.Kind = table.TableKind_Enum
+			oft.Kind = v3model.TypeUsage_Enum
 		}
 
 		if globals.SourceTypeExists(oft.ObjectType, oft.FieldName) {

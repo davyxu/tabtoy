@@ -3,14 +3,13 @@ package jsondata
 import (
 	"github.com/davyxu/tabtoy/util"
 	"github.com/davyxu/tabtoy/v3/model"
-	"github.com/davyxu/tabtoy/v3/table"
 	"strings"
 	"text/template"
 )
 
 var UsefulFunc = template.FuncMap{}
 
-func wrapSingleValue(globals *model.Globals, valueType *table.TableField, value string) string {
+func wrapSingleValue(globals *model.Globals, valueType *model.TypeDefine, value string) string {
 	switch {
 	case valueType.FieldType == "string": // 字符串
 		return util.StringEscape(value)
@@ -29,14 +28,14 @@ func wrapSingleValue(globals *model.Globals, valueType *table.TableField, value 
 	}
 
 	if value == "" {
-		return table.FetchDefaultValue(valueType)
+		return model.FetchDefaultValue(valueType)
 	}
 
 	return value
 
 }
 
-func WrapValue(globals *model.Globals, value string, valueType *table.TableField) string {
+func WrapValue(globals *model.Globals, value string, valueType *model.TypeDefine) string {
 	if valueType.IsArray() {
 
 		var sb strings.Builder
@@ -64,7 +63,7 @@ func WrapValue(globals *model.Globals, value string, valueType *table.TableField
 }
 
 func init() {
-	UsefulFunc["WrapTabValue"] = func(globals *model.Globals, dataTable *model.DataTable, allHeaders []*table.TableField, row, col int) (ret string) {
+	UsefulFunc["WrapTabValue"] = func(globals *model.Globals, dataTable *model.DataTable, allHeaders []*model.TypeDefine, row, col int) (ret string) {
 
 		// 找到完整的表头（按完整表头遍历）
 		header := allHeaders[col]

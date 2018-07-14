@@ -1,4 +1,4 @@
-package table
+package model
 
 import (
 	"github.com/ahmetb/go-linq"
@@ -31,7 +31,7 @@ var (
 )
 
 // 取类型的默认值
-func FetchDefaultValue(tf *TableField) (ret string) {
+func FetchDefaultValue(tf *TypeDefine) (ret string) {
 
 	linq.From(FieldTypes).WhereT(func(ft *FieldType) bool {
 
@@ -45,7 +45,7 @@ func FetchDefaultValue(tf *TableField) (ret string) {
 }
 
 // 将定义用的类型，转换为不同语言对应的复合类型
-func LanguageType(tf *TableField, lanType string) string {
+func LanguageType(tf *TypeDefine, lanType string) string {
 
 	convertedType := LanguagePrimitive(tf, lanType)
 
@@ -64,7 +64,7 @@ func LanguageType(tf *TableField, lanType string) string {
 }
 
 // 将类型转为对应语言的原始类型
-func LanguagePrimitive(tf *TableField, lanType string) string {
+func LanguagePrimitive(tf *TypeDefine, lanType string) string {
 
 	var convertedType string
 	linq.From(FieldTypes).WhereT(func(ft *FieldType) bool {

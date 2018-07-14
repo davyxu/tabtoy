@@ -3,7 +3,6 @@ package model
 import (
 	"github.com/ahmetb/go-linq"
 	"github.com/davyxu/tabtoy/v3/helper"
-	"github.com/davyxu/tabtoy/v3/table"
 )
 
 type Globals struct {
@@ -16,12 +15,11 @@ type Globals struct {
 	IndexGetter helper.FileGetter // 索引文件获取器
 	TableGetter helper.FileGetter // 其他文件获取器
 
-	IndexList []*table.TablePragma // 输入的索引文件
+	IndexList []*IndexDefine // 输入的索引文件
 
 	Types *TypeTable // 输入的类型及符号
 
 	Datas DataTableList // 输出的字符串格式的数据表
-
 }
 
 func (self *Globals) HasKeyValueTypes() bool {
@@ -30,9 +28,9 @@ func (self *Globals) HasKeyValueTypes() bool {
 
 func (self *Globals) KeyValueTypeNames() (ret []string) {
 
-	linq.From(self.IndexList).WhereT(func(pragma *table.TablePragma) bool {
-		return pragma.TableMode == table.TableMode_KeyValue
-	}).SelectT(func(pragma *table.TablePragma) string {
+	linq.From(self.IndexList).WhereT(func(pragma *IndexDefine) bool {
+		return pragma.Kind == TableKind_KeyValue
+	}).SelectT(func(pragma *IndexDefine) string {
 
 		return pragma.TableType
 	}).Distinct().ToSlice(&ret)

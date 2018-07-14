@@ -4,7 +4,7 @@ import (
 	"github.com/davyxu/golexer"
 	"github.com/davyxu/tabtoy/v2tov3/model"
 	"github.com/davyxu/tabtoy/v3/helper"
-	"github.com/davyxu/tabtoy/v3/table"
+	v3model "github.com/davyxu/tabtoy/v3/model"
 	"github.com/tealeg/xlsx"
 	"strings"
 )
@@ -18,7 +18,7 @@ func importDataHeader(globals *model.Globals, sourceSheet, targetSheet *xlsx.She
 
 		var oft model.ObjectFieldType
 		oft.ObjectType = tableName + "Define"
-		oft.Kind = table.TableKind_HeaderStruct
+		oft.Kind = v3model.TypeUsage_HeaderStruct
 
 		oft.FieldName = helper.GetSheetValueString(sourceSheet, 0, col)
 
@@ -74,8 +74,8 @@ func importDataHeader(globals *model.Globals, sourceSheet, targetSheet *xlsx.She
 
 			targetOft := globals.ObjectTypeByName(oft.FieldType)
 			// 类型已经被前置定义，且不是枚举（那就是结构体）时，标记为空，后面不会被使用
-			if targetOft != nil && targetOft.Kind != table.TableKind_Enum {
-				oft.Kind = table.TableKind_None
+			if targetOft != nil && targetOft.Kind != v3model.TypeUsage_Enum {
+				oft.Kind = v3model.TypeUsage_None
 			}
 
 		}

@@ -3,7 +3,6 @@ package compiler
 import (
 	"github.com/davyxu/tabtoy/v3/model"
 	"github.com/davyxu/tabtoy/v3/report"
-	"github.com/davyxu/tabtoy/v3/table"
 )
 
 func loadVariantTables(globals *model.Globals, kvList, dataList *model.DataTableList) error {
@@ -14,8 +13,8 @@ func loadVariantTables(globals *model.Globals, kvList, dataList *model.DataTable
 
 		report.Log.Debugf("   (%s) %s", pragma.TableType, pragma.TableFileName)
 
-		switch pragma.TableMode {
-		case table.TableMode_Data:
+		switch pragma.Kind {
+		case model.TableKind_Data:
 			tablist, err := LoadDataTable(globals.TableGetter, pragma.TableFileName, pragma.TableType)
 
 			if err != nil {
@@ -30,7 +29,7 @@ func loadVariantTables(globals *model.Globals, kvList, dataList *model.DataTable
 				dataList.AddDataTable(tab)
 			}
 
-		case table.TableMode_Type:
+		case model.TableKind_Type:
 
 			err := LoadTypeTable(globals.Types, globals.TableGetter, pragma.TableFileName, false)
 
@@ -38,7 +37,7 @@ func loadVariantTables(globals *model.Globals, kvList, dataList *model.DataTable
 				return err
 			}
 
-		case table.TableMode_KeyValue:
+		case model.TableKind_KeyValue:
 			tablist, err := LoadDataTable(globals.TableGetter, pragma.TableFileName, pragma.TableType)
 
 			if err != nil {
@@ -47,7 +46,7 @@ func loadVariantTables(globals *model.Globals, kvList, dataList *model.DataTable
 
 			for _, tab := range tablist {
 
-				ResolveHeaderFields(tab, "TableKeyValue", globals.Types)
+				ResolveHeaderFields(tab, "KVDefine", globals.Types)
 
 				CheckHeaderTypes(tab, globals.Types)
 				kvList.AddDataTable(tab)

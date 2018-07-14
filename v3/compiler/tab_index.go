@@ -2,23 +2,22 @@ package compiler
 
 import (
 	"github.com/davyxu/tabtoy/v3/model"
-	"github.com/davyxu/tabtoy/v3/table"
 	"path/filepath"
 	"sort"
 	"strings"
 )
 
-func loadIndexData(tab *model.DataTable, symbols *model.TypeTable) (pragmaList []*table.TablePragma) {
+func loadIndexData(tab *model.DataTable, symbols *model.TypeTable) (pragmaList []*model.IndexDefine) {
 
 	for row := 1; row < len(tab.Rows); row++ {
 
-		var pragma table.TablePragma
-		if !model.ParseRow(&pragma, tab, row, symbols) {
+		var pragma model.IndexDefine
+		if !ParseRow(&pragma, tab, row, symbols) {
 			continue
 		}
 
-		if pragma.TableMode == table.TableMode_Type {
-			pragma.TableType = "TableField"
+		if pragma.Kind == model.TableKind_Type {
+			pragma.TableType = "TypeDefine"
 		}
 
 		if pragma.TableType == "" {
@@ -40,17 +39,17 @@ func LoadIndexTable(globals *model.Globals, fileName string) error {
 		return nil
 	}
 
-	tabs, err := LoadDataTable(globals.IndexGetter, fileName, "TablePragma")
+	tabs, err := LoadDataTable(globals.IndexGetter, fileName, "IndexDefine")
 
 	if err != nil {
 		return err
 	}
 
-	var pragmaList []*table.TablePragma
+	var pragmaList []*model.IndexDefine
 
 	for _, tab := range tabs {
 
-		ResolveHeaderFields(tab, "TablePragma", globals.Types)
+		ResolveHeaderFields(tab, "IndexDefine", globals.Types)
 
 		pragmaList = append(pragmaList, loadIndexData(tab, globals.Types)...)
 	}
@@ -60,8 +59,8 @@ func LoadIndexTable(globals *model.Globals, fileName string) error {
 		a := pragmaList[i]
 		b := pragmaList[j]
 
-		if a.TableMode != b.TableMode {
-			return a.TableMode < b.TableMode
+		if a.Kind != b.Kind {
+			return a.Kind < b.Kind
 		}
 
 		if a.TableType != b.TableType {

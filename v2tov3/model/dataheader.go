@@ -2,11 +2,11 @@ package model
 
 import (
 	"github.com/davyxu/golexer"
-	"github.com/davyxu/tabtoy/v3/table"
+	"github.com/davyxu/tabtoy/v3/model"
 )
 
 type ObjectFieldType struct {
-	table.TableField
+	model.TypeDefine
 	Meta *golexer.KVPair
 }
 
