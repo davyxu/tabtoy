@@ -15,6 +15,7 @@ func InitBuiltinTypes(typeTab *TypeTable) {
 		{Kind: TypeUsage_HeaderStruct, ObjectType: "TypeDefine", Name: "字段类型", FieldName: "FieldType", FieldType: "string"},
 		{Kind: TypeUsage_HeaderStruct, ObjectType: "TypeDefine", Name: "值", FieldName: "Value", FieldType: "string"},
 		{Kind: TypeUsage_HeaderStruct, ObjectType: "TypeDefine", Name: "数组切割", FieldName: "ArraySplitter", FieldType: "string"},
+		{Kind: TypeUsage_HeaderStruct, ObjectType: "TypeDefine", Name: "索引", FieldName: "MakeIndex", FieldType: "bool"},
 
 		// 索引表类型
 		{Kind: TypeUsage_Enum, ObjectType: "TableKind", Name: "", FieldName: "None", FieldType: "int", Value: "0"},

@@ -3,10 +3,10 @@ package model
 type TableKind int32
 
 const (
-	TableKind_None     TableKind = 0 //
-	TableKind_Type               = 1 // 类型表
-	TableKind_Data               = 2 // 数据表
-	TableKind_KeyValue           = 3 // 键值表
+	TableKind_None     TableKind = iota //
+	TableKind_Type                      // 类型表
+	TableKind_Data                      // 数据表
+	TableKind_KeyValue                  // 键值表
 )
 
 type IndexDefine struct {

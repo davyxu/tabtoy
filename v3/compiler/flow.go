@@ -19,13 +19,6 @@ func Compile(globals *model.Globals) (ret error) {
 
 	}()
 
-	//report.Log.Debugln("Loading Builtin Types... ")
-	//err := LoadTypeTable(globals.Types, model.BuiltinTypes, "BuiltinTypes.xlsx", true)
-	//
-	//if err != nil {
-	//	return err
-	//}
-
 	model.InitBuiltinTypes(globals.Types)
 
 	report.Log.Debugf("Loading Index file: '%s'... ", globals.IndexFile)

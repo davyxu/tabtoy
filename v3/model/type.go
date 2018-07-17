@@ -3,9 +3,9 @@ package model
 type TypeUsage int32
 
 const (
-	TypeUsage_None         TypeUsage = 0 //
-	TypeUsage_HeaderStruct           = 1 // 表头
-	TypeUsage_Enum                   = 2 // 枚举
+	TypeUsage_None         TypeUsage = iota //
+	TypeUsage_HeaderStruct                  // 表头
+	TypeUsage_Enum                          // 枚举
 )
 
 func (self TypeUsage) String() string {

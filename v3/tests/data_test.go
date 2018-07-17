@@ -107,13 +107,13 @@ func TestRepeatCheck(t *testing.T) {
 
 	typeSheet := emu.CreateDefault("Type.xlsx")
 	helper.WriteTypeTableHeader(typeSheet)
-	helper.WriteRowValues(typeSheet, "表头", "TestData", "ID", "ID", "int", "", "")
+	helper.WriteRowValues(typeSheet, "表头", "TestData", "ID", "ID", "int", "", "", "true")
 	helper.WriteRowValues(typeSheet, "表头", "TestData", "技能列表", "SkillList", "int", "|", "")
 
 	dataSheet := emu.CreateDefault("TestData.xlsx")
 	helper.WriteRowValues(dataSheet, "ID", "技能列表", "技能列表")
 	helper.WriteRowValues(dataSheet, "1", "100", "200")
-	helper.WriteRowValues(dataSheet, "2", "", "1") // 多列数组补0
+	helper.WriteRowValues(dataSheet, "1", "", "1") // 多列数组补0
 
 	emu.VerifyData(`
 {

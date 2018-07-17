@@ -44,7 +44,7 @@ func WriteRowValues(sheet *xlsx.Sheet, valueList ...interface{}) {
 
 func WriteTypeTableHeader(sheet *xlsx.Sheet) {
 
-	WriteRowValues(sheet, "种类", "对象类型", "标识名", "字段名", "字段类型", "数组切割", "值")
+	WriteRowValues(sheet, "种类", "对象类型", "标识名", "字段名", "字段类型", "数组切割", "值", "索引")
 }
 
 func WriteIndexTableHeader(sheet *xlsx.Sheet) {
