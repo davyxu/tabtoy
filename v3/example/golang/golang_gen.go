@@ -49,9 +49,71 @@ type ExampleKV struct {
 type Table struct {
 	ExampleData []*ExampleData // table: ExampleData
 	ExampleKV   []*ExampleKV   // table: ExampleKV
+
+	// Indices
+	ExampleDataByID map[int32]*ExampleData `json:"-"` // table: ExampleData
+
+	// Handlers
+	postHandlers []func(*Table) `json:"-"`
+	preHandlers  []func(*Table) `json:"-"`
 }
 
 // table: ExampleKV
 func (self *Table) GetKeyValue_ExampleKV() *ExampleKV {
 	return self.ExampleKV[0]
+}
+
+// 注册加载后回调(用于构建数据)
+func (self *Table) RegisterPostloadHandler(h func(*Table)) {
+
+	if h == nil {
+		panic("empty postload handler")
+	}
+
+	self.postHandlers = append(self.postHandlers, h)
+}
+
+// 注册加载前回调(用于清除数据)
+func (self *Table) RegisterPreloadHandlers(h func(*Table)) {
+
+	if h == nil {
+		panic("empty preload handler")
+	}
+
+	self.preHandlers = append(self.preHandlers, h)
+}
+
+// 调用PreHander，清除索引和数据
+func (self *Table) ResetData() {
+
+	for _, h := range self.preHandlers {
+		h(self)
+	}
+
+	self.ExampleData = self.ExampleData[0:0]
+	self.ExampleKV = self.ExampleKV[0:0]
+
+	self.ExampleDataByID = map[int32]*ExampleData{}
+}
+
+// 构建索引，调用PostHander
+func (self *Table) BuildData() {
+
+	for _, v := range self.ExampleData {
+		self.ExampleDataByID[v.ID] = v
+	}
+
+	for _, h := range self.postHandlers {
+		h(self)
+	}
+}
+
+// 初始化表实例
+func NewTable() *Table {
+
+	self := &Table{}
+
+	self.ResetData()
+
+	return self
 }

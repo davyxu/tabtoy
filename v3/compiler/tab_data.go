@@ -69,25 +69,25 @@ func LoadDataTable(filegetter helper.FileGetter, fileName, headerType, resolveHe
 
 func CheckRepeat(inputList *model.DataTableList) {
 
-	for _, inputTab := range inputList.AllTables() {
+	for _, tab := range inputList.AllTables() {
 
 		// 遍历输入数据的每一列
-		for _, inputHeader := range inputTab.Headers {
+		for _, header := range tab.Headers {
 
 			// 输入的列头
 
-			if inputHeader.TypeInfo == nil {
+			if header.TypeInfo == nil {
 				continue
 			}
 
 			// 这列需要建立索引
-			if inputHeader.TypeInfo.MakeIndex {
+			if header.TypeInfo.MakeIndex {
 
 				checker := map[string]*model.Cell{}
 
-				for row := 1; row < len(inputTab.Rows); row++ {
+				for row := 1; row < len(tab.Rows); row++ {
 
-					inputCell := inputTab.GetCell(row, inputHeader.Cell.Col)
+					inputCell := tab.GetCell(row, header.Cell.Col)
 
 					// 这行被注释，无效行
 					if inputCell == nil {
