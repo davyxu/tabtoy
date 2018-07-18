@@ -45,7 +45,7 @@ func Compile(globals *model.Globals) (ret error) {
 
 		// 合并所有的KV表行
 		var mergedKV model.DataTableList
-		mergeData(&kvList, &mergedKV, globals.Types)
+		MergeData(&kvList, &mergedKV, globals.Types)
 
 		// 完整KV表转置为普通数据表
 		for _, tab := range mergedKV.AllTables() {
@@ -57,7 +57,9 @@ func Compile(globals *model.Globals) (ret error) {
 	report.Log.Debugln("Merge data tables...")
 
 	// 合并所有的数据表
-	mergeData(&dataList, &globals.Datas, globals.Types)
+	MergeData(&dataList, &globals.Datas, globals.Types)
+
+	CheckRepeat(&globals.Datas)
 
 	return nil
 }

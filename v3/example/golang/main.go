@@ -14,14 +14,14 @@ func main() {
 		return
 	}
 
-	var config Config
-	err = json.Unmarshal(data, &config)
+	var tab Table
+	err = json.Unmarshal(data, &tab)
 
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	fmt.Printf("%+v\n", config)
+	fmt.Printf("%+v\n", tab)
 
 }

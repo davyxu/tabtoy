@@ -7,9 +7,9 @@ import (
 	"github.com/davyxu/tabtoy/v3/report"
 )
 
-func LoadTypeTable(typeTab *model.TypeTable, indexGetter helper.FileGetter, fileName string, builtin bool) error {
+func LoadTypeTable(typeTab *model.TypeTable, indexGetter helper.FileGetter, fileName string) error {
 
-	tabs, err := LoadDataTable(indexGetter, fileName, "TypeDefine")
+	tabs, err := LoadDataTable(indexGetter, fileName, "TypeDefine", "TypeDefine", typeTab)
 
 	if err != nil {
 		return err
@@ -17,7 +17,7 @@ func LoadTypeTable(typeTab *model.TypeTable, indexGetter helper.FileGetter, file
 
 	for _, tab := range tabs {
 
-		ResolveHeaderFields(tab, "TypeDefine", typeTab)
+		//resolveHeaderFields(tab, "TypeDefine", typeTab)
 
 		for row := 1; row < len(tab.Rows); row++ {
 
@@ -26,8 +26,6 @@ func LoadTypeTable(typeTab *model.TypeTable, indexGetter helper.FileGetter, file
 			if !ParseRow(&objtype, tab, row, typeTab) {
 				continue
 			}
-
-			objtype.IsBuiltin = builtin
 
 			if typeTab.FieldByName(objtype.ObjectType, objtype.FieldName) != nil {
 

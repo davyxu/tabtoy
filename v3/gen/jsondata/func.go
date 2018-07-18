@@ -13,6 +13,8 @@ func wrapSingleValue(globals *model.Globals, valueType *model.TypeDefine, value 
 	switch {
 	case valueType.FieldType == "string": // 字符串
 		return util.StringEscape(value)
+	case valueType.FieldType == "float32":
+		return value
 	case globals.Types.IsEnumKind(valueType.FieldType): // 枚举
 		return globals.Types.ResolveEnumValue(valueType.FieldType, value)
 	case valueType.FieldType == "bool":

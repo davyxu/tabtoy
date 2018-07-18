@@ -39,7 +39,7 @@ func LoadIndexTable(globals *model.Globals, fileName string) error {
 		return nil
 	}
 
-	tabs, err := LoadDataTable(globals.IndexGetter, fileName, "IndexDefine")
+	tabs, err := LoadDataTable(globals.IndexGetter, fileName, "IndexDefine", "IndexDefine", globals.Types)
 
 	if err != nil {
 		return err
@@ -48,8 +48,6 @@ func LoadIndexTable(globals *model.Globals, fileName string) error {
 	var pragmaList []*model.IndexDefine
 
 	for _, tab := range tabs {
-
-		ResolveHeaderFields(tab, "IndexDefine", globals.Types)
 
 		pragmaList = append(pragmaList, loadIndexData(tab, globals.Types)...)
 	}

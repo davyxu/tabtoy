@@ -47,7 +47,7 @@ func FetchDefaultValue(tf *TypeDefine) (ret string) {
 // 将定义用的类型，转换为不同语言对应的复合类型
 func LanguageType(tf *TypeDefine, lanType string) string {
 
-	convertedType := LanguagePrimitive(tf, lanType)
+	convertedType := LanguagePrimitive(tf.FieldType, lanType)
 
 	if tf.IsArray() {
 		switch lanType {
@@ -64,12 +64,12 @@ func LanguageType(tf *TypeDefine, lanType string) string {
 }
 
 // 将类型转为对应语言的原始类型
-func LanguagePrimitive(tf *TypeDefine, lanType string) string {
+func LanguagePrimitive(fieldType string, lanType string) string {
 
 	var convertedType string
 	linq.From(FieldTypes).WhereT(func(ft *FieldType) bool {
 
-		return ft.InputFieldName == tf.FieldType
+		return ft.InputFieldName == fieldType
 	}).SelectT(func(ft *FieldType) string {
 
 		switch lanType {
@@ -86,7 +86,7 @@ func LanguagePrimitive(tf *TypeDefine, lanType string) string {
 	})
 
 	if convertedType == "" {
-		convertedType = tf.FieldType
+		convertedType = fieldType
 	}
 
 	return convertedType

@@ -15,30 +15,27 @@ func loadVariantTables(globals *model.Globals, kvList, dataList *model.DataTable
 
 		switch pragma.Kind {
 		case model.TableKind_Data:
-			tablist, err := LoadDataTable(globals.TableGetter, pragma.TableFileName, pragma.TableType)
+			tablist, err := LoadDataTable(globals.TableGetter, pragma.TableFileName, pragma.TableType, pragma.TableType, globals.Types)
 
 			if err != nil {
 				return err
 			}
 
 			for _, tab := range tablist {
-				ResolveHeaderFields(tab, tab.HeaderType, globals.Types)
-
-				CheckHeaderTypes(tab, globals.Types)
 
 				dataList.AddDataTable(tab)
 			}
 
 		case model.TableKind_Type:
 
-			err := LoadTypeTable(globals.Types, globals.TableGetter, pragma.TableFileName, false)
+			err := LoadTypeTable(globals.Types, globals.TableGetter, pragma.TableFileName)
 
 			if err != nil {
 				return err
 			}
 
 		case model.TableKind_KeyValue:
-			tablist, err := LoadDataTable(globals.TableGetter, pragma.TableFileName, pragma.TableType)
+			tablist, err := LoadDataTable(globals.TableGetter, pragma.TableFileName, pragma.TableType, "KVDefine", globals.Types)
 
 			if err != nil {
 				return err
@@ -46,9 +43,6 @@ func loadVariantTables(globals *model.Globals, kvList, dataList *model.DataTable
 
 			for _, tab := range tablist {
 
-				ResolveHeaderFields(tab, "KVDefine", globals.Types)
-
-				CheckHeaderTypes(tab, globals.Types)
 				kvList.AddDataTable(tab)
 			}
 

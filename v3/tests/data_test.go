@@ -108,23 +108,13 @@ func TestRepeatCheck(t *testing.T) {
 	typeSheet := emu.CreateDefault("Type.xlsx")
 	helper.WriteTypeTableHeader(typeSheet)
 	helper.WriteRowValues(typeSheet, "表头", "TestData", "ID", "ID", "int", "", "", "true")
-	helper.WriteRowValues(typeSheet, "表头", "TestData", "技能列表", "SkillList", "int", "|", "")
 
 	dataSheet := emu.CreateDefault("TestData.xlsx")
-	helper.WriteRowValues(dataSheet, "ID", "技能列表", "技能列表")
-	helper.WriteRowValues(dataSheet, "1", "100", "200")
-	helper.WriteRowValues(dataSheet, "1", "", "1") // 多列数组补0
+	helper.WriteRowValues(dataSheet, "ID")
+	helper.WriteRowValues(dataSheet, "1")
+	helper.WriteRowValues(dataSheet, "1") // 多列数组补0
 
-	emu.VerifyData(`
-{
-			"@Tool": "github.com/davyxu/tabtoy",
-			"@Version": "testver",	
-			"TestData":[ 
-				{ "ID": 1, "SkillList": [100,200] },
-				{ "ID": 2, "SkillList": [0,1] } 
-			]
-		}
-`)
+	emu.MustGotError("TableError.DuplicateValueInMakingIndex 创建索引时发现重复值 | '1' @TestData.xlsx|Default(A3)")
 }
 
 // TODO KV表测试

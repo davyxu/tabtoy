@@ -8,25 +8,7 @@ import (
 	"strings"
 )
 
-func CheckHeaderTypes(tab *model.DataTable, types *model.TypeTable) {
-
-	for _, header := range tab.Headers {
-
-		if header.TypeInfo == nil {
-			continue
-		}
-
-		// 原始类型检查
-		if !model.PrimitiveExists(header.TypeInfo.FieldType) &&
-			!types.ObjectExists(header.TypeInfo.FieldType) { // 对象检查
-
-			report.ReportError("UnknownFieldType", header.Cell.String())
-		}
-	}
-
-}
-
-func loadheader(sheet *xlsx.Sheet, tab *model.DataTable) {
+func Loadheader(sheet *xlsx.Sheet, tab *model.DataTable, resolveTableType string, typeTab *model.TypeTable) {
 	// 读取表头
 
 	for col := 0; ; col++ {
@@ -52,6 +34,27 @@ func loadheader(sheet *xlsx.Sheet, tab *model.DataTable) {
 
 	}
 
+	resolveHeaderFields(tab, resolveTableType, typeTab)
+
+	checkHeaderTypes(tab, typeTab)
+}
+
+func checkHeaderTypes(tab *model.DataTable, typeTab *model.TypeTable) {
+
+	for _, header := range tab.Headers {
+
+		if header.TypeInfo == nil {
+			continue
+		}
+
+		// 原始类型检查
+		if !model.PrimitiveExists(header.TypeInfo.FieldType) &&
+			!typeTab.ObjectExists(header.TypeInfo.FieldType) { // 对象检查
+
+			report.ReportError("UnknownFieldType", header.Cell.String())
+		}
+	}
+
 }
 
 func headerValueExists(offset int, name string, headers []*model.HeaderField) bool {
@@ -65,7 +68,7 @@ func headerValueExists(offset int, name string, headers []*model.HeaderField) bo
 	return false
 }
 
-func ResolveHeaderFields(tab *model.DataTable, tableObjectType string, symbols *model.TypeTable) {
+func resolveHeaderFields(tab *model.DataTable, tableObjectType string, typeTab *model.TypeTable) {
 
 	tab.OriginalHeaderType = tableObjectType
 	for index, header := range tab.Headers {
@@ -74,7 +77,7 @@ func ResolveHeaderFields(tab *model.DataTable, tableObjectType string, symbols *
 			continue
 		}
 
-		tf := symbols.FieldByName(tableObjectType, header.Cell.Value)
+		tf := typeTab.FieldByName(tableObjectType, header.Cell.Value)
 		if tf == nil {
 			report.ReportError("HeaderFieldNotDefined", header.Cell.String())
 		}

@@ -35,7 +35,7 @@ func createOutputTable(symbols *model.TypeTable, inputTab *model.DataTable) *mod
 }
 
 // 将不同文件/Sheet/KV转换的表，按照表头类型合并数据输出
-func mergeData(inputList, outputList *model.DataTableList, symbols *model.TypeTable) {
+func MergeData(inputList, outputList *model.DataTableList, symbols *model.TypeTable) {
 
 	for _, inputTab := range inputList.AllTables() {
 

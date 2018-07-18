@@ -3,6 +3,7 @@ package compiler
 import (
 	"github.com/davyxu/tabtoy/v3/helper"
 	"github.com/davyxu/tabtoy/v3/model"
+	"github.com/davyxu/tabtoy/v3/report"
 	"github.com/tealeg/xlsx"
 	"strings"
 )
@@ -11,8 +12,15 @@ func readOneRow(sheet *xlsx.Sheet, tab *model.DataTable, row int) bool {
 
 	for _, header := range tab.Headers {
 
-		// 取列头所在列和当前行交叉的单元格
-		value := helper.GetSheetValueString(sheet, row, header.Cell.Col)
+		var value string
+
+		// 浮点数单元格按原样输出
+		if model.LanguagePrimitive(header.TypeInfo.FieldType, "go") == "float32" {
+			value = helper.GetSheetValueAsNumericString(sheet, row, header.Cell.Col)
+		} else {
+			// 取列头所在列和当前行交叉的单元格
+			value = helper.GetSheetValueString(sheet, row, header.Cell.Col)
+		}
 
 		// 首列带#时，本行忽略
 		if header.Cell.Col == 0 && strings.HasPrefix(value, "#") {
@@ -26,7 +34,7 @@ func readOneRow(sheet *xlsx.Sheet, tab *model.DataTable, row int) bool {
 	return true
 }
 
-func LoadDataTable(filegetter helper.FileGetter, fileName, headerType string) (ret []*model.DataTable, err error) {
+func LoadDataTable(filegetter helper.FileGetter, fileName, headerType, resolveHeaderType string, typeTab *model.TypeTable) (ret []*model.DataTable, err error) {
 	file, err := filegetter.GetFile(fileName)
 	if err != nil {
 		return nil, err
@@ -41,7 +49,7 @@ func LoadDataTable(filegetter helper.FileGetter, fileName, headerType string) (r
 
 		ret = append(ret, tab)
 
-		loadheader(sheet, tab)
+		Loadheader(sheet, tab, resolveHeaderType, typeTab)
 
 		// 遍历所有数据行
 		for row := 0; ; row++ {
@@ -57,4 +65,45 @@ func LoadDataTable(filegetter helper.FileGetter, fileName, headerType string) (r
 	}
 
 	return
+}
+
+func CheckRepeat(inputList *model.DataTableList) {
+
+	for _, inputTab := range inputList.AllTables() {
+
+		// 遍历输入数据的每一列
+		for _, inputHeader := range inputTab.Headers {
+
+			// 输入的列头
+
+			if inputHeader.TypeInfo == nil {
+				continue
+			}
+
+			// 这列需要建立索引
+			if inputHeader.TypeInfo.MakeIndex {
+
+				checker := map[string]*model.Cell{}
+
+				for row := 1; row < len(inputTab.Rows); row++ {
+
+					inputCell := inputTab.GetCell(row, inputHeader.Cell.Col)
+
+					// 这行被注释，无效行
+					if inputCell == nil {
+						break
+					}
+
+					if _, ok := checker[inputCell.Value]; ok {
+
+						report.ReportError("DuplicateValueInMakingIndex", inputCell.String())
+
+					} else {
+						checker[inputCell.Value] = inputCell
+					}
+
+				}
+			}
+		}
+	}
 }
