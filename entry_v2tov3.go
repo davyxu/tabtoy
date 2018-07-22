@@ -16,7 +16,7 @@ func V2ToV3Entry() {
 
 	globals := model.NewGlobals()
 
-	globals.TableGetter = new(helper.SyncFileLoader)
+	globals.TableGetter = helper.NewFileLoader(true)
 
 	globals.SourceFileList = flag.Args()
 	globals.OutputDir = *paramUpgradeOut

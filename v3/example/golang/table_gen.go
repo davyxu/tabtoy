@@ -64,7 +64,7 @@ func (self *Table) GetKeyValue_ExampleKV() *ExampleKV {
 }
 
 // 注册加载后回调(用于构建数据)
-func (self *Table) RegisterPostloadHandler(h func(*Table)) {
+func (self *Table) RegisterPostEntry(h func(*Table)) {
 
 	if h == nil {
 		panic("empty postload handler")
@@ -74,7 +74,7 @@ func (self *Table) RegisterPostloadHandler(h func(*Table)) {
 }
 
 // 注册加载前回调(用于清除数据)
-func (self *Table) RegisterPreloadHandlers(h func(*Table)) {
+func (self *Table) RegisterPreEntry(h func(*Table)) {
 
 	if h == nil {
 		panic("empty preload handler")

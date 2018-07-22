@@ -9,7 +9,7 @@ type Globals struct {
 	IndexFile         string // 指示文件
 	PackageName       string // 文件生成时的包名
 	CombineStructName string // 包含最终表所有数据的根结构
-	Para              bool   // 并发读取文件
+	//Para              bool   // 并发读取文件
 
 	IndexGetter helper.FileGetter // 索引文件获取器
 	TableGetter helper.FileGetter // 其他文件获取器

@@ -106,7 +106,8 @@ func loadDatas(globals *model.Globals, sourceFile, targetFile *xlsx.File, tabPra
 }
 
 func loadTable(globals *model.Globals, fileName string) error {
-	sourceFile, err := globals.TableGetter.GetFile(fileName)
+
+	sourceFile, err := xlsx.OpenFile(fileName)
 	if err != nil {
 		return err
 	}

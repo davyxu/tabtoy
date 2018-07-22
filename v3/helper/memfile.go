@@ -46,10 +46,10 @@ func (self *MemFile) CreateDefault(filename string) *xlsx.Sheet {
 	return sheet
 }
 
-func (self *MemFile) GetFile(filename string) (*xlsx.File, error) {
+func (self *MemFile) GetFile(filename string) (TableFile, error) {
 
 	if f, ok := self.dataByFileName[filename]; ok {
-		return f.File, nil
+		return NewXlsxFile(f.File), nil
 	}
 
 	return nil, errors.New("file not found: " + filename)

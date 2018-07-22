@@ -28,22 +28,20 @@ var (
 )
 
 func selectFileLoader(globals *model.Globals, para bool) {
-	globals.IndexGetter = new(helper.SyncFileLoader)
-	globals.Para = para
-	if globals.Para {
-		// 缓冲文件
-		asyncLoader := helper.NewAsyncFileLoader()
+	globals.IndexGetter = helper.NewFileLoader(true)
 
+	tabLoader := helper.NewFileLoader(!para)
+
+	if para {
 		for _, pragma := range globals.IndexList {
-			asyncLoader.AddFile(pragma.TableFileName)
+			tabLoader.AddFile(pragma.TableFileName)
 		}
 
-		asyncLoader.Commit()
-
-		globals.TableGetter = asyncLoader
-	} else {
-		globals.TableGetter = globals.IndexGetter
+		tabLoader.Commit()
 	}
+
+	globals.TableGetter = tabLoader
+
 }
 
 func GenFile(globals *model.Globals) error {

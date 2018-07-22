@@ -28,8 +28,7 @@ func NewTableEmulator(t *testing.T) *TableEmulator {
 	globals.Version = "testver"
 	globals.IndexFile = "Index.xlsx"
 	globals.PackageName = "main"
-	globals.CombineStructName = "Config"
-	globals.Para = false
+	globals.CombineStructName = "Table"
 
 	memfile := helper.NewMemFile()
 
@@ -176,6 +175,8 @@ func (self *TableEmulator) VerifyGoTypeAndJson(expectJson string) {
 	var appJson []byte
 	appJson, err = compileLauncher(filepath.Join(dir, "launcher.go"), configFileName, tableFileName)
 	if err != nil {
+		self.T.Log(string(appJson))
+		self.T.FailNow()
 		return
 	}
 
