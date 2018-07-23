@@ -48,17 +48,22 @@ func (self *FileLoader) Commit() {
 
 func loadFileByExt(filename string) interface{} {
 	switch filepath.Ext(filename) {
-	case ".xlsx", ".xls":
+	case ".xlsx", ".xls", ".xlsm":
 
 		file, err := xlsx.OpenFile(filename)
 		if err != nil {
 			return err
 		}
 
-		file.ToSlice()
-
 		return NewXlsxFile(file)
+
 	case ".csv":
+		data, err := NewCSVFile(filename)
+		if err != nil {
+			return err
+		}
+
+		return data
 
 	default:
 		report.ReportError("UnknownInputFileExtension", filename)
