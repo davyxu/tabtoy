@@ -192,5 +192,6 @@ ModelManifest.xml
 
 v2/example/lua/*.dll
 v2/example/cpp/.vs
+v3/example/lua/*.dll
 *.db
 v2tov3/example/*.xlsx

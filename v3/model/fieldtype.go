@@ -2,7 +2,6 @@ package model
 
 import (
 	"github.com/ahmetb/go-linq"
-	"text/template"
 )
 
 type FieldType struct {
@@ -44,25 +43,6 @@ func FetchDefaultValue(tf *TypeDefine) (ret string) {
 	return
 }
 
-// 将定义用的类型，转换为不同语言对应的复合类型
-func LanguageType(tf *TypeDefine, lanType string) string {
-
-	convertedType := LanguagePrimitive(tf.FieldType, lanType)
-
-	if tf.IsArray() {
-		switch lanType {
-		case "cs":
-			return convertedType + "[]"
-		case "go":
-			return "[]" + convertedType
-		default:
-			panic("unknown lan type: " + lanType)
-		}
-	}
-
-	return convertedType
-}
-
 // 将类型转为对应语言的原始类型
 func LanguagePrimitive(fieldType string, lanType string) string {
 
@@ -99,10 +79,4 @@ func PrimitiveExists(fieldType string) bool {
 
 		return ft.InputFieldName == fieldType
 	}).Count() > 0
-}
-
-var UsefulFunc = template.FuncMap{}
-
-func init() {
-	UsefulFunc["LanguageType"] = LanguageType
 }
