@@ -87,6 +87,10 @@ func (self *CSVSheet) Name() string {
 	return self.file.Name
 }
 
+func (self *CSVSheet) MaxColumn() int {
+	return self.file.MaxCol()
+}
+
 func (self *CSVSheet) IsFullRowEmpty(row int) bool {
 
 	for col := 0; col < self.file.MaxCol(); col++ {

@@ -15,6 +15,7 @@ func readOneRow(sheet helper.TableSheet, tab *model.DataTable, row int) bool {
 			continue
 		}
 
+		// 浮点数用库取时，需要特殊处理
 		isFloat := model.LanguagePrimitive(header.TypeInfo.FieldType, "go") == "float32"
 
 		value := sheet.GetValue(row, header.Cell.Col, isFloat)
@@ -51,7 +52,7 @@ func LoadDataTable(filegetter helper.FileGetter, fileName, headerType, resolveHe
 		// 遍历所有数据行
 		for row := 0; ; row++ {
 
-			if sheet.IsFullRowEmpty(row) {
+			if helper.IsRowEmpty(sheet, row) {
 				break
 			}
 
@@ -71,8 +72,7 @@ func CheckRepeat(inputList *model.DataTableList) {
 		// 遍历输入数据的每一列
 		for _, header := range tab.Headers {
 
-			// 输入的列头
-
+			// 输入的列头，为空表示改列被注释
 			if header.TypeInfo == nil {
 				continue
 			}

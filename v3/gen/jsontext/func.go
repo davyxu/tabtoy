@@ -1,4 +1,4 @@
-package jsondata
+package jsontext
 
 import (
 	"github.com/davyxu/tabtoy/util"

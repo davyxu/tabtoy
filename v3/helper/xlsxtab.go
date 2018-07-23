@@ -1,6 +1,9 @@
 package helper
 
-import "github.com/tealeg/xlsx"
+import (
+	"github.com/tealeg/xlsx"
+	"strings"
+)
 
 type XlsxFile struct {
 	*xlsx.File
@@ -34,19 +37,38 @@ func (self *XlsxSheet) Name() string {
 	return self.Sheet.Name
 }
 
-func (self *XlsxSheet) IsFullRowEmpty(row int) bool {
-	return IsFullRowEmpty(self.Sheet, row)
+func (self *XlsxSheet) MaxColumn() int {
+	return self.Sheet.MaxCol
 }
 
-func (self *XlsxSheet) GetValue(row, col int, isFloat bool) string {
+func (self *XlsxSheet) IsFullRowEmpty(row int) bool {
+
+	for col := 0; col < self.Sheet.MaxCol; col++ {
+
+		data := self.GetValue(row, col, false)
+
+		if data != "" {
+			return false
+		}
+	}
+
+	return true
+}
+
+func (self *XlsxSheet) GetValue(row, col int, isFloat bool) (ret string) {
+
+	c := self.Sheet.Cell(row, col)
 
 	// 浮点数单元格按原样输出
 	if isFloat {
-		return GetSheetValueAsNumericString(self.Sheet, row, col)
+		ret, _ = c.GeneralNumeric()
+		ret = strings.TrimSpace(ret)
 	} else {
 		// 取列头所在列和当前行交叉的单元格
-		return GetSheetValueString(self.Sheet, row, col)
+		ret = strings.TrimSpace(c.Value)
 	}
+
+	return
 }
 
 func NewXlsxSheet(sheet *xlsx.Sheet) TableSheet {
