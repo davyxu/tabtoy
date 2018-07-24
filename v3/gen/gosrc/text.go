@@ -25,7 +25,7 @@ var (
 
 {{range $sn, $objName := $.Types.StructNames}}
 type {{$objName}} struct{ {{range $fi,$field := $.Types.AllFieldByName $objName}}
-	{{$field.FieldName}} {{LanguageType $field "go"}} {{GoTabTag $field}} {{end}}
+	{{$field.FieldName}} {{GoType $field}} {{GoTabTag $field}} {{end}}
 }
 {{end}}
 
@@ -34,7 +34,7 @@ type {{.CombineStructName}} struct { {{range $ti, $tab := $.Datas.AllTables}}
 	{{$tab.HeaderType}} []*{{$tab.HeaderType}} // table: {{$tab.HeaderType}} {{end}}
 
 	// Indices {{range $ii, $idx := GetIndices $}}
-	{{$idx.Table.HeaderType}}By{{$idx.FieldInfo.FieldName}} map[{{LanguageType $idx.FieldInfo "go"}}]*{{$idx.Table.HeaderType}}	{{JsonTabOmit}} // table: {{$idx.Table.HeaderType}} {{end}}
+	{{$idx.Table.HeaderType}}By{{$idx.FieldInfo.FieldName}} map[{{GoType $idx.FieldInfo}}]*{{$idx.Table.HeaderType}}	{{JsonTabOmit}} // table: {{$idx.Table.HeaderType}} {{end}}
 
 	// Handlers
 	postHandlers []func(*Table) {{JsonTabOmit}}
@@ -78,7 +78,7 @@ func (self *Table) ResetData() {
 	{{range $ti, $tab := $.Datas.AllTables}}
 	self.{{$tab.HeaderType}} = self.{{$tab.HeaderType}}[0:0] {{end}}
 	{{range $ii, $idx := GetIndices $}}
-	self.{{$idx.Table.HeaderType}}By{{$idx.FieldInfo.FieldName}} = map[{{LanguageType $idx.FieldInfo "go"}}]*{{$idx.Table.HeaderType}}{} {{end}}	
+	self.{{$idx.Table.HeaderType}}By{{$idx.FieldInfo.FieldName}} = map[{{GoType $idx.FieldInfo}}]*{{$idx.Table.HeaderType}}{} {{end}}	
 }
 
 // 构建索引，调用PostHander

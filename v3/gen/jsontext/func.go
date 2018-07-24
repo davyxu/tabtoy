@@ -30,7 +30,7 @@ func wrapSingleValue(globals *model.Globals, valueType *model.TypeDefine, value 
 	}
 
 	if value == "" {
-		return model.FetchDefaultValue(valueType)
+		return model.FetchDefaultValue(valueType.FieldType)
 	}
 
 	return value

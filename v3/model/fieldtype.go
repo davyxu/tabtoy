@@ -15,10 +15,12 @@ type FieldType struct {
 
 var (
 	FieldTypes = []*FieldType{
+		{"int16", "int16", "Int16", "0"},
 		{"int32", "int32", "Int32", "0"},
 		{"int64", "int64", "Int64", "0"},
 		{"int", "int32", "Int32", "0"},
-		{"uint64", "uint64", "UInt64", "0"},
+		{"uint16", "uint16", "UInt16", "0"},
+		{"uint32", "uint32", "UInt32", "0"},
 		{"uint64", "uint64", "UInt64", "0"},
 		{"float", "float32", "float", "0"},
 		{"double", "float64", "double", "0"},
@@ -30,11 +32,11 @@ var (
 )
 
 // 取类型的默认值
-func FetchDefaultValue(tf *TypeDefine) (ret string) {
+func FetchDefaultValue(fieldType string) (ret string) {
 
 	linq.From(FieldTypes).WhereT(func(ft *FieldType) bool {
 
-		return ft.InputFieldName == tf.FieldType
+		return ft.InputFieldName == fieldType
 	}).ForEachT(func(ft *FieldType) {
 
 		ret = ft.DefaultValue

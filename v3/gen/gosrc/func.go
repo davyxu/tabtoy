@@ -21,7 +21,20 @@ func KeyValueTypeNames(globals *model.Globals) (ret []string) {
 	return
 }
 
+// 将定义用的类型，转换为不同语言对应的复合类型
+
 func init() {
+	UsefulFunc["GoType"] = func(tf *model.TypeDefine) string {
+
+		convertedType := model.LanguagePrimitive(tf.FieldType, "go")
+
+		if tf.IsArray() {
+			return "[]" + convertedType
+		}
+
+		return convertedType
+	}
+
 	UsefulFunc["GoTabTag"] = func(fieldType *model.TypeDefine) string {
 
 		var sb strings.Builder

@@ -12,27 +12,7 @@ type TableIndices struct {
 	FieldInfo *model.TypeDefine
 }
 
-// 将定义用的类型，转换为不同语言对应的复合类型
-func LanguageType(tf *model.TypeDefine, lanType string) string {
-
-	convertedType := model.LanguagePrimitive(tf.FieldType, lanType)
-
-	if tf.IsArray() {
-		switch lanType {
-		case "cs":
-			return convertedType + "[]"
-		case "go":
-			return "[]" + convertedType
-		default:
-			panic("unknown lan type: " + lanType)
-		}
-	}
-
-	return convertedType
-}
-
 func init() {
-	UsefulFunc["LanguageType"] = LanguageType
 
 	UsefulFunc["GetIndices"] = func(globals *model.Globals) (ret []TableIndices) {
 

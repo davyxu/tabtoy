@@ -4,6 +4,7 @@ import (
 	"flag"
 	"github.com/davyxu/tabtoy/v3/compiler"
 	"github.com/davyxu/tabtoy/v3/gen"
+	"github.com/davyxu/tabtoy/v3/gen/cssrc"
 	"github.com/davyxu/tabtoy/v3/gen/gosrc"
 	"github.com/davyxu/tabtoy/v3/gen/jsontext"
 	"github.com/davyxu/tabtoy/v3/gen/luasrc"
@@ -27,6 +28,7 @@ var (
 		{"gosrc", gosrc.Generate, paramGoOut},
 		{"jsontext", jsontext.Generate, paramJsonOut},
 		{"luasrc", luasrc.Generate, paramLuaOut},
+		{"cssrc", cssrc.Generate, paramCSharpOut},
 	}
 )
 
