@@ -19,9 +19,9 @@ namespace {{.PackageName}}
 		public {{CSType $field}} {{$field.FieldName}} = {{CSDefaultValue $ $field}}; {{end}}
 
 		#region Deserialize Code
-		public void Deserialize( tabtoy.DataReader reader )
+		public void Deserialize( tabtoy.TableReader reader )
 		{
-			int tag = -1;
+			UInt32 tag = 0;
             while ( reader.ReadTag(ref tag) )
             {
  				switch (tag)
@@ -43,7 +43,7 @@ namespace {{.PackageName}}
 	{ {{range $ti, $tab := $.Datas.AllTables}}
 		public List<{{$tab.HeaderType}}> {{$tab.HeaderType}} = new List<{{$tab.HeaderType}}>(); // table: {{$tab.HeaderType}} {{end}}
 
-		public void Deserialize( tabtoy.DataReader reader )
+		public void Deserialize( tabtoy.TableReader reader )
 		{	
 			reader.ReadHeader();{{range $ti, $tab := $.Datas.AllTables}}
 			reader.ReadStruct(ref {{$tab.HeaderType}}); {{end}}

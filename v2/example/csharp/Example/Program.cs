@@ -24,13 +24,13 @@ namespace csharptest
                 var config = new table.Config();
                 table.Config.Deserialize(config, reader);                
 
-                // ж╠╫см╗╧Щоб╠Й╩Ях║╩Р╠ИюЗ
+                // ж╠О©╫О©╫м╗О©╫О©╫О©╫б╠О©╫О©╫х║О©╫О©╫О©╫О©╫О©╫
                 var directFetch = config.Sample[2];
 
-                // лМ╪схуж╬йДЁЖ╩Рвт╤╗рЕйДЁЖ
+                // О©╫О©╫О©╫О©╫О©╫ж╬О©╫О©╫О©╫О©╫О©╫О©╫т╤О©╫О©╫О©╫О©╫О©╫О©╫
                 config.TableLogger.AddTarget( new tabtoy.DebuggerTarget() );
 
-                // х║©уй╠, ╣╠д╛хож╣╡╩н╙©уй╠, йДЁЖхуж╬
+                // х║О©╫О©╫й╠, О©╫О©╫д╛О©╫О©╫ж╣О©╫О©╫н╙О©╫О©╫й╠, О©╫О©╫О©╫О©╫О©╫ж╬
                 var nullFetchOutLog = config.GetSampleByID( 0 );
                 
             }

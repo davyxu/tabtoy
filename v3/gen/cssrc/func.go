@@ -3,6 +3,7 @@ package cssrc
 import (
 	"fmt"
 	"github.com/davyxu/tabtoy/util"
+	"github.com/davyxu/tabtoy/v3/gen/binpak"
 	"github.com/davyxu/tabtoy/v3/model"
 	"text/template"
 )
@@ -50,35 +51,9 @@ func init() {
 
 	UsefulFunc["CSTag"] = func(globals *model.Globals, fieldIndex int, tf *model.TypeDefine) string {
 
-		convertedType := model.LanguagePrimitive(tf.FieldType, "cs")
+		tag := binpak.MakeTag(globals, tf, fieldIndex)
 
-		var t int
-		switch {
-		case convertedType == "Int16":
-			t = 1
-		case convertedType == "Int32":
-			t = 2
-		case convertedType == "Int64":
-			t = 3
-		case convertedType == "UInt16":
-			t = 4
-		case convertedType == "UInt32":
-			t = 5
-		case convertedType == "UInt64":
-			t = 6
-		case convertedType == "float":
-			t = 7
-		case convertedType == "string":
-			t = 8
-		case convertedType == "bool":
-			t = 9
-		case globals.Types.IsEnumKind(tf.FieldType):
-			t = 10
-		default:
-			panic("unknown type:" + tf.FieldType)
-		}
-
-		return fmt.Sprintf("0x%x", t<<16|fieldIndex)
+		return fmt.Sprintf("0x%x", tag)
 	}
 
 	UsefulFunc["CSReader"] = func(globals *model.Globals, tf *model.TypeDefine) (ret string) {

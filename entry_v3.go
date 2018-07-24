@@ -4,6 +4,7 @@ import (
 	"flag"
 	"github.com/davyxu/tabtoy/v3/compiler"
 	"github.com/davyxu/tabtoy/v3/gen"
+	"github.com/davyxu/tabtoy/v3/gen/binpak"
 	"github.com/davyxu/tabtoy/v3/gen/cssrc"
 	"github.com/davyxu/tabtoy/v3/gen/gosrc"
 	"github.com/davyxu/tabtoy/v3/gen/jsontext"
@@ -29,6 +30,7 @@ var (
 		{"jsontext", jsontext.Generate, paramJsonOut},
 		{"luasrc", luasrc.Generate, paramLuaOut},
 		{"cssrc", cssrc.Generate, paramCSharpOut},
+		{"binpak", binpak.Generate, paramBinaryOut},
 	}
 )
 

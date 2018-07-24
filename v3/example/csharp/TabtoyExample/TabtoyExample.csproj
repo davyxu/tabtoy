@@ -42,8 +42,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\api\csharp\DataReader.cs">
-      <Link>DataReader.cs</Link>
+    <Compile Include="..\..\..\api\csharp\TableReader.cs">
+      <Link>TableReader.cs</Link>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="table_gen.cs" />

@@ -22,34 +22,34 @@ namespace tabtoy
 
     public interface ITableSerializable
     {
-        void Deserialize(DataReader reader);
+        void Deserialize(TableReader reader);
     }
     
 
-    public class DataReader
+    public class TableReader
     {
-        BinaryReader _reader;
+        BinaryReader _binaryReader;
         long _boundPos;
 
-        public DataReader(Stream stream)
+        public TableReader(Stream stream)
         {
-            _reader = new BinaryReader(stream);
+            _binaryReader = new BinaryReader(stream);
             _boundPos = stream.Length;
         }
 
-        public DataReader(Stream stream, long boundpos)
+        public TableReader(Stream stream, long boundpos)
         {
-            _reader = new BinaryReader(stream);
+            _binaryReader = new BinaryReader(stream);
             _boundPos = boundpos;
         }
 
-        public DataReader(DataReader reader, long boundpos)
+        public TableReader(TableReader reader, long boundpos)
         {
-            _reader = reader._reader;
+            _binaryReader = reader._binaryReader;
             _boundPos = boundpos;
         }
 
-        void ConsumeData(int size)
+        void ConsumeData(uint size)
         {
             if (!IsDataEnough(size))
             {
@@ -57,9 +57,9 @@ namespace tabtoy
             }
         }
 
-        bool IsDataEnough(int size)
+        bool IsDataEnough(uint size)
         {
-            return _reader.BaseStream.Position + size <= _boundPos;
+            return _binaryReader.BaseStream.Position + size <= _boundPos;
         }
 
         const int FileVersion = 3;
@@ -73,19 +73,19 @@ namespace tabtoy
                 throw new Exception("Invalid tabtoy file");
             }
 
-            Int32 ver = 0;
-            ReadInt32(ref ver);
+            UInt32 ver = 0;
+            ReadUInt32(ref ver);
             if (ver != FileVersion)
             {
                 throw new Exception("Invalid tabtoy version");
             }            
         }
 
-        public bool ReadTag(ref Int32 v)
+        public bool ReadTag(ref UInt32 v)
         {
-            if (IsDataEnough(sizeof(Int32)))
+            if (IsDataEnough(sizeof(UInt32)))
             {
-                v = _reader.ReadInt32();
+                v = _binaryReader.ReadUInt32();
                 return true;
             }
 
@@ -98,14 +98,14 @@ namespace tabtoy
         {
             ConsumeData(sizeof(Int16));
 
-            v = _reader.ReadInt16();
+            v = _binaryReader.ReadInt16();
         }
 
         public void ReadInt32(ref Int32 v)
         {
             ConsumeData(sizeof(Int32));
 
-            v = _reader.ReadInt32();
+            v = _binaryReader.ReadInt32();
         }
        
 
@@ -113,52 +113,52 @@ namespace tabtoy
         {
             ConsumeData(sizeof(Int64));
 
-            v = _reader.ReadInt64();
+            v = _binaryReader.ReadInt64();
         }
 
         public void ReadUInt16(ref UInt16 v)
         {
             ConsumeData(sizeof(UInt16));
 
-            v = _reader.ReadUInt16();
+            v = _binaryReader.ReadUInt16();
         }
 
         public void ReadUInt32(ref UInt32 v)
         {
             ConsumeData(sizeof(UInt32));
 
-            v = _reader.ReadUInt32();
+            v = _binaryReader.ReadUInt32();
         }
 
         public void ReadUInt64(ref UInt64 v)
         {
             ConsumeData(sizeof(UInt64));
 
-            v = _reader.ReadUInt64();
+            v = _binaryReader.ReadUInt64();
         }
 
         public void ReadFloat(ref float v)
         {
             ConsumeData(sizeof(float));
 
-            v = _reader.ReadSingle();
+            v = _binaryReader.ReadSingle();
         }
 
         public void ReadBool(ref bool v)
         {
             ConsumeData(sizeof(bool));
 
-            v = _reader.ReadBoolean();
+            v = _binaryReader.ReadBoolean();
         }
 
         public void ReadString(ref string v)
         {
-            Int32 len = 0;
-            ReadInt32(ref len);
+            UInt32 len = 0;
+            ReadUInt32(ref len);
 
             ConsumeData(sizeof(Byte) * len);
 
-            v = encoding.GetString(_reader.ReadBytes(len));
+            v = encoding.GetString(_binaryReader.ReadBytes((int)len));
         }
 
         public void ReadEnum<T>(ref T v)
@@ -241,19 +241,19 @@ namespace tabtoy
 
         public void ReadStruct<T>(ref T v) where T : ITableSerializable, new()
         {
-            Int32 bound = 0;
-            ReadInt32(ref bound);
+            UInt32 bound = 0;
+            ReadUInt32(ref bound);
 
             v = new T();
 
             // 避免不同结构体跨越式影响其他数据二进制边界
-            v.Deserialize(new DataReader(this, _reader.BaseStream.Position + bound));
+            v.Deserialize(new TableReader(this, _binaryReader.BaseStream.Position + bound));
         }
 
         public void ReadStruct<T>(ref List<T> v) where T : ITableSerializable, new()
         {
-            Int32 len = 0;
-            ReadInt32(ref len);
+            UInt32 len = 0;
+            ReadUInt32(ref len);
 
             for (int i = 0; i < len; i++)
             {

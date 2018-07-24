@@ -24,9 +24,9 @@ namespace main
 		public List<Int32> Skill = new List<Int32>(); 
 
 		#region Deserialize Code
-		public void Deserialize( tabtoy.DataReader reader )
+		public void Deserialize( tabtoy.TableReader reader )
 		{
-			int tag = -1;
+			UInt32 tag = 0;
             while ( reader.ReadTag(ref tag) )
             {
  				switch (tag)
@@ -69,9 +69,9 @@ namespace main
 		public List<Int32> GroupID = new List<Int32>(); 
 
 		#region Deserialize Code
-		public void Deserialize( tabtoy.DataReader reader )
+		public void Deserialize( tabtoy.TableReader reader )
 		{
-			int tag = -1;
+			UInt32 tag = 0;
             while ( reader.ReadTag(ref tag) )
             {
  				switch (tag)
@@ -104,7 +104,7 @@ namespace main
 		public List<ExampleData> ExampleData = new List<ExampleData>(); // table: ExampleData 
 		public List<ExampleKV> ExampleKV = new List<ExampleKV>(); // table: ExampleKV 
 
-		public void Deserialize( tabtoy.DataReader reader )
+		public void Deserialize( tabtoy.TableReader reader )
 		{	
 			reader.ReadHeader();
 			reader.ReadStruct(ref ExampleData); 
