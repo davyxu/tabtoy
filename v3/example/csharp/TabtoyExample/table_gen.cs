@@ -101,14 +101,39 @@ namespace main
 	// Combine struct
 	public partial class Table
 	{ 
-		public List<ExampleData> ExampleData = new List<ExampleData>(); // table: ExampleData 
-		public List<ExampleKV> ExampleKV = new List<ExampleKV>(); // table: ExampleKV 
+		// table: ExampleData
+		public List<ExampleData> ExampleData = new List<ExampleData>(); 
+		// table: ExampleKV
+		public List<ExampleKV> ExampleKV = new List<ExampleKV>(); 
+
+		// Indices 
+		public Dictionary<Int32,ExampleData> ExampleDataByID = new Dictionary<Int32,ExampleData>(); 
+
+		
+		// table: ExampleKV
+		public ExampleKV GetKeyValue_ExampleKV()
+		{
+			return ExampleKV[0];
+		}
+
+		public void ResetData( )
+		{   
+			ExampleData.Clear(); 
+			ExampleKV.Clear();  
+			ExampleDataByID.Clear(); 	
+		}
 
 		public void Deserialize( tabtoy.TableReader reader )
 		{	
 			reader.ReadHeader();
 			reader.ReadStruct(ref ExampleData); 
 			reader.ReadStruct(ref ExampleKV); 
+				
+			foreach( var kv in ExampleData )
+			{
+				ExampleDataByID[kv.ID] = kv;
+			}
+			
 		}
 	}
 }

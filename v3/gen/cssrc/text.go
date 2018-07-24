@@ -41,12 +41,35 @@ namespace {{.PackageName}}
 	// Combine struct
 	public partial class {{.CombineStructName}}
 	{ {{range $ti, $tab := $.Datas.AllTables}}
-		public List<{{$tab.HeaderType}}> {{$tab.HeaderType}} = new List<{{$tab.HeaderType}}>(); // table: {{$tab.HeaderType}} {{end}}
+		// table: {{$tab.HeaderType}}
+		public List<{{$tab.HeaderType}}> {{$tab.HeaderType}} = new List<{{$tab.HeaderType}}>(); {{end}}
+
+		// Indices {{range $ii, $idx := GetIndices $}}
+		public Dictionary<{{CSType $idx.FieldInfo}},{{$idx.Table.HeaderType}}> {{$idx.Table.HeaderType}}By{{$idx.FieldInfo.FieldName}} = new Dictionary<{{CSType $idx.FieldInfo}},{{$idx.Table.HeaderType}}>(); {{end}}
+
+		{{if HasKeyValueTypes $}}
+		//{{range $ti, $name := GetKeyValueTypeNames $}} table: {{$name}}
+		public {{$name}} GetKeyValue_{{$name}}()
+		{
+			return {{$name}}[0];
+		}{{end}}{{end}}
+
+		public void ResetData( )
+		{   {{range $ti, $tab := $.Datas.AllTables}}
+			{{$tab.HeaderType}}.Clear(); {{end}} {{range $ii, $idx := GetIndices $}}
+			{{$idx.Table.HeaderType}}By{{$idx.FieldInfo.FieldName}}.Clear(); {{end}}	
+		}
 
 		public void Deserialize( tabtoy.TableReader reader )
 		{	
 			reader.ReadHeader();{{range $ti, $tab := $.Datas.AllTables}}
 			reader.ReadStruct(ref {{$tab.HeaderType}}); {{end}}
+			{{range $ii, $idx := GetIndices $}}	
+			foreach( var kv in {{$idx.Table.HeaderType}} )
+			{
+				{{$idx.Table.HeaderType}}By{{$idx.FieldInfo.FieldName}}[kv.{{$idx.FieldInfo.FieldName}}] = kv;
+			}
+			{{end}}
 		}
 	}
 }
