@@ -50,6 +50,6 @@ func main() {
 		fmt.Println("KV: ", tab.GetKeyValue_ExampleKV().ServerIP)
 	})
 
-	ReloadTable("../json/json_gen.json")
+	ReloadTable("../json/table_gen.json")
 
 }
