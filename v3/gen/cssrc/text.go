@@ -18,7 +18,7 @@ namespace {{.PackageName}}
 	{ {{range $fi,$field := $.Types.AllFieldByName $objName}}
 		public {{CSType $field}} {{$field.FieldName}} = {{CSDefaultValue $ $field}}; {{end}}
 
-		#region Deserialize Code
+		{{if $.GenBinary}}#region Deserialize Code
 		public void Deserialize( tabtoy.TableReader reader )
 		{
 			UInt32 tag = 0;
@@ -34,7 +34,7 @@ namespace {{.PackageName}}
 				}
 			}
 		}
-		#endregion
+		#endregion {{end}}
 	}
 	{{end}}
 
@@ -59,7 +59,7 @@ namespace {{.PackageName}}
 			{{$tab.HeaderType}}.Clear(); {{end}} {{range $ii, $idx := GetIndices $}}
 			{{$idx.Table.HeaderType}}By{{$idx.FieldInfo.FieldName}}.Clear(); {{end}}	
 		}
-
+		{{if $.GenBinary}}
 		public void Deserialize( tabtoy.TableReader reader )
 		{	
 			reader.ReadHeader();{{range $ti, $tab := $.Datas.AllTables}}
@@ -70,7 +70,7 @@ namespace {{.PackageName}}
 				{{$idx.Table.HeaderType}}By{{$idx.FieldInfo.FieldName}}[kv.{{$idx.FieldInfo.FieldName}}] = kv;
 			}
 			{{end}}
-		}
+		}{{end}}
 	}
 }
 `

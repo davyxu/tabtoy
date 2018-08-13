@@ -59,7 +59,7 @@ namespace main
 				}
 			}
 		}
-		#endregion
+		#endregion 
 	}
 	
 	public partial class ExampleKV : tabtoy.ITableSerializable
@@ -94,7 +94,7 @@ namespace main
 				}
 			}
 		}
-		#endregion
+		#endregion 
 	}
 	
 
@@ -122,7 +122,7 @@ namespace main
 			ExampleKV.Clear();  
 			ExampleDataByID.Clear(); 	
 		}
-
+		
 		public void Deserialize( tabtoy.TableReader reader )
 		{	
 			reader.ReadHeader();

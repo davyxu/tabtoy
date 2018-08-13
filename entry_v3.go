@@ -85,6 +85,7 @@ func V3Entry() {
 	globals.IndexFile = *paramIndexFile
 	globals.PackageName = *paramPackageName
 	globals.CombineStructName = *paramCombineStructName
+	globals.GenBinary = *paramBinaryOut != ""
 
 	selectFileLoader(globals, *paramPara)
 
