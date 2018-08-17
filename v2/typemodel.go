@@ -155,6 +155,9 @@ func (self *typeModelRoot) ParseData(localFD *model.FileDescriptor, globalFD *mo
 
 		m.fd.Comment, self.Col = m.getValue("Comment")
 
+		// 去掉注释中的回车,避免代码生成错误
+		m.fd.Comment = strings.Replace(m.fd.Comment, "\n", " ", -1)
+
 		var rawMeta string
 		rawMeta, self.Col = m.getValue("Meta")
 
