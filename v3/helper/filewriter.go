@@ -10,7 +10,7 @@ func WriteFile(filename string, data []byte) error {
 
 	err := os.MkdirAll(filepath.Dir(filename), 0755)
 
-	if !os.IsExist(err) {
+	if err != nil && !os.IsExist(err) {
 		return err
 	}
 
