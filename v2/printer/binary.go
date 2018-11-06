@@ -5,7 +5,7 @@ import (
 	"github.com/davyxu/tabtoy/v2/model"
 )
 
-const combineFileVersion = 2
+const combineFileVersion = 3
 
 type binaryPrinter struct {
 }
@@ -15,6 +15,7 @@ func (self *binaryPrinter) Run(g *Globals) *Stream {
 	fileStresam := NewStream()
 	fileStresam.WriteString("TABTOY")
 	fileStresam.WriteInt32(combineFileVersion)
+	fileStresam.WriteString(BinaryBuildID())
 
 	for index, tab := range g.Tables {
 
