@@ -15,7 +15,7 @@ func (self *binaryPrinter) Run(g *Globals) *Stream {
 	fileStresam := NewStream()
 	fileStresam.WriteString("TABTOY")
 	fileStresam.WriteInt32(combineFileVersion)
-	fileStresam.WriteString(BinaryBuildID())
+	fileStresam.WriteString(g.BuildID)
 
 	for index, tab := range g.Tables {
 

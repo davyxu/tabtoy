@@ -33,6 +33,7 @@ type Globals struct {
 	GlobalIndexes []TableIndex      // 类型信息.全局索引
 	CombineStruct *model.Descriptor // 类型信息.Combine结构体
 
+	BuildID string
 }
 
 func (self *Globals) PreExport() bool {
