@@ -10,7 +10,7 @@ import (
 var log = golog.New("main")
 
 const (
-	Version_v2 = "2.9.1"
+	Version_v2 = "2.8.11"
 	Version_v3 = "3.0.0"
 )
 

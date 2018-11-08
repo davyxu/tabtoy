@@ -196,3 +196,8 @@ v2/example/cpp/.vs
 *.db
 v3/table/data_gen.json
 v2tov3/example/*.xlsx
+v2/example/csharp/.vs
+v3/example/csharp/.vs
+*.rar
+v3/example/lua/lua53.dll
+*.stackdump
