@@ -87,19 +87,25 @@ func (self *{{$.Name}}Table) Get{{.Name}}( ) {{.ElementTypeString}} {
 }
 {{end}}
 
+
 // 从json文件加载
 func (self *{{$.Name}}Table) Load(filename string) error {
-
 	data, err := ioutil.ReadFile(filename)
 
 	if err != nil {
 		return err
 	}
 
+	return self.LoadData(data)
+}
+
+// 从二进制加载
+func (self *{{$.Name}}Table) LoadData(data []byte) error {
+
 	var newTab {{$.Name}}
 
 	// 读取
-	err = json.Unmarshal(data, &newTab)
+	err := json.Unmarshal(data, &newTab)
 	if err != nil {
 		return err
 	}

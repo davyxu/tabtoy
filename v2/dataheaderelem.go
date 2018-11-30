@@ -3,6 +3,7 @@ package v2
 import (
 	"github.com/davyxu/tabtoy/v2/i18n"
 	"github.com/davyxu/tabtoy/v2/model"
+	"strings"
 )
 
 type DataHeaderElement struct {
@@ -97,7 +98,7 @@ func (self *DataHeaderElement) Parse(def *model.FieldDescriptor, localFD *model.
 		return DataSheetHeader_FieldMeta
 	}
 
-	def.Comment = self.Comment
+	def.Comment = strings.Replace(self.Comment, "\n", " ", -1)
 
 	// 根据字段名查找, 处理repeated字段case
 	exist, ok := headerByName[def.Name]

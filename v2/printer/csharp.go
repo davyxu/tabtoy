@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"text/template"
 
+	"bytes"
+	"crypto/md5"
 	"github.com/davyxu/tabtoy/v2/i18n"
 	"github.com/davyxu/tabtoy/v2/model"
 	"strings"
@@ -58,6 +60,9 @@ namespace {{.Namespace}}{{$globalIndex:=.Indexes}}{{$verticalFields:=.VerticalFi
             return def;
         }
 		{{end}}
+		public string GetBuildID(){
+			return "{{$.BuildID}}";
+		}
 	{{range $verticalFields}}
 		public {{.StructName}} Get{{.Name}}( )
 		{
@@ -360,6 +365,8 @@ type csharpFileModel struct {
 	VerticalFields []csharpField
 
 	GenSerializeCode bool
+
+	BuildID string
 }
 
 type csharpPrinter struct {
@@ -454,6 +461,16 @@ func (self *csharpPrinter) Run(g *Globals) *Stream {
 	}
 
 	bf := NewStream()
+
+	var md5Buffer bytes.Buffer
+	err = tpl.Execute(&md5Buffer, &m)
+	if err != nil {
+		log.Errorln(err)
+		return nil
+	}
+
+	m.BuildID = fmt.Sprintf("%x", md5.Sum(bf.Buffer().Bytes()))
+	g.BuildID = m.BuildID
 
 	err = tpl.Execute(bf.Buffer(), &m)
 	if err != nil {

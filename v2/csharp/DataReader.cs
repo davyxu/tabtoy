@@ -24,7 +24,10 @@ namespace tabtoy
     public class DataReader
     {
         BinaryReader _reader;
-        long _boundPos  = -1;
+        long _boundPos;
+
+        // 将字符串中的"\n"转换为\n
+        public bool ConvertNewLine { get; set; }
 
         public DataReader(Stream stream )
         {
@@ -57,9 +60,9 @@ namespace tabtoy
             return _reader.BaseStream.Position + size <= _boundPos;
         }
 
-        const int CombineFileVersion = 2;
+        const int CombineFileVersion = 3;
 
-        public bool ReadHeader( )
+        public bool ReadHeader(string expectBuildID = null)
         {            
             var tag = ReadString();
             if (tag != "TABTOY")
@@ -69,6 +72,12 @@ namespace tabtoy
 
             var ver = ReadInt32();
             if (ver != CombineFileVersion)
+            {
+                return false;
+            }
+
+            var buildID = ReadString();
+            if (expectBuildID != null && expectBuildID != buildID)
             {
                 return false;
             }
@@ -136,7 +145,17 @@ namespace tabtoy
 
             ConsumeData(sizeof(Byte) * len);
 
-            return encoding.GetString(_reader.ReadBytes(len));
+            var str = encoding.GetString(_reader.ReadBytes(len));
+
+            if (ConvertNewLine)
+            {
+                
+                return str.Replace("\\n", "\n");
+            }
+            else
+            {
+                return str;
+            }
         }
 
         public T ReadEnum<T>( )
