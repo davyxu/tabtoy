@@ -22,17 +22,17 @@ namespace csharptest
                 }
 
                 var config = new table.Config();
-                table.Config.Deserialize(config, reader);                
+                table.Config.Deserialize(config, reader);
 
-                // ֱ��ͨ���±��ȡ�����
+                // 直接通过下标获取或遍历
                 var directFetch = config.Sample[2];
 
-                // �����־������Զ������
-                config.TableLogger.AddTarget( new tabtoy.DebuggerTarget() );
+                // 添加日志输出或自定义输出
+                config.TableLogger.AddTarget(new tabtoy.DebuggerTarget());
 
-                // ȡ��ʱ, ��Ĭ��ֵ��Ϊ��ʱ, �����־
-                var nullFetchOutLog = config.GetSampleByID( 0 );
-                
+                // 取空时, 当默认值不为空时, 输出日志
+                var nullFetchOutLog = config.GetSampleByID(0);
+
             }
            
         }
