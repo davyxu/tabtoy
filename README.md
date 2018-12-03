@@ -37,7 +37,7 @@
 * Tales of the Neon Sea(迷雾侦探)
     https://store.steampowered.com/app/828740/Tales_of_the_Neon_Sea/
     平台: PC(Steam), PS4, Switch
-    
+
 * Mad Magic
 	https://itunes.apple.com/app/id1146098397
 

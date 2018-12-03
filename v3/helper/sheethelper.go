@@ -11,14 +11,6 @@ func GetSheetValueString(sheet *xlsx.Sheet, row, col int) string {
 	return strings.TrimSpace(c.Value)
 }
 
-func GetSheetValueAsNumericString(sheet *xlsx.Sheet, row, col int) string {
-	c := sheet.Cell(row, col)
-
-	str, _ := c.GeneralNumeric()
-
-	return strings.TrimSpace(str)
-}
-
 // 整行都是空的
 func IsFullRowEmpty(sheet *xlsx.Sheet, row int) bool {
 

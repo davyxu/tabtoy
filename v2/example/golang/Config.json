@@ -1,10 +1,10 @@
 {
 	"Tool": "github.com/davyxu/tabtoy",
-	"Version": "2.9.1",
+	"Version": "2.8.11",
 	"Sample":[
-		{ "ID": 100, "Name": "黑猫警长", "NumericalRate": 0.6, "ItemID": 100, "BuffID":[ 0, 10 ], "Pos": { "X": 100, "Y": 89 }, "Type": 0, "SkillID":[ 4, 6, 7 ], "AttackParam": { "Value": 1 }, "SingleStruct": { "HP": 100, "AttackRate": 1.2 }, "StrStruct":[ { "HP": 3, "ExType": 0 }, { "HP": 10, "ExType": 1 } ] },
+		{ "ID": 100, "Name": "黑猫警长", "NumericalRate": 0.6, "ItemID": 100, "BuffID":[ 10 ], "Pos": { "X": 100, "Y": 89 }, "Type": 0, "SkillID":[ 4, 6, 7 ], "AttackParam": { "Value": 1 }, "SingleStruct": { "HP": 100, "AttackRate": 1.2 }, "StrStruct":[ { "HP": 3, "ExType": 0 }, { "HP": 10, "ExType": 1 } ] },
 		{ "ID": 101, "Name": "葫芦\n娃", "NumericalRate": 0.8, "ItemID": 100, "BuffID":[ 3, 1 ], "Type": 2, "SkillID":[ 1 ], "SingleStruct": { "HP": 10 }, "StrStruct":[ {  } ] },
-		{ "ID": 102, "Name": "舒\"克\"", "NumericalRate": 0.7, "ItemID": 100, "BuffID":[ 0, 0 ], "Type": 3, "SkillID":[  ], "SingleStruct": { "HP": 10 }, "StrStruct":[ {  } ] },
-		{ "ID": 103, "Name": "贝\n塔", "ItemID": 100, "BuffID":[ 0, 0 ], "Type": 1, "SkillID":[  ], "SingleStruct": { "HP": 10 }, "StrStruct":[ {  } ] },
-		{ "ID": 104, "Name": "邋遢大王", "NumericalRate": 1, "ItemID": 100, "BuffID":[ 0, 0 ], "Type": 2, "SkillID":[  ], "SingleStruct": { "HP": 10 }, "StrStruct":[ {  } ] }
+		{ "ID": 102, "Name": "舒\"克\"", "NumericalRate": 0.7, "ItemID": 100, "BuffID":[  ], "Type": 3, "SkillID":[  ], "SingleStruct": { "HP": 10 }, "StrStruct":[ {  } ] },
+		{ "ID": 103, "Name": "贝\n塔", "ItemID": 100, "BuffID":[  ], "Type": 1, "SkillID":[  ], "SingleStruct": { "HP": 10 }, "StrStruct":[ {  } ] },
+		{ "ID": 104, "Name": "邋遢大王", "NumericalRate": 1, "ItemID": 100, "BuffID":[  ], "Type": 2, "SkillID":[  ], "SingleStruct": { "HP": 10 }, "StrStruct":[ {  } ] }
 	]}

@@ -1,0 +1,14 @@
+种类,对象类型,标识名,字段名,字段类型,数组切割,值,索引
+表头,ExampleData,任务ID,ID,int,,,是
+表头,ExampleData,名称,Name,string,,,
+表头,ExampleData,比例,Rate,float,,,
+表头,ExampleData,类型,Type,ActorType,,,
+表头,ExampleData,技能列表,Skill,int,|,,
+枚举,ActorType,,None,int,,0,
+枚举,ActorType,法鸡,Pharah,int,,1,
+枚举,ActorType,狂鼠,Junkrat,int,,2,
+枚举,ActorType,源氏,Genji,int,,3,
+枚举,ActorType,天使,Mercy,int,,4,
+,,,,,,,
+,,,,,,,
+,,,,,,,

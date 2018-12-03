@@ -19,7 +19,7 @@ var (
 // 文件类型导出
 var (
 	paramPackageName       = flag.String("package", "", "override the package name in table @Types")
-	paramCombineStructName = flag.String("combinename", "Table", "combine struct name, code struct name")
+	paramCombineStructName = flag.String("combinename", "Table", "combine struct name, code struct flagstr")
 	paramProtoOut          = flag.String("proto_out", "", "output protobuf define (*.proto)")
 	paramPbtOut            = flag.String("pbt_out", "", "output proto text format (*.pbt)")
 	paramLuaOut            = flag.String("lua_out", "", "output lua code (*.lua)")

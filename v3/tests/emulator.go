@@ -5,7 +5,7 @@ import (
 	"github.com/davyxu/tabtoy/v3/compiler"
 	"github.com/davyxu/tabtoy/v3/gen"
 	"github.com/davyxu/tabtoy/v3/gen/gosrc"
-	"github.com/davyxu/tabtoy/v3/gen/jsondata"
+	"github.com/davyxu/tabtoy/v3/gen/jsontext"
 	"github.com/davyxu/tabtoy/v3/helper"
 	"github.com/davyxu/tabtoy/v3/model"
 	"io/ioutil"
@@ -28,8 +28,7 @@ func NewTableEmulator(t *testing.T) *TableEmulator {
 	globals.Version = "testver"
 	globals.IndexFile = "Index.xlsx"
 	globals.PackageName = "main"
-	globals.CombineStructName = "Config"
-	globals.Para = false
+	globals.CombineStructName = "Table"
 
 	memfile := helper.NewMemFile()
 
@@ -117,7 +116,7 @@ func (self *TableEmulator) VerifyData(expectJson string) {
 	}
 
 	var appJson []byte
-	appJson, err = jsondata.Generate(self.G)
+	appJson, err = jsontext.Generate(self.G)
 
 	if err != nil {
 		return
@@ -163,7 +162,7 @@ func (self *TableEmulator) VerifyGoTypeAndJson(expectJson string) {
 
 	configFileName := filepath.Join(dir, "config.json")
 
-	if err = genFile(self.G, configFileName, jsondata.Generate); err != nil {
+	if err = genFile(self.G, configFileName, jsontext.Generate); err != nil {
 		return
 	}
 
@@ -176,6 +175,8 @@ func (self *TableEmulator) VerifyGoTypeAndJson(expectJson string) {
 	var appJson []byte
 	appJson, err = compileLauncher(filepath.Join(dir, "launcher.go"), configFileName, tableFileName)
 	if err != nil {
+		self.T.Log(string(appJson))
+		self.T.FailNow()
 		return
 	}
 

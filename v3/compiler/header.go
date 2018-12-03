@@ -4,16 +4,15 @@ import (
 	"github.com/davyxu/tabtoy/v3/helper"
 	"github.com/davyxu/tabtoy/v3/model"
 	"github.com/davyxu/tabtoy/v3/report"
-	"github.com/tealeg/xlsx"
 	"strings"
 )
 
-func Loadheader(sheet *xlsx.Sheet, tab *model.DataTable, resolveTableType string, typeTab *model.TypeTable) {
+func Loadheader(sheet helper.TableSheet, tab *model.DataTable, resolveTableType string, typeTab *model.TypeTable) {
 	// 读取表头
 
 	for col := 0; ; col++ {
 
-		headerValue := helper.GetSheetValueString(sheet, 0, col)
+		headerValue := sheet.GetValue(0, col, false)
 
 		// 空列，终止
 		if headerValue == "" {
@@ -51,7 +50,7 @@ func checkHeaderTypes(tab *model.DataTable, typeTab *model.TypeTable) {
 		if !model.PrimitiveExists(header.TypeInfo.FieldType) &&
 			!typeTab.ObjectExists(header.TypeInfo.FieldType) { // 对象检查
 
-			report.ReportError("UnknownFieldType", header.Cell.String())
+			report.ReportError("UnknownFieldType", header.TypeInfo.FieldType, header.Cell.String())
 		}
 	}
 

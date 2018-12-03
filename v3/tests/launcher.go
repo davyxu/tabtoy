@@ -33,7 +33,7 @@ func main() {
 		return
 	}
 
-	var config Config
+	var config Table
 	err = json.Unmarshal(data, &config)
 
 	if err != nil {
@@ -69,7 +69,7 @@ func main() {
 	output, err := cmd.CombinedOutput()
 
 	if err != nil {
-		return nil, err
+		return output, err
 	}
 
 	return output, nil
