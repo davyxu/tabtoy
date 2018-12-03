@@ -80,7 +80,7 @@ func GenFile(globals *model.Globals) error {
 
 func V3Entry() {
 	globals := model.NewGlobals()
-	globals.Version = Version_v3
+	globals.Version = Version
 
 	globals.IndexFile = *paramIndexFile
 	globals.PackageName = *paramPackageName

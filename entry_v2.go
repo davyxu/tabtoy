@@ -17,7 +17,7 @@ func V2Entry() {
 		}
 	}
 
-	g.Version = Version_v2
+	g.Version = Version
 
 	for _, v := range flag.Args() {
 		g.InputFileList = append(g.InputFileList, v)
