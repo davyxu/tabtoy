@@ -45,6 +45,7 @@ namespace tabtoy
         {
             _reader = reader._reader;
             _boundPos = boundpos;
+            ConvertNewLine = reader.ConvertNewLine;
         }
 
         void ConsumeData(int size)
