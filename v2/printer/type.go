@@ -103,7 +103,7 @@ func (self *typePrinter) Run(g *Globals) *Stream {
 		log.Errorln(err)
 	}
 
-	bf.WriteBytes(data)
+	bf.WriteRawBytes(data)
 
 	return bf
 }

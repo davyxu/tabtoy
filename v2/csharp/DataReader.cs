@@ -19,12 +19,21 @@ namespace tabtoy
 	    Struct  = 9,	    
     }
 
+    public enum FileState
+    {
+        OK = 0,
+        InvalidTag,
+        InvalidVersion,
+        InvalidType,
+        InvalidData,
+    }
+
     public delegate void DeserializeHandler<T>(T ins, DataReader reader);
 
     public class DataReader
     {
         BinaryReader _reader;
-        long _boundPos;
+        long _boundPos;        
 
         // 将字符串中的"\n"转换为\n
         public bool ConvertNewLine { get; set; }
@@ -61,30 +70,54 @@ namespace tabtoy
             return _reader.BaseStream.Position + size <= _boundPos;
         }
 
-        const int CombineFileVersion = 3;
+        const int CombineFileVersion = 4;
 
-        public bool ReadHeader(string expectBuildID = null)
+        public FileState ReadHeader(string expectBuildID = null)
         {            
             var tag = ReadString();
-            if (tag != "TABTOY")
+            if (tag != "TT")
             {
-                return false;
+                return FileState.InvalidTag;
             }
 
             var ver = ReadInt32();
             if (ver != CombineFileVersion)
             {
-                return false;
+                return FileState.InvalidVersion;
             }
 
             var buildID = ReadString();
             if (expectBuildID != null && expectBuildID != buildID)
             {
-                return false;
+                return FileState.InvalidType;
             }
-           
-            return true;
+            
+            // 文件校验码
+            var fileCheckSum = ReadString();
+
+            var savedPos = _reader.BaseStream.Position;
+            System.Security.Cryptography.MD5 md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
+            byte[] retVal = md5.ComputeHash(_reader.BaseStream);
+            _reader.BaseStream.Position = savedPos;
+
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < retVal.Length; i++)
+            {
+                sb.Append(retVal[i].ToString("x2"));
+            }
+
+            // 读取后的文件校验
+            var contentCheckSum = sb.ToString();
+
+            if (contentCheckSum != fileCheckSum)
+            {
+                return FileState.InvalidData;
+            }
+
+
+            return FileState.OK;
         }
+
 
         static readonly UTF8Encoding encoding = new UTF8Encoding();
 
@@ -140,13 +173,20 @@ namespace tabtoy
             return _reader.ReadBoolean();
         }
 
-        public string ReadString()
+        public byte[] ReadBytes()
         {
             var len = ReadInt32();
 
             ConsumeData(sizeof(Byte) * len);
 
-            var str = encoding.GetString(_reader.ReadBytes(len));
+            return _reader.ReadBytes(len);
+        }
+
+        public string ReadString()
+        {
+            var data = ReadBytes();
+
+            var str = encoding.GetString(data);
 
             if (ConvertNewLine)
             {

@@ -25,7 +25,7 @@ func (self *Stream) Buffer() *bytes.Buffer {
 	return &self.buf
 }
 
-func (self *Stream) WriteBytes(b []byte) {
+func (self *Stream) WriteRawBytes(b []byte) {
 	self.buf.Write(b)
 }
 
@@ -58,6 +58,13 @@ func (self *Stream) WriteString(v string) {
 	binary.Write(&self.buf, binary.LittleEndian, int32(len(rawStr)))
 
 	binary.Write(&self.buf, binary.LittleEndian, rawStr)
+}
+
+func (self *Stream) WriteBytes(v []byte) {
+
+	binary.Write(&self.buf, binary.LittleEndian, int32(len(v)))
+
+	binary.Write(&self.buf, binary.LittleEndian, v)
 }
 
 func (self *Stream) WriteNodeValue(ft model.FieldType, value *model.Node) {
