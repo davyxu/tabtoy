@@ -118,7 +118,7 @@ tabtoy --mode=v2 --json_out=config.json --combinename=Config Table.xlsx
 
 ### Golang读取例子
 
-	[例子](https://github.com/davyxu/tabtoy/tree/master/v2/example/golang)
+[例子](https://github.com/davyxu/tabtoy/tree/master/v2/example/golang)
 	
 ```golang
 	config := table.NewConfigTable()
@@ -174,7 +174,7 @@ tabtoy --mode=v2 --json_out=config.json --combinename=Config Table.xlsx
 
 ### lua读取例子
 
-	[例子](https://github.com/davyxu/tabtoy/tree/master/v2/example/lua)
+[例子](https://github.com/davyxu/tabtoy/tree/master/v2/example/lua)
 
 ```lua
 -- 添加搜索路径
@@ -257,12 +257,17 @@ tabtoy --mode=v2 --json_out=CombineConfig.json --combinename=Config Item.xlsx+It
 
 P.S. 不要将@Types表单加#
 
+## 不同的表能生成指定不同语言的源码么?
+比如: A表生成A类, B表生成B类分别使用.
+不支持, tabtoy拥有统一的类型系统和数据分析设计,虽然在一个工程里可以手动导出2次形成2个类使用,但会遇到很多麻烦, 比如:类型冲突.
+所以, tabtoy提倡在一个工程里一次将表导出, 表只有1个入口. 客户端和服务器可以分别生成不同的入口.
+
 
 # 备注
 
 感觉不错请star, 谢谢!
 
-开源讨论群: 527430600
+开源讨论群: 527430600, 进群验证:tabtoy
 
 知乎: [http://www.zhihu.com/people/sunicdavy](http://www.zhihu.com/people/sunicdavy)
 
