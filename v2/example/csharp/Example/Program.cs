@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using tabtoy;
 
 namespace csharptest
 {
@@ -7,21 +8,23 @@ namespace csharptest
     {
 
         static void Main(string[] args)
-        {
-            var dir = Directory.GetCurrentDirectory();
+        {            
             using (var stream = new FileStream("../../Config.bin", FileMode.Open))
             {
                 stream.Position = 0;
 
                 var reader = new tabtoy.DataReader(stream);
-                
-                if ( !reader.ReadHeader(  ) )
+
+                var config = new table.Config();
+
+                var result = reader.ReadHeader(config.GetBuildID());
+                if ( result != FileState.OK)
                 {
                     Console.WriteLine("combine file crack!");
                     return;
                 }
 
-                var config = new table.Config();
+                
                 table.Config.Deserialize(config, reader);
 
                 // 直接通过下标获取或遍历

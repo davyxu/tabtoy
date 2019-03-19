@@ -139,37 +139,34 @@ tabtoy --mode=v2 --json_out=config.json --combinename=Config Table.xlsx
 	[例子](https://github.com/davyxu/tabtoy/tree/master/v2/example/csharp)
 
 ```csharp
-    using (var stream = new FileStream("../../../../Config.bin", FileMode.Open))
-    {
-        stream.Position = 0;
+   using (var stream = new FileStream("../../Config.bin", FileMode.Open))
+   {
+       stream.Position = 0;
 
-        var reader = new tabtoy.DataReader(stream);
-        
-        if ( !reader.ReadHeader( ) )
-        {
-            Console.WriteLine("combine file crack!");
-            return;
-        }
+       var reader = new tabtoy.DataReader(stream);
 
-        var config = new gamedef.Config();
-        table.Config.Deserialize(config, reader);                
+       var config = new table.Config();
 
-        // 直接通过下标获取或遍历
-        var directFetch = config.Sample[2];
+       var result = reader.ReadHeader(config.GetBuildID());
+       if ( result != FileState.OK)
+       {
+           Console.WriteLine("combine file crack!");
+           return;
+       }
 
-        // 根据索引取
-        var indexFetch = config.GetSampleByID(100);
 
-        // 取不存在的元素时, 返回给定的默认值, 避免空
-        var indexFetchByDefault = config.GetSampleByID(0, new gamedef.SampleDefine() );
+       table.Config.Deserialize(config, reader);
 
-        // 添加日志输出或自定义输出
-        config.TableLogger.AddTarget( new tabtoy.DebuggerTarget() );
+       // 直接通过下标获取或遍历
+       var directFetch = config.Sample[2];
 
-        // 取空时, 当默认值不为空时, 输出日志
-        var nullFetchOutLog = config.GetSampleByID( 0 );
+       // 添加日志输出或自定义输出
+       config.TableLogger.AddTarget(new tabtoy.DebuggerTarget());
 
-    }
+       // 取空时, 当默认值不为空时, 输出日志
+       var nullFetchOutLog = config.GetSampleByID(0);
+
+   }
 ```
 
 ### lua读取例子

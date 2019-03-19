@@ -10,7 +10,7 @@ import (
 var log = golog.New("main")
 
 const (
-	Version = "2.8.12"
+	Version = "2.9.0"
 )
 
 func main() {
