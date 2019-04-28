@@ -3,7 +3,6 @@ package helper
 import (
 	"errors"
 	"github.com/davyxu/tabtoy/v3/report"
-	"github.com/tealeg/xlsx"
 	"path/filepath"
 	"sync"
 )
@@ -47,29 +46,27 @@ func (self *FileLoader) Commit() {
 }
 
 func loadFileByExt(filename string) interface{} {
+
+	var tabFile TableFile
 	switch filepath.Ext(filename) {
 	case ".xlsx", ".xls", ".xlsm":
 
-		file, err := xlsx.OpenFile(filename)
-		if err != nil {
-			return err
-		}
-
-		return NewXlsxFile(file)
+		tabFile = NewXlsxFile()
 
 	case ".csv":
-		data, err := NewCSVFile(filename)
-		if err != nil {
-			return err
-		}
-
-		return data
+		tabFile = NewCSVFile()
 
 	default:
 		report.ReportError("UnknownInputFileExtension", filename)
 	}
 
-	return nil
+	err := tabFile.Load(filename)
+
+	if err != nil {
+		return err
+	}
+
+	return tabFile
 }
 
 func (self *FileLoader) GetFile(filename string) (TableFile, error) {

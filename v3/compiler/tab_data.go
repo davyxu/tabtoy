@@ -16,9 +16,9 @@ func readOneRow(sheet helper.TableSheet, tab *model.DataTable, row int) bool {
 		}
 
 		// 浮点数用库取时，需要特殊处理
-		isFloat := model.LanguagePrimitive(header.TypeInfo.FieldType, "go") == "float32"
+		//isFloat := model.LanguagePrimitive(header.TypeInfo.FieldType, "go") == "float32"
 
-		value := sheet.GetValue(row, header.Cell.Col, isFloat)
+		value := sheet.GetValue(row, header.Cell.Col)
 
 		// 首列带#时，本行忽略
 		if header.Cell.Col == 0 && strings.HasPrefix(value, "#") {
@@ -52,7 +52,7 @@ func LoadDataTable(filegetter helper.FileGetter, fileName, headerType, resolveHe
 		// 遍历所有数据行
 		for row := 0; ; row++ {
 
-			if helper.IsRowEmpty(sheet, row) {
+			if sheet.IsFullRowEmpty(row) {
 				break
 			}
 

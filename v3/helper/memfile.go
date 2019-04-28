@@ -6,7 +6,7 @@ import (
 )
 
 type MemFileData struct {
-	File      *xlsx.File
+	File      TableFile
 	TableName string
 	FileName  string
 }
@@ -24,7 +24,7 @@ func (self *MemFile) VisitAllTable(callback func(data *MemFileData) bool) {
 	}
 }
 
-func (self *MemFile) AddFile(filename string, file *xlsx.File) (ret *MemFileData) {
+func (self *MemFile) AddFile(filename string, file TableFile) (ret *MemFileData) {
 
 	ret = &MemFileData{
 		File:     file,
@@ -36,20 +36,36 @@ func (self *MemFile) AddFile(filename string, file *xlsx.File) (ret *MemFileData
 	return
 }
 
-func (self *MemFile) CreateDefault(filename string) *xlsx.Sheet {
+func (self *MemFile) CreateDefault(filename string) TableSheet {
 
-	f := xlsx.NewFile()
-	sheet, _ := f.AddSheet("Default")
+	xfile := xlsx.NewFile()
+	xfile.AddSheet("Default")
 
-	self.AddFile(filename, sheet.File)
+	file := NewXlsxFile()
 
-	return sheet
+	file.(interface {
+		FromXFile(file *xlsx.File)
+	}).FromXFile(xfile)
+
+	self.AddFile(filename, file)
+
+	return file.Sheets()[0]
+}
+
+func (self *MemFile) CreateDefault2(filename string) TableSheet {
+
+	file := NewCSVFile()
+
+	self.AddFile(filename, file)
+
+	return file.Sheets()[0]
 }
 
 func (self *MemFile) GetFile(filename string) (TableFile, error) {
 
 	if f, ok := self.dataByFileName[filename]; ok {
-		return NewXlsxFile(f.File), nil
+
+		return f.File, nil
 	}
 
 	return nil, errors.New("file not found: " + filename)
