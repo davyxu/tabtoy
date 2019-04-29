@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	paramUpgradeOut = flag.String("up_out", "", "upgrade v2 table to v3 format output dir")
+	paramUpgradeOut = flag.String("upout", "", "upgrade v2 table to v3 format output dir")
 )
 
 func V2ToV3Entry() {

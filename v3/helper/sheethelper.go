@@ -26,37 +26,28 @@ func IsFullRowEmpty(sheet *xlsx.Sheet, row int) bool {
 	return true
 }
 
-func WriteIndexTableHeader(sheet TableSheet) {
-	sheet.WriteRow("模式", "表类型", "表文件名")
-}
+func WriteRowValues(sheet *xlsx.Sheet, valueList ...interface{}) {
 
-func WriteTypeTableHeader(sheet TableSheet) {
-	sheet.WriteRow("种类", "对象类型", "标识名", "字段名", "字段类型", "数组切割", "值", "索引")
-}
+	row := sheet.AddRow()
 
-func WriteRowValues(sheet TableSheet, valueList ...string) {
-	sheet.WriteRow(valueList...)
-}
+	//if sheet.MaxCol != 0 && sheet.MaxCol != len(valueList) {
+	//	panic("diff col count")
+	//}
 
-func ConvertToCSV(inputFile TableFile) (outputFile TableFile) {
+	for _, value := range valueList {
 
-	csvFile := NewCSVFile()
-
-	outSheet := csvFile.Sheets()[0]
-
-	inSheet := inputFile.Sheets()[0]
-
-	// 遍历所有数据行
-	for row := 0; ; row++ {
-
-		if inSheet.IsFullRowEmpty(row) {
-			break
-		}
-
-		rows := ReadSheetRow(inSheet, row)
-
-		outSheet.WriteRow(rows...)
+		cell := row.AddCell()
+		cell.SetValue(value)
 	}
 
-	return csvFile
+}
+
+func WriteTypeTableHeader(sheet *xlsx.Sheet) {
+
+	WriteRowValues(sheet, "种类", "对象类型", "标识名", "字段名", "字段类型", "数组切割", "值", "索引")
+}
+
+func WriteIndexTableHeader(sheet *xlsx.Sheet) {
+
+	WriteRowValues(sheet, "模式", "表类型", "表文件名")
 }

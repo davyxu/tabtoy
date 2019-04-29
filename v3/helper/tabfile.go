@@ -1,10 +1,6 @@
 package helper
 
 type TableFile interface {
-	Load(filename string) error
-
-	// 保存到文件
-	Save(filename string) error
 
 	// 获取所有表单
 	Sheets() []TableSheet
@@ -16,27 +12,23 @@ type TableSheet interface {
 	Name() string
 
 	// 从表单指定单元格获取值
-	GetValue(row, col int) string
+	GetValue(row, col int, isFloat bool) string
 
 	// 最大列
 	MaxColumn() int
-
-	// 写入一行数据
-	WriteRow(valueList ...string)
-
-	// 检测本行是否全空(结束)
-	IsFullRowEmpty(row int) bool
 }
 
-func ReadSheetRow(sheet TableSheet, row int) (ret []string) {
+// 检查表单的某行是否全空
+func IsRowEmpty(sheet TableSheet, row int) bool {
 
-	ret = make([]string, sheet.MaxColumn())
 	for col := 0; col < sheet.MaxColumn(); col++ {
 
-		value := sheet.GetValue(row, col)
+		data := sheet.GetValue(row, col, false)
 
-		ret[col] = value
+		if data != "" {
+			return false
+		}
 	}
 
-	return
+	return true
 }

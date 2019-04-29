@@ -8,7 +8,11 @@ import (
 
 func ExportIndexTable(globals *model.Globals) error {
 
-	globals.TargetIndexSheet = globals.AddTable("Index.xlsx")
+	var err error
+	globals.TargetIndexSheet, err = globals.AddTable("Index.xlsx", "").AddSheet("Default")
+	if err != nil {
+		return err
+	}
 
 	helper.WriteIndexTableHeader(globals.TargetIndexSheet)
 
