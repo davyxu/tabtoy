@@ -14,6 +14,7 @@ var (
 		"DuplicateTypeFieldName":      {CHS: "类型表字段重复"},
 		"EnumValueEmpty":              {CHS: "枚举值空"},
 		"DuplicateEnumValue":          {CHS: "枚举值重复"},
+		"UnknownEnumValue":            {CHS: "未知的枚举值"},
 		"InvalidTypeTable":            {CHS: "非法的类型表"},
 		"HeaderTypeNotFound":          {CHS: "表头类型找不到"},
 		"DuplicateValueInMakingIndex": {CHS: "创建索引时发现重复值"},

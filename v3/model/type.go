@@ -1,5 +1,9 @@
 package model
 
+/*
+	添加字段和枚举, 需要在model.InitBuiltinTypes函数中添加入口
+*/
+
 type TypeUsage int32
 
 const (

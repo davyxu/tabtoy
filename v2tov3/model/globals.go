@@ -14,31 +14,31 @@ type Globals struct {
 
 	SourceFileList []string
 
-	TargetTypesSheet *xlsx.Sheet
+	TargetTypesSheet helper.TableSheet
 
-	TargetIndexSheet *xlsx.Sheet
+	TargetIndexSheet helper.TableSheet
 
 	TargetTables *helper.MemFile
 
 	OutputDir string
 }
 
-func (self *Globals) AddTableByFile(tableFileName, tableName string, file *xlsx.File) {
+func (self *Globals) AddTableByFile(tableFileName, tableName string, inputFile *xlsx.File) {
+
+	file := helper.NewXlsxFile()
+
+	file.(interface {
+		FromXFile(file *xlsx.File)
+	}).FromXFile(inputFile)
 
 	tableFileName = filepath.Base(tableFileName)
 
 	self.TargetTables.AddFile(tableFileName, file).TableName = tableName
 }
 
-func (self *Globals) AddTable(tableFileName, tableName string) *xlsx.File {
+func (self *Globals) AddTable(tableFileName string) helper.TableSheet {
 
-	targetFile := xlsx.NewFile()
-
-	tableFileName = filepath.Base(tableFileName)
-
-	self.TargetTables.AddFile(tableFileName, targetFile).TableName = tableName
-
-	return targetFile
+	return self.TargetTables.CreateXLSXFile(tableFileName)
 }
 
 func (self *Globals) SourceTypeExists(objectTypeName, fieldName string) bool {

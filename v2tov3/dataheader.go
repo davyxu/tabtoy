@@ -17,7 +17,7 @@ func importDataHeader(globals *model.Globals, sourceSheet, targetSheet *xlsx.She
 	for col := 0; ; col++ {
 
 		var oft model.ObjectFieldType
-		oft.ObjectType = tableName + "Define"
+		oft.ObjectType = tableName
 		oft.Kind = v3model.TypeUsage_HeaderStruct
 
 		oft.FieldName = helper.GetSheetValueString(sourceSheet, 0, col)

@@ -72,17 +72,35 @@ func (self *TypeTable) IsEnumKind(objectType string) bool {
 }
 
 // 匹配枚举值
-func (self *TypeTable) ResolveEnumValue(objectType, value string) (ret string) {
+func (self *TypeTable) ResolveEnumValue(objectType, value string) string {
 
-	linq.From(self.fields).WhereT(func(td *TypeData) bool {
+	enumFields := self.getEnumFields(objectType)
 
-		return td.Define.ObjectType == objectType &&
-			(td.Define.Name == value || td.Define.FieldName == value)
-	}).ForEachT(func(td *TypeData) {
+	if len(enumFields) == 0 {
+		return ""
+	}
 
-		ret = td.Define.Value
+	for _, td := range enumFields {
 
-	})
+		if td.Define.Name == value || td.Define.FieldName == value {
+			return td.Define.Value
+		}
+
+	}
+
+	// 默认取第一个
+	return enumFields[0].Define.Value
+}
+
+func (self *TypeTable) getEnumFields(objectType string) (ret []*TypeData) {
+
+	for _, td := range self.fields {
+
+		if td.Define.ObjectType == objectType {
+			ret = append(ret, td)
+		}
+
+	}
 
 	return
 }

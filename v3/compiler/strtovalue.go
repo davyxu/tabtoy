@@ -63,6 +63,7 @@ func StringToValue(str string, value interface{}, tf *model.TypeDefine, symbols 
 		return nil
 	}
 
+	// 内建类型定义与model.InitBuiltinTypes中不匹配
 	panic("unhandled value: " + str)
 
 	return nil

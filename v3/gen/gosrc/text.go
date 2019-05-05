@@ -21,6 +21,11 @@ var (
 		 {{$field.Value}}: "{{$field.FieldName}}", // {{$field.Name}} {{end}}
 	}
 )
+
+func (self {{$objName}}) String() string {
+	name, _ := {{$objName}}MapperNameByValue[int32(self)]
+	return name
+}
 {{end}}
 
 {{range $sn, $objName := $.Types.StructNames}}
@@ -37,8 +42,8 @@ type {{.CombineStructName}} struct { {{range $ti, $tab := $.Datas.AllTables}}
 	{{$idx.Table.HeaderType}}By{{$idx.FieldInfo.FieldName}} map[{{GoType $idx.FieldInfo}}]*{{$idx.Table.HeaderType}}	{{JsonTabOmit}} // table: {{$idx.Table.HeaderType}} {{end}}
 
 	// Handlers
-	postHandlers []func(*Table) {{JsonTabOmit}}
-	preHandlers  []func(*Table) {{JsonTabOmit}}
+	postHandlers []func(*{{.CombineStructName}}) error {{JsonTabOmit}}
+	preHandlers  []func(*{{.CombineStructName}}) error {{JsonTabOmit}}
 }
 
 {{if HasKeyValueTypes $}}
@@ -49,7 +54,7 @@ func (self*{{$.CombineStructName}}) GetKeyValue_{{$name}}() *{{$name}}{
 {{end}}{{end}}
 
 // 注册加载后回调(用于构建数据)
-func (self *Table) RegisterPostEntry(h func(*Table)) {
+func (self *{{.CombineStructName}}) RegisterPostEntry(h func(*{{.CombineStructName}}) error) {
 
 	if h == nil {
 		panic("empty postload handler")
@@ -59,7 +64,7 @@ func (self *Table) RegisterPostEntry(h func(*Table)) {
 }
 
 // 注册加载前回调(用于清除数据)
-func (self *Table) RegisterPreEntry(h func(*Table)) {
+func (self *{{.CombineStructName}}) RegisterPreEntry(h func(*{{.CombineStructName}}) error) {
 
 	if h == nil {
 		panic("empty preload handler")
@@ -69,28 +74,35 @@ func (self *Table) RegisterPreEntry(h func(*Table)) {
 }
 
 // 调用PreHander，清除索引和数据
-func (self *Table) ResetData() {
+func (self *{{.CombineStructName}}) ResetData() error{
 
 	for _, h := range self.preHandlers {
-		h(self)
+		if err := h(self); err != nil {
+			return err
+		}
 	}
 
 	{{range $ti, $tab := $.Datas.AllTables}}
 	self.{{$tab.HeaderType}} = self.{{$tab.HeaderType}}[0:0] {{end}}
 	{{range $ii, $idx := GetIndices $}}
-	self.{{$idx.Table.HeaderType}}By{{$idx.FieldInfo.FieldName}} = map[{{GoType $idx.FieldInfo}}]*{{$idx.Table.HeaderType}}{} {{end}}	
+	self.{{$idx.Table.HeaderType}}By{{$idx.FieldInfo.FieldName}} = map[{{GoType $idx.FieldInfo}}]*{{$idx.Table.HeaderType}}{} {{end}}
+	return nil
 }
 
 // 构建索引，调用PostHander
-func (self *Table) BuildData() {
+func (self *{{.CombineStructName}}) BuildData() error {
 	{{range $ii, $idx := GetIndices $}}
 	for _, v := range self.{{$idx.Table.HeaderType}} {
 		self.{{$idx.Table.HeaderType}}By{{$idx.FieldInfo.FieldName}}[v.{{$idx.FieldInfo.FieldName}}] = v
 	}{{end}}
 
 	for _, h := range self.postHandlers {
-		h(self)
+		if err := h(self); err != nil {
+			return err
+		}
 	}
+
+	return nil
 }
 
 // 初始化表实例

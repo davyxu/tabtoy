@@ -6,6 +6,7 @@ import (
 	"golang.org/x/text/encoding/simplifiedchinese"
 	"golang.org/x/text/transform"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 	"strings"
 )
@@ -14,6 +15,8 @@ type CSVFile struct {
 	sheet *CSVSheet
 
 	Name string
+
+	utf8 bool
 
 	records [][]string
 }
@@ -42,41 +45,77 @@ func ConvGBKToUTF8(s []byte) ([]byte, error) {
 	return d, nil
 }
 
-func (self *CSVFile) ConvertToUTF8() {
+func ConvUTF8ToGBK(s []byte) ([]byte, error) {
+	I := bytes.NewReader(s)
+	O := transform.NewReader(I, simplifiedchinese.GBK.NewEncoder())
+	d, e := ioutil.ReadAll(O)
+	if e != nil {
+		return nil, e
+	}
+	return d, nil
+}
+
+func (self *CSVFile) Transform(convf func(s []byte) ([]byte, error)) {
 
 	for row, rowData := range self.records {
 
 		for col, cell := range rowData {
 
 			if cell != "" {
-				data, _ := ConvGBKToUTF8([]byte(cell))
+				data, _ := convf([]byte(cell))
 				self.records[row][col] = string(data)
 			}
 		}
 
 	}
-
 }
 
-func NewCSVFile(filename string) (*CSVFile, error) {
+func (self *CSVFile) Save(filename string) error {
 
-	data, err := ioutil.ReadFile(filename)
+	file, err := os.Create(filename)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	self := &CSVFile{}
+	writer := csv.NewWriter(file)
 
-	self.Name = strings.TrimSuffix(filename, filepath.Ext(filename))
+	err = writer.WriteAll(self.records)
 
-	self.sheet = &CSVSheet{file: self}
+	if err != nil {
+		return err
+	}
+
+	writer.Flush()
+
+	return nil
+}
+
+func (self *CSVFile) Load(fileName string) error {
+
+	data, err := ioutil.ReadFile(fileName)
+	if err != nil {
+		return err
+	}
+
+	self.Name = strings.TrimSuffix(fileName, filepath.Ext(fileName))
 
 	self.records, err = csv.NewReader(bytes.NewReader(data)).ReadAll()
 
-	// 电子表格默认只能导入GBK的编码，因此认为输入的都是GBK的CSV
-	self.ConvertToUTF8()
+	if err != nil {
+		return err
+	}
 
-	return self, err
+	return nil
+}
+
+func NewCSVFile() *CSVFile {
+
+	self := &CSVFile{}
+
+	// 默认创建sheet
+	self.sheet = &CSVSheet{file: self}
+
+	return self
 }
 
 type CSVSheet struct {
@@ -95,7 +134,7 @@ func (self *CSVSheet) IsFullRowEmpty(row int) bool {
 
 	for col := 0; col < self.file.MaxCol(); col++ {
 
-		data := self.GetValue(row, col, false)
+		data := self.GetValue(row, col)
 
 		if data != "" {
 			return false
@@ -105,7 +144,11 @@ func (self *CSVSheet) IsFullRowEmpty(row int) bool {
 	return true
 }
 
-func (self *CSVSheet) GetValue(row, col int, isFloat bool) string {
+func (self *CSVSheet) GetValue(row, col int) string {
+
+	if row >= len(self.file.records) {
+		return ""
+	}
 
 	rowData := self.file.records[row]
 
@@ -114,4 +157,15 @@ func (self *CSVSheet) GetValue(row, col int, isFloat bool) string {
 	}
 
 	return rowData[col]
+}
+
+func (self *CSVSheet) WriteRow(valueList ...string) {
+
+	var rowData []string
+	for _, str := range valueList {
+
+		rowData = append(rowData, str)
+	}
+
+	self.file.records = append(self.file.records, rowData)
 }

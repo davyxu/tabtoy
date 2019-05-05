@@ -1,4 +1,4 @@
-package golang
+package tabtoy
 
 import "encoding/binary"
 

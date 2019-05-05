@@ -12,7 +12,7 @@ func Loadheader(sheet helper.TableSheet, tab *model.DataTable, resolveTableType 
 
 	for col := 0; ; col++ {
 
-		headerValue := sheet.GetValue(0, col, false)
+		headerValue := sheet.GetValue(0, col)
 
 		// 空列，终止
 		if headerValue == "" {

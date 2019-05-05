@@ -26,7 +26,7 @@ func NewTableEmulator(t *testing.T) *TableEmulator {
 
 	globals := model.NewGlobals()
 	globals.Version = "testver"
-	globals.IndexFile = "Index.xlsx"
+	globals.IndexFile = "Index"
 	globals.PackageName = "main"
 	globals.CombineStructName = "Table"
 

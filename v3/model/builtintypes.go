@@ -23,8 +23,9 @@ func InitBuiltinTypes(typeTab *TypeTable) {
 		{Kind: TypeUsage_Enum, ObjectType: "TableKind", Name: "数据表", FieldName: "Data", FieldType: "int", Value: "2"},
 		{Kind: TypeUsage_Enum, ObjectType: "TableKind", Name: "键值表", FieldName: "KeyValue", FieldType: "int", Value: "3"},
 		{Kind: TypeUsage_HeaderStruct, ObjectType: "IndexDefine", Name: "模式", FieldName: "TableKind", FieldType: "TableKind"},
-		{Kind: TypeUsage_HeaderStruct, ObjectType: "IndexDefine", Name: "表类型", FieldName: "TableType", FieldType: "TableKind"},
-		{Kind: TypeUsage_HeaderStruct, ObjectType: "IndexDefine", Name: "表文件名", FieldName: "TableFileName", FieldType: "TableKind"},
+		{Kind: TypeUsage_HeaderStruct, ObjectType: "IndexDefine", Name: "表类型", FieldName: "TableType", FieldType: "string"},
+		{Kind: TypeUsage_HeaderStruct, ObjectType: "IndexDefine", Name: "表文件名", FieldName: "TableFileName", FieldType: "string"},
+		{Kind: TypeUsage_HeaderStruct, ObjectType: "IndexDefine", Name: "标记", FieldName: "Tags", FieldType: "string", ArraySplitter: "|"},
 
 		// KV表类型
 		{Kind: TypeUsage_HeaderStruct, ObjectType: "KVDefine", Name: "字段名", FieldName: "FieldName", FieldType: "string"},

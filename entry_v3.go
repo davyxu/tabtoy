@@ -25,6 +25,9 @@ type V3GenEntry struct {
 var (
 	paramIndexFile = flag.String("index", "", "input multi-files configs")
 
+	paramUseGBKCSV = flag.Bool("use_gbkcsv", true, "use gbk format in csv file")
+	paramMatchTag  = flag.String("matchtag", "", "match data table file tags in v3 Index file")
+
 	v3GenList = []V3GenEntry{
 		{"gosrc", gosrc.Generate, paramGoOut},
 		{"jsontext", jsontext.Generate, paramJsonOut},
@@ -33,23 +36,6 @@ var (
 		{"binpak", binpak.Generate, paramBinaryOut},
 	}
 )
-
-func selectFileLoader(globals *model.Globals, para bool) {
-	globals.IndexGetter = helper.NewFileLoader(true)
-
-	tabLoader := helper.NewFileLoader(!para)
-
-	if para {
-		for _, pragma := range globals.IndexList {
-			tabLoader.AddFile(pragma.TableFileName)
-		}
-
-		tabLoader.Commit()
-	}
-
-	globals.TableGetter = tabLoader
-
-}
 
 func GenFile(globals *model.Globals) error {
 	for _, entry := range v3GenList {
@@ -86,8 +72,16 @@ func V3Entry() {
 	globals.PackageName = *paramPackageName
 	globals.CombineStructName = *paramCombineStructName
 	globals.GenBinary = *paramBinaryOut != ""
+	globals.MatchTag = *paramMatchTag
 
-	selectFileLoader(globals, *paramPara)
+	if globals.MatchTag != "" {
+		report.Log.Infof("MatchTag: %s", globals.MatchTag)
+	}
+
+	idxloader := helper.NewFileLoader(true)
+	idxloader.UseGBKCSV = *paramUseGBKCSV
+	globals.IndexGetter = idxloader
+	globals.UseGBKCSV = *paramUseGBKCSV
 
 	var err error
 

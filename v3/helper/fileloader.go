@@ -3,7 +3,6 @@ package helper
 import (
 	"errors"
 	"github.com/davyxu/tabtoy/v3/report"
-	"github.com/tealeg/xlsx"
 	"path/filepath"
 	"sync"
 )
@@ -17,6 +16,8 @@ type FileLoader struct {
 	inputFile  []string
 
 	syncLoad bool
+
+	UseGBKCSV bool
 }
 
 func (self *FileLoader) AddFile(filename string) {
@@ -33,7 +34,7 @@ func (self *FileLoader) Commit() {
 
 		go func(fileName string) {
 
-			self.fileByName.Store(fileName, loadFileByExt(fileName))
+			self.fileByName.Store(fileName, loadFileByExt(fileName, self.UseGBKCSV))
 
 			task.Done()
 
@@ -46,37 +47,46 @@ func (self *FileLoader) Commit() {
 	self.inputFile = self.inputFile[0:0]
 }
 
-func loadFileByExt(filename string) interface{} {
+func loadFileByExt(filename string, useGBKCSV bool) interface{} {
+
+	var tabFile TableFile
 	switch filepath.Ext(filename) {
 	case ".xlsx", ".xls", ".xlsm":
 
-		file, err := xlsx.OpenFile(filename)
+		tabFile = NewXlsxFile()
+
+		err := tabFile.Load(filename)
+
 		if err != nil {
 			return err
 		}
-
-		return NewXlsxFile(file)
 
 	case ".csv":
-		data, err := NewCSVFile(filename)
+		tabFile = NewCSVFile()
+
+		err := tabFile.Load(filename)
+
 		if err != nil {
 			return err
 		}
 
-		return data
+		// 输入gbk, 内部utf8
+		if useGBKCSV {
+			tabFile.(*CSVFile).Transform(ConvGBKToUTF8)
+		}
 
 	default:
 		report.ReportError("UnknownInputFileExtension", filename)
 	}
 
-	return nil
+	return tabFile
 }
 
 func (self *FileLoader) GetFile(filename string) (TableFile, error) {
 
 	if self.syncLoad {
 
-		result := loadFileByExt(filename)
+		result := loadFileByExt(filename, self.UseGBKCSV)
 		if err, ok := result.(error); ok {
 			return nil, err
 		}

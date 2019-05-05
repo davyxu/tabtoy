@@ -1,6 +1,7 @@
 package v2tov3
 
 import (
+	"github.com/davyxu/tabtoy/util"
 	"github.com/davyxu/tabtoy/v2tov3/model"
 	"github.com/davyxu/tabtoy/v3/helper"
 	"sort"
@@ -8,11 +9,7 @@ import (
 
 func ExportIndexTable(globals *model.Globals) error {
 
-	var err error
-	globals.TargetIndexSheet, err = globals.AddTable("Index.xlsx", "").AddSheet("Default")
-	if err != nil {
-		return err
-	}
+	globals.TargetIndexSheet = globals.AddTable("Index.xlsx")
 
 	helper.WriteIndexTableHeader(globals.TargetIndexSheet)
 
@@ -56,7 +53,7 @@ func ExportIndexTable(globals *model.Globals) error {
 
 	for _, data := range tabList {
 
-		helper.WriteRowValues(globals.TargetIndexSheet, getMode(data), data.TableName+"Define", data.FileName)
+		helper.WriteRowValues(globals.TargetIndexSheet, getMode(data), data.TableName, util.ChangeExtension(data.FileName, ".csv"))
 	}
 
 	return nil

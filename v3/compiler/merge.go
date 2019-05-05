@@ -11,6 +11,10 @@ func createOutputTable(symbols *model.TypeTable, inputTab *model.DataTable) *mod
 	outputTab.HeaderType = inputTab.HeaderType
 	outputTab.OriginalHeaderType = inputTab.OriginalHeaderType
 
+	// Merge后的表报错没显示来源文件名, 添加这里
+	outputTab.FileName = inputTab.FileName
+	outputTab.SheetName = inputTab.SheetName
+
 	// 原始表头类型为解析
 	headerFields := symbols.AllFieldByName(inputTab.OriginalHeaderType)
 

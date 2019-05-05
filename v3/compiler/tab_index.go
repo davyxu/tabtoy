@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func loadIndexData(tab *model.DataTable, symbols *model.TypeTable) (pragmaList []*model.IndexDefine) {
+func parseIndexRow(tab *model.DataTable, symbols *model.TypeTable) (pragmaList []*model.IndexDefine) {
 
 	for row := 1; row < len(tab.Rows); row++ {
 
@@ -39,6 +39,7 @@ func LoadIndexTable(globals *model.Globals, fileName string) error {
 		return nil
 	}
 
+	// 加载原始数据
 	tabs, err := LoadDataTable(globals.IndexGetter, fileName, "IndexDefine", "IndexDefine", globals.Types)
 
 	if err != nil {
@@ -48,8 +49,7 @@ func LoadIndexTable(globals *model.Globals, fileName string) error {
 	var pragmaList []*model.IndexDefine
 
 	for _, tab := range tabs {
-
-		pragmaList = append(pragmaList, loadIndexData(tab, globals.Types)...)
+		pragmaList = append(pragmaList, parseIndexRow(tab, globals.Types)...)
 	}
 
 	// 按表类型排序，保证类型表先读取

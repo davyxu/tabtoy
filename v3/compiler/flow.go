@@ -1,6 +1,7 @@
 package compiler
 
 import (
+	"github.com/davyxu/tabtoy/v3/helper"
 	"github.com/davyxu/tabtoy/v3/model"
 	"github.com/davyxu/tabtoy/v3/report"
 )
@@ -27,6 +28,19 @@ func Compile(globals *model.Globals) (ret error) {
 	if err != nil {
 		return err
 	}
+
+	tabLoader := helper.NewFileLoader(!globals.ParaLoading)
+	tabLoader.UseGBKCSV = globals.UseGBKCSV
+
+	if globals.ParaLoading {
+		for _, pragma := range globals.IndexList {
+			tabLoader.AddFile(pragma.TableFileName)
+		}
+
+		tabLoader.Commit()
+	}
+
+	globals.TableGetter = tabLoader
 
 	var kvList, dataList model.DataTableList
 
@@ -59,7 +73,8 @@ func Compile(globals *model.Globals) (ret error) {
 	// 合并所有的数据表
 	MergeData(&dataList, &globals.Datas, globals.Types)
 
-	CheckRepeat(&globals.Datas)
+	checkEnumValue(globals)
+	checkRepeat(globals)
 
 	return nil
 }
