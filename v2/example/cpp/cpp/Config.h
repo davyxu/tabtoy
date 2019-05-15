@@ -58,15 +58,21 @@ namespace table
 	{
 	public:
 	
-		
+		/// <summary> 
+		/// LuaStringMapperValue:true
+		/// </summary>
 		public:
  		int HP_ = 10; // 血量
 	
-		
+		/// <summary> 
+		/// LuaStringMapperValue:true
+		/// </summary>
 		public:
  		float AttackRate_ = 0.0f; // 攻击速率
 	
-		
+		/// <summary> 
+		/// LuaStringMapperValue:true
+		/// </summary>
 		public:
  		ActorType ExType_ = ActorType::Leader; // 额外类型
 	
@@ -81,7 +87,9 @@ namespace table
 	{
 	public:
 	
-		
+		/// <summary> 
+		/// LuaStringMapperValue:true
+		/// </summary>
 		public:
  		int Value_ = 0; // 攻击值
 	

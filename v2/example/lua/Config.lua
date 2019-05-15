@@ -26,6 +26,12 @@ for _, rec in pairs(tab.Sample) do
 end
 
 tab.Enum = {
+	ActorType = {
+		[0] = "Leader",
+		[2] = "Pig",
+		Monkey = 1,
+		Hammer = 3,
+	},
 }
 
 return tab

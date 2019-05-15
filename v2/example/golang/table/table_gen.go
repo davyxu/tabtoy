@@ -65,20 +65,20 @@ type Vec2 struct {
 // Defined in table: Sample
 type Prop struct {
 
-	// 血量
+	// 血量LuaStringMapperValue:true
 	HP int32
 
-	// 攻击速率
+	// 攻击速率LuaStringMapperValue:true
 	AttackRate float32
 
-	// 额外类型
+	// 额外类型LuaStringMapperValue:true
 	ExType ActorType
 }
 
 // Defined in table: Sample
 type AttackParam struct {
 
-	// 攻击值
+	// 攻击值LuaStringMapperValue:true
 	Value int32
 }
 

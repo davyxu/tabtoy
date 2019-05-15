@@ -344,13 +344,19 @@ namespace table
 	{
 	
 		
-		
+		/// <summary> 
+		/// LuaStringMapperValue:true
+		/// </summary>
 		public int HP = 10; // 血量
 		
-		
+		/// <summary> 
+		/// LuaStringMapperValue:true
+		/// </summary>
 		public float AttackRate = 0f; // 攻击速率
 		
-		
+		/// <summary> 
+		/// LuaStringMapperValue:true
+		/// </summary>
 		public ActorType ExType = ActorType.Leader; // 额外类型
 	
 	
@@ -363,7 +369,9 @@ namespace table
 	{
 	
 		
-		
+		/// <summary> 
+		/// LuaStringMapperValue:true
+		/// </summary>
 		public int Value = 0; // 攻击值
 	
 	
