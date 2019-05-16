@@ -1,9 +1,9 @@
 package printer
 
 import (
+	"github.com/davyxu/tabtoy/util"
 	"github.com/davyxu/tabtoy/v2/i18n"
 	"github.com/davyxu/tabtoy/v2/model"
-	"github.com/davyxu/tabtoy/util"
 )
 
 func valueWrapperPbt(t model.FieldType, node *model.Node) string {
@@ -56,6 +56,10 @@ func printTablePBT(bf *Stream, tab *model.Table) bool {
 		// 遍历每一列
 		for rootFieldIndex, node := range r.Nodes {
 
+			if node.SugguestIgnore && !node.IsRepeated {
+				continue
+			}
+
 			if node.IsRepeated {
 				bf.Printf("%s:[ ", node.Name)
 			} else {
@@ -82,9 +86,7 @@ func printTablePBT(bf *Stream, tab *model.Table) bool {
 					// 单值
 					valueNode := node.Child[0]
 
-					if !node.SugguestIgnore {
-						bf.Printf("%s", valueWrapperPbt(node.Type, valueNode))
-					}
+					bf.Printf("%s", valueWrapperPbt(node.Type, valueNode))
 
 				}
 

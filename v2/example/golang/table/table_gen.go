@@ -65,20 +65,20 @@ type Vec2 struct {
 // Defined in table: Sample
 type Prop struct {
 
-	// 血量LuaStringMapperValue:true
+	// 血量
 	HP int32
 
-	// 攻击速率LuaStringMapperValue:true
+	// 攻击速率
 	AttackRate float32
 
-	// 额外类型LuaStringMapperValue:true
+	// 额外类型
 	ExType ActorType
 }
 
 // Defined in table: Sample
 type AttackParam struct {
 
-	// 攻击值LuaStringMapperValue:true
+	// 攻击值
 	Value int32
 }
 
@@ -90,6 +90,8 @@ type SampleDefine struct {
 
 	//名称
 	Name string `自定义tag:"支持go的struct tag"`
+
+	EmptyName string
 
 	//图标ID
 	IconID int32

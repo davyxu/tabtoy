@@ -58,21 +58,15 @@ namespace table
 	{
 	public:
 	
-		/// <summary> 
-		/// LuaStringMapperValue:true
-		/// </summary>
+		
 		public:
  		int HP_ = 10; // 血量
 	
-		/// <summary> 
-		/// LuaStringMapperValue:true
-		/// </summary>
+		
 		public:
  		float AttackRate_ = 0.0f; // 攻击速率
 	
-		/// <summary> 
-		/// LuaStringMapperValue:true
-		/// </summary>
+		
 		public:
  		ActorType ExType_ = ActorType::Leader; // 额外类型
 	
@@ -87,9 +81,7 @@ namespace table
 	{
 	public:
 	
-		/// <summary> 
-		/// LuaStringMapperValue:true
-		/// </summary>
+		
 		public:
  		int Value_ = 0; // 攻击值
 	
@@ -115,6 +107,10 @@ namespace table
 		/// </summary>
 		public:
  		std::string Name_ = ""; 
+	
+		
+		public:
+ 		std::string EmptyName_ = ""; 
 	
 		/// <summary> 
 		/// 图标ID
@@ -354,52 +350,57 @@ namespace table
 						ins.Name_ = reader.ReadString();
                 	}
                 	break; 
-                	case 0x10002:
+                	case 0x60002:
+                	{
+						ins.EmptyName_ = reader.ReadString();
+                	}
+                	break; 
+                	case 0x10003:
                 	{
 						ins.IconID_ = reader.ReadInt32();
                 	}
                 	break; 
-                	case 0x50003:
+                	case 0x50004:
                 	{
 						ins.NumericalRate_ = reader.ReadFloat();
                 	}
                 	break; 
-                	case 0x10004:
+                	case 0x10005:
                 	{
 						ins.ItemID_ = reader.ReadInt32();
                 	}
                 	break; 
-                	case 0x10005:
+                	case 0x10006:
                 	{
 						ins.BuffID_.emplace_back( reader.ReadInt32() );
                 	}
                 	break; 
-                	case 0x90006:
+                	case 0x90007:
                 	{
 						ins.Pos_ = reader.ReadStruct<Vec2>(Deserialize);
                 	}
                 	break; 
-                	case 0x80007:
+                	case 0x80008:
                 	{
 						ins.Type_ = reader.ReadEnum<ActorType>();
                 	}
                 	break; 
-                	case 0x10008:
+                	case 0x10009:
                 	{
 						ins.SkillID_.emplace_back( reader.ReadInt32() );
                 	}
                 	break; 
-                	case 0x90009:
+                	case 0x9000a:
                 	{
 						ins.AttackParam_ = reader.ReadStruct<AttackParam>(Deserialize);
                 	}
                 	break; 
-                	case 0x9000a:
+                	case 0x9000b:
                 	{
 						ins.SingleStruct_ = reader.ReadStruct<Prop>(Deserialize);
                 	}
                 	break; 
-                	case 0x9000b:
+                	case 0x9000c:
                 	{
 						ins.StrStruct_.emplace_back( reader.ReadStruct<Prop>(Deserialize) );
                 	}
