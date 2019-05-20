@@ -262,52 +262,57 @@ namespace table
 						ins.Name = reader.ReadString();
                 	}
                 	break; 
-                	case 0x10002:
+                	case 0x60002:
+                	{
+						ins.EmptyName = reader.ReadString();
+                	}
+                	break; 
+                	case 0x10003:
                 	{
 						ins.IconID = reader.ReadInt32();
                 	}
                 	break; 
-                	case 0x50003:
+                	case 0x50004:
                 	{
 						ins.NumericalRate = reader.ReadFloat();
                 	}
                 	break; 
-                	case 0x10004:
+                	case 0x10005:
                 	{
 						ins.ItemID = reader.ReadInt32();
                 	}
                 	break; 
-                	case 0x10005:
+                	case 0x10006:
                 	{
 						ins.BuffID.Add( reader.ReadInt32() );
                 	}
                 	break; 
-                	case 0x90006:
+                	case 0x90007:
                 	{
 						ins.Pos = reader.ReadStruct<Vec2>(Vec2DeserializeHandler);
                 	}
                 	break; 
-                	case 0x80007:
+                	case 0x80008:
                 	{
 						ins.Type = reader.ReadEnum<ActorType>();
                 	}
                 	break; 
-                	case 0x10008:
+                	case 0x10009:
                 	{
 						ins.SkillID.Add( reader.ReadInt32() );
                 	}
                 	break; 
-                	case 0x90009:
+                	case 0x9000a:
                 	{
 						ins.AttackParam = reader.ReadStruct<AttackParam>(AttackParamDeserializeHandler);
                 	}
                 	break; 
-                	case 0x9000a:
+                	case 0x9000b:
                 	{
 						ins.SingleStruct = reader.ReadStruct<Prop>(PropDeserializeHandler);
                 	}
                 	break; 
-                	case 0x9000b:
+                	case 0x9000c:
                 	{
 						ins.StrStruct.Add( reader.ReadStruct<Prop>(PropDeserializeHandler) );
                 	}
@@ -385,6 +390,9 @@ namespace table
 		/// 名称
 		/// </summary>
 		public string Name = ""; 
+		
+		
+		public string EmptyName = ""; 
 		
 		/// <summary> 
 		/// 图标ID

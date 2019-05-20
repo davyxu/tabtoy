@@ -3,11 +3,11 @@
 
 local tab = {
 	Sample = {
-		{ ID = 100, Name = "黑猫警长", IconID = 0, NumericalRate = 0.6, ItemID = 100, BuffID = { 10 }, Pos = { X= 100, Y= 89 }, Type = 0, SkillID = { 4, 6, 7 }, AttackParam = { Value= 1 }, SingleStruct = { HP= 100, AttackRate= 1.2 }, StrStruct = { { HP= 3, ExType= 0 }, { HP= 10, ExType= 1 } } 	},
-		{ ID = 101, Name = "葫芦\n娃", IconID = 0, NumericalRate = 0.8, ItemID = 100, BuffID = { 3, 1 }, Pos = {  }, Type = 2, SkillID = { 1 }, AttackParam = {  }, SingleStruct = { HP= 10, AttackRate= 0, ExType= 0 }, StrStruct = { {  } } 	},
-		{ ID = 102, Name = "舒\"克\"", IconID = 0, NumericalRate = 0.7, ItemID = 100, BuffID = {  }, Pos = {  }, Type = 3, SkillID = {  }, AttackParam = {  }, SingleStruct = { HP= 10, AttackRate= 0, ExType= 0 }, StrStruct = { {  } } 	},
-		{ ID = 103, Name = "贝\n塔", IconID = 0, NumericalRate = 0, ItemID = 100, BuffID = {  }, Pos = {  }, Type = 1, SkillID = {  }, AttackParam = {  }, SingleStruct = { HP= 10, AttackRate= 0, ExType= 0 }, StrStruct = { {  } } 	},
-		{ ID = 104, Name = "邋遢大王", IconID = 0, NumericalRate = 1, ItemID = 100, BuffID = {  }, Pos = {  }, Type = 2, SkillID = {  }, AttackParam = {  }, SingleStruct = { HP= 10, AttackRate= 0, ExType= 0 }, StrStruct = { {  } } 	}
+		{ ID = 100, Name = "黑猫警长", EmptyName = "", IconID = 0, NumericalRate = 0.6, ItemID = 100, BuffID = { 10 }, Pos = { X= 100, Y= 89 }, Type = 0, SkillID = { 4, 6, 7 }, AttackParam = { Value= 1 }, SingleStruct = { HP= 100, AttackRate= 1.2 }, StrStruct = { { HP= 3, ExType= 0 }, { HP= 10, ExType= 1 } } 	},
+		{ ID = 101, Name = "葫芦\n娃", EmptyName = "", IconID = 0, NumericalRate = 0.8, ItemID = 100, BuffID = { 3, 1 }, Pos = {  }, Type = 2, SkillID = { 1 }, AttackParam = {  }, SingleStruct = { HP= 10, AttackRate= 0, ExType= 0 }, StrStruct = { {  } } 	},
+		{ ID = 102, Name = "舒\"克\"", EmptyName = "", IconID = 0, NumericalRate = 0.7, ItemID = 100, BuffID = {  }, Pos = {  }, Type = 3, SkillID = {  }, AttackParam = {  }, SingleStruct = { HP= 10, AttackRate= 0, ExType= 0 }, StrStruct = { {  } } 	},
+		{ ID = 103, Name = "贝\n塔", EmptyName = "", IconID = 0, NumericalRate = 0, ItemID = 100, BuffID = {  }, Pos = {  }, Type = 1, SkillID = {  }, AttackParam = {  }, SingleStruct = { HP= 10, AttackRate= 0, ExType= 0 }, StrStruct = { {  } } 	},
+		{ ID = 104, Name = "邋遢大王", EmptyName = "", IconID = 0, NumericalRate = 1, ItemID = 100, BuffID = {  }, Pos = {  }, Type = 2, SkillID = {  }, AttackParam = {  }, SingleStruct = { HP= 10, AttackRate= 0, ExType= 0 }, StrStruct = { {  } } 	}
 	}
 
 }
@@ -26,6 +26,12 @@ for _, rec in pairs(tab.Sample) do
 end
 
 tab.Enum = {
+	ActorType = {
+		[0] = "Leader",
+		[2] = "Pig",
+		Monkey = 1,
+		Hammer = 3,
+	},
 }
 
 return tab
