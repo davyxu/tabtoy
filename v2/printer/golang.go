@@ -39,6 +39,11 @@ var (
 {{$en.Name}}MapperNameByValue = map[int32]string{ {{range .GoFields}}
 	{{.Number}}: "{{.Name}}" , {{end}}
 }
+
+{{$en.Name}}CommentByValue = map[int32]string{ {{range .GoFields}}
+	{{.Number}}: "{{.RawComment}}" , {{end}}
+}
+
 )
 
 func (self {{$en.Name}}) String() string {
@@ -243,11 +248,24 @@ type goFieldModel struct {
 	Number int
 }
 
-func (self goFieldModel) Alias() string {
+func (self *goFieldModel) Alias() string {
 	return self.FieldDescriptor.Meta.GetString("Alias")
 }
 
-func (self goFieldModel) Comment() string {
+func (self *goFieldModel) RawComment() string {
+	var out string
+
+	if self.FieldDescriptor.Meta.GetString("Alias") != "" {
+		out += self.FieldDescriptor.Meta.GetString("Alias")
+	}
+
+	if self.FieldDescriptor.Comment != "" {
+		out += self.FieldDescriptor.Comment
+	}
+	return out
+}
+
+func (self *goFieldModel) Comment() string {
 
 	var out string
 

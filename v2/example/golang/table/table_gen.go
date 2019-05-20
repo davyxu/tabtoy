@@ -41,6 +41,13 @@ var (
 		2: "Pig",
 		3: "Hammer",
 	}
+
+	ActorTypeCommentByValue = map[int32]string{
+		0: "唐僧",
+		1: "孙悟空",
+		2: "猪八戒",
+		3: "沙僧",
+	}
 )
 
 func (self ActorType) String() string {
