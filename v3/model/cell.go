@@ -15,6 +15,7 @@ type Cell struct {
 
 }
 
+// 全拷贝
 func (self *Cell) CopyFrom(c *Cell) {
 	self.Value = c.Value
 	self.Row = c.Row

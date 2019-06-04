@@ -96,6 +96,10 @@ func MergeData(inputList, outputList *model.DataTableList, symbols *model.TypeTa
 					panic("输出单元格找不到")
 				}
 
+				// 切记, V3不支持, 也不能支持默认值
+				// 默认值会导致多表中, 有默认值列才有默认值, 导出数据在不同功能表间会出现歧义
+				// 建议在逻辑层自行处理
+
 				if inputHeader.TypeInfo.IsArray() {
 
 					combineArrayCell(outputCell, inputCell, inputHeader.TypeInfo.ArraySplitter)

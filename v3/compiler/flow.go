@@ -29,18 +29,21 @@ func Compile(globals *model.Globals) (ret error) {
 		return err
 	}
 
-	tabLoader := helper.NewFileLoader(!globals.ParaLoading)
-	tabLoader.UseGBKCSV = globals.UseGBKCSV
+	// 测试时, 这个Getter会被提前设置为MemFile, 普通导出时, 这个Getter为空
+	if globals.TableGetter == nil {
+		tabLoader := helper.NewFileLoader(!globals.ParaLoading)
+		tabLoader.UseGBKCSV = globals.UseGBKCSV
 
-	if globals.ParaLoading {
-		for _, pragma := range globals.IndexList {
-			tabLoader.AddFile(pragma.TableFileName)
+		if globals.ParaLoading {
+			for _, pragma := range globals.IndexList {
+				tabLoader.AddFile(pragma.TableFileName)
+			}
+
+			tabLoader.Commit()
 		}
 
-		tabLoader.Commit()
+		globals.TableGetter = tabLoader
 	}
-
-	globals.TableGetter = tabLoader
 
 	var kvList, dataList model.DataTableList
 
