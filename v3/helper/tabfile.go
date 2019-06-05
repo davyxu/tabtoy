@@ -10,13 +10,17 @@ type TableFile interface {
 	Sheets() []TableSheet
 }
 
+type ValueOption struct {
+	ValueAsFloat bool
+}
+
 type TableSheet interface {
 
 	// 表单名称
 	Name() string
 
 	// 从表单指定单元格获取值
-	GetValue(row, col int) string
+	GetValue(row, col int, opt *ValueOption) string
 
 	// 最大列
 	MaxColumn() int
@@ -33,7 +37,7 @@ func ReadSheetRow(sheet TableSheet, row int) (ret []string) {
 	ret = make([]string, sheet.MaxColumn())
 	for col := 0; col < sheet.MaxColumn(); col++ {
 
-		value := sheet.GetValue(row, col)
+		value := sheet.GetValue(row, col, nil)
 
 		ret[col] = value
 	}

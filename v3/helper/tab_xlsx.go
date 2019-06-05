@@ -63,7 +63,7 @@ func (self *XlsxSheet) IsFullRowEmpty(row int) bool {
 
 	for col := 0; col < self.Sheet.MaxCol; col++ {
 
-		data := self.GetValue(row, col)
+		data := self.GetValue(row, col, nil)
 
 		if data != "" {
 			return false
@@ -73,19 +73,11 @@ func (self *XlsxSheet) IsFullRowEmpty(row int) bool {
 	return true
 }
 
-func (self *XlsxSheet) GetValue(row, col int) (ret string) {
-	c := self.Sheet.Cell(row, col)
-
-	// 取列头所在列和当前行交叉的单元格
-	return strings.TrimSpace(c.Value)
-}
-
-func (self *XlsxSheet) GetValueEx(row, col int, isFloat bool) (ret string) {
-
+func (self *XlsxSheet) GetValue(row, col int, opt *ValueOption) (ret string) {
 	c := self.Sheet.Cell(row, col)
 
 	// 浮点数单元格按原样输出
-	if isFloat {
+	if opt != nil && opt.ValueAsFloat {
 		ret, _ = c.GeneralNumeric()
 		ret = strings.TrimSpace(ret)
 	} else {

@@ -15,9 +15,9 @@ func readOneRow(sheet helper.TableSheet, tab *model.DataTable, row int) bool {
 		}
 
 		// 浮点数用库取时，需要特殊处理
-		//isFloat := model.LanguagePrimitive(header.TypeInfo.FieldType, "go") == "float32"
+		isFloat := model.LanguagePrimitive(header.TypeInfo.FieldType, "go") == "float32"
 
-		value := sheet.GetValue(row, header.Cell.Col)
+		value := sheet.GetValue(row, header.Cell.Col, &helper.ValueOption{ValueAsFloat: isFloat})
 
 		// 首列带#时，本行忽略
 		if header.Cell.Col == 0 && strings.HasPrefix(value, "#") {

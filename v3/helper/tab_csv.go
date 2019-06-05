@@ -134,7 +134,7 @@ func (self *CSVSheet) IsFullRowEmpty(row int) bool {
 
 	for col := 0; col < self.file.MaxCol(); col++ {
 
-		data := self.GetValue(row, col)
+		data := self.GetValue(row, col, nil)
 
 		if data != "" {
 			return false
@@ -144,7 +144,7 @@ func (self *CSVSheet) IsFullRowEmpty(row int) bool {
 	return true
 }
 
-func (self *CSVSheet) GetValue(row, col int) string {
+func (self *CSVSheet) GetValue(row, col int, opt *ValueOption) string {
 
 	if row >= len(self.file.records) {
 		return ""

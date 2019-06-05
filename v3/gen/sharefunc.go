@@ -2,6 +2,7 @@ package gen
 
 import (
 	"github.com/ahmetb/go-linq"
+	"github.com/davyxu/tabtoy/util"
 	"github.com/davyxu/tabtoy/v3/model"
 	"text/template"
 )
@@ -22,6 +23,33 @@ func KeyValueTypeNames(globals *model.Globals) (ret []string) {
 	}).Distinct().ToSlice(&ret)
 
 	return
+}
+
+func WrapSingleValue(globals *model.Globals, valueType *model.TypeDefine, value string) string {
+	switch {
+	case valueType.FieldType == "string": // 字符串
+		return util.StringEscape(value)
+	case valueType.FieldType == "float":
+		return value
+	case globals.Types.IsEnumKind(valueType.FieldType): // 枚举
+		return globals.Types.ResolveEnumValue(valueType.FieldType, value)
+	case valueType.FieldType == "bool":
+
+		switch value {
+		case "是", "yes", "YES", "1", "true", "TRUE", "True":
+			return "true"
+		case "否", "no", "NO", "0", "false", "FALSE", "False":
+			return "false"
+		}
+
+		return "false"
+	}
+
+	if value == "" {
+		return model.FetchDefaultValue(valueType.FieldType)
+	}
+
+	return value
 }
 
 func init() {

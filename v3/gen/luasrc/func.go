@@ -1,40 +1,13 @@
 package luasrc
 
 import (
-	"github.com/davyxu/tabtoy/util"
+	"github.com/davyxu/tabtoy/v3/gen"
 	"github.com/davyxu/tabtoy/v3/model"
 	"strings"
 	"text/template"
 )
 
 var UsefulFunc = template.FuncMap{}
-
-func wrapSingleValue(globals *model.Globals, valueType *model.TypeDefine, value string) string {
-	switch {
-	case valueType.FieldType == "string": // 字符串
-		return util.StringEscape(value)
-	case valueType.FieldType == "float32":
-		return value
-	case globals.Types.IsEnumKind(valueType.FieldType): // 枚举
-		return globals.Types.ResolveEnumValue(valueType.FieldType, value)
-	case valueType.FieldType == "bool":
-
-		switch value {
-		case "是", "yes", "YES", "1", "true", "TRUE", "True":
-			return "true"
-		case "否", "no", "NO", "0", "false", "FALSE", "False":
-			return "false"
-		}
-
-		return "false"
-	}
-
-	if value == "" {
-		return model.FetchDefaultValue(valueType.FieldType)
-	}
-
-	return value
-}
 
 func WrapValue(globals *model.Globals, value string, valueType *model.TypeDefine) string {
 	if valueType.IsArray() {
@@ -48,7 +21,7 @@ func WrapValue(globals *model.Globals, value string, valueType *model.TypeDefine
 				if index > 0 {
 					sb.WriteString(",")
 				}
-				sb.WriteString(wrapSingleValue(globals, valueType, elementValue))
+				sb.WriteString(gen.WrapSingleValue(globals, valueType, elementValue))
 			}
 		}
 
@@ -57,7 +30,7 @@ func WrapValue(globals *model.Globals, value string, valueType *model.TypeDefine
 		return sb.String()
 
 	} else {
-		return wrapSingleValue(globals, valueType, value)
+		return gen.WrapSingleValue(globals, valueType, value)
 	}
 
 	return value
