@@ -103,7 +103,7 @@
 	
 * 手动编译获取最新版
 	
-	go get -u -v github.com/davyxu/tabtoy
+	go get github.com/davyxu/tabtoy
 	
 ### 编写导出命令行
 
