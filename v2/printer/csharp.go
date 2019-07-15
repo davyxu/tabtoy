@@ -113,6 +113,14 @@ namespace {{.Namespace}}{{$globalIndex:=.Indexes}}{{$verticalFields:=.VerticalFi
 			{{end}}
 		}{{end}}
 		#endregion
+		#region Clear Code
+		public void Clear( )
+		{	{{range .Fields}}		
+				{{.Name}}.Clear(); {{end}}
+			{{range $globalIndex}}
+				_{{.RowName}}By{{.IndexName}}.Clear(); {{end}}
+		}
+		#endregion
 	{{end}}
 
 	} {{end}}
