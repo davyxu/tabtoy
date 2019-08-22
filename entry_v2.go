@@ -21,10 +21,9 @@ var (
 func V2Entry() {
 	g := printer.NewGlobals()
 
-	if *paramLanguage != "" {
-		if !i18n.SetLanguage(*paramLanguage) {
-			log.Infof("language not support: %s", *paramLanguage)
-		}
+	if !i18n.SetLanguage(*paramLanguage) {
+		log.Infof("language not support: %s", *paramLanguage)
+		os.Exit(1)
 	}
 
 	g.Version = Version
