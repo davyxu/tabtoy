@@ -88,7 +88,3 @@ func SetLanguage(lan string) bool {
 func registerLanguage(lan string, data map[StringID]string) {
 	lanByStr[lan] = data
 }
-
-func init() {
-	SetLanguage("en_us")
-}
