@@ -17,7 +17,7 @@ type IndexDefine struct {
 	Kind          TableKind `tb_name:"模式"`
 	TableType     string    `tb_name:"表类型"`
 	TableFileName string    `tb_name:"表文件名"`
-	Tags          []string  `tb_name:"标记"`
+	Tags          []string  `tb_name:"标记"` // | 分割
 }
 
 func (self *IndexDefine) MatchTag(tag string) bool {
