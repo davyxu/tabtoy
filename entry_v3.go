@@ -7,6 +7,7 @@ import (
 	"github.com/davyxu/tabtoy/v3/gen/binpak"
 	"github.com/davyxu/tabtoy/v3/gen/cssrc"
 	"github.com/davyxu/tabtoy/v3/gen/gosrc"
+	"github.com/davyxu/tabtoy/v3/gen/javasrc"
 	"github.com/davyxu/tabtoy/v3/gen/jsontext"
 	"github.com/davyxu/tabtoy/v3/gen/luasrc"
 	"github.com/davyxu/tabtoy/v3/helper"
@@ -34,6 +35,7 @@ var (
 		{"luasrc", luasrc.Generate, paramLuaOut},
 		{"cssrc", cssrc.Generate, paramCSharpOut},
 		{"binpak", binpak.Generate, paramBinaryOut},
+		{"javasrc", javasrc.Generate, paramJavaOut},
 	}
 )
 

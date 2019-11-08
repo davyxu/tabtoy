@@ -1,4 +1,4 @@
-package gosrc
+package javasrc
 
 import (
 	"github.com/davyxu/protoplus/codegen"

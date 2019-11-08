@@ -12,6 +12,7 @@ ${GOPATH}/bin/tabtoy -mode=v3 \
 -lua_out=../lua/table_gen.lua \
 -csharp_out=../csharp/TabtoyExample/table_gen.cs \
 -binary_out=../binary/table_gen.bin \
+-java_out=../java/src/main/java/main/Table.java \
 -package=main
 
 cp ../json/table_gen.json ../java/cfg

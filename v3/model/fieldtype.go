@@ -8,6 +8,7 @@ type FieldType struct {
 	InputFieldName string `tb_name:"输入字段"`
 	GoFieldName    string `tb_name:"Go字段"`
 	CSFieldName    string `tb_name:"C#字段"`
+	JavaFieldName  string `tb_name:"Java字段"`
 	DefaultValue   string `tb_name:"默认值"`
 }
 
@@ -15,19 +16,19 @@ type FieldType struct {
 
 var (
 	FieldTypes = []*FieldType{
-		{"int16", "int16", "Int16", "0"},
-		{"int32", "int32", "Int32", "0"},
-		{"int64", "int64", "Int64", "0"},
-		{"int", "int32", "Int32", "0"},
-		{"uint16", "uint16", "UInt16", "0"},
-		{"uint32", "uint32", "UInt32", "0"},
-		{"uint64", "uint64", "UInt64", "0"},
-		{"float", "float32", "float", "0"},
-		{"double", "float64", "double", "0"},
-		{"float32", "float32", "float", "0"},
-		{"float64", "float64", "double", "0"},
-		{"bool", "bool", "bool", "FALSE"},
-		{"string", "string", "string", ""},
+		{"int16", "int16", "Int16", "int", "0"},
+		{"int32", "int32", "Int32", "int", "0"},
+		{"int64", "int64", "Int64", "long", "0"},
+		{"int", "int32", "Int32", "int", "0"},
+		{"uint16", "uint16", "UInt16", "int", "0"},
+		{"uint32", "uint32", "UInt32", "int", "0"},
+		{"uint64", "uint64", "UInt64", "long", "0"},
+		{"float", "float32", "float", "float", "0"},
+		{"double", "float64", "double", "double", "0"},
+		{"float32", "float32", "float", "float", "0"},
+		{"float64", "float64", "double", "double", "0"},
+		{"bool", "bool", "bool", "boolean", "FALSE"},
+		{"string", "string", "string", "String", ""},
 	}
 )
 
@@ -59,6 +60,8 @@ func LanguagePrimitive(fieldType string, lanType string) string {
 			return ft.CSFieldName
 		case "go":
 			return ft.GoFieldName
+		case "java":
+			return ft.JavaFieldName
 		default:
 			panic("unknown lan type: " + lanType)
 		}
