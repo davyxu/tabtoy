@@ -14,3 +14,6 @@ v2/example/cpp/Debug
 v3/example/csharp/TabtoyExample/obj
 v3/example/csharp/.vs
 v3/example/csharp/TabtoyExample/bin
+v3/example/java/.gradle
+v3/example/java/.idea
+v3/example/java/build

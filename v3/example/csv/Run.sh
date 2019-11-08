@@ -1,9 +1,7 @@
 #!/bin/bash
 
-CURR=`pwd`
-cd ../../../../../../..
-export GOPATH=`pwd`
-cd ${CURR}
+# 默认设置代理, 国内专用
+export GOPROXY=https://goproxy.io
 
 go build -v -o ${GOPATH}/bin/tabtoy github.com/davyxu/tabtoy
 
@@ -15,3 +13,5 @@ ${GOPATH}/bin/tabtoy -mode=v3 \
 -csharp_out=../csharp/TabtoyExample/table_gen.cs \
 -binary_out=../binary/table_gen.bin \
 -package=main
+
+cp ../json/table_gen.json ../java/cfg

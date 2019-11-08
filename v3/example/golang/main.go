@@ -37,17 +37,19 @@ func ReloadTable(filename string) {
 func main() {
 
 	// 表加载前清除之前的手动索引和表关联数据
-	Tab.RegisterPreEntry(func(tab *Table) {
+	Tab.RegisterPreEntry(func(tab *Table) error {
 
 		fmt.Println("tab pre load clear")
+		return nil
 	})
 
 	// 表加载和构建索引后，需要手动处理数据的回调
-	Tab.RegisterPostEntry(func(tab *Table) {
+	Tab.RegisterPostEntry(func(tab *Table) error {
 
 		fmt.Printf("%+v\n", tab.ExampleDataByID[200])
 
 		fmt.Println("KV: ", tab.GetKeyValue_ExampleKV().ServerIP)
+		return nil
 	})
 
 	ReloadTable("../json/table_gen.json")
