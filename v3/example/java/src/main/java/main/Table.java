@@ -26,17 +26,17 @@ public final class Table {
 	
 	
 	public class ExampleData { 	
-		public int ID; // 任务ID; 	
-		public String Name; // 名称; 	
-		public float Rate; // 比例; 	
-		public ActorType Type; // 类型; 	
-		public int[] Skill; // 技能列表; 
+		public int ID = 0; // 任务ID; 	
+		public String Name = ""; // 名称; 	
+		public float Rate = 0; // 比例; 	
+		public ActorType Type = ActorType.None; // 类型; 	
+		public int[] Skill = new int[]{}; // 技能列表; 
 	}
 	
 	public class ExampleKV { 	
-		public String ServerIP; // 服务器IP; 	
-		public int ServerPort; // 服务器端口; 	
-		public int[] GroupID; // 分组; 
+		public String ServerIP = ""; // 服务器IP; 	
+		public int ServerPort = 0; // 服务器端口; 	
+		public int[] GroupID = new int[]{}; // 分组; 
 	}
 	
 	

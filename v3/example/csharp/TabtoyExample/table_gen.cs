@@ -20,7 +20,7 @@ namespace main
 		public Int32 ID = 0; 
 		public string Name = ""; 
 		public float Rate = 0; 
-		public ActorType Type = 0; 
+		public ActorType Type = ActorType.None; 
 		public List<Int32> Skill = new List<Int32>(); 
 
 		#region Deserialize Code

@@ -25,7 +25,7 @@ public final class {{.CombineStructName}} {	{{range $sn, $objName := $.Types.Enu
 	{{end}}
 	{{range $sn, $objName := $.Types.StructNames}}
 	public class {{$objName}} { {{range $fi,$field := $.Types.AllFieldByName $objName}}	
-		public {{JavaType $field false}} {{$field.FieldName}}; // {{$field.Name}}; {{end}}
+		public {{JavaType $field false}} {{$field.FieldName}} = {{JavaDefaultValue $ $field}}; // {{$field.Name}}; {{end}}
 	}
 	{{end}}
 	{{range $ti, $tab := $.Datas.AllTables}}
