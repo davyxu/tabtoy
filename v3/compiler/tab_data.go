@@ -3,6 +3,7 @@ package compiler
 import (
 	"github.com/davyxu/tabtoy/v3/helper"
 	"github.com/davyxu/tabtoy/v3/model"
+	"github.com/pkg/errors"
 	"strings"
 )
 
@@ -34,7 +35,7 @@ func readOneRow(sheet helper.TableSheet, tab *model.DataTable, row int) bool {
 func LoadDataTable(filegetter helper.FileGetter, fileName, headerType, resolveHeaderType string, typeTab *model.TypeTable) (ret []*model.DataTable, err error) {
 	file, err := filegetter.GetFile(fileName)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, fileName)
 	}
 
 	for _, sheet := range file.Sheets() {
