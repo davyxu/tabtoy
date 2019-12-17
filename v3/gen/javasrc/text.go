@@ -67,7 +67,7 @@ public final class {{.CombineStructName}} {	{{range $sn, $objName := $.Types.Enu
 	public void  BuildData()  {
 		{{range $ii, $idx := GetIndices $}}
 		for( {{$idx.Table.HeaderType}} v:{{$idx.Table.HeaderType}} ) {
-			{{$idx.Table.HeaderType}}By{{$idx.FieldInfo.FieldName}}.put(v.ID, v);
+			{{$idx.Table.HeaderType}}By{{$idx.FieldInfo.FieldName}}.put(v.{{$idx.FieldInfo.FieldName}}, v);
 		}{{end}}
 
 		for( TableEvent ev : eventHandlers){
