@@ -77,19 +77,24 @@ func TestArrayList(t *testing.T) {
 	helper.WriteTypeTableHeader(typeSheet)
 	helper.WriteRowValues(typeSheet, "表头", "TestData", "ID", "ID", "int", "", "")
 	helper.WriteRowValues(typeSheet, "表头", "TestData", "技能列表", "SkillList", "int", "|", "")
+	helper.WriteRowValues(typeSheet, "表头", "TestData", "名字列表", "NameList", "string", "|", "")
 
 	dataSheet := emu.CreateCSVFile("TestData")
-	helper.WriteRowValues(dataSheet, "ID", "技能列表", "技能列表")
-	helper.WriteRowValues(dataSheet, "1", "100", "200")
-	helper.WriteRowValues(dataSheet, "2", "", "1") // 多列数组补0
+	helper.WriteRowValues(dataSheet, "ID", "技能列表", "技能列表", "技能列表", "名字列表", "名字列表")
+	helper.WriteRowValues(dataSheet, "1", "100", "200", "300", "", "")
+	helper.WriteRowValues(dataSheet, "2", "1", "", "3", "", "")   // 多列数组补0
+	helper.WriteRowValues(dataSheet, "3", "", "20", "30", "", "") // 多列数组补0
+	helper.WriteRowValues(dataSheet, "4", "", "", "", "", "")     // 多列数组补0
 
 	emu.VerifyData(`
 {
 			"@Tool": "github.com/davyxu/tabtoy",
 			"@Version": "testver",	
 			"TestData":[ 
-				{ "ID": 1, "SkillList": [100,200] },
-				{ "ID": 2, "SkillList": [0,1] } 
+				{ "ID": 1, "SkillList": [100,200,300], "NameList":["", ""] },
+				{ "ID": 2, "SkillList": [1,0,3], "NameList":["", ""] }, 
+				{ "ID": 3, "SkillList": [0,20,30], "NameList":["", ""] },
+				{ "ID": 4, "SkillList": [0,0,0], "NameList":["", ""] }
 			]
 		}
 `)
@@ -118,3 +123,32 @@ func TestRepeatCheck(t *testing.T) {
 }
 
 // TODO KV表测试
+
+// 单元格中有切割符时, 重复列的拆分符需要单独设置
+func TestArraySpliter(t *testing.T) {
+
+	emu := NewTableEmulator(t)
+	indexSheet := emu.CreateCSVFile("Index")
+
+	helper.WriteIndexTableHeader(indexSheet)
+	helper.WriteRowValues(indexSheet, "类型表", "", "Type")
+	helper.WriteRowValues(indexSheet, "数据表", "", "TestData")
+
+	typeSheet := emu.CreateCSVFile("Type")
+	helper.WriteTypeTableHeader(typeSheet)
+	helper.WriteRowValues(typeSheet, "表头", "TestData", "Week", "Week", "string", "$", "", "true")
+
+	dataSheet := emu.CreateCSVFile("TestData")
+	helper.WriteRowValues(dataSheet, "Week", "Week")
+	helper.WriteRowValues(dataSheet, "1|2|3", "4|5|6")
+
+	emu.VerifyData(`
+{
+        	"@Tool": "github.com/davyxu/tabtoy",
+        	"@Version": "testver",	
+        	"TestData":[ 
+        		{ "Week": ["1|2|3", "4|5|6"] } 
+        	]
+        }
+`)
+}

@@ -3,9 +3,9 @@
 local tab = { 
 	ExampleData = { 
 		{ ID = 100, Name = "扎克镇", Rate = 3.14, Type = 2, Skill = {3,1,2}, }, 
-		{ ID = 200, Name = "阿努比斯神庙", Rate = 1.2, Type = 1, Skill = {100,9,86,0}, }, 
-		{ ID = 300, Name = "花村", Rate = 79.4, Type = 3, Skill = {}, }, 
-		{ ID = 400, Name = "艾兴瓦尔德", Rate = 0.63, Type = 4, Skill = {}, },  
+		{ ID = 200, Name = "阿努比斯神庙", Rate = 1.2, Type = 1, Skill = {0,90}, }, 
+		{ ID = 300, Name = "花村", Rate = 79.4, Type = 3, Skill = {0}, }, 
+		{ ID = 400, Name = "艾兴瓦尔德", Rate = 0.63, Type = 4, Skill = {0}, },  
 	},
 	ExampleKV = { 
 		{ ServerIP = "8.8.8.8", ServerPort = 1024, GroupID = {10,20}, },  

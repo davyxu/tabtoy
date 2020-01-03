@@ -3,7 +3,6 @@ package compiler
 import (
 	"github.com/davyxu/tabtoy/v3/model"
 	"github.com/davyxu/tabtoy/v3/report"
-	"strings"
 )
 
 func createOutputTable(symbols *model.TypeTable, inputTab *model.DataTable) *model.DataTable {
@@ -102,7 +101,7 @@ func MergeData(inputList, outputList *model.DataTableList, symbols *model.TypeTa
 
 				if inputHeader.TypeInfo.IsArray() {
 
-					combineArrayCell(outputCell, inputCell, inputHeader.TypeInfo.ArraySplitter)
+					combineRepeatedCell(outputCell, inputCell, inputHeader, inputTab)
 
 				} else {
 					outputCell.CopyFrom(inputCell)
@@ -113,40 +112,25 @@ func MergeData(inputList, outputList *model.DataTableList, symbols *model.TypeTa
 	}
 }
 
-func combineArrayCell(ouputCell, inputCell *model.Cell, splitter string) {
+func combineRepeatedCell(outputCell, inputCell *model.Cell, inputHeader *model.HeaderField, inputTab *model.DataTable) {
 
-	var sb strings.Builder
+	spliter := inputHeader.TypeInfo.ArraySplitter
 
-	var valueCount int
+	if inputTab.RepeatedFieldIndex(inputHeader) > 0 {
 
-	tail := ouputCell
-
-	// 把之前的格子的值合并为字符串
-	for c := ouputCell.Next; c != nil; c = c.Next {
-
-		tail = c
-
-		if valueCount > 0 {
-			sb.WriteString(splitter)
+		if outputCell.Value != "" || model.LanguagePrimitive(inputHeader.TypeInfo.FieldType, "go") == "string" {
+			outputCell.Value += spliter
 		}
-
-		sb.WriteString(c.Value)
-		valueCount++
 	}
 
-	for _, value := range strings.Split(inputCell.Value, splitter) {
-
-		if valueCount > 0 {
-			sb.WriteString(splitter)
-		}
-
-		sb.WriteString(value)
-		valueCount++
+	var inputValue string
+	if inputCell.Value == "" {
+		inputValue = model.FetchDefaultValue(inputHeader.TypeInfo.FieldType)
+	} else {
+		inputValue = inputCell.Value
 	}
 
-	ouputCell.Value = sb.String()
-
-	tail.Next = &model.Cell{}
-	tail.Next.CopyFrom(inputCell)
+	// 将多个列中的数值合并到最终单元格的值中, Spliter分割, 分割过程在每种数据gen中处理
+	outputCell.Value += inputValue
 
 }

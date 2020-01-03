@@ -32,8 +32,6 @@ func WrapValue(globals *model.Globals, value string, valueType *model.TypeDefine
 	} else {
 		return gen.WrapSingleValue(globals, valueType, value)
 	}
-
-	return value
 }
 
 func init() {

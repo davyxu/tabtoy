@@ -20,6 +20,35 @@ type DataTable struct {
 	Headers []*HeaderField
 }
 
+// 重复列在表中数量, 重复列可以将数组拆在多个列中填写
+func (self *DataTable) RepeatedFieldCount(field *HeaderField) (ret int) {
+
+	for _, hf := range self.Headers {
+		if hf.TypeInfo == field.TypeInfo {
+			ret++
+		}
+	}
+
+	return
+}
+
+// 重复列在表中的索引, 相对于重复列的数量
+func (self *DataTable) RepeatedFieldIndex(field *HeaderField) (ret int) {
+
+	for _, hf := range self.Headers {
+		if hf.TypeInfo == field.TypeInfo {
+
+			if hf == field {
+				break
+			}
+
+			ret++
+		}
+	}
+
+	return
+}
+
 // 模板用，排除表头的数据索引
 func (self *DataTable) DataRowIndex() (ret []int) {
 

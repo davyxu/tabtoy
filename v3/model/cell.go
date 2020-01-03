@@ -10,9 +10,6 @@ type Cell struct {
 	Row   int // base 0
 	Col   int // base 0
 	Table *DataTable
-
-	Next *Cell // 多列数组中，多个数值保存到一行
-
 }
 
 // 全拷贝

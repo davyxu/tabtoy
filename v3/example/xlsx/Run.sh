@@ -3,9 +3,9 @@
 # 默认设置代理, 国内专用
 export GOPROXY=https://goproxy.io
 
-go build -v -o ${GOPATH}/bin/tabtoy github.com/davyxu/tabtoy
+go build -v -o ./tabtoy github.com/davyxu/tabtoy
 
-${GOPATH}/bin/tabtoy -mode=v3 \
+./tabtoy -mode=v3 \
 -index=Index.xlsx \
 -go_out=../golang/table_gen.go \
 -json_out=../json/table_gen.json \
@@ -16,3 +16,5 @@ ${GOPATH}/bin/tabtoy -mode=v3 \
 -package=main
 
 cp ../json/table_gen.json ../java/cfg
+
+rm -f tabtoy
