@@ -152,3 +152,32 @@ func TestArraySpliter(t *testing.T) {
         }
 `)
 }
+
+//// 单元格类型与期望类型不匹配时
+//func TestMissMatchingType(t *testing.T) {
+//
+//	emu := NewTableEmulator(t)
+//	indexSheet := emu.CreateCSVFile("Index")
+//
+//	helper.WriteIndexTableHeader(indexSheet)
+//	helper.WriteRowValues(indexSheet, "类型表", "", "Type")
+//	helper.WriteRowValues(indexSheet, "数据表", "", "TestData")
+//
+//	typeSheet := emu.CreateCSVFile("Type")
+//	helper.WriteTypeTableHeader(typeSheet)
+//	helper.WriteRowValues(typeSheet, "表头", "TestData", "ID", "ID", "int", "", "", "true")
+//
+//	dataSheet := emu.CreateCSVFile("TestData")
+//	helper.WriteRowValues(dataSheet, "ID")
+//	helper.WriteRowValues(dataSheet, "中文")
+//
+//	emu.VerifyData(`
+//{
+//        	"@Tool": "github.com/davyxu/tabtoy",
+//        	"@Version": "testver",
+//        	"TestData":[
+//        		{ "Week": ["1|2|3", "4|5|6"] }
+//        	]
+//        }
+//`)
+//}

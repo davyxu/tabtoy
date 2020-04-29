@@ -19,5 +19,6 @@ var (
 		"HeaderTypeNotFound":          {CHS: "表头类型找不到"},
 		"DuplicateValueInMakingIndex": {CHS: "创建索引时发现重复值"},
 		"UnknownInputFileExtension":   {CHS: "未知的输入文件扩展名"},
+		"DataMissMatchTypeDefine":     {CHS: "数据与定义类型不匹配"},
 	}
 )

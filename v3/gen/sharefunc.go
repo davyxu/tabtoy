@@ -40,11 +40,9 @@ func WrapSingleValue(globals *model.Globals, valueType *model.TypeDefine, value 
 		return globals.Types.ResolveEnumValue(valueType.FieldType, value)
 	case valueType.FieldType == "bool":
 
-		switch value {
-		case "是", "yes", "YES", "1", "true", "TRUE", "True":
+		v, _ := model.ParseBool(value)
+		if v {
 			return "true"
-		case "否", "no", "NO", "0", "false", "FALSE", "False":
-			return "false"
 		}
 
 		return "false"

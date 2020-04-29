@@ -2,6 +2,7 @@ package model
 
 import (
 	"github.com/ahmetb/go-linq"
+	"github.com/pkg/errors"
 )
 
 type FieldType struct {
@@ -84,4 +85,17 @@ func PrimitiveExists(fieldType string) bool {
 
 		return ft.InputFieldName == fieldType
 	}).Count() > 0
+}
+
+func ParseBool(s string) (bool, error) {
+	switch s {
+	case "是", "yes", "YES", "1", "true", "TRUE", "True":
+		return true, nil
+	case "否", "no", "NO", "0", "false", "FALSE", "False":
+		return false, nil
+	case "":
+		return false, nil
+	}
+
+	return false, errors.New("invalid bool value")
 }

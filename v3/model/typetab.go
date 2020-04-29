@@ -73,6 +73,23 @@ func (self *TypeTable) IsEnumKind(objectType string) bool {
 
 func (self *TypeTable) ResolveEnum(objectType, value string) *TypeData {
 
+	t := self.GetEnumValue(objectType, value)
+
+	if t != nil {
+		return t
+	}
+
+	enumFields := self.getEnumFields(objectType)
+
+	if len(enumFields) == 0 {
+		return nil
+	}
+
+	// 默认取第一个
+	return enumFields[0]
+}
+
+func (self *TypeTable) GetEnumValue(objectType, value string) *TypeData {
 	enumFields := self.getEnumFields(objectType)
 
 	if len(enumFields) == 0 {
@@ -87,8 +104,7 @@ func (self *TypeTable) ResolveEnum(objectType, value string) *TypeData {
 
 	}
 
-	// 默认取第一个
-	return enumFields[0]
+	return nil
 }
 
 // 匹配枚举值

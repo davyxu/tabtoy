@@ -78,6 +78,7 @@ func Compile(globals *model.Globals) (ret error) {
 
 	checkEnumValue(globals)
 	checkRepeat(globals)
+	checkDataType(globals)
 
 	return nil
 }
