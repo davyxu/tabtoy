@@ -61,6 +61,11 @@ func init() {
 		return fmt.Sprintf("0x%x", tag)
 	}
 
+	UsefulFunc["CSStructTag"] = func() string {
+
+		return fmt.Sprintf("0x%x", binpak.MakeTagStructArray())
+	}
+
 	UsefulFunc["CSReader"] = func(globals *model.Globals, tf *model.TypeDefine) (ret string) {
 
 		convertedType := model.LanguagePrimitive(tf.FieldType, "cs")

@@ -8,7 +8,7 @@ func writeHeader(writer *BinaryWriter) error {
 	if err := writer.WriteString("TABTOY"); err != nil {
 		return err
 	}
-	if err := writer.WriteUInt32(3); err != nil {
+	if err := writer.WriteUInt32(4); err != nil {
 		return err
 	}
 
@@ -25,10 +25,18 @@ func Generate(globals *model.Globals) (data []byte, err error) {
 
 	for _, tab := range globals.Datas.AllTables() {
 
+		// 结构体的标记头, 方便跨过不同类型
+		structTag := MakeTagStructArray()
+		if err := totalWriter.WriteUInt32(structTag); err != nil {
+			return nil, err
+		}
+
+		totalWriter.WriteString(tab.HeaderType)
+
 		totalDataRow := len(tab.Rows) - 1
 		totalWriter.WriteUInt32(uint32(totalDataRow))
 
-		// 结构体数组
+		// 表的每一个行
 		for row := 1; row < len(tab.Rows); row++ {
 
 			if swriter, err := writeStruct(globals, tab, row); err != nil {

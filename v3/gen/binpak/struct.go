@@ -25,6 +25,7 @@ func writeStruct(globals *model.Globals, tab *model.DataTable, row int) (*Binary
 
 		goType := model.LanguagePrimitive(header.TypeInfo.FieldType, "go")
 
+		// 写入字段
 		if header.TypeInfo.IsArray() {
 
 			for _, elementValue := range strings.Split(cell.Value, header.TypeInfo.ArraySplitter) {

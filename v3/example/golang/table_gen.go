@@ -45,6 +45,10 @@ type ExampleData struct {
 	TagList []string  `tb_name:"标记"`
 }
 
+type ExtendData struct {
+	Additive float32 `tb_name:"附加"`
+}
+
 type ExampleKV struct {
 	ServerIP   string  `tb_name:"服务器IP"`
 	ServerPort uint16  `tb_name:"服务器端口"`
@@ -54,6 +58,7 @@ type ExampleKV struct {
 // Combine struct
 type Table struct {
 	ExampleData []*ExampleData // table: ExampleData
+	ExtendData  []*ExtendData  // table: ExtendData
 	ExampleKV   []*ExampleKV   // table: ExampleKV
 
 	// Indices
@@ -99,6 +104,7 @@ func (self *Table) ResetData() error {
 	}
 
 	self.ExampleData = self.ExampleData[0:0]
+	self.ExtendData = self.ExtendData[0:0]
 	self.ExampleKV = self.ExampleKV[0:0]
 
 	self.ExampleDataByID = map[int32]*ExampleData{}

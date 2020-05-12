@@ -35,6 +35,10 @@ public final class Table {
 		public String[] TagList = new String[]{}; // 标记; 
 	}
 	
+	public class ExtendData { 	
+		public float Additive = 0; // 附加; 
+	}
+	
 	public class ExampleKV { 	
 		public String ServerIP = ""; // 服务器IP; 	
 		public int ServerPort = 0; // 服务器端口; 	
@@ -43,6 +47,7 @@ public final class Table {
 	
 	
 	public List<ExampleData> ExampleData = new ArrayList<>(); // table: ExampleData 
+	public List<ExtendData> ExtendData = new ArrayList<>(); // table: ExtendData 
 	public List<ExampleKV> ExampleKV = new ArrayList<>(); // table: ExampleKV 
 
 	// Indices 
@@ -73,6 +78,7 @@ public final class Table {
 		}
 		
 		ExampleData.clear(); 
+		ExtendData.clear(); 
 		ExampleKV.clear(); 
 		
 		ExampleDataByID.clear(); 	

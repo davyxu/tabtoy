@@ -40,6 +40,17 @@ func MakeTag(globals *model.Globals, tf *model.TypeDefine, fieldIndex int) uint3
 	return uint32(t<<16 | fieldIndex)
 }
 
+func MakeTagStructArray() uint32 {
+
+	var t int
+	t = 11
+
+	// 结构体默认是数组
+	t += 100
+
+	return uint32(t << 16)
+}
+
 func writePair(globals *model.Globals, structWriter *BinaryWriter, fieldType *model.TypeDefine, goType, value string, fieldIndex int) error {
 
 	tag := MakeTag(globals, fieldType, fieldIndex)

@@ -67,8 +67,30 @@ namespace {{.PackageName}}
 		{{if $.GenBinary}}
 		public void Deserialize( tabtoy.TableReader reader )
 		{	
-			reader.ReadHeader();{{range $ti, $tab := $.Datas.AllTables}}
-			reader.ReadStruct(ref {{$tab.HeaderType}}); {{end}}
+			reader.ReadHeader();
+
+			UInt32 tag = 0;
+            while ( reader.ReadTag(ref tag) )
+            {
+				if (tag == 0x6f0000)
+				{
+                    var tabName = string.Empty;
+                    reader.ReadString(ref tabName);
+					switch (tabName)
+					{ {{range $ti, $tab := $.Datas.AllTables}}
+						case "{{$tab.HeaderType}}":
+						{
+							reader.ReadStruct(ref {{$tab.HeaderType}});	
+						}
+						break;{{end}}
+						default:
+						{
+							reader.SkipFiled(tag);                            
+						}
+						break;
+					}
+				}
+			}
 			{{range $ii, $idx := GetIndices $}}	
 			foreach( var kv in {{$idx.Table.HeaderType}} )
 			{

@@ -17,7 +17,8 @@ namespace tabtoy
         Float = 7,
         String = 8,
         Bool = 9,
-        Enum = 10,        
+        Enum = 10,
+        Struct =11,
     }
 
     public interface ITableSerializable
@@ -49,7 +50,7 @@ namespace tabtoy
             _boundPos = boundpos;
         }
 
-        void ConsumeData(uint size)
+        void ValidateDataBound(uint size)
         {
             if (!IsDataEnough(size))
             {
@@ -57,12 +58,18 @@ namespace tabtoy
             }
         }
 
+        void ConsumeData(uint size)
+        {
+            ValidateDataBound(size);
+            _binaryReader.BaseStream.Seek(size, SeekOrigin.Current);
+        }
+
         bool IsDataEnough(uint size)
         {
             return _binaryReader.BaseStream.Position + size <= _boundPos;
         }
 
-        const int FileVersion = 3;
+        const int FileVersion = 4;
 
         public void ReadHeader()
         {
@@ -209,6 +216,19 @@ namespace tabtoy
                         this.ReadBool(ref dummy);
                     }
                     break;
+                case 111: // struct
+                    {
+                        UInt32 len = 0;
+                        ReadUInt32(ref len);
+                        for( int i = 0; i < len; i++)
+                        {
+                            UInt32 bound = 0;
+                            ReadUInt32(ref bound);
+                            ConsumeData(bound);
+                        }
+                        
+                    }
+                    break;
                 default:
                     throw new Exception("Invalid tag type");
             }
@@ -219,14 +239,14 @@ namespace tabtoy
 
         public void ReadInt16(ref Int16 v)
         {
-            ConsumeData(sizeof(Int16));
+            ValidateDataBound(sizeof(Int16));
 
             v = _binaryReader.ReadInt16();
         }
 
         public void ReadInt32(ref Int32 v)
         {
-            ConsumeData(sizeof(Int32));
+            ValidateDataBound(sizeof(Int32));
 
             v = _binaryReader.ReadInt32();
         }
@@ -234,42 +254,42 @@ namespace tabtoy
 
         public void ReadInt64(ref Int64 v)
         {
-            ConsumeData(sizeof(Int64));
+            ValidateDataBound(sizeof(Int64));
 
             v = _binaryReader.ReadInt64();
         }
 
         public void ReadUInt16(ref UInt16 v)
         {
-            ConsumeData(sizeof(UInt16));
+            ValidateDataBound(sizeof(UInt16));
 
             v = _binaryReader.ReadUInt16();
         }
 
         public void ReadUInt32(ref UInt32 v)
         {
-            ConsumeData(sizeof(UInt32));
+            ValidateDataBound(sizeof(UInt32));
 
             v = _binaryReader.ReadUInt32();
         }
 
         public void ReadUInt64(ref UInt64 v)
         {
-            ConsumeData(sizeof(UInt64));
+            ValidateDataBound(sizeof(UInt64));
 
             v = _binaryReader.ReadUInt64();
         }
 
         public void ReadFloat(ref float v)
         {
-            ConsumeData(sizeof(float));
+            ValidateDataBound(sizeof(float));
 
             v = _binaryReader.ReadSingle();
         }
 
         public void ReadBool(ref bool v)
         {
-            ConsumeData(sizeof(bool));
+            ValidateDataBound(sizeof(bool));
 
             v = _binaryReader.ReadBoolean();
         }
@@ -279,7 +299,7 @@ namespace tabtoy
             UInt32 len = 0;
             ReadUInt32(ref len);
 
-            ConsumeData(sizeof(Byte) * len);
+            ValidateDataBound(sizeof(Byte) * len);
 
             v = encoding.GetString(_binaryReader.ReadBytes((int)len));
         }

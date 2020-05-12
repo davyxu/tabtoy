@@ -79,6 +79,34 @@ namespace main
 		#endregion 
 	}
 	
+	public partial class ExtendData : tabtoy.ITableSerializable
+	{ 
+		public float Additive = 0; 
+
+		#region Deserialize Code
+		public void Deserialize( tabtoy.TableReader reader )
+		{
+			UInt32 tag = 0;
+            while ( reader.ReadTag(ref tag) )
+            {
+ 				switch (tag)
+                { 
+                	case 0x70000:
+                	{
+						reader.ReadFloat( ref Additive );
+                	}
+                	break;
+                    default:
+                    {
+                        reader.SkipFiled(tag);                            
+                    }
+                    break;
+				}
+			}
+		}
+		#endregion 
+	}
+	
 	public partial class ExampleKV : tabtoy.ITableSerializable
 	{ 
 		public string ServerIP = ""; 
@@ -125,6 +153,8 @@ namespace main
 	{ 
 		// table: ExampleData
 		public List<ExampleData> ExampleData = new List<ExampleData>(); 
+		// table: ExtendData
+		public List<ExtendData> ExtendData = new List<ExtendData>(); 
 		// table: ExampleKV
 		public List<ExampleKV> ExampleKV = new List<ExampleKV>(); 
 
@@ -141,6 +171,7 @@ namespace main
 		public void ResetData( )
 		{   
 			ExampleData.Clear(); 
+			ExtendData.Clear(); 
 			ExampleKV.Clear();  
 			ExampleDataByID.Clear(); 	
 		}
@@ -148,8 +179,39 @@ namespace main
 		public void Deserialize( tabtoy.TableReader reader )
 		{	
 			reader.ReadHeader();
-			reader.ReadStruct(ref ExampleData); 
-			reader.ReadStruct(ref ExampleKV); 
+
+			UInt32 tag = 0;
+            while ( reader.ReadTag(ref tag) )
+            {
+				if (tag == 0x6f0000)
+				{
+                    var tabName = string.Empty;
+                    reader.ReadString(ref tabName);
+					switch (tabName)
+					{ 
+						case "ExampleData":
+						{
+							reader.ReadStruct(ref ExampleData);	
+						}
+						break;
+						case "ExtendData":
+						{
+							reader.ReadStruct(ref ExtendData);	
+						}
+						break;
+						case "ExampleKV":
+						{
+							reader.ReadStruct(ref ExampleKV);	
+						}
+						break;
+						default:
+						{
+							reader.SkipFiled(tag);                            
+						}
+						break;
+					}
+				}
+			}
 				
 			foreach( var kv in ExampleData )
 			{
