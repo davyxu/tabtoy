@@ -33,6 +33,10 @@ func MakeTag(globals *model.Globals, tf *model.TypeDefine, fieldIndex int) uint3
 		panic("unknown type:" + tf.FieldType)
 	}
 
+	if tf.IsArray() {
+		t += 100
+	}
+
 	return uint32(t<<16 | fieldIndex)
 }
 

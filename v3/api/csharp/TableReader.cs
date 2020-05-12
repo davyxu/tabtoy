@@ -92,6 +92,129 @@ namespace tabtoy
             return false;
         }
 
+        public void SkipFiled(UInt32 tag)
+        {
+            var fieldIndex = tag & 0xffff;
+            switch (tag >> 16)
+            {
+                case 1: // int16
+                    {
+                        Int16 dummy = 0;
+                        this.ReadInt16(ref dummy);
+                    }
+                    break;
+                case 2: // int32
+                case 10: // enum
+                    {
+                        Int32 dummy = 0;
+                        this.ReadInt32(ref dummy);
+                    }
+                    break;
+                case 3: // int64
+                    {
+                        Int64 dummy = 0;
+                        this.ReadInt64(ref dummy);
+                    }
+                    break;
+                case 4: // uint16
+                    {
+                        UInt16 dummy = 0;
+                        this.ReadUInt16(ref dummy);
+                    }
+                    break;
+                case 5: // uint32
+                    {
+                        UInt32 dummy = 0;
+                        this.ReadUInt32(ref dummy);
+                    }
+                    break;
+                case 6: // uint64
+                    {
+                        UInt64 dummy = 0;
+                        this.ReadUInt64(ref dummy);
+                    }
+                    break;
+                case 7: // float32
+                    {
+                        float dummy = 0;
+                        this.ReadFloat(ref dummy);                        
+                    }
+                    break;
+                case 8: // string
+                    {
+                        string dummy = string.Empty;
+                        this.ReadString(ref dummy);
+                    }
+                    break;
+                case 9: // bool
+                    {
+                        bool dummy = false;
+                        this.ReadBool(ref dummy);
+                    }
+                    break;
+
+
+                case 101: // int16
+                    {
+                        var dummy = new List<Int16>();
+                        this.ReadInt16(ref dummy);
+                    }
+                    break;
+                case 102: // int32
+                case 110: // enum
+                    {
+                        var dummy = new List<Int32>();
+                        this.ReadInt32(ref dummy);
+                    }
+                    break;
+                case 103: // int64
+                    {
+                        var dummy = new List<Int64>();
+                        this.ReadInt64(ref dummy);
+                    }
+                    break;
+                case 104: // uint16
+                    {
+                        var dummy = new List<UInt16>();
+                        this.ReadUInt16(ref dummy);
+                    }
+                    break;
+                case 105: // uint32
+                    {
+                        var dummy = new List<UInt32>();
+                        this.ReadUInt32(ref dummy);
+                    }
+                    break;
+                case 106: // uint64
+                    {
+                        var dummy = new List<UInt64>();
+                        this.ReadUInt64(ref dummy);
+                    }
+                    break;
+                case 107: // float32
+                    {
+                        var dummy = new List<float>();
+                        this.ReadFloat(ref dummy);
+                    }
+                    break;
+                case 108: // string
+                    {
+                        var dummy = new List<string>();
+                        this.ReadString(ref dummy);
+                    }
+                    break;
+                case 109: // bool
+                    {
+                        var dummy = new List<bool>();
+                        this.ReadBool(ref dummy);
+                    }
+                    break;
+                default:
+                    throw new Exception("Invalid tag type");
+            }
+        }
+
+
         static readonly UTF8Encoding encoding = new UTF8Encoding();
 
         public void ReadInt16(ref Int16 v)

@@ -22,6 +22,8 @@ namespace main
 		public float Rate = 0; 
 		public ActorType Type = ActorType.None; 
 		public List<Int32> Skill = new List<Int32>(); 
+		public Int32 Buff = 0; 
+		public List<string> TagList = new List<string>(); 
 
 		#region Deserialize Code
 		public void Deserialize( tabtoy.TableReader reader )
@@ -51,11 +53,26 @@ namespace main
 						reader.ReadEnum( ref Type );
                 	}
                 	break;
-                	case 0x20004:
+                	case 0x660004:
                 	{
 						reader.ReadInt32( ref Skill );
                 	}
                 	break;
+                	case 0x20005:
+                	{
+						reader.ReadInt32( ref Buff );
+                	}
+                	break;
+                	case 0x6c0006:
+                	{
+						reader.ReadString( ref TagList );
+                	}
+                	break;
+                    default:
+                    {
+                        reader.SkipFiled(tag);                            
+                    }
+                    break;
 				}
 			}
 		}
@@ -86,11 +103,16 @@ namespace main
 						reader.ReadUInt16( ref ServerPort );
                 	}
                 	break;
-                	case 0x20002:
+                	case 0x660002:
                 	{
 						reader.ReadInt32( ref GroupID );
                 	}
                 	break;
+                    default:
+                    {
+                        reader.SkipFiled(tag);                            
+                    }
+                    break;
 				}
 			}
 		}

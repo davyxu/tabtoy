@@ -31,6 +31,11 @@ namespace {{.PackageName}}
 						reader.Read{{CSReader $ $field}}( ref {{$field.FieldName}} );
                 	}
                 	break;{{end}}
+                    default:
+                    {
+                        reader.SkipFiled(tag);                            
+                    }
+                    break;
 				}
 			}
 		}
