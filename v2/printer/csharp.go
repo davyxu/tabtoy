@@ -477,7 +477,7 @@ func (self *csharpPrinter) Run(g *Globals) *Stream {
 		return nil
 	}
 
-	m.BuildID = fmt.Sprintf("%x", md5.Sum(bf.Buffer().Bytes()))
+	m.BuildID = fmt.Sprintf("%x", md5.Sum(md5Buffer.Bytes()))
 	g.BuildID = m.BuildID
 
 	err = tpl.Execute(bf.Buffer(), &m)
