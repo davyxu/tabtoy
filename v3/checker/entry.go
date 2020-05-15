@@ -2,9 +2,9 @@ package checker
 
 import "github.com/davyxu/tabtoy/v3/model"
 
-func Check(list *model.DataTableList) {
+func CheckData(globals *model.Globals) {
 
-	//for _, tab := range list.Data {
-	//
-	//}
+	checkEnumValue(globals)
+	checkRepeat(globals)
+	checkDataType(globals)
 }

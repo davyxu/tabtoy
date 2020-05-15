@@ -15,9 +15,11 @@ type TableIndices struct {
 }
 
 func KeyValueTypeNames(globals *model.Globals) (ret []string) {
-	linq.From(globals.IndexList).WhereT(func(pragma *model.IndexDefine) bool {
+	linq.From(globals.IndexList).Where(func(raw interface{}) bool {
+		pragma := raw.(*model.IndexDefine)
 		return pragma.Kind == model.TableKind_KeyValue
-	}).SelectT(func(pragma *model.IndexDefine) string {
+	}).Select(func(raw interface{}) interface{} {
+		pragma := raw.(*model.IndexDefine)
 
 		return pragma.TableType
 	}).Distinct().ToSlice(&ret)

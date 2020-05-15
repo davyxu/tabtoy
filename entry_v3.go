@@ -39,27 +39,43 @@ var (
 	}
 )
 
-func GenFile(globals *model.Globals) error {
+func genFile(globals *model.Globals, entry V3GenEntry, c chan error) {
+	filename := *entry.flagstr
+
+	if data, err := entry.f(globals); err != nil {
+		c <- err
+	} else {
+
+		report.Log.Infof("  [%s] %s", entry.name, filename)
+
+		err = helper.WriteFile(filename, data)
+
+		if err != nil {
+			c <- err
+		}
+	}
+
+	c <- nil
+}
+
+func GenFileByList(globals *model.Globals) error {
+
+	var errList []chan error
 	for _, entry := range v3GenList {
 
 		if *entry.flagstr == "" {
 			continue
 		}
 
-		filename := *entry.flagstr
+		c := make(chan error)
+		errList = append(errList, c)
+		go genFile(globals, entry, c)
+	}
 
-		if data, err := entry.f(globals); err != nil {
+	for _, c := range errList {
+		err := <-c
+		if err != nil {
 			return err
-		} else {
-
-			report.Log.Infof("  [%s] %s", entry.name, filename)
-
-			err = helper.WriteFile(filename, data)
-
-			if err != nil {
-				return err
-			}
-
 		}
 	}
 
@@ -69,7 +85,7 @@ func GenFile(globals *model.Globals) error {
 func V3Entry() {
 	globals := model.NewGlobals()
 	globals.Version = Version
-
+	globals.ParaLoading = *paramPara
 	globals.IndexFile = *paramIndexFile
 	globals.PackageName = *paramPackageName
 	globals.CombineStructName = *paramCombineStructName
@@ -94,7 +110,7 @@ func V3Entry() {
 	}
 
 	report.Log.Debugln("Generate files...")
-	err = GenFile(globals)
+	err = GenFileByList(globals)
 	if err != nil {
 		goto Exit
 	}

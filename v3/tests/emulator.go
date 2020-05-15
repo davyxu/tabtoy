@@ -76,7 +76,7 @@ func (self *TableEmulator) VerifyType(expectJson string) {
 		return
 	}
 
-	appJson := self.G.Types.ToJSON(false)
+	appJson := self.G.Types.ToJSON()
 
 	if expectJson == "" {
 		return

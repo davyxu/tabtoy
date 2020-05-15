@@ -1,6 +1,6 @@
 {
 	"@Tool": "github.com/davyxu/tabtoy",
-	"@Version": "2.9.2",	
+	"@Version": "2.9.3",	
 	"ExampleData":[ 
 		{ "ID": 100, "Name": "扎克镇", "Rate": 3.14, "Type": 2, "Skill": [3,1,2], "Buff": 100, "TagList": ["a","b"] },
 		{ "ID": 200, "Name": "阿努比斯神庙", "Rate": 1.2, "Type": 1, "Skill": [100,0,90], "Buff": 1, "TagList": ["c"] },

@@ -1,7 +1,6 @@
 package model
 
 import (
-	"github.com/ahmetb/go-linq"
 	"github.com/pkg/errors"
 )
 
@@ -31,18 +30,23 @@ var (
 		{"bool", "bool", "bool", "boolean", "FALSE"},
 		{"string", "string", "string", "String", ""},
 	}
+
+	FieldTypeByType = map[string]*FieldType{}
 )
+
+func init() {
+
+	for _, ft := range FieldTypes {
+		FieldTypeByType[ft.InputFieldName] = ft
+	}
+}
 
 // 取类型的默认值
 func FetchDefaultValue(fieldType string) (ret string) {
 
-	linq.From(FieldTypes).WhereT(func(ft *FieldType) bool {
-
-		return ft.InputFieldName == fieldType
-	}).ForEachT(func(ft *FieldType) {
-
-		ret = ft.DefaultValue
-	})
+	if ft, ok := FieldTypeByType[fieldType]; ok {
+		return ft.DefaultValue
+	}
 
 	return
 }
@@ -50,12 +54,7 @@ func FetchDefaultValue(fieldType string) (ret string) {
 // 将类型转为对应语言的原始类型
 func LanguagePrimitive(fieldType string, lanType string) string {
 
-	var convertedType string
-	linq.From(FieldTypes).WhereT(func(ft *FieldType) bool {
-
-		return ft.InputFieldName == fieldType
-	}).SelectT(func(ft *FieldType) string {
-
+	if ft, ok := FieldTypeByType[fieldType]; ok {
 		switch lanType {
 		case "cs":
 			return ft.CSFieldName
@@ -66,25 +65,19 @@ func LanguagePrimitive(fieldType string, lanType string) string {
 		default:
 			panic("unknown lan type: " + lanType)
 		}
-	}).ForEachT(func(typeName string) {
-
-		convertedType = typeName
-	})
-
-	if convertedType == "" {
-		convertedType = fieldType
 	}
 
-	return convertedType
+	return fieldType
 }
 
 // 原始类型是否存在，例如: int32, int64
 func PrimitiveExists(fieldType string) bool {
 
-	return linq.From(FieldTypes).WhereT(func(ft *FieldType) bool {
+	if _, ok := FieldTypeByType[fieldType]; ok {
+		return true
+	}
 
-		return ft.InputFieldName == fieldType
-	}).Count() > 0
+	return false
 }
 
 func ParseBool(s string) (bool, error) {
