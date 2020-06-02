@@ -16,6 +16,7 @@ type FileLoader struct {
 	inputFile  []string
 
 	syncLoad bool
+	cacheDir string
 
 	UseGBKCSV bool
 }
@@ -34,7 +35,7 @@ func (self *FileLoader) Commit() {
 
 		go func(fileName string) {
 
-			self.fileByName.Store(fileName, loadFileByExt(fileName, self.UseGBKCSV))
+			self.fileByName.Store(fileName, loadFileByExt(fileName, self.UseGBKCSV, self.cacheDir))
 
 			task.Done()
 
@@ -47,13 +48,13 @@ func (self *FileLoader) Commit() {
 	self.inputFile = self.inputFile[0:0]
 }
 
-func loadFileByExt(filename string, useGBKCSV bool) interface{} {
+func loadFileByExt(filename string, useGBKCSV bool, cacheDir string) interface{} {
 
 	var tabFile TableFile
 	switch filepath.Ext(filename) {
 	case ".xlsx", ".xls", ".xlsm":
 
-		tabFile = NewXlsxFile()
+		tabFile = NewXlsxFile(cacheDir)
 
 		err := tabFile.Load(filename)
 
@@ -86,7 +87,7 @@ func (self *FileLoader) GetFile(filename string) (TableFile, error) {
 
 	if self.syncLoad {
 
-		result := loadFileByExt(filename, self.UseGBKCSV)
+		result := loadFileByExt(filename, self.UseGBKCSV, self.cacheDir)
 		if err, ok := result.(error); ok {
 			return nil, err
 		}
@@ -109,8 +110,9 @@ func (self *FileLoader) GetFile(filename string) (TableFile, error) {
 
 }
 
-func NewFileLoader(syncLoad bool) *FileLoader {
+func NewFileLoader(syncLoad bool, cacheDir string) *FileLoader {
 	return &FileLoader{
 		syncLoad: syncLoad,
+		cacheDir: cacheDir,
 	}
 }

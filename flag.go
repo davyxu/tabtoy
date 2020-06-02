@@ -13,6 +13,10 @@ var (
 	// 并发导出,提高导出速度, 输出日志会混乱
 	paramPara = flag.Bool("para", false, "parallel export by your cpu count")
 
+	// 并发导出,提高导出速度, 输出日志会混乱
+	paramCacheDir = flag.String("cachedir", "./.tabtoycache", "cache file output dir")
+	paramUseCache = flag.Bool("usecache", false, "use cache file enhanced exporting speed")
+
 	paramLanguage = flag.String("lan", "en_us", "set output language")
 )
 

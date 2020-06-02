@@ -86,6 +86,10 @@ func V3Entry() {
 	globals := model.NewGlobals()
 	globals.Version = Version
 	globals.ParaLoading = *paramPara
+	if *paramUseCache {
+		globals.CacheDir = *paramCacheDir
+		os.Mkdir(globals.CacheDir, 0666)
+	}
 	globals.IndexFile = *paramIndexFile
 	globals.PackageName = *paramPackageName
 	globals.CombineStructName = *paramCombineStructName
@@ -96,7 +100,7 @@ func V3Entry() {
 		report.Log.Infof("MatchTag: %s", globals.MatchTag)
 	}
 
-	idxloader := helper.NewFileLoader(true)
+	idxloader := helper.NewFileLoader(true, globals.CacheDir)
 	idxloader.UseGBKCSV = *paramUseGBKCSV
 	globals.IndexGetter = idxloader
 	globals.UseGBKCSV = *paramUseGBKCSV

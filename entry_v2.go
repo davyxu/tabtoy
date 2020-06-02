@@ -33,6 +33,8 @@ func V2Entry() {
 	}
 
 	g.ParaMode = *paramPara
+	g.CacheDir = *paramCacheDir
+	g.UseCache = *paramUseCache
 	g.CombineStructName = *paramCombineStructName
 	g.ProtoVersion = *paramProtoVersion
 	g.LuaEnumIntValue = *paramLuaEnumIntValue

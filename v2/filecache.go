@@ -3,6 +3,7 @@ package v2
 import (
 	"github.com/davyxu/tabtoy/v2/i18n"
 	"github.com/davyxu/tabtoy/v2/printer"
+	"os"
 	"path/filepath"
 	"strings"
 	"sync"
@@ -33,6 +34,28 @@ func cacheFile(g *printer.Globals) (fileObjByName map[string]*File) {
 
 	filelist := getFileList(g)
 
+	var cachedir string
+	if g.UseCache {
+		cachedir = g.CacheDir
+
+		os.Mkdir(g.CacheDir, 0666)
+	}
+
+	writeOK := func(xlsxFileName string) {
+		file, fromCache := NewFile(xlsxFileName, cachedir)
+
+		fileObjByNameGuard.Lock()
+		fileObjByName[xlsxFileName] = file
+		fileObjByNameGuard.Unlock()
+		if fromCache {
+			log.Infof("%s [Cache]", filepath.Base(xlsxFileName))
+		} else {
+			log.Infof("%s", filepath.Base(xlsxFileName))
+		}
+
+	}
+
+	// 这里加速效果良好, 默认开启
 	var task sync.WaitGroup
 	task.Add(len(filelist))
 
@@ -40,13 +63,7 @@ func cacheFile(g *printer.Globals) (fileObjByName map[string]*File) {
 
 		go func(xlsxFileName string) {
 
-			log.Infoln(filepath.Base(xlsxFileName))
-			file := NewFile(xlsxFileName)
-
-			fileObjByNameGuard.Lock()
-			fileObjByName[xlsxFileName] = file
-			fileObjByNameGuard.Unlock()
-
+			writeOK(xlsxFileName)
 			task.Done()
 
 		}(filename)
@@ -54,6 +71,12 @@ func cacheFile(g *printer.Globals) (fileObjByName map[string]*File) {
 	}
 
 	task.Wait()
+
+	// 调试用
+	//for _, filename := range filelist {
+	//
+	//	writeOK(filename)
+	//}
 
 	return
 }

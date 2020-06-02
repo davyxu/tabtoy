@@ -159,6 +159,20 @@ func (self *CSVSheet) GetValue(row, col int, opt *ValueOption) string {
 	return rowData[col]
 }
 
+func (self *CSVSheet) SetValue(row, col int, value string) bool {
+	if row >= len(self.file.records) {
+		return false
+	}
+	rowData := self.file.records[row]
+
+	if col >= len(rowData) {
+		return false
+	}
+
+	rowData[col] = value
+	return true
+}
+
 func (self *CSVSheet) WriteRow(valueList ...string) {
 
 	var rowData []string

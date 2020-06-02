@@ -41,7 +41,7 @@ func (self *MemFile) CreateXLSXFile(filename string) TableSheet {
 	xfile := xlsx.NewFile()
 	xfile.AddSheet("Default")
 
-	file := NewXlsxFile()
+	file := NewXlsxFile("")
 
 	file.(interface {
 		FromXFile(file *xlsx.File)

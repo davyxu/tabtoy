@@ -1,6 +1,7 @@
 package helper
 
 import (
+	"github.com/davyxu/tabtoy/util"
 	"github.com/tealeg/xlsx"
 	"strings"
 )
@@ -8,7 +9,8 @@ import (
 type XlsxFile struct {
 	file *xlsx.File
 
-	sheets []TableSheet
+	sheets   []TableSheet
+	cacheDir string
 }
 
 func (self *XlsxFile) Sheets() (ret []TableSheet) {
@@ -20,11 +22,30 @@ func (self *XlsxFile) Save(filename string) error {
 	return self.file.Save(filename)
 }
 
-func (self *XlsxFile) Load(filename string) error {
+func (self *XlsxFile) Load(filename string) (err error) {
 
-	file, err := xlsx.OpenFile(filename)
-	if err != nil {
-		return err
+	var file *xlsx.File
+
+	if self.cacheDir == "" {
+		file, err = xlsx.OpenFile(filename)
+		if err != nil {
+			return err
+		}
+	} else {
+		cache := util.NewTableCache(filename, self.cacheDir)
+
+		if err = cache.Open(); err != nil {
+			return err
+		}
+
+		if file, err = cache.Load(); err != nil {
+			return err
+		} else {
+
+			if !cache.UseCache() {
+				cache.Save()
+			}
+		}
 	}
 
 	self.FromXFile(file)
@@ -40,9 +61,11 @@ func (self *XlsxFile) FromXFile(file *xlsx.File) {
 	}
 }
 
-func NewXlsxFile() TableFile {
+func NewXlsxFile(cacheDir string) TableFile {
 
-	self := &XlsxFile{}
+	self := &XlsxFile{
+		cacheDir: cacheDir,
+	}
 
 	return self
 }

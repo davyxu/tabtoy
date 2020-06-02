@@ -25,7 +25,7 @@ type Globals struct {
 
 func (self *Globals) AddTableByFile(tableFileName, tableName string, inputFile *xlsx.File) {
 
-	file := helper.NewXlsxFile()
+	file := helper.NewXlsxFile("")
 
 	file.(interface {
 		FromXFile(file *xlsx.File)

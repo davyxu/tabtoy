@@ -25,6 +25,8 @@ type Globals struct {
 
 	ParaLoading bool
 	UseGBKCSV   bool
+
+	CacheDir string
 }
 
 func NewGlobals() *Globals {

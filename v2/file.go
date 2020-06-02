@@ -1,6 +1,7 @@
 package v2
 
 import (
+	"github.com/davyxu/tabtoy/util"
 	"strings"
 
 	"github.com/davyxu/tabtoy/v2/i18n"
@@ -155,7 +156,7 @@ func isTypeSheet(name string) bool {
 	return strings.TrimSpace(name) == model.TypeSheetName
 }
 
-func NewFile(filename string) *File {
+func NewFile(filename string, cacheDir string) (f *File, fromCache bool) {
 
 	self := &File{
 		valueRepByKey: make(map[valueRepeatData]bool),
@@ -163,15 +164,35 @@ func NewFile(filename string) *File {
 		FileName:      filename,
 	}
 
-	var err error
-	self.coreFile, err = xlsx.OpenFile(filename)
+	if cacheDir != "" {
+		cache := util.NewTableCache(filename, cacheDir)
 
-	if err != nil {
-		log.Errorln(err.Error())
-		log.Errorf("%s, %v", i18n.String(i18n.System_OpenReadXlsxFailed), err.Error())
+		if err := cache.Open(); err != nil {
+			log.Errorf("%s, %v", i18n.String(i18n.System_OpenReadXlsxFailed), err.Error())
+			return nil, false
+		}
 
-		return nil
+		if cfile, err := cache.Load(); err != nil {
+			log.Errorln(err.Error())
+			log.Errorf("%s, %v", i18n.String(i18n.System_OpenReadXlsxFailed), err.Error())
+			return nil, false
+		} else {
+			self.coreFile = cfile
+
+			if !cache.UseCache() {
+				cache.Save()
+			}
+
+			return self, cache.UseCache()
+		}
 	}
 
-	return self
+	var err error
+	self.coreFile, err = xlsx.OpenFile(filename)
+	if err != nil {
+		log.Errorf("%s, %v", i18n.String(i18n.System_OpenReadXlsxFailed), err.Error())
+		return nil, false
+	}
+
+	return self, false
 }
