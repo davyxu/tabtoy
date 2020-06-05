@@ -14,13 +14,24 @@ public final class {{.CombineStructName}} {	{{range $sn, $objName := $.Types.Enu
 	 public enum {{$objName}} { {{range $fi,$field := $.Types.AllFieldByName $objName}}
 			{{$field.FieldName}}({{$field.Value}}), // {{$field.Name}} {{end}}
 		;
-       {{$objName}}(int v) {
-           this.{{$objName}} = v;
-       }
-	   public int get{{$objName}}() {
-           return {{$objName}};
-       }
-       private final int {{$objName}};
+		{{$objName}}(int v) {
+		   this.{{$objName}} = v;
+		}
+		public int get{{$objName}}() {
+		   return {{$objName}};
+		}
+		
+		private final int {{$objName}};
+
+		public static {{$objName}} fromInt( int v ){
+			switch (v){ {{range $fi,$field := $.Types.AllFieldByName $objName}}
+			  case {{$field.Value}}:
+				return {{$field.FieldName}}; {{end}}
+			  default:
+				return null;
+			}
+		}
+
 	 }
 	{{end}}
 	{{range $sn, $objName := $.Types.StructNames}}

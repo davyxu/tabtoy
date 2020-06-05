@@ -17,3 +17,5 @@ v3/example/csharp/TabtoyExample/bin
 v3/example/java/.gradle
 v3/example/java/.idea
 v3/example/java/build
+v3/example/java/.project
+v3/example/java/.settings/org.eclipse.buildship.core.prefs
