@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public final class {{.CombineStructName}} {	{{range $sn, $objName := $.Types.EnumNames}}
+public class {{.CombineStructName}} {	{{range $sn, $objName := $.Types.EnumNames}}
 	 public enum {{$objName}} { {{range $fi,$field := $.Types.AllFieldByName $objName}}
 			{{$field.FieldName}}({{$field.Value}}), // {{$field.Name}} {{end}}
 		;

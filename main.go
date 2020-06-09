@@ -11,10 +11,10 @@ import (
 var log = golog.New("main")
 
 const (
-	Version = "2.9.4"
+	Version = "2.10.0"
 )
 
-var enableProfile bool = false
+var enableProfile = false
 
 func main() {
 

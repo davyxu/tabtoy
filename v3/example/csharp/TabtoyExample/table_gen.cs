@@ -18,7 +18,7 @@ namespace main
 	public partial class ExampleData : tabtoy.ITableSerializable
 	{ 
 		public Int32 ID = 0; 
-		public string Name = ""; 
+		public string Name = string.Empty; 
 		public float Rate = 0; 
 		public ActorType Type = ActorType.None; 
 		public List<Int32> Skill = new List<Int32>(); 
@@ -69,7 +69,7 @@ namespace main
 	
 	public partial class ExampleKV : tabtoy.ITableSerializable
 	{ 
-		public string ServerIP = ""; 
+		public string ServerIP = string.Empty; 
 		public UInt16 ServerPort = 0; 
 		public List<Int32> GroupID = new List<Int32>(); 
 

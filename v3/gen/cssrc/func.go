@@ -13,6 +13,12 @@ var UsefulFunc = template.FuncMap{}
 func wrapSingleValue(globals *model.Globals, valueType *model.TypeDefine, value string) string {
 	switch {
 	case valueType.FieldType == "string": // 字符串
+
+		// C#特殊优化
+		if value == "" {
+			return "string.Empty"
+		}
+
 		return util.StringEscape(value)
 	case valueType.FieldType == "float32":
 		return value
@@ -96,7 +102,6 @@ func init() {
 			return wrapSingleValue(globals, tf, "")
 		}
 
-		return convertedType
 	}
 
 }
