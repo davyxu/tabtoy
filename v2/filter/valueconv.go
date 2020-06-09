@@ -17,16 +17,16 @@ func ConvertValue(fd *model.FieldDescriptor, value string, fileD *model.FileDesc
 
 	switch fd.Type {
 	case model.FieldType_Int32:
-		_, err := strconv.ParseInt(value, 10, 32)
+		v, err := strconv.ParseInt(value, 10, 32)
 		if err != nil {
 			log.Debugln(err)
 			return "", false
 		}
 
 		ret = value
-		node.AddValue(ret)
+		node.AddValue(ret, v)
 	case model.FieldType_Int64:
-		_, err := strconv.ParseInt(value, 10, 64)
+		v, err := strconv.ParseInt(value, 10, 64)
 
 		if err != nil {
 			log.Debugln(err)
@@ -34,66 +34,52 @@ func ConvertValue(fd *model.FieldDescriptor, value string, fileD *model.FileDesc
 		}
 
 		ret = value
-		node.AddValue(ret)
+		node.AddValue(ret, v)
 	case model.FieldType_UInt32:
-		_, err := strconv.ParseUint(value, 10, 32)
+		v, err := strconv.ParseUint(value, 10, 32)
 		if err != nil {
 			log.Debugln(err)
 			return "", false
 		}
 
 		ret = value
-		node.AddValue(ret)
+		node.AddValue(ret, v)
 	case model.FieldType_UInt64:
-		_, err := strconv.ParseUint(value, 10, 64)
+		v, err := strconv.ParseUint(value, 10, 64)
 		if err != nil {
 			log.Debugln(err)
 			return "", false
 		}
 
 		ret = value
-		node.AddValue(ret)
+		node.AddValue(ret, v)
 	case model.FieldType_Float:
-		_, err := strconv.ParseFloat(value, 32)
+		v, err := strconv.ParseFloat(value, 64)
 		if err != nil {
 			log.Debugln(err)
 			return "", false
 		}
 
 		ret = value
-		node.AddValue(ret)
+		node.AddValue(ret, v)
 	case model.FieldType_Bool:
-
-		for {
-			if value == "是" {
-				ret = "true"
-				break
-			} else if value == "否" {
-				ret = "false"
-				break
-			}
-
-			v, err := strconv.ParseBool(value)
-
-			if err != nil {
-				log.Debugln(err)
-				return "", false
-			}
-
-			if v {
-				ret = "true"
-			} else {
-				ret = "false"
-			}
-
-			break
+		if value == "是" || value == "true" || value == "True" {
+			value = "true"
+		} else {
+			value = "false"
 		}
 
-		node.AddValue(ret)
+		v, err := strconv.ParseBool(value)
+		if err != nil {
+			log.Debugln(err)
+			return "", false
+		}
 
+		ret = value
+		node.AddValue(ret, v)
 	case model.FieldType_String:
 		ret = value
-		node.AddValue(ret)
+		node.AddValue(ret, value)
 	case model.FieldType_Enum:
 		if fd.Complex == nil {
 			log.Errorf("%s, '%s'", i18n.String(i18n.ConvertValue_EnumTypeNil), fd.Name)
@@ -108,7 +94,7 @@ func ConvertValue(fd *model.FieldDescriptor, value string, fileD *model.FileDesc
 
 		// 使用枚举的英文字段名输出
 		ret = evd.Name
-		node.AddValue(ret).EnumValue = evd.EnumValue
+		node.AddValue(ret, evd.EnumValue).EnumValue = evd.EnumValue
 
 	case model.FieldType_Struct:
 
