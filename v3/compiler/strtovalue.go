@@ -21,6 +21,11 @@ func StringToValue(str string, value interface{}, tf *model.TypeDefine, symbols 
 
 	if tf.IsArray() {
 
+		// Tags为空时, 数组中就不应该有元素
+		if str == "" {
+			return nil
+		}
+
 		tValue := reflect.TypeOf(value).Elem()
 		vValue := reflect.Indirect(reflect.ValueOf(value))
 

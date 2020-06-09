@@ -16,6 +16,7 @@ func InitBuiltinTypes(typeTab *TypeTable) {
 		{Kind: TypeUsage_HeaderStruct, ObjectType: "TypeDefine", Name: "值", FieldName: "Value", FieldType: "string"},
 		{Kind: TypeUsage_HeaderStruct, ObjectType: "TypeDefine", Name: "数组切割", FieldName: "ArraySplitter", FieldType: "string"},
 		{Kind: TypeUsage_HeaderStruct, ObjectType: "TypeDefine", Name: "索引", FieldName: "MakeIndex", FieldType: "bool"},
+		{Kind: TypeUsage_HeaderStruct, ObjectType: "TypeDefine", Name: "标记", FieldName: "Tags", FieldType: "string", ArraySplitter: "|"},
 
 		// 索引表类型
 		{Kind: TypeUsage_Enum, ObjectType: "TableKind", Name: "", FieldName: "None", FieldType: "int", Value: "0"},
@@ -33,6 +34,7 @@ func InitBuiltinTypes(typeTab *TypeTable) {
 		{Kind: TypeUsage_HeaderStruct, ObjectType: "KVDefine", Name: "标识名", FieldName: "Name", FieldType: "string"},
 		{Kind: TypeUsage_HeaderStruct, ObjectType: "KVDefine", Name: "值", FieldName: "Value", FieldType: "string"},
 		{Kind: TypeUsage_HeaderStruct, ObjectType: "KVDefine", Name: "数组切割", FieldName: "ArraySplitter", FieldType: "string"},
+		{Kind: TypeUsage_HeaderStruct, ObjectType: "KVDefine", Name: "标记", FieldName: "Tags", FieldType: "string", ArraySplitter: "|"},
 	} {
 		tf.IsBuiltin = true
 

@@ -16,13 +16,20 @@
 					"Name": "Pharah",
 					"Type": "int",
 					"Comment": "法鸡",
-					"Value": "1"
+					"Value": "1",
+					"Tags": [
+						"k",
+						"n"
+					]
 				},
 				{
 					"Name": "Junkrat",
 					"Type": "int",
 					"Comment": "狂鼠",
-					"Value": "2"
+					"Value": "2",
+					"Tags": [
+						"e"
+					]
 				},
 				{
 					"Name": "Genji",
@@ -51,12 +58,19 @@
 				{
 					"Name": "Name",
 					"Type": "string",
-					"Comment": "名称"
+					"Comment": "名称",
+					"Tags": [
+						"a",
+						"b"
+					]
 				},
 				{
 					"Name": "Rate",
 					"Type": "float",
-					"Comment": "比例"
+					"Comment": "比例",
+					"Tags": [
+						"c"
+					]
 				},
 				{
 					"Name": "Type",
@@ -78,12 +92,19 @@
 				{
 					"Name": "ServerIP",
 					"Type": "string",
-					"Comment": "服务器IP"
+					"Comment": "服务器IP",
+					"Tags": [
+						"e",
+						"f"
+					]
 				},
 				{
 					"Name": "ServerPort",
 					"Type": "uint16",
-					"Comment": "服务器端口"
+					"Comment": "服务器端口",
+					"Tags": [
+						"g"
+					]
 				},
 				{
 					"Name": "GroupID",

@@ -3,12 +3,13 @@ package jsontype
 import "strconv"
 
 type Field struct {
-	Name          string // 字段名
-	Type          string // 表中原有写的类型
-	Comment       string // 注释, 表中的名称
-	Value         string `json:",omitempty"` // 枚举值
-	MakeIndex     bool   `json:",omitempty"` // 是否生成索引
-	ArraySplitter string `json:",omitempty"` // 数组切割符
+	Name          string   // 字段名
+	Type          string   // 表中原有写的类型
+	Comment       string   // 注释, 表中的名称
+	Value         string   `json:",omitempty"` // 枚举值
+	MakeIndex     bool     `json:",omitempty"` // 是否生成索引
+	ArraySplitter string   `json:",omitempty"` // 数组切割符
+	Tags          []string `json:",omitempty"` // 自定义标记
 }
 
 func (self *Field) EnumValue() int {

@@ -33,6 +33,7 @@ type TypeDefine struct {
 	Value         string    `tb_name:"值" json:",omitempty"`
 	ArraySplitter string    `tb_name:"数组切割" json:",omitempty"`
 	MakeIndex     bool      `tb_name:"索引" json:",omitempty"`
+	Tags          []string  `tb_name:"标记" json:",omitempty"`
 	IsBuiltin     bool      `json:",omitempty"`
 }
 

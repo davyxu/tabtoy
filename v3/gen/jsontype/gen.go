@@ -32,6 +32,7 @@ func Generate(globals *model.Globals) (data []byte, err error) {
 		fd.Value = def.Value
 		fd.MakeIndex = def.MakeIndex
 		fd.ArraySplitter = def.ArraySplitter
+		fd.Tags = def.Tags
 
 		obj.Fields = append(obj.Fields, &fd)
 	}
