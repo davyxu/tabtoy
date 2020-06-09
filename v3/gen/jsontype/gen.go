@@ -16,6 +16,12 @@ func Generate(globals *model.Globals) (data []byte, err error) {
 			obj = &Object{}
 			obj.Name = def.ObjectType
 
+			for _, indexDef := range globals.IndexList {
+				if indexDef.TableType == def.ObjectType {
+					obj.Tags = append(obj.Tags, indexDef.Tags...)
+				}
+			}
+
 			switch def.Kind {
 			case model.TypeUsage_HeaderStruct:
 				obj.Type = "Struct"

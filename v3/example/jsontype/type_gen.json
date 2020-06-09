@@ -94,6 +94,11 @@
 		{
 			"Name": "ExampleKV",
 			"Type": "Struct",
+			"Tags": [
+				"k",
+				"v",
+				"n"
+			],
 			"Fields": [
 				{
 					"Name": "ServerIP",

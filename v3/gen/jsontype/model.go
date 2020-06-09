@@ -20,7 +20,8 @@ func (self *Field) EnumValue() int {
 // 表示表格, 枚举
 type Object struct {
 	Name string
-	Type string // 对象类型
+	Type string   // 对象类型
+	Tags []string `json:",omitempty"` // 自定义标记
 
 	Fields []*Field
 }
