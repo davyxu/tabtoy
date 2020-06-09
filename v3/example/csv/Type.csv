@@ -4,6 +4,7 @@
 表头,ExampleData,比例,Rate,float,,,,c
 表头,ExampleData,类型,Type,ActorType,,,,
 表头,ExampleData,技能列表,Skill,int,|,,,
+表头,ExampleData,多列,Multi,int,|,,,
 枚举,ActorType,,None,int,,0,,
 枚举,ActorType,法鸡,Pharah,int,,1,,k|n
 枚举,ActorType,狂鼠,Junkrat,int,,2,,e

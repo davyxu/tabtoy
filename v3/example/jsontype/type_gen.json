@@ -1,6 +1,6 @@
 {
 	"@Tool": "github.com/davyxu/tabtoy",
-	"@Version": "2.9.4",
+	"@Version": "3.0.0",
 	"Objects": [
 		{
 			"Name": "ActorType",
@@ -81,6 +81,12 @@
 					"Name": "Skill",
 					"Type": "int",
 					"Comment": "技能列表",
+					"ArraySplitter": "|"
+				},
+				{
+					"Name": "Multi",
+					"Type": "int",
+					"Comment": "多列",
 					"ArraySplitter": "|"
 				}
 			]

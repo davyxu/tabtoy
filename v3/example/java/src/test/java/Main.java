@@ -21,8 +21,6 @@ public class Main {
             e.printStackTrace();
         }
 
-        Table.ActorType a =  Table.ActorType.fromInt(4);
-
         // 表格数据
         Table tab;
 

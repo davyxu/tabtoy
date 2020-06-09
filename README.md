@@ -1,56 +1,34 @@
-# tabtoy
+# tabtoy v3
 
-游戏客户端,服务器的策划表格数据导出
+高性能表格数据导出工具
 
 ![tabtoylogo](doc/logo.png)
 
-# 优点
 
-* 编写电子表格, 导出. 只需2步, 即可导出数据!
+# 特性
+* 支持Xlsx/CSV作为表格数据混合输入
 
-* 跨平台运行, 无第三方依赖, 无需任何的vbs,vba,dll
+* 支持JSON/Golang/C#/Java/Lua/二进制 源码, 数据, 类型输出
 
-* 支持文件格式最多的导出器(json, lua, C#+二进制, protobuf text, proto, golang) 
+* 自动单元格数据格式检查, 精确到单元格的报错
 
-* 一次设置, 自动生成索引代码, 支持lua, C#
+* 支持预定义枚举, 可使用中文枚举类型
 
-* 单元格字段列顺序随意调整, 自动检查错误, 精确报错位置
+* 支持表拆分, 支持多人协作
 
-* 强类型, 导出时自动类型检查, 提前暴露表格错误
+* 支持KV配置表, 方便将表格作为配置文件
 
-* 支持中文枚举值, 中文结构体字段, 编写,更直观
+* 多核并发导出, 缓存加速, 上百文件秒级导出
 
-* 支持同类型表拆分, 多人协作填表导出互不影响
-
-* 支持纵向填写字段作为配置, 将电子表格作为快速配置文件
-
-* 全中文导出提示,并支持多语言导出提示
-
-* 支持导出Tag匹配,导出需要的部分, 避免客户端混合服务器私密数据
-
-* 支持类型信息导出, 方便无反射的语言(例如C++)使用
-
-* 充分利用CPU多核进行导出, 是已知的现有导出器中速度最快的
-
-# 商用项目
-
-* Tales of the Neon Sea(迷雾侦探)
-    https://store.steampowered.com/app/828740/Tales_of_the_Neon_Sea/
-    平台: PC(Steam), PS4, Switch
-    
-* 劫后余生
-    https://www.taptap.com/app/159209
-
-* Mad Magic
-	https://itunes.apple.com/app/id1146098397
-
-* 消诺克
-	http://www.taptap.com/app/15881
-
-* Fairy in Wonderland
-    https://itunes.apple.com/us/app/fairy-in-wonderland-parkour/id1128656892?l=zh&ls=1&mt=8
 
 # 迭代历程
+
+* 2020年6月: tabtoy v3
+    支持Xlsx/CSV混合导出
+    
+    新的表格格式
+        
+    重构代码
 
 * 2016年8月: 第六代导出器,tabtoy v2 调整为以电子表格为中心的方式, 支持v1 90%常用功能
 
@@ -74,194 +52,410 @@
 	
 * 2011年: 第一代导出器,基于VBA的表格内建导出器,速度慢,复用困难,容易错,不安全
 
+# 导出第一个表
 
-# 导出性能
+## 类型表
+准备一个电子表格命名为: Type.xlsx
 
-53个Excel源文件, 格式xlsm, 大小3.8M
+类型表用于定义表格中表头以及用到的类型
 
-导出速度(硬件环境: i7-4790 8核+SSD),  2.4s
+表格内容如下:
 
-# 第六代导出器文档(tabtoy v2)
+种类 | 对象类型 | 标识名 | 字段名 | 字段类型 | 数组切割| 值 | 索引 | 标记
+---|---|---|---|---|---|---|---|---
+表头 | MyData | ID | ID | int32| 
+表头 | MyData | 名称 | Name | string|
 
-![电子表格](doc/table_v2.png)
-功能强大的的导出表格式
+## 数据表
+准备一个电子表格命名为: MyData.xlsx
 
-![电子表格](doc/log_v2.png)
-详细的输出日志及报错信息,以及精准到单元格的多语言报错
+表格内容如下:
 
-## 导出步骤
+ID | 名称
+---|---
+1 | 坦克
+2 | 法师
 
-### 准备电子表格文件
+## 索引表
+* 准备一个电子表格命名为: Index.xlsx
 
-格式请参考:
-	
-	https://github.com/davyxu/tabtoy/blob/master/v2/example/Sample.xlsx
-	
-	
-### 准备tabtoy二进制
+模式 | 表类型 | 表文件名
+---|---|---
+类型表 |        | Type.xlsx
+数据表 | MyData | MyData.xlsx
 
-* 已经编译好的二进制:
-	
-	[https://github.com/davyxu/tabtoy/releases](https://github.com/davyxu/tabtoy/releases)
-	
-* 手动编译获取最新版
-	
-	go get github.com/davyxu/tabtoy
-	
-### 编写导出命令行
+注意 数据表的表类型需要与类型表里的对象类型对应
 
-范例:
-		
-```bat
 
-tabtoy --mode=v2 --json_out=config.json --combinename=Config Table.xlsx
+## 编写导出shell
 
+
+[下载tabtoy](https://github.com/davyxu/tabtoy/releases)
+
+```bash
+tabtoy.exe -mode=v3 -index=Index.xlsx -json_out=table_gen.json
 ```
-* 注意: 不要将这个命令行指令对例子表格进行导出, 例子表格包含类型信息, 需要多个表格组合导出
 
-### Golang读取例子
+[完整例子文件](https://github.com/davyxu/tabtoy/tree/master/v3/example/tutorial)
 
-[例子](https://github.com/davyxu/tabtoy/tree/master/v2/example/golang)
-	
-```golang
-	config := table.NewConfigTable()
 
-	if err := config.Load("Config.json"); err != nil {
-		panic(err)
+# 导出数据/源码/类型
+
+## Golang使用表格数据
+
+导出命令行:
+```bash
+tabtoy.exe -mode=v3 -index=Index.xlsx -go_out=table_gen.json -json_out=table_gen.json
+```
+
+读取数据源码:
+
+```go
+// 重新加载指定文件名的表
+func ReloadTable(filename string) {
+
+	// 根据需要从你的源数据读取，这里从指定文件名的文件读取
+	data, err := ioutil.ReadFile(filename)
+	if err != nil {
+		fmt.Println(err)
+		return
 	}
 
-	for index, v := range config.SampleByID {
-		fmt.Println(index, v)
+	// 重置数据，这里会触发Prehandler
+	Tab.ResetData()
+
+	// 使用json反序列化
+	err = json.Unmarshal(data, Tab)
+
+	if err != nil {
+		fmt.Println(err)
+		return
 	}
+
+	// 构建数据和索引，这里会触发PostHandler
+	Tab.BuildData()
+}
+
 ```
-	
-	
+[完整Golang例子](https://github.com/davyxu/tabtoy/tree/master/v3/example/golang)
 
-### C#读取例子
-	
-	[例子](https://github.com/davyxu/tabtoy/tree/master/v2/example/csharp)
-
-```csharp
-   using (var stream = new FileStream("../../Config.bin", FileMode.Open))
-   {
-       stream.Position = 0;
-
-       var reader = new tabtoy.DataReader(stream);
-
-       var config = new table.Config();
-
-       var result = reader.ReadHeader(config.GetBuildID());
-       if ( result != FileState.OK)
-       {
-           Console.WriteLine("combine file crack!");
-           return;
-       }
+## C#使用表格数据
 
 
-       table.Config.Deserialize(config, reader);
+导出命令行:
+```bash
+tabtoy.exe -mode=v3 -index=Index.xlsx -csharp_out=table_gen.cs -binary_out=table_gen.bin
+   ```
 
-       // 直接通过下标获取或遍历
-       var directFetch = config.Sample[2];
+读取数据源码:
 
-       // 添加日志输出或自定义输出
-       config.TableLogger.AddTarget(new tabtoy.DebuggerTarget());
+```cs
+using System;
+using System.IO;
 
-       // 取空时, 当默认值不为空时, 输出日志
-       var nullFetchOutLog = config.GetSampleByID(0);
+using (var stream = new FileStream("table_gen.bin", FileMode.Open))
+{
+    stream.Position = 0;
 
-   }
+    var reader = new tabtoy.TableReader(stream);
+
+
+    var tab = new main.Table();
+
+    try
+    {    
+        tab.Deserialize(reader);
+    }
+    catch (Exception e)
+    {
+        Console.WriteLine(e);
+        throw;
+    }
+    
+
+    Console.WriteLine(tab.ExampleData[3].Name);
+
+}
 ```
 
-### lua读取例子
+* C#源码出于性能考虑, 默认读取tabtoy专用二进制格式
 
-[例子](https://github.com/davyxu/tabtoy/tree/master/v2/example/lua)
+* C#也可以读取JSON数据格式, 由于C#第三方JSON不统一, 请自行使用生成的源码与第三方源码对接
+
+[完整C#例子](https://github.com/davyxu/tabtoy/tree/master/v3/example/csharp)
+
+## Java使用表格数据
+
+导出命令行:
+```bash
+tabtoy.exe -mode=v3 -index=Index.xlsx -java_out=Table.java -json_out=table_gen.json
+```
+
+读取数据源码:
+
+```java
+import main.Table;
+import com.alibaba.fastjson.JSON;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Map;
+
+public class Main {
+
+    // 从文件读取数据
+    private static String readFileAsString(String fileName)throws Exception
+    {
+        return new String(Files.readAllBytes(Paths.get(fileName)));
+    }
+    public static void main(String[] args) throws Exception {
+
+        // 从文件读取配置表
+        String data = null;
+        try {
+            data = readFileAsString("table_gen.json");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // 表格数据
+        Table tab;
+
+        // 从json序列化出对象
+        tab = JSON.parseObject(data, Table.class);
+
+        if(tab == null){
+            throw new Exception("parse table failed");
+        }
+
+        // 构建索引
+        tab.BuildData();
+
+        // 测试输出
+        for(Map.Entry<Integer, Table.ExampleData> def : tab.ExampleDataByID.entrySet()){
+            System.out.println(def.getValue().Name);
+        }
+    }
+}
+```
+
+[完整Java例子](https://github.com/davyxu/tabtoy/tree/master/v3/example/java)
+
+## Lua使用表格数据
+
+导出命令行:
+```bash
+tabtoy.exe -mode=v3 -index=Index.xlsx -lua_out=table_gen.lua
+```
+
+读取数据源码:
 
 ```lua
 -- 添加搜索路径
 package.path = package.path .. ";../?.lua"
 
 -- 加载
-local t = require "Config"
+local t = require "table_gen"
 
--- 直接访问原始数据
-print(t.Sample[1].Name)
+-- 直接访问原始数据, 此处输出为UTF8格式, windows命令行下会出现乱码是正常现象
+print(t.ExampleData[2].Name)
 
 -- 通过索引访问
-print(t.SampleByID[103].ID)
+print(t.ExampleDataByID[300].ID)
+```
 
-print(t.SampleByName["黑猫警长"].ID)
+[完整Lua例子](https://github.com/davyxu/tabtoy/tree/master/v3/example/lua)
+
+## 导出表格类型信息
+
+导出命令行:
+```bash
+tabtoy.exe -mode=v3 -index=Index.xlsx -jsontype_out=type_gen.json 
+```
+
+# 特色功能
+
+## 定义和使用枚举
+
+
+* 在类型表中定义枚举
+
+种类 | 对象类型 | 标识名 | 字段名 | 字段类型 | 数组切割| 值 | 索引 | 标记
+---|---|---|---|---|---|---|---|---
+枚举 | ActorType |   | None | int32|  | 0
+枚举 | ActorType | 法鸡 | Pharah | int32|  | 1
+枚举 | ActorType | 狂鼠 | Junkrat | string| | 2
+枚举 | ActorType | 源氏 | Genji | int32|  | 3
+枚举 | ActorType | 天使 | Mercy | string| | 4
+表头 | ExampleData | 类型 | Type | ActorType
+
+* 在数据表中使用枚举
+
+类型 |
+--- |
+狂鼠 |
+Genji |
+
+* 在数据表的枚举字段中, 枚举 字段名或标识名都会自动识别对应枚举值
+
+* 枚举只有枚举数值会被导出. 枚举标识名, 字段名均不会出现在数据中
+
+## 使用数组
+种类 | 对象类型 | 标识名 | 字段名 | 字段类型 | 数组切割| 值 | 索引 | 标记
+---|---|---|---|---|---|---|---|---
+表头 | ExampleData | 技能列表| Skill | int32 | <code>&#124;</code>   | 
+
+技能列表 |
+--- |
+<code>2&#124;3</code> |
+1 |
+
+输出:
+
+ [2, 3]
+ 
+ [ 1 ]
+
+
+## 使用多列数组
+
+种类 | 对象类型 | 标识名 | 字段名 | 字段类型 | 数组切割| 值 | 索引 | 标记
+---|---|---|---|---|---|---|---|---
+表头 | ExampleData | 技能列表| Skill | int32 | <code>&#124;</code>   | 
+
+技能列表 | 技能列表
+--- | --- |
+<code>2&#124;3</code> | 4
+1 | 
+
+输出:
+
+ [2, 3, 4]
+ 
+ [ 1, 0 ]
+ 
+ * 多列数组单元格所有数据会被自动切割并合并
+ 
+ * 当数组字段拆分为多个同名列时, 导出数组将为空单元格默认填充类型默认值
+ 
+ * 切勿在被拆分表中使用多列数组, 导出数据可能存在歧义
+
+## 为字段建立索引
+种类 | 对象类型 | 标识名 | 字段名 | 字段类型 | 数组切割| 值 | 索引 | 标记
+---|---|---|---|---|---|---|---|---
+表头 | ExampleData | ID| ID | int32 |  | |是| 
+
+
+生成代码中, 会自动对数据创建索引, 例如:
+```go
+ExampleDataByID map[int32]*ExampleData
 ```
 
 
-## 所有例子
-	
-[例子](https://github.com/davyxu/tabtoy/blob/master/v2/example)
+## 表拆分
 
-* 注意: 例子中展现的是一般项目中多表的使用方法
+将ExampleData表, 拆为Data.csv, Data2.csv表
 
-	共享的类型信息会被统一放在Globals表中, 最终导出时, 需要将Globals和其他表一起配合导出
+模式 | 表类型 | 表文件名
+---|---|---
+类型表 |        | Type.xlsx
+数据表 | ExampleData | Data.csv
+数据表 | ExampleData | Data2.csv
 
-
-## 详细文档
-
-[文档](https://github.com/davyxu/tabtoy/blob/master/doc/Manual_V2.md)
-
-[错误描述](https://github.com/davyxu/tabtoy/blob/master/doc/error_v2.md)
+每个表中的字段可按需填写
 
 
-## 功能扩展
+## KV表
 
-### 多表合并导出
-一些表格, 如角色, 道具的表格, 会将角色或道具充当不同的角色和功能, 例如: 道具作为装备
-道具作为宠物,  boss配置, 怪物配置, npc配置等等
+准备类型表:
 
-tabtoy支持按功能分类后的表格, 导出时保持一致的表头及类型, 方便策划拆表进行多人协作
+模式 | 表类型 | 表文件名
+---|---|---
+类型表 |        | Type.xlsx
+数据表 | ExampleKV | KV.csv
 
-[例子](https://github.com/davyxu/tabtoy/tree/master/v2/example/combine)
+准备KV表:
 
-```bat
-
-tabtoy --mode=v2 --json_out=CombineConfig.json --combinename=Config Item.xlsx+Item_Equip.xlsx+Item_Pet.xlsx
-
-```
-
-需要合并的同类表格间使用'+'互相连接
+字段名 | 字段类型 | 标识名 |  值|  数组切割 | 标记
+---|---|---|---|---|---|
+ServerIP | string | 服务器IP | 8.8.8.8
+ServerPort | uint16 | 服务器端口 | 1024  
 
 
-### 导出Tag匹配
-如果客户端使用C#并读取二进制导出数据, 服务器使用golang开发读取json
+## 空行分割
 
-* 我们不希望新手引导的表导入到服务器的配置文件中, 可以这么做:
+表格数据如下:
 
-	在新手引导表的@Types表单里添加OutputTag: [".cs", ".bin"]
+ID | 名称
+---|---
+1 | 坦克
+2 | 法师
+(空行)  |
+3 | 治疗
 
-* 我们不希望服务器的ip配置表导入到客户端的配置文件中, 可以这么做:
+导出数据
+* 1 坦克
+* 2 法师
 
-	在ip配置表的@Types表单里添加OutputTag: [".go", ".json"]
+导表工具在识别到空行后, 空行后的数据将被忽略
 
-减少数据冗余和保证客户端数据安全, tabtoy已经为你考虑
+## 行数据注释
 
-### 支持纵向导出, 用于配置表
-![电子表格](doc/vertical_v2.png)
+表格数据如下:
 
-[例子](https://github.com/davyxu/tabtoy/tree/master/v2/example/verticalconfig)
+ID | 名称
+---|---
+1 | 坦克
+#2 | 法师
+3 | 治疗
 
+导出数据
+* 1 坦克
+* 3 治疗
+
+在任意表的首列单元格中首字符为#时，该行所有数据不会被导出
+
+
+## 列数据注释
+
+表格数据如下:
+
+ID | #名称
+---|---
+1 | 坦克
+2 | 法师
+3 | 治疗
+
+导出数据
+* 1 
+* 2
+* 3 
+
+表头中, 列字段首字符为#时，该列所有数据按默认值导出 
+
+
+## 使用标记
+
+在类型表标记中添加字符串, 使用|做默认分割, 将在-jsontype导出json中获得字段关联的标记
+
+## 启用缓冲
+命令行中加入-usecache=true, 将启用缓存功能, 加速导出速度
+
+-cachedir参数设定缓存目录, 默认换出到tabtoy当前目录下的.tabtoycache目录
 
 # FAQ
 
-## 能够将某些列隐藏不导出?
+* 怎么让客户端和服务器通过标记分别导出
 
-在列名字前加#即可, 例如: ID 一列不导出, 将第一行的ID列改为#ID即可
+    请为客户端和服务器分别编写两个tabtoy导出过程分别导出
 
-同样的, Sheet表单上也支持#,带#开头的表单不会被导出
+# V2版本说明
 
-P.S. 不要将@Types表单加#
 
-## 不同的表能生成指定不同语言的源码么?
-比如: A表生成A类, B表生成B类分别使用.
-不支持, tabtoy拥有统一的类型系统和数据分析设计,虽然在一个工程里可以手动导出2次形成2个类使用,但会遇到很多麻烦, 比如:类型冲突.
-所以, tabtoy提倡在一个工程里一次将表导出, 表只有1个入口. 客户端和服务器可以分别生成不同的入口.
+* tabtoy 同时支持V2, V3版本导出
 
+* V2版本将不再获得更新
+
+* [V2文档](https://github.com/davyxu/tabtoy/blob/master/README_v2.md)
 
 # 备注
 
