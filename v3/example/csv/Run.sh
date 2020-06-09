@@ -9,6 +9,7 @@ go build -v -o ./tabtoy github.com/davyxu/tabtoy
 -index=Index.csv \
 -go_out=../golang/table_gen.go \
 -json_out=../json/table_gen.json \
+-jsontype_out=../jsontype/type_gen.json \
 -lua_out=../lua/table_gen.lua \
 -csharp_out=../csharp/TabtoyExample/table_gen.cs \
 -binary_out=../binary/table_gen.bin \

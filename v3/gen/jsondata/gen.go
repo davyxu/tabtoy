@@ -1,4 +1,4 @@
-package jsontext
+package jsondata
 
 import (
 	"github.com/davyxu/protoplus/codegen"

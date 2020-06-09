@@ -1,4 +1,4 @@
-package jsontext
+package jsondata
 
 // 报错行号+3
 const templateText = `{

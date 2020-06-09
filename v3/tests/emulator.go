@@ -116,7 +116,7 @@ func (self *TableEmulator) VerifyData(expectJson string) {
 	}
 
 	var appJson []byte
-	appJson, err = jsontext.Generate(self.G)
+	appJson, err = jsondata.Generate(self.G)
 
 	if err != nil {
 		return
@@ -162,7 +162,7 @@ func (self *TableEmulator) VerifyGoTypeAndJson(expectJson string) {
 
 	configFileName := filepath.Join(dir, "config.json")
 
-	if err = genFile(self.G, configFileName, jsontext.Generate); err != nil {
+	if err = genFile(self.G, configFileName, jsondata.Generate); err != nil {
 		return
 	}
 

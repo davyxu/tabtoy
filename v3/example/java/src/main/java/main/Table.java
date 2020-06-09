@@ -49,13 +49,7 @@ public final class Table {
 		public String Name = ""; // 名称; 	
 		public float Rate = 0; // 比例; 	
 		public ActorType Type = ActorType.None; // 类型; 	
-		public int[] Skill = new int[]{}; // 技能列表; 	
-		public int Buff = 0; // 增益; 	
-		public String[] TagList = new String[]{}; // 标记; 
-	}
-	
-	public class ExtendData { 	
-		public float Additive = 0; // 附加; 
+		public int[] Skill = new int[]{}; // 技能列表; 
 	}
 	
 	public class ExampleKV { 	
@@ -66,7 +60,6 @@ public final class Table {
 	
 	
 	public List<ExampleData> ExampleData = new ArrayList<>(); // table: ExampleData 
-	public List<ExtendData> ExtendData = new ArrayList<>(); // table: ExtendData 
 	public List<ExampleKV> ExampleKV = new ArrayList<>(); // table: ExampleKV 
 
 	// Indices 
@@ -97,7 +90,6 @@ public final class Table {
 		}
 		
 		ExampleData.clear(); 
-		ExtendData.clear(); 
 		ExampleKV.clear(); 
 		
 		ExampleDataByID.clear(); 	

@@ -1,4 +1,4 @@
-package binpak
+package bindata
 
 import (
 	"github.com/davyxu/tabtoy/v3/model"

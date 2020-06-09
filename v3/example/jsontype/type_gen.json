@@ -1,0 +1,97 @@
+{
+	"@Tool": "github.com/davyxu/tabtoy",
+	"@Version": "2.9.4",
+	"Objects": [
+		{
+			"Name": "ActorType",
+			"Type": "Enum",
+			"Fields": [
+				{
+					"Name": "None",
+					"Type": "int",
+					"Comment": "",
+					"Value": "0"
+				},
+				{
+					"Name": "Pharah",
+					"Type": "int",
+					"Comment": "法鸡",
+					"Value": "1"
+				},
+				{
+					"Name": "Junkrat",
+					"Type": "int",
+					"Comment": "狂鼠",
+					"Value": "2"
+				},
+				{
+					"Name": "Genji",
+					"Type": "int",
+					"Comment": "源氏",
+					"Value": "3"
+				},
+				{
+					"Name": "Mercy",
+					"Type": "int",
+					"Comment": "天使",
+					"Value": "4"
+				}
+			]
+		},
+		{
+			"Name": "ExampleData",
+			"Type": "Struct",
+			"Fields": [
+				{
+					"Name": "ID",
+					"Type": "int",
+					"Comment": "任务ID",
+					"MakeIndex": true
+				},
+				{
+					"Name": "Name",
+					"Type": "string",
+					"Comment": "名称"
+				},
+				{
+					"Name": "Rate",
+					"Type": "float",
+					"Comment": "比例"
+				},
+				{
+					"Name": "Type",
+					"Type": "ActorType",
+					"Comment": "类型"
+				},
+				{
+					"Name": "Skill",
+					"Type": "int",
+					"Comment": "技能列表",
+					"ArraySplitter": "|"
+				}
+			]
+		},
+		{
+			"Name": "ExampleKV",
+			"Type": "Struct",
+			"Fields": [
+				{
+					"Name": "ServerIP",
+					"Type": "string",
+					"Comment": "服务器IP"
+				},
+				{
+					"Name": "ServerPort",
+					"Type": "uint16",
+					"Comment": "服务器端口"
+				},
+				{
+					"Name": "GroupID",
+					"Type": "int",
+					"Comment": "分组",
+					"ArraySplitter": ";"
+				}
+			]
+		}
+	]
+}

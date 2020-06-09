@@ -3,7 +3,7 @@ package cssrc
 import (
 	"fmt"
 	"github.com/davyxu/tabtoy/util"
-	"github.com/davyxu/tabtoy/v3/gen/binpak"
+	"github.com/davyxu/tabtoy/v3/gen/bindata"
 	"github.com/davyxu/tabtoy/v3/model"
 	"text/template"
 )
@@ -56,14 +56,14 @@ func init() {
 
 	UsefulFunc["CSTag"] = func(globals *model.Globals, fieldIndex int, tf *model.TypeDefine) string {
 
-		tag := binpak.MakeTag(globals, tf, fieldIndex)
+		tag := bindata.MakeTag(globals, tf, fieldIndex)
 
 		return fmt.Sprintf("0x%x", tag)
 	}
 
 	UsefulFunc["CSStructTag"] = func() string {
 
-		return fmt.Sprintf("0x%x", binpak.MakeTagStructArray())
+		return fmt.Sprintf("0x%x", bindata.MakeTagStructArray())
 	}
 
 	UsefulFunc["CSReader"] = func(globals *model.Globals, tf *model.TypeDefine) (ret string) {

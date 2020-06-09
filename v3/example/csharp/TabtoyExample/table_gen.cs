@@ -22,8 +22,6 @@ namespace main
 		public float Rate = 0; 
 		public ActorType Type = ActorType.None; 
 		public List<Int32> Skill = new List<Int32>(); 
-		public Int32 Buff = 0; 
-		public List<string> TagList = new List<string>(); 
 
 		#region Deserialize Code
 		public void Deserialize( tabtoy.TableReader reader )
@@ -56,44 +54,6 @@ namespace main
                 	case 0x660004:
                 	{
 						reader.ReadInt32( ref Skill );
-                	}
-                	break;
-                	case 0x20005:
-                	{
-						reader.ReadInt32( ref Buff );
-                	}
-                	break;
-                	case 0x6c0006:
-                	{
-						reader.ReadString( ref TagList );
-                	}
-                	break;
-                    default:
-                    {
-                        reader.SkipFiled(tag);                            
-                    }
-                    break;
-				}
-			}
-		}
-		#endregion 
-	}
-	
-	public partial class ExtendData : tabtoy.ITableSerializable
-	{ 
-		public float Additive = 0; 
-
-		#region Deserialize Code
-		public void Deserialize( tabtoy.TableReader reader )
-		{
-			UInt32 tag = 0;
-            while ( reader.ReadTag(ref tag) )
-            {
- 				switch (tag)
-                { 
-                	case 0x70000:
-                	{
-						reader.ReadFloat( ref Additive );
                 	}
                 	break;
                     default:
@@ -153,8 +113,6 @@ namespace main
 	{ 
 		// table: ExampleData
 		public List<ExampleData> ExampleData = new List<ExampleData>(); 
-		// table: ExtendData
-		public List<ExtendData> ExtendData = new List<ExtendData>(); 
 		// table: ExampleKV
 		public List<ExampleKV> ExampleKV = new List<ExampleKV>(); 
 
@@ -171,7 +129,6 @@ namespace main
 		public void ResetData( )
 		{   
 			ExampleData.Clear(); 
-			ExtendData.Clear(); 
 			ExampleKV.Clear();  
 			ExampleDataByID.Clear(); 	
 		}
@@ -192,11 +149,6 @@ namespace main
 						case "ExampleData":
 						{
 							reader.ReadStruct(ref ExampleData);	
-						}
-						break;
-						case "ExtendData":
-						{
-							reader.ReadStruct(ref ExtendData);	
 						}
 						break;
 						case "ExampleKV":

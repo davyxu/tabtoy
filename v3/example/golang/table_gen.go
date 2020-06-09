@@ -36,17 +36,11 @@ func (self ActorType) String() string {
 }
 
 type ExampleData struct {
-	ID      int32     `tb_name:"任务ID"`
-	Name    string    `tb_name:"名称"`
-	Rate    float32   `tb_name:"比例"`
-	Type    ActorType `tb_name:"类型"`
-	Skill   []int32   `tb_name:"技能列表"`
-	Buff    int32     `tb_name:"增益"`
-	TagList []string  `tb_name:"标记"`
-}
-
-type ExtendData struct {
-	Additive float32 `tb_name:"附加"`
+	ID    int32     `tb_name:"任务ID"`
+	Name  string    `tb_name:"名称"`
+	Rate  float32   `tb_name:"比例"`
+	Type  ActorType `tb_name:"类型"`
+	Skill []int32   `tb_name:"技能列表"`
 }
 
 type ExampleKV struct {
@@ -58,7 +52,6 @@ type ExampleKV struct {
 // Combine struct
 type Table struct {
 	ExampleData []*ExampleData // table: ExampleData
-	ExtendData  []*ExtendData  // table: ExtendData
 	ExampleKV   []*ExampleKV   // table: ExampleKV
 
 	// Indices
@@ -104,7 +97,6 @@ func (self *Table) ResetData() error {
 	}
 
 	self.ExampleData = self.ExampleData[0:0]
-	self.ExtendData = self.ExtendData[0:0]
 	self.ExampleKV = self.ExampleKV[0:0]
 
 	self.ExampleDataByID = map[int32]*ExampleData{}

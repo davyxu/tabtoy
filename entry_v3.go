@@ -4,11 +4,12 @@ import (
 	"flag"
 	"github.com/davyxu/tabtoy/v3/compiler"
 	"github.com/davyxu/tabtoy/v3/gen"
-	"github.com/davyxu/tabtoy/v3/gen/binpak"
+	"github.com/davyxu/tabtoy/v3/gen/bindata"
 	"github.com/davyxu/tabtoy/v3/gen/cssrc"
 	"github.com/davyxu/tabtoy/v3/gen/gosrc"
 	"github.com/davyxu/tabtoy/v3/gen/javasrc"
-	"github.com/davyxu/tabtoy/v3/gen/jsontext"
+	"github.com/davyxu/tabtoy/v3/gen/jsondata"
+	"github.com/davyxu/tabtoy/v3/gen/jsontype"
 	"github.com/davyxu/tabtoy/v3/gen/luasrc"
 	"github.com/davyxu/tabtoy/v3/helper"
 	"github.com/davyxu/tabtoy/v3/model"
@@ -31,10 +32,11 @@ var (
 
 	v3GenList = []V3GenEntry{
 		{"gosrc", gosrc.Generate, paramGoOut},
-		{"jsontext", jsontext.Generate, paramJsonOut},
+		{"jsondata", jsondata.Generate, paramJsonOut},
+		{"jsontype", jsontype.Generate, paramJsonTypeOut},
 		{"luasrc", luasrc.Generate, paramLuaOut},
 		{"cssrc", cssrc.Generate, paramCSharpOut},
-		{"binpak", binpak.Generate, paramBinaryOut},
+		{"bindata", bindata.Generate, paramBinaryOut},
 		{"javasrc", javasrc.Generate, paramJavaOut},
 	}
 )

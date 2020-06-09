@@ -2,14 +2,10 @@
 	"@Tool": "github.com/davyxu/tabtoy",
 	"@Version": "2.9.4",	
 	"ExampleData":[ 
-		{ "ID": 100, "Name": "扎克镇", "Rate": 3.14, "Type": 2, "Skill": [3,1,2], "Buff": 100, "TagList": ["a","b"] },
-		{ "ID": 200, "Name": "阿努比斯神庙", "Rate": 1.2, "Type": 1, "Skill": [100,0,90], "Buff": 1, "TagList": ["c"] },
-		{ "ID": 300, "Name": "花村", "Rate": 79.4, "Type": 3, "Skill": [0], "Buff": 0, "TagList": [] },
-		{ "ID": 400, "Name": "艾兴瓦尔德", "Rate": 0.63, "Type": 4, "Skill": [0], "Buff": 0, "TagList": [] } 
-	],
-	"ExtendData":[ 
-		{ "Additive": 1.1 },
-		{ "Additive": 1.2 } 
+		{ "ID": 100, "Name": "扎克镇", "Rate": 3.14, "Type": 2, "Skill": [3,1,2] },
+		{ "ID": 200, "Name": "阿努比斯神庙", "Rate": 1.2, "Type": 1, "Skill": [100,0,90] },
+		{ "ID": 300, "Name": "花村", "Rate": 79.4, "Type": 3, "Skill": [0] },
+		{ "ID": 400, "Name": "艾兴瓦尔德", "Rate": 0.63, "Type": 4, "Skill": [0] } 
 	],
 	"ExampleKV":[ 
 		{ "ServerIP": "8.8.8.8", "ServerPort": 1024, "GroupID": [10,20] } 
