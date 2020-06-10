@@ -12,7 +12,7 @@ func valueWrapperLua(g *Globals, t model.FieldType, n *model.Node) string {
 
 	switch t {
 	case model.FieldType_String:
-		return util.StringEscape(n.Value)
+		return util.StringWrap(util.StringEscape(n.Value))
 	case model.FieldType_Enum:
 		if g.LuaEnumIntValue {
 			return fmt.Sprintf("%d", n.EnumValue)

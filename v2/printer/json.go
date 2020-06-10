@@ -12,7 +12,7 @@ func valueWrapperJson(t model.FieldType, node *model.Node) string {
 
 	switch t {
 	case model.FieldType_String:
-		return util.StringEscape(node.Value)
+		return util.StringWrap(util.StringEscape(node.Value))
 	case model.FieldType_Enum:
 		return strconv.Itoa(int(node.EnumValue))
 	}

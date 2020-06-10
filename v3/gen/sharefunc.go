@@ -30,7 +30,7 @@ func KeyValueTypeNames(globals *model.Globals) (ret []string) {
 func WrapSingleValue(globals *model.Globals, valueType *model.TypeDefine, value string) string {
 	switch {
 	case valueType.FieldType == "string": // 字符串
-		return util.StringEscape(value)
+		return util.StringWrap(util.StringEscape(value))
 	case valueType.FieldType == "float":
 
 		if value == "" {

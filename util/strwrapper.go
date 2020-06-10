@@ -47,6 +47,9 @@ func StringEscape(s string) string {
 
 	}
 
-	return fmt.Sprintf("\"%s\"", string(b))
+	return string(b)
+}
 
+func StringWrap(s string) string {
+	return fmt.Sprintf("\"%s\"", s)
 }

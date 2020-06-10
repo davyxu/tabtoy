@@ -10,7 +10,7 @@ func valueWrapperPbt(t model.FieldType, node *model.Node) string {
 
 	switch t {
 	case model.FieldType_String:
-		return util.StringEscape(node.Value)
+		return util.StringWrap(util.StringEscape(node.Value))
 	}
 
 	return node.Value

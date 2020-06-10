@@ -9,6 +9,7 @@ import (
 	"github.com/davyxu/tabtoy/v3/gen/gosrc"
 	"github.com/davyxu/tabtoy/v3/gen/javasrc"
 	"github.com/davyxu/tabtoy/v3/gen/jsondata"
+	"github.com/davyxu/tabtoy/v3/gen/jsondata2"
 	"github.com/davyxu/tabtoy/v3/gen/jsontype"
 	"github.com/davyxu/tabtoy/v3/gen/luasrc"
 	"github.com/davyxu/tabtoy/v3/helper"
@@ -33,6 +34,7 @@ var (
 	v3GenList = []V3GenEntry{
 		{"gosrc", gosrc.Generate, paramGoOut},
 		{"jsondata", jsondata.Generate, paramJsonOut},
+		{"jsondata2", jsondata2.Generate, paramJson2Out},
 		{"jsontype", jsontype.Generate, paramJsonTypeOut},
 		{"luasrc", luasrc.Generate, paramLuaOut},
 		{"cssrc", cssrc.Generate, paramCSharpOut},

@@ -19,7 +19,7 @@ func wrapSingleValue(globals *model.Globals, valueType *model.TypeDefine, value 
 			return "string.Empty"
 		}
 
-		return util.StringEscape(value)
+		return util.StringWrap(util.StringEscape(value))
 	case valueType.FieldType == "float32":
 		return value
 	case globals.Types.IsEnumKind(valueType.FieldType): // 枚举
