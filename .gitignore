@@ -21,3 +21,5 @@ v3/example/java/.project
 v3/example/java/.settings/org.eclipse.buildship.core.prefs
 v3/example/binary/*.bin
 *.zip
+*.gz
+tabtoy
