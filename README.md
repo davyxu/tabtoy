@@ -105,7 +105,7 @@ tabtoy.exe -mode=v3 -index=Index.xlsx -json_out=table_gen.json
 
 导出命令行:
 ```bash
-tabtoy.exe -mode=v3 -index=Index.xlsx -go_out=table_gen.json -json_out=table_gen.json
+tabtoy.exe -mode=v3 -index=Index.xlsx -package=main -go_out=table_gen.json -json_out=table_gen.json
 ```
 
 读取数据源码:
@@ -144,7 +144,7 @@ func ReloadTable(filename string) {
 
 导出命令行:
 ```bash
-tabtoy.exe -mode=v3 -index=Index.xlsx -csharp_out=table_gen.cs -binary_out=table_gen.bin
+tabtoy.exe -mode=v3 -index=Index.xlsx -package=main -csharp_out=table_gen.cs -binary_out=table_gen.bin
    ```
 
 读取数据源码:
@@ -188,7 +188,7 @@ using (var stream = new FileStream("table_gen.bin", FileMode.Open))
 
 导出命令行:
 ```bash
-tabtoy.exe -mode=v3 -index=Index.xlsx -java_out=Table.java -json_out=table_gen.json
+tabtoy.exe -mode=v3 -index=Index.xlsx -package=main -java_out=Table.java -json_out=table_gen.json
 ```
 
 读取数据源码:
