@@ -21,10 +21,10 @@ namespace {{.PackageName}}
 		{{if $.GenBinary}}#region Deserialize Code
 		public void Deserialize( tabtoy.TableReader reader )
 		{
-			UInt32 tag = 0;
-            while ( reader.ReadTag(ref tag) )
+			UInt32 mamaSaidTagNameShouldBeLong = 0;
+            while ( reader.ReadTag(ref mamaSaidTagNameShouldBeLong) )
             {
- 				switch (tag)
+ 				switch (mamaSaidTagNameShouldBeLong)
                 { {{range $fi,$field := $.Types.AllFieldByName $objName}}
                 	case {{CSTag $ $fi $field}}:
                 	{
@@ -33,7 +33,7 @@ namespace {{.PackageName}}
                 	break;{{end}}
                     default:
                     {
-                        reader.SkipFiled(tag);                            
+                        reader.SkipFiled(mamaSaidTagNameShouldBeLong);                            
                     }
                     break;
 				}
@@ -69,10 +69,10 @@ namespace {{.PackageName}}
 		{	
 			reader.ReadHeader();
 
-			UInt32 tag = 0;
-            while ( reader.ReadTag(ref tag) )
+			UInt32 mamaSaidTagNameShouldBeLong = 0;
+            while ( reader.ReadTag(ref mamaSaidTagNameShouldBeLong) )
             {
-				if (tag == 0x6f0000)
+				if (mamaSaidTagNameShouldBeLong == 0x6f0000)
 				{
                     var tabName = string.Empty;
                     reader.ReadString(ref tabName);
@@ -85,7 +85,7 @@ namespace {{.PackageName}}
 						break;{{end}}
 						default:
 						{
-							reader.SkipFiled(tag);                            
+							reader.SkipFiled(mamaSaidTagNameShouldBeLong);                            
 						}
 						break;
 					}

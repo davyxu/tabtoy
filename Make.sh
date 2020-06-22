@@ -4,7 +4,7 @@
 
 if [ "$1" == "" ] 
 then
-	echo "Usage: Make.sh version"
+	echo "Usage: Make.sh version(like 1.0.0)"
 	exit 1
 fi
 
