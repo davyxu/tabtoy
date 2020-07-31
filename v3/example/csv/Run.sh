@@ -16,6 +16,12 @@ go build -v -o ./tabtoy github.com/davyxu/tabtoy
 -java_out=../java/src/main/java/main/Table.java \
 -package=main
 
+
+if [[ $? -ne 0 ]] ; then
+	read -rsp $'Errors occurred...\n' ;
+	exit 1
+fi
+
 cp ../json/table_gen.json ../java/cfg
 
 rm -f tabtoy

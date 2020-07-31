@@ -3,6 +3,7 @@ package compiler
 import (
 	"github.com/davyxu/tabtoy/v3/model"
 	"github.com/davyxu/tabtoy/v3/report"
+	"strings"
 )
 
 func createOutputTable(symbols *model.TypeTable, inputTab *model.DataTable) *model.DataTable {
@@ -114,23 +115,20 @@ func MergeData(inputList, outputList *model.DataTableList, symbols *model.TypeTa
 
 func combineRepeatedCell(outputCell, inputCell *model.Cell, inputHeader *model.HeaderField, inputTab *model.DataTable) {
 
-	spliter := inputHeader.TypeInfo.ArraySplitter
+	// 数组列, 单列情况
+	if inputTab.ArrayFieldCount(inputHeader) == 1 {
 
-	if inputTab.RepeatedFieldIndex(inputHeader) > 0 {
-
-		if outputCell.Value != "" || model.LanguagePrimitive(inputHeader.TypeInfo.FieldType, "go") == "string" {
-			outputCell.Value += spliter
+		// 不为空时, 切割值为数组
+		if inputCell.Value != "" {
+			for _, element := range strings.Split(inputCell.Value, inputHeader.TypeInfo.ArraySplitter) {
+				outputCell.ValueList = append(outputCell.ValueList, element)
+			}
 		}
-	}
 
-	var inputValue string
-	if inputCell.Value == "" {
-		inputValue = model.FetchDefaultValue(inputHeader.TypeInfo.FieldType)
 	} else {
-		inputValue = inputCell.Value
-	}
 
-	// 将多个列中的数值合并到最终单元格的值中, Spliter分割, 分割过程在每种数据gen中处理
-	outputCell.Value += inputValue
+		// 数组列, 多列情况, 每列添加到单元格
+		outputCell.ValueList = append(outputCell.ValueList, inputCell.Value)
+	}
 
 }

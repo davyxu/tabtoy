@@ -6,10 +6,11 @@ import (
 )
 
 type Cell struct {
-	Value string
-	Row   int // base 0
-	Col   int // base 0
-	Table *DataTable
+	Value     string
+	ValueList []string // merge之后, 数组值保存在这里
+	Row       int      // base 0
+	Col       int      // base 0
+	Table     *DataTable
 }
 
 // 全拷贝
@@ -28,5 +29,12 @@ func (self *Cell) String() string {
 		sheet = self.Table.SheetName
 	}
 
-	return fmt.Sprintf("'%s' @%s|%s(%s)", self.Value, file, sheet, util.R1C1ToA1(self.Row+1, self.Col+1))
+	var value string
+	if len(self.ValueList) > 0 {
+		value = fmt.Sprintf("%+v", self.ValueList)
+	} else {
+		value = self.Value
+	}
+
+	return fmt.Sprintf("'%s' @%s|%s(%s)", value, file, sheet, util.R1C1ToA1(self.Row+1, self.Col+1))
 }

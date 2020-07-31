@@ -137,6 +137,39 @@ func TestInvalidEnumValue(t *testing.T) {
 	emu.MustGotError("TableError.UnknownEnumValue 未知的枚举值 | ActorType 'Arch2' @TestData|(A2)")
 }
 
+// 枚举值为空
+func TestEmptyEnumValue(t *testing.T) {
+
+	emu := NewTableEmulator(t)
+	indexSheet := emu.CreateCSVFile("Index")
+
+	helper.WriteIndexTableHeader(indexSheet)
+	helper.WriteRowValues(indexSheet, "类型表", "", "Type")
+	helper.WriteRowValues(indexSheet, "数据表", "", "TestData")
+
+	typeSheet := emu.CreateCSVFile("Type")
+	helper.WriteTypeTableHeader(typeSheet)
+	helper.WriteRowValues(typeSheet, "枚举", "ActorType", "", "None", "int", "", "1")
+	helper.WriteRowValues(typeSheet, "枚举", "ActorType", "", "Arch", "int", "", "2")
+
+	helper.WriteRowValues(typeSheet, "表头", "TestData", "ID", "ID", "int", "", "")
+	helper.WriteRowValues(typeSheet, "表头", "TestData", "角色类型", "Type", "ActorType", "", "")
+
+	dataSheet := emu.CreateCSVFile("TestData")
+	helper.WriteRowValues(dataSheet, "ID", "角色类型")
+	helper.WriteRowValues(dataSheet, "1", "")
+
+	emu.VerifyData(`
+{
+			"@Tool": "github.com/davyxu/tabtoy",
+        	"@Version": "testver",	
+        	"TestData":[ 
+        		{ "ID": 1, "Type": 1 } 
+        	]
+}
+`)
+}
+
 func TestBasicType(t *testing.T) {
 
 	emu := NewTableEmulator(t)

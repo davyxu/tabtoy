@@ -2,7 +2,6 @@ package bindata
 
 import (
 	"github.com/davyxu/tabtoy/v3/model"
-	"strings"
 )
 
 // 写入表的一行
@@ -28,7 +27,7 @@ func writeStruct(globals *model.Globals, tab *model.DataTable, row int) (*Binary
 		// 写入字段
 		if header.TypeInfo.IsArray() {
 
-			for _, elementValue := range strings.Split(cell.Value, header.TypeInfo.ArraySplitter) {
+			for _, elementValue := range cell.ValueList {
 
 				if err := writePair(globals, structWriter, header.TypeInfo, goType, elementValue, header.Cell.Col); err != nil {
 					return nil, err
