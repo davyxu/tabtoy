@@ -17,6 +17,9 @@ var (
 	paramCacheDir = flag.String("cachedir", "./.tabtoycache", "cache file output dir")
 	paramUseCache = flag.Bool("usecache", false, "use cache file enhanced exporting speed")
 
+	// 源文件变化列表, 未使用cache的文件
+	paramModifyList = flag.String("modlistfile", "", "output list to file, include not using cache input file list, means file has been modified")
+
 	paramLanguage = flag.String("lan", "en_us", "set output language")
 )
 

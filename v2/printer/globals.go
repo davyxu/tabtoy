@@ -22,6 +22,7 @@ type Globals struct {
 	LuaTabHeader       string
 	GenCSSerailizeCode bool
 	PackageName        string
+	ModList            []string
 
 	Printers []*PrinterContext
 

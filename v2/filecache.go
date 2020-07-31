@@ -46,13 +46,17 @@ func cacheFile(g *printer.Globals) (fileObjByName map[string]*File) {
 
 		fileObjByNameGuard.Lock()
 		fileObjByName[xlsxFileName] = file
-		fileObjByNameGuard.Unlock()
+
+		nameOnly := filepath.Base(xlsxFileName)
+
 		if fromCache {
-			log.Infof("%s [Cache]", filepath.Base(xlsxFileName))
+			log.Infof("%s [Cache]", nameOnly)
 		} else {
-			log.Infof("%s", filepath.Base(xlsxFileName))
+			g.ModList = append(g.ModList, nameOnly)
+			log.Infof("%s", nameOnly)
 		}
 
+		fileObjByNameGuard.Unlock()
 	}
 
 	// 这里加速效果良好, 默认开启

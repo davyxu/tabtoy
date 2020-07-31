@@ -78,6 +78,10 @@ func V2Entry() {
 		g.AddOutputType("type", *paramTypeOut)
 	}
 
+	if *paramModifyList != "" {
+		g.AddOutputType("modlist", *paramModifyList)
+	}
+
 	if !v2.Run(g) {
 		os.Exit(1)
 	}

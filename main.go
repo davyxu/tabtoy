@@ -11,7 +11,7 @@ import (
 var log = golog.New("main")
 
 const (
-	Version = "3.0.1"
+	Version = "3.0.0"
 )
 
 var enableProfile = false
