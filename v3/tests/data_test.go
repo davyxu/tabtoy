@@ -83,7 +83,7 @@ func TestArrayList(t *testing.T) {
 
 	dataSheet := emu.CreateCSVFile("TestData")
 	helper.WriteRowValues(dataSheet, "ID", "技能列表", "技能列表", "技能列表", "名字列表", "名字列表", "ID列表")
-	helper.WriteRowValues(dataSheet, "1", "100", "200", "300", "", "", "")
+	helper.WriteRowValues(dataSheet, "1", "100", "200", "300", "", "", "1|2")
 	helper.WriteRowValues(dataSheet, "2", "1", "", "3", "", "", "")   // 多列数组补0
 	helper.WriteRowValues(dataSheet, "3", "", "20", "30", "", "", "") // 多列数组补0
 	helper.WriteRowValues(dataSheet, "4", "", "", "", "", "", "")     // 多列数组补0
@@ -99,7 +99,7 @@ func TestArrayList(t *testing.T) {
         	"@Tool": "github.com/davyxu/tabtoy",
         	"@Version": "testver",	
         	"TestData":[ 
-        		{ "ID": 1, "SkillList": [100,200,300], "NameList": ["",""], "IDList": [] },
+        		{ "ID": 1, "SkillList": [100,200,300], "NameList": ["",""], "IDList": [1, 2] },
         		{ "ID": 2, "SkillList": [1,0,3], "NameList": ["",""], "IDList": [] },
         		{ "ID": 3, "SkillList": [0,20,30], "NameList": ["",""], "IDList": [] },
         		{ "ID": 4, "SkillList": [0,0,0], "NameList": ["",""], "IDList": [] },
