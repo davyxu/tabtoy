@@ -10,6 +10,8 @@ fi
 
 Version=$1
 
+go clean -cache
+
 export GOARCH=amd64
 export GOOS=windows
 
