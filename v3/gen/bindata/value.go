@@ -104,7 +104,17 @@ func writeValue(globals *model.Globals, structWriter *BinaryWriter, fieldType *m
 
 			return structWriter.WriteFloat32(float32(v))
 		}
+	case goType == "float64":
+		if value == "" {
+			return structWriter.WriteFloat64(0)
+		} else {
+			v, err := strconv.ParseFloat(value, 64)
+			if err != nil {
+				return err
+			}
 
+			return structWriter.WriteFloat64(v)
+		}
 	case goType == "string":
 		return structWriter.WriteString(value)
 
@@ -123,7 +133,7 @@ func writeValue(globals *model.Globals, structWriter *BinaryWriter, fieldType *m
 		}
 
 	default:
-		panic("unknown binary type")
+		panic("unknown binary type: " + fieldType.FieldType)
 	}
 
 	return nil

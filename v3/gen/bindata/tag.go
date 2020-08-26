@@ -29,6 +29,8 @@ func MakeTag(globals *model.Globals, tf *model.TypeDefine, fieldIndex int) uint3
 		t = 9
 	case globals.Types.IsEnumKind(tf.FieldType):
 		t = 10
+	case convertedType == "float64":
+		t = 11
 	default:
 		panic("unknown type:" + tf.FieldType)
 	}

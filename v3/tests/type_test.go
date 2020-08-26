@@ -185,11 +185,12 @@ func TestBasicType(t *testing.T) {
 	helper.WriteRowValues(typeSheet, "表头", "TestData", "字符串", "String", "string", "", "")
 	helper.WriteRowValues(typeSheet, "表头", "TestData", "布尔", "Bool", "bool", "", "")
 	helper.WriteRowValues(typeSheet, "表头", "TestData", "浮点", "Float", "float", "", "")
+	helper.WriteRowValues(typeSheet, "表头", "TestData", "双精度", "Double", "double", "", "")
 	helper.WriteRowValues(typeSheet, "表头", "TestData", "整形数组", "IntList", "int", "|", "")
 
 	dataSheet := emu.CreateCSVFile("TestData")
-	helper.WriteRowValues(dataSheet, "整形", "字符串", "布尔", "浮点", "整形数组")
-	helper.WriteRowValues(dataSheet, "100", "\"hello\"", "true", "3.14159", "1|2|3")
+	helper.WriteRowValues(dataSheet, "整形", "字符串", "布尔", "浮点", "双精度", "整形数组")
+	helper.WriteRowValues(dataSheet, "100", "\"hello\"", "true", "3.14159", "1.602176", "1|2|3")
 
 	emu.VerifyGoTypeAndJson(`
 {
@@ -199,6 +200,7 @@ func TestBasicType(t *testing.T) {
 			"String": "\"hello\"",
 			"Bool": true,
 			"Float": 3.14159,
+			"Double": 1.602176,
 			"IntList": [
 				1,
 				2,

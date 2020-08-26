@@ -51,6 +51,12 @@ func (self *BinaryWriter) WriteFloat32(x float32) error {
 	return binary.Write(&self.buffer, binary.LittleEndian, &v)
 }
 
+func (self *BinaryWriter) WriteFloat64(x float64) error {
+
+	v := math.Float64bits(x)
+	return binary.Write(&self.buffer, binary.LittleEndian, &v)
+}
+
 func (self *BinaryWriter) WriteBool(x bool) error {
 	return binary.Write(&self.buffer, binary.LittleEndian, &x)
 }
