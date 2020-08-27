@@ -18,7 +18,8 @@ namespace tabtoy
         String = 8,
         Bool = 9,
         Enum = 10,
-        Struct =11,
+        Struct = 11,
+        Double = 12,
     }
 
     public interface ITableSerializable
@@ -159,7 +160,12 @@ namespace tabtoy
                         this.ReadBool(ref dummy);
                     }
                     break;
-
+                case 12: // float64
+                    {
+                        double dummy = 0;
+                        this.ReadDouble(ref dummy);
+                    }
+                    break;
 
                 case 101: // int16
                     {
@@ -285,6 +291,13 @@ namespace tabtoy
             ValidateDataBound(sizeof(float));
 
             v = _binaryReader.ReadSingle();
+        }
+
+        public void ReadDouble(ref double v)
+        {
+            ValidateDataBound(sizeof(float));
+
+            v = _binaryReader.ReadDouble();
         }
 
         public void ReadBool(ref bool v)

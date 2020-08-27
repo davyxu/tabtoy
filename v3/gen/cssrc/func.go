@@ -79,6 +79,8 @@ func init() {
 		switch {
 		case convertedType == "float":
 			ret = "Float"
+		case convertedType == "double":
+			ret = "Double"
 		case convertedType == "string":
 			ret = "String"
 		case convertedType == "bool":

@@ -2,6 +2,7 @@
 表头,ExampleData,任务ID,ID,int,,,是,,,
 表头,ExampleData,名称,Name,string,,,,,,
 表头,ExampleData,比例,Rate,float,,,,,,
+表头,ExampleData,精度,Accuracy,double,,,,,,
 表头,ExampleData,类型,Type,ActorType,,,,,,
 表头,ExampleData,技能列表,Skill,int,|,,,,,
 表头,ExampleData,增益,Buff,int,,,,本字段用于测试二进制向后兼容性,,

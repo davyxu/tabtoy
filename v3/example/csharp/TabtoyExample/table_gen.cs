@@ -19,7 +19,8 @@ namespace main
 	{ 
 		public Int32 ID = 0; 
 		public string Name = string.Empty; 
-		public double Rate = 0; 
+		public float Rate = 0; 
+		public double Accuracy = 0; 
 		public ActorType Type = ActorType.None; 
 		public List<Int32> Skill = new List<Int32>(); 
 		public Int32 Buff = 0; 
@@ -44,32 +45,37 @@ namespace main
 						reader.ReadString( ref Name );
                 	}
                 	break;
-                	case 0xb0002:
+                	case 0x70002:
                 	{
-						reader.Readdouble( ref Rate );
+						reader.ReadFloat( ref Rate );
                 	}
                 	break;
-                	case 0xa0003:
+                	case 0xc0003:
+                	{
+						reader.ReadDouble( ref Accuracy );
+                	}
+                	break;
+                	case 0xa0004:
                 	{
 						reader.ReadEnum( ref Type );
                 	}
                 	break;
-                	case 0x660004:
+                	case 0x660005:
                 	{
 						reader.ReadInt32( ref Skill );
                 	}
                 	break;
-                	case 0x20005:
+                	case 0x20006:
                 	{
 						reader.ReadInt32( ref Buff );
                 	}
                 	break;
-                	case 0x6c0006:
+                	case 0x6c0007:
                 	{
 						reader.ReadString( ref TagList );
                 	}
                 	break;
-                	case 0x660007:
+                	case 0x660008:
                 	{
 						reader.ReadInt32( ref Multi );
                 	}

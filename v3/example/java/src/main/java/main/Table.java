@@ -47,7 +47,8 @@ public class Table {
 	public class ExampleData { 	
 		public int ID = 0; // 任务ID; 	
 		public String Name = ""; // 名称; 	
-		public double Rate = 0; // 比例; 	
+		public float Rate = 0; // 比例; 	
+		public double Accuracy = 0; // 精度; 	
 		public ActorType Type = ActorType.None; // 类型; 	
 		public int[] Skill = new int[]{}; // 技能列表; 	
 		public int Buff = 0; // 增益; 	

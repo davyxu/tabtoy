@@ -36,14 +36,15 @@ func (self ActorType) String() string {
 }
 
 type ExampleData struct {
-	ID      int32     `tb_name:"任务ID"`
-	Name    string    `tb_name:"名称"`
-	Rate    float64   `tb_name:"比例"`
-	Type    ActorType `tb_name:"类型"`
-	Skill   []int32   `tb_name:"技能列表"`
-	Buff    int32     `tb_name:"增益"`
-	TagList []string  `tb_name:"标记"`
-	Multi   []int32   `tb_name:"多列"`
+	ID       int32     `tb_name:"任务ID"`
+	Name     string    `tb_name:"名称"`
+	Rate     float32   `tb_name:"比例"`
+	Accuracy float64   `tb_name:"精度"`
+	Type     ActorType `tb_name:"类型"`
+	Skill    []int32   `tb_name:"技能列表"`
+	Buff     int32     `tb_name:"增益"`
+	TagList  []string  `tb_name:"标记"`
+	Multi    []int32   `tb_name:"多列"`
 }
 
 type ExtendData struct {
