@@ -13,7 +13,7 @@ func WrapValue(globals *model.Globals, cell *model.Cell, valueType *model.TypeDe
 	if valueType.IsArray() {
 
 		var sb strings.Builder
-		sb.WriteString("[")
+		sb.WriteString("{")
 
 		if cell != nil {
 			for index, elementValue := range cell.ValueList {
@@ -24,7 +24,7 @@ func WrapValue(globals *model.Globals, cell *model.Cell, valueType *model.TypeDe
 			}
 		}
 
-		sb.WriteString("]")
+		sb.WriteString("}")
 
 		return sb.String()
 

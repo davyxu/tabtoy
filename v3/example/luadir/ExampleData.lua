@@ -3,7 +3,6 @@
 
 return {
 	init = function( g )
-		
 		g.ExampleData = { 
 			{ ID = 100, Name = "扎克镇", Rate = 3.14, Accuracy = 1.602176, Type = 2, Skill = {3,1,2}, Buff = 100, TagList = {"a","b"}, Multi = {1,3}, }, 
 			{ ID = 200, Name = "阿努比斯神庙", Rate = 1.2, Accuracy = 3.14159, Type = 1, Skill = {100,0,90}, Buff = 1, TagList = {"c"}, Multi = {4,0}, }, 
@@ -11,36 +10,12 @@ return {
 			{ ID = 400, Name = "艾兴瓦尔德", Rate = 0.63, Accuracy = 0, Type = 4, Skill = {}, Buff = 0, TagList = {}, Multi = {}, },  
 		}
 		
-		g.ExtendData = { 
-			{ Additive = 1.1, }, 
-			{ Additive = 1.2, },  
-		}
-		
-		g.ExampleKV = { 
-			{ ServerIP = "8.8.8.8", ServerPort = 1024, GroupID = {10,20}, },  
-		}
-		
-		
 		-- ExampleData
 		g.ExampleDataByID = {}
 		for _, rec in pairs(g.ExampleData) do
 			g.ExampleDataByID[rec.ID] = rec
 		end
 		
-		
-		g.ActorType =
-		{ 
-			None = 0, --  
-			Pharah = 1, -- 法鸡 
-			Junkrat = 2, -- 狂鼠 
-			Genji = 3, -- 源氏 
-			Mercy = 4, -- 天使  
-			[0] = "None", --  
-			[1] = "Pharah", -- 法鸡 
-			[2] = "Junkrat", -- 狂鼠 
-			[3] = "Genji", -- 源氏 
-			[4] = "Mercy", -- 天使 
-		}
 		return g
 	end
 }

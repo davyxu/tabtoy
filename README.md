@@ -101,7 +101,7 @@ tabtoy.exe -mode=v3 -index=Index.xlsx -json_out=table_gen.json
 
 # 导出数据/源码/类型
 
-## Golang使用表格数据
+## Golang使用表格导出的JSON数据
 
 导出命令行:
 ```bash
@@ -134,12 +134,10 @@ tabtoy.exe -mode=v3 -index=Index.xlsx -package=main -go_out=table_gen.json -json
 		fmt.Println(err)
 		os.Exit(1)
 	}
-
-	fmt.Println("")
 ```
 [完整Golang例子](https://github.com/davyxu/tabtoy/tree/master/v3/example/golang)
 
-## C#使用表格数据
+## C#使用表格导出二进制数据
 
 
 导出命令行:
@@ -184,7 +182,7 @@ using (var stream = new FileStream("table_gen.bin", FileMode.Open))
 
 [完整C#例子](https://github.com/davyxu/tabtoy/tree/master/v3/example/csharp)
 
-## Java使用表格数据
+## Java使用表格导出的JSON数据
 
 导出命令行:
 ```bash
@@ -240,7 +238,7 @@ public class Main {
 
 [完整Java例子](https://github.com/davyxu/tabtoy/tree/master/v3/example/java)
 
-## Lua使用表格数据
+## Lua使用表格导出的Lua数据(测试中)
 
 导出命令行:
 ```bash
@@ -250,27 +248,110 @@ tabtoy.exe -mode=v3 -index=Index.xlsx -lua_out=table_gen.lua
 读取数据源码:
 
 ```lua
--- 添加搜索路径
-package.path = package.path .. ";../?.lua"
+    -- 加载
+    local tab = {}
+    require("table_gen").init(tab)
+    
+    -- 遍历表
+    print("Iterate lua table by order:")
+    for _, v in ipairs(tab.ExampleData) do
+        print(v.ID, v.Name)
+    end
 
--- 加载
-local t = require "table_gen"
+    -- 通过索引访问
+    print("Access index table data:")
+    print(tab.ExampleDataByID[300].ID)
 
--- 直接访问原始数据, 此处输出为UTF8格式, windows命令行下会出现乱码是正常现象
-print(t.ExampleData[2].Name)
-
--- 通过索引访问
-print(t.ExampleDataByID[300].ID)
+    -- 枚举类型访问
+    print("Use generated enum:")
+    print(tab.ActorType.Pharah,  tab.ActorType[3])
 ```
 
 [完整Lua例子](https://github.com/davyxu/tabtoy/tree/master/v3/example/lua)
 
-## 导出表格类型信息
+## 将表格类型信息导出为JSON格式
 
 导出命令行:
 ```bash
 tabtoy.exe -mode=v3 -index=Index.xlsx -jsontype_out=type_gen.json 
 ```
+
+# 按表导出
+## Golang按需读取JSON数据(测试中)
+
+导出命令行:
+```bash
+tabtoy.exe -mode=v3 -index=Index.xlsx -package=main -go_out=table_gen.json -json_dir=.
+```
+
+读取数据源码:
+
+```go
+	var TabData = NewTable()
+	err := tabtoy.LoadTableFromFile(TabData, "../jsondir/ExampleData.json")
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	fmt.Println("load specified table: ExampleData")
+	for k, v := range TabData.ExampleDataByID {
+		fmt.Println(k, v)
+	}
+
+	// 分表加载时, 不会触发pre/post Handler
+	var TabKV = NewTable()
+	err = tabtoy.LoadTableFromFile(TabKV, "../jsondir/ExampleKV.json")
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	fmt.Println("load specified table: ExampleKV")
+	for k, v := range TabKV.ExampleKV {
+		fmt.Println(k, v)
+	}
+```
+[完整Golang例子](https://github.com/davyxu/tabtoy/tree/master/v3/example/golang)
+
+## Lua按需读取Lua数据(测试中)
+
+导出命令行:
+```bash
+tabtoy.exe -mode=v3 -index=Index.xlsx -lua_dir=.
+```
+
+读取数据源码:
+
+```lua
+    local tabData = {}
+    require("ExampleData").init(tabData)
+    require("ExtendData").init(tabData)
+
+    print("Load 2 tables into one lua table:")
+    for _, v in ipairs(tabData.ExampleData) do
+        print(v.ID, v.Name)
+    end
+    for _, v in ipairs(tabData.ExtendData) do
+        print(v.Additive)
+    end
+
+    print("Load kv table into single lua table:")
+    local kvData = {}
+    require("ExampleKV").init(kvData)
+    for _, v in ipairs(kvData.ExampleKV) do
+        print(v.ServerIP, v.ServerPort)
+    end
+
+    -- lua枚举是可选功能, 根据需要加载
+    local tabType = {}
+    require("_TableType").init(tabType)
+    print("Use generated enum:")
+    print(tabType.ActorType.Pharah,  tabType.ActorType[3])
+```
+
+[完整Lua例子](https://github.com/davyxu/tabtoy/tree/master/v3/example/lua)
+[导出的Lua表](https://github.com/davyxu/tabtoy/tree/master/v3/example/luasrc)
 
 # 特色功能
 
