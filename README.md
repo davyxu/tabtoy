@@ -111,31 +111,31 @@ tabtoy.exe -mode=v3 -index=Index.xlsx -package=main -go_out=table_gen.json -json
 读取数据源码:
 
 ```go
-// 重新加载指定文件名的表
-func ReloadTable(filename string) {
 
-	// 根据需要从你的源数据读取，这里从指定文件名的文件读取
-	data, err := ioutil.ReadFile(filename)
+	var Tab = NewTable()
+
+	// 表加载前清除之前的手动索引和表关联数据
+	Tab.RegisterPreEntry(func(tab *Table) error {
+		fmt.Println("tab pre load clear")
+		return nil
+	})
+
+	// 表加载和构建索引后，需要手动处理数据的回调
+	Tab.RegisterPostEntry(func(tab *Table) error {
+		fmt.Println("tab post load done")
+		fmt.Printf("%+v\n", tab.ExampleDataByID[200])
+
+		fmt.Println("KV: ", tab.GetKeyValue_ExampleKV().ServerIP)
+		return nil
+	})
+
+	err := tabtoy.LoadFromFile(Tab, "../json/table_gen.json")
 	if err != nil {
 		fmt.Println(err)
-		return
+		os.Exit(1)
 	}
 
-	// 重置数据，这里会触发Prehandler
-	Tab.ResetData()
-
-	// 使用json反序列化
-	err = json.Unmarshal(data, Tab)
-
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	// 构建数据和索引，这里会触发PostHandler
-	Tab.BuildData()
-}
-
+	fmt.Println("")
 ```
 [完整Golang例子](https://github.com/davyxu/tabtoy/tree/master/v3/example/golang)
 

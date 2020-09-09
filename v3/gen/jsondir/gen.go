@@ -1,9 +1,11 @@
-package jsondata2
+package jsondir
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/davyxu/tabtoy/util"
 	"github.com/davyxu/tabtoy/v3/model"
+	"io/ioutil"
 	"strconv"
 )
 
@@ -95,16 +97,16 @@ func wrapSingleValue(globals *model.Globals, valueType *model.TypeDefine, value 
 	return value
 }
 
-func Generate(globals *model.Globals) (data []byte, err error) {
-
-	fileData := map[string]interface{}{
-		"@Tool":    "github.com/davyxu/tabtoy",
-		"@Version": globals.Version,
-	}
+func Output(globals *model.Globals, param string) (err error) {
 
 	for _, tab := range globals.Datas.AllTables() {
 
 		headers := globals.Types.AllFieldByName(tab.OriginalHeaderType)
+
+		fileData := map[string]interface{}{
+			"@Tool":    "github.com/davyxu/tabtoy",
+			"@Version": globals.Version,
+		}
 
 		var tabData []interface{}
 
@@ -126,7 +128,18 @@ func Generate(globals *model.Globals) (data []byte, err error) {
 		}
 
 		fileData[tab.HeaderType] = tabData
+
+		data, err := json.MarshalIndent(&fileData, "", "\t")
+
+		if err != nil {
+			return err
+		}
+
+		err = ioutil.WriteFile(fmt.Sprintf("%s/%s.json", param, tab.HeaderType), data, 0666)
+		if err != nil {
+			return err
+		}
 	}
 
-	return json.MarshalIndent(&fileData, "", "\t")
+	return nil
 }

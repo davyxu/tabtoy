@@ -1,0 +1,12 @@
+{
+	"@Tool": "github.com/davyxu/tabtoy",
+	"@Version": "3.0.1",
+	"ExtendData": [
+		{
+			"Additive": 1.1
+		},
+		{
+			"Additive": 1.2
+		}
+	]
+}

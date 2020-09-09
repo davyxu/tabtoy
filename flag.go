@@ -31,7 +31,6 @@ var (
 	paramPbtOut            = flag.String("pbt_out", "", "output proto text format (*.pbt)")
 	paramLuaOut            = flag.String("lua_out", "", "output lua code (*.lua)")
 	paramJsonOut           = flag.String("json_out", "", "output json format (*.json)")
-	paramJson2Out          = flag.String("json2_out", "", "output json format (*.json)")
 	paramJsonTypeOut       = flag.String("jsontype_out", "", "output json type (*.json)")
 	paramCSharpOut         = flag.String("csharp_out", "", "output c# class and deserialize code (*.cs)")
 	paramGoOut             = flag.String("go_out", "", "output golang code (*.go)")
@@ -39,4 +38,6 @@ var (
 	paramTypeOut           = flag.String("type_out", "", "output table types(*.json)")
 	paramCppOut            = flag.String("cpp_out", "", "output c++ format (*.cpp)")
 	paramJavaOut           = flag.String("java_out", "", "output java code (*.java)")
+
+	paramJsonDir = flag.String("json_dir", "", "output json format (*.json) to dir")
 )

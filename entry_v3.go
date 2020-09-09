@@ -9,7 +9,7 @@ import (
 	"github.com/davyxu/tabtoy/v3/gen/gosrc"
 	"github.com/davyxu/tabtoy/v3/gen/javasrc"
 	"github.com/davyxu/tabtoy/v3/gen/jsondata"
-	"github.com/davyxu/tabtoy/v3/gen/jsondata2"
+	"github.com/davyxu/tabtoy/v3/gen/jsondir"
 	"github.com/davyxu/tabtoy/v3/gen/jsontype"
 	"github.com/davyxu/tabtoy/v3/gen/luasrc"
 	"github.com/davyxu/tabtoy/v3/helper"
@@ -19,9 +19,10 @@ import (
 )
 
 type V3GenEntry struct {
-	name    string
-	f       gen.GenFunc
-	flagstr *string
+	name          string
+	genSingleFile gen.GenSingleFile
+	genCustom     gen.GenCustom
+	param         *string
 }
 
 // v3新增
@@ -32,30 +33,40 @@ var (
 	paramMatchTag  = flag.String("matchtag", "", "match data table file tags in v3 Index file")
 
 	v3GenList = []V3GenEntry{
-		{"gosrc", gosrc.Generate, paramGoOut},
-		{"jsondata", jsondata.Generate, paramJsonOut},
-		{"jsondata2", jsondata2.Generate, paramJson2Out},
-		{"jsontype", jsontype.Generate, paramJsonTypeOut},
-		{"luasrc", luasrc.Generate, paramLuaOut},
-		{"cssrc", cssrc.Generate, paramCSharpOut},
-		{"bindata", bindata.Generate, paramBinaryOut},
-		{"javasrc", javasrc.Generate, paramJavaOut},
+		{name: "gosrc", genSingleFile: gosrc.Generate, param: paramGoOut},
+		{name: "jsondata", genSingleFile: jsondata.Generate, param: paramJsonOut},
+		{name: "jsontype", genSingleFile: jsontype.Generate, param: paramJsonTypeOut},
+		{name: "luasrc", genSingleFile: luasrc.Generate, param: paramLuaOut},
+		{name: "cssrc", genSingleFile: cssrc.Generate, param: paramCSharpOut},
+		{name: "bindata", genSingleFile: bindata.Generate, param: paramBinaryOut},
+		{name: "javasrc", genSingleFile: javasrc.Generate, param: paramJavaOut},
+		{name: "jsondir", genCustom: jsondir.Output, param: paramJsonDir},
 	}
 )
 
 func genFile(globals *model.Globals, entry V3GenEntry, c chan error) {
-	filename := *entry.flagstr
+	filename := *entry.param
 
-	if data, err := entry.f(globals); err != nil {
-		c <- err
-	} else {
-
-		report.Log.Infof("  [%s] %s", entry.name, filename)
-
-		err = helper.WriteFile(filename, data)
-
-		if err != nil {
+	if entry.genSingleFile != nil {
+		if data, err := entry.genSingleFile(globals); err != nil {
 			c <- err
+		} else {
+
+			report.Log.Infof("  [%s] %s", entry.name, filename)
+
+			err = helper.WriteFile(filename, data)
+
+			if err != nil {
+				c <- err
+			}
+		}
+	}
+
+	if entry.genCustom != nil {
+		if err := entry.genCustom(globals, *entry.param); err != nil {
+			c <- err
+		} else {
+			report.Log.Infof("  [%s] %s", entry.name, filename)
 		}
 	}
 
@@ -67,7 +78,7 @@ func GenFileByList(globals *model.Globals) error {
 	var errList []chan error
 	for _, entry := range v3GenList {
 
-		if *entry.flagstr == "" {
+		if *entry.param == "" {
 			continue
 		}
 

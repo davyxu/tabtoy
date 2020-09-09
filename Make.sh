@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-#export GOPROXY=https://goproxy.io
-
 if [ "$1" == "" ] 
 then
 	echo "Usage: Make.sh version(like 1.0.0)"

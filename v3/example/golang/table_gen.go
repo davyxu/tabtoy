@@ -3,6 +3,8 @@
 // Version: 3.0.1
 package main
 
+import "errors"
+
 type TableEnumValue struct {
 	Name  string
 	Index int32
@@ -69,6 +71,9 @@ type Table struct {
 	// Handlers
 	postHandlers []func(*Table) error `json:"-"`
 	preHandlers  []func(*Table) error `json:"-"`
+
+	indexHandler map[string]func() `json:"-"`
+	resetHandler map[string]func() `json:"-"`
 }
 
 // table: ExampleKV
@@ -96,30 +101,41 @@ func (self *Table) RegisterPreEntry(h func(*Table) error) {
 	self.preHandlers = append(self.preHandlers, h)
 }
 
-// 调用PreHander，清除索引和数据
+// 清除索引和数据
 func (self *Table) ResetData() error {
 
+	err := self.InvokePreHandler()
+	if err != nil {
+		return err
+	}
+
+	return self.ResetTable("")
+}
+
+// 全局表构建索引及通知回调
+func (self *Table) BuildData() error {
+
+	err := self.IndexTable("")
+	if err != nil {
+		return err
+	}
+
+	return self.InvokePostHandler()
+}
+
+// 调用加载前回调
+func (self *Table) InvokePreHandler() error {
 	for _, h := range self.preHandlers {
 		if err := h(self); err != nil {
 			return err
 		}
 	}
 
-	self.ExampleData = self.ExampleData[0:0]
-	self.ExtendData = self.ExtendData[0:0]
-	self.ExampleKV = self.ExampleKV[0:0]
-
-	self.ExampleDataByID = map[int32]*ExampleData{}
 	return nil
 }
 
-// 构建索引，调用PostHander
-func (self *Table) BuildData() error {
-
-	for _, v := range self.ExampleData {
-		self.ExampleDataByID[v.ID] = v
-	}
-
+// 调用加载后回调
+func (self *Table) InvokePostHandler() error {
 	for _, h := range self.postHandlers {
 		if err := h(self); err != nil {
 			return err
@@ -129,10 +145,70 @@ func (self *Table) BuildData() error {
 	return nil
 }
 
+// 为表建立索引. 表名为空时, 构建所有表索引
+func (self *Table) IndexTable(tableName string) error {
+
+	if tableName == "" {
+
+		for _, h := range self.indexHandler {
+			h()
+		}
+		return nil
+
+	} else {
+		if h, ok := self.indexHandler[tableName]; ok {
+			h()
+		}
+
+		return nil
+	}
+}
+
+// 重置表格数据
+func (self *Table) ResetTable(tableName string) error {
+	if tableName == "" {
+		for _, h := range self.resetHandler {
+			h()
+		}
+
+		return nil
+	} else {
+		if h, ok := self.resetHandler[tableName]; ok {
+			h()
+			return nil
+		}
+
+		return errors.New("reset table failed, table not found: " + tableName)
+	}
+}
+
 // 初始化表实例
 func NewTable() *Table {
 
-	self := &Table{}
+	self := &Table{
+		indexHandler: make(map[string]func()),
+		resetHandler: make(map[string]func()),
+	}
+
+	self.indexHandler["ExampleData"] = func() {
+		for _, v := range self.ExampleData {
+			self.ExampleDataByID[v.ID] = v
+		}
+	}
+
+	self.resetHandler["ExampleData"] = func() {
+		self.ExampleData = nil
+
+		self.ExampleDataByID = map[int32]*ExampleData{}
+	}
+	self.resetHandler["ExtendData"] = func() {
+		self.ExtendData = nil
+
+	}
+	self.resetHandler["ExampleKV"] = func() {
+		self.ExampleKV = nil
+
+	}
 
 	self.ResetData()
 

@@ -192,7 +192,7 @@ func (self *TableEmulator) VerifyGoTypeAndJson(expectJson string) {
 	}
 }
 
-func genFile(globals *model.Globals, filename string, genFunc gen.GenFunc) error {
+func genFile(globals *model.Globals, filename string, genFunc gen.GenSingleFile) error {
 
 	data, err := genFunc(globals)
 

@@ -1,57 +1,70 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	tabtoy "github.com/davyxu/tabtoy/v3/api/golang"
+	"os"
 )
 
-// 在包中定义外部可访问的表句柄
-var Tab = NewTable()
+// 一次性加载所有表
+func LoadAllTable() {
 
-// 重新加载指定文件名的表
-func ReloadTable(filename string) {
-
-	// 根据需要从你的源数据读取，这里从指定文件名的文件读取
-	data, err := ioutil.ReadFile(filename)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	// 重置数据，这里会触发Prehandler
-	Tab.ResetData()
-
-	// 使用json反序列化
-	err = json.Unmarshal(data, Tab)
-
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	// 构建数据和索引，这里会触发PostHandler
-	Tab.BuildData()
-}
-
-func main() {
+	var Tab = NewTable()
 
 	// 表加载前清除之前的手动索引和表关联数据
 	Tab.RegisterPreEntry(func(tab *Table) error {
-
 		fmt.Println("tab pre load clear")
 		return nil
 	})
 
 	// 表加载和构建索引后，需要手动处理数据的回调
 	Tab.RegisterPostEntry(func(tab *Table) error {
-
+		fmt.Println("tab post load done")
 		fmt.Printf("%+v\n", tab.ExampleDataByID[200])
 
 		fmt.Println("KV: ", tab.GetKeyValue_ExampleKV().ServerIP)
 		return nil
 	})
 
-	ReloadTable("../json/table_gen.json")
+	err := tabtoy.LoadFromFile(Tab, "../json/table_gen.json")
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 
+	fmt.Println("")
+}
+
+// 按指定表加载
+func LoadSpecifiedTable() {
+	var TabData = NewTable()
+	err := tabtoy.LoadTableFromFile(TabData, "../jsondir/ExampleData.json")
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	fmt.Println("load specified table: ExampleData")
+	for k, v := range TabData.ExampleDataByID {
+		fmt.Println(k, v)
+	}
+
+	// 分表加载时, 不会触发pre/post Handler
+	var TabKV = NewTable()
+	err = tabtoy.LoadTableFromFile(TabKV, "../jsondir/ExampleKV.json")
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	fmt.Println("load specified table: ExampleKV")
+	for k, v := range TabKV.ExampleKV {
+		fmt.Println(k, v)
+	}
+}
+
+func main() {
+	LoadAllTable()
+
+	LoadSpecifiedTable()
 }
