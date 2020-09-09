@@ -45,6 +45,7 @@ var (
 	paramJavaOut     = flag.String("java_out", "", "output java code (*.java)")
 
 	// 按表多文件导出
-	paramJsonDir = flag.String("json_dir", "", "output json format (*.json) to dir")
-	paramLuaDir  = flag.String("lua_dir", "", "output lua format (*.lua) to dir")
+	paramJsonDir   = flag.String("json_dir", "", "output json format (*.json) to dir")
+	paramLuaDir    = flag.String("lua_dir", "", "output lua format (*.lua) to dir")
+	paramBinaryDir = flag.String("binary_dir", "", "output binary format (*.bin) to dir")
 )

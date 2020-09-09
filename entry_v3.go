@@ -42,6 +42,7 @@ var (
 		{name: "javasrc", genSingleFile: javasrc.Generate, param: paramJavaOut},
 		{name: "jsondir", genCustom: jsondir.Output, param: paramJsonDir},
 		{name: "luadir", genCustom: luasrc.Output, param: paramLuaDir},
+		{name: "binarydir", genCustom: bindata.Output, param: paramBinaryDir},
 	}
 )
 

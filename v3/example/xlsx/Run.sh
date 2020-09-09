@@ -9,6 +9,7 @@ go build -v -o ./tabtoy github.com/davyxu/tabtoy
 -json_dir=../jsondir \
 -lua_out=../lua/table_gen.lua \
 -lua_dir=../luadir \
+-binary_dir=../binary \
 -csharp_out=../csharp/TabtoyExample/table_gen.cs \
 -binary_out=../binary/table_gen.bin \
 -java_out=../java/src/main/java/main/Table.java \

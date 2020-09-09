@@ -5,9 +5,8 @@ namespace TabtoyExample
 {
     class Program
     {
-        static void Main(string[] args)
-        {
-            var curr = Directory.GetCurrentDirectory();
+        static void LoadAllTable()
+        {            
             using (var stream = new FileStream("../../../../binary/table_gen.bin", FileMode.Open))
             {
                 stream.Position = 0;
@@ -18,7 +17,7 @@ namespace TabtoyExample
                 var tab = new main.Table();
 
                 try
-                {    
+                {
                     tab.Deserialize(reader);
                 }
                 catch (Exception e)
@@ -26,11 +25,71 @@ namespace TabtoyExample
                     Console.WriteLine(e);
                     throw;
                 }
-                
 
-                Console.WriteLine(tab.ExampleData[3].Name);
+                // 表遍历
+                foreach (var kv in tab.ExampleData) 
+                {
+                    Console.Write("{0} {1}\n",kv.ID, kv.Name);
+                }
 
+                // 直接取值
+                Console.WriteLine(tab.ExtendData[1].Additive);
+
+                // KV配置
+                Console.WriteLine(tab.GetKeyValue_ExampleKV().ServerIP);
             }
+        }
+
+        static void LoadTableByName(main.Table tab,  string tableName)
+        {
+            using (var stream = new FileStream(string.Format("../../../../binary/{0}.bin", tableName), FileMode.Open))
+            {
+                stream.Position = 0;
+
+                var reader = new tabtoy.TableReader(stream);
+                try
+                {
+                    tab.Deserialize(reader);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    throw;
+                }
+            }
+        }
+
+        static void LoadSpecifiedTable()
+        {
+            var tabData = new main.Table();
+
+            LoadTableByName(tabData, "ExampleData");
+            LoadTableByName(tabData, "ExtendData");
+
+            Console.WriteLine("Load table merged into one class");
+            // 表遍历
+            foreach (var kv in tabData.ExampleData)
+            {
+                Console.Write("{0} {1}\n", kv.ID, kv.Name);
+            }
+            // 表遍历
+            foreach (var kv in tabData.ExtendData)
+            {
+                Console.Write("{0}\n", kv.Additive);
+            }
+
+            Console.WriteLine("Load KV table into one class");
+            var tabKV = new main.Table();
+            LoadTableByName(tabKV, "ExampleKV");
+
+            // KV配置
+            Console.WriteLine(tabKV.GetKeyValue_ExampleKV().ServerIP);
+        }
+
+        static void Main(string[] args)
+        {
+            LoadAllTable();
+            LoadSpecifiedTable();
         }
     }
 }
