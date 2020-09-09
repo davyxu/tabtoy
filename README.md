@@ -281,6 +281,15 @@ tabtoy.exe -mode=v3 -index=Index.xlsx -jsontype_out=type_gen.json
 ```
 
 # 按表导出
+
+tabtoy默认情况下, 均是将数据, 源码一次性导出.出于以下原因,tabtoy支持按表导出数据
+
+* 某些语言在读取大量数据时, 会出现兼容性问题. 例如: lua的local和const限制等
+
+* 按需读取数据, 降低内存需求
+
+* 按需更新数据, 减少模块耦合
+
 ## Golang按需读取JSON数据(测试中)
 
 导出命令行:

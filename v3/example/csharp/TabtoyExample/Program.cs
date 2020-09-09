@@ -5,6 +5,7 @@ namespace TabtoyExample
 {
     class Program
     {
+        // 加载所有表
         static void LoadAllTable()
         {            
             using (var stream = new FileStream("../../../../binary/table_gen.bin", FileMode.Open))
@@ -40,6 +41,7 @@ namespace TabtoyExample
             }
         }
 
+        // 读取指定名字的表, 可根据实际需求调整该函数适应不同加载数据来源
         static void LoadTableByName(main.Table tab,  string tableName)
         {
             using (var stream = new FileStream(string.Format("../../../../binary/{0}.bin", tableName), FileMode.Open))
@@ -59,6 +61,7 @@ namespace TabtoyExample
             }
         }
 
+        // 指定表读取例子
         static void LoadSpecifiedTable()
         {
             var tabData = new main.Table();
