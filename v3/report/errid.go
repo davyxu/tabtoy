@@ -21,5 +21,6 @@ var (
 		"UnknownInputFileExtension":      {CHS: "未知的输入文件扩展名"},
 		"DataMissMatchTypeDefine":        {CHS: "数据与定义类型不匹配"},
 		"ArrayMultiColumnDefineNotMatch": {CHS: "数组类型多列跨表定义不一致"},
+		"InvalidFieldName":               {CHS: "非法字段名"},
 	}
 )

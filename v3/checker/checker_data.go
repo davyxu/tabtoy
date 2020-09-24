@@ -42,7 +42,7 @@ func checkDataType(globals *model.Globals) {
 							report.ReportError("DataMissMatchTypeDefine", currHeader.TypeInfo.FieldType, crrCell.String())
 						}
 					}
-				} else {
+				} else if inputCell.Value != "" {
 					err := checkSingleValue(header, inputCell.Value)
 					if err != nil {
 						report.ReportError("DataMissMatchTypeDefine", currHeader.TypeInfo.FieldType, crrCell.String())
