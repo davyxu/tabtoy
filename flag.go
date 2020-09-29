@@ -33,6 +33,7 @@ var (
 
 	// 单文件导出
 	paramProtoOut    = flag.String("proto_out", "", "output protobuf define (*.proto)")
+	paramPbBinaryOut = flag.String("pbbin_out", "", "output protobuf binary (*.bin)")
 	paramPbtOut      = flag.String("pbt_out", "", "output proto text format (*.pbt)")
 	paramLuaOut      = flag.String("lua_out", "", "output lua code (*.lua)")
 	paramJsonOut     = flag.String("json_out", "", "output json format (*.json)")

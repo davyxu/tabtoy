@@ -101,6 +101,7 @@ func Output(globals *model.Globals, param string) (err error) {
 
 	for _, tab := range globals.Datas.AllTables() {
 
+		// 一个表的所有列
 		headers := globals.Types.AllFieldByName(tab.OriginalHeaderType)
 
 		fileData := map[string]interface{}{
@@ -110,6 +111,7 @@ func Output(globals *model.Globals, param string) (err error) {
 
 		var tabData []interface{}
 
+		// 遍历所有数据
 		for row := 1; row < len(tab.Rows); row++ {
 
 			rowData := map[string]interface{}{}
@@ -124,7 +126,6 @@ func Output(globals *model.Globals, param string) (err error) {
 			}
 
 			tabData = append(tabData, rowData)
-
 		}
 
 		fileData[tab.HeaderType] = tabData

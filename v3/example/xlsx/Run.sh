@@ -13,6 +13,8 @@ go build -v -o ./tabtoy github.com/davyxu/tabtoy
 -csharp_out=../csharp/TabtoyExample/table_gen.cs \
 -binary_out=../binary/table_gen.bin \
 -java_out=../java/src/main/java/main/Table.java \
+-proto_out=../protobuf/table.proto \
+-pbbin_out=../protobuf/pb.bin \
 -package=main
 
 if [ $? -ne 0 ] ; then

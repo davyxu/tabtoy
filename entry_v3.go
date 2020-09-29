@@ -12,6 +12,8 @@ import (
 	"github.com/davyxu/tabtoy/v3/gen/jsondir"
 	"github.com/davyxu/tabtoy/v3/gen/jsontype"
 	"github.com/davyxu/tabtoy/v3/gen/luasrc"
+	"github.com/davyxu/tabtoy/v3/gen/pbdata"
+	"github.com/davyxu/tabtoy/v3/gen/pbsrc"
 	"github.com/davyxu/tabtoy/v3/helper"
 	"github.com/davyxu/tabtoy/v3/model"
 	"github.com/davyxu/tabtoy/v3/report"
@@ -40,6 +42,9 @@ var (
 		{name: "cssrc", genSingleFile: cssrc.Generate, param: paramCSharpOut},
 		{name: "bindata", genSingleFile: bindata.Generate, param: paramBinaryOut},
 		{name: "javasrc", genSingleFile: javasrc.Generate, param: paramJavaOut},
+		{name: "pbsrc", genSingleFile: pbsrc.Generate, param: paramProtoOut},
+		{name: "pbdata", genSingleFile: pbdata.Generate, param: paramPbBinaryOut},
+
 		{name: "jsondir", genCustom: jsondir.Output, param: paramJsonDir},
 		{name: "luadir", genCustom: luasrc.Output, param: paramLuaDir},
 		{name: "binarydir", genCustom: bindata.Output, param: paramBinaryDir},
