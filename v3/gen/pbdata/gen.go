@@ -131,19 +131,7 @@ func Generate(globals *model.Globals) (data []byte, err error) {
 
 func tableValue2PbValueList(globals *model.Globals, cell *model.Cell, valueType *model.TypeDefine, list protoreflect.List) {
 
-	pbType := model.LanguagePrimitive(valueType.FieldType, "go")
-
-	// go类型转pb
-	switch pbType {
-	case "int16", "int8":
-		pbType = "int32"
-	case "uint16", "uint8":
-		pbType = "uint32"
-	case "float32":
-		pbType = "float"
-	case "float64":
-		pbType = "double"
-	}
+	pbType := model.LanguagePrimitive(valueType.FieldType, "pb")
 
 	switch pbType {
 	case "int32":
@@ -172,12 +160,8 @@ func tableValue2PbValueList(globals *model.Globals, cell *model.Cell, valueType 
 
 		for _, str := range cell.ValueList {
 
-			switch str {
-			case "是", "yes", "YES", "1", "true", "TRUE", "True":
-				list.Append(protoreflect.ValueOfBool(true))
-			default:
-				list.Append(protoreflect.ValueOfBool(false))
-			}
+			v, _ := model.ParseBool(str)
+			list.Append(protoreflect.ValueOfBool(v))
 		}
 
 	case "string":
@@ -204,19 +188,7 @@ func tableValue2PbValueList(globals *model.Globals, cell *model.Cell, valueType 
 
 func tableValue2PbValue(globals *model.Globals, cell *model.Cell, valueType *model.TypeDefine) protoreflect.Value {
 
-	pbType := model.LanguagePrimitive(valueType.FieldType, "go")
-
-	// go类型转pb
-	switch pbType {
-	case "int16", "int8":
-		pbType = "int32"
-	case "uint16", "uint8":
-		pbType = "uint32"
-	case "float32":
-		pbType = "float"
-	case "float64":
-		pbType = "double"
-	}
+	pbType := model.LanguagePrimitive(valueType.FieldType, "pb")
 
 	switch pbType {
 	case "int32":
@@ -259,12 +231,9 @@ func tableValue2PbValue(globals *model.Globals, cell *model.Cell, valueType *mod
 		if cell.Value == "" {
 			return protoreflect.ValueOfBool(false)
 		}
-		switch cell.Value {
-		case "是", "yes", "YES", "1", "true", "TRUE", "True":
-			return protoreflect.ValueOfBool(true)
-		default:
-			return protoreflect.ValueOfBool(false)
-		}
+
+		v, _ := model.ParseBool(cell.Value)
+		return protoreflect.ValueOfBool(v)
 	case "string":
 		return protoreflect.ValueOfString(cell.Value)
 	default:
@@ -286,19 +255,7 @@ func tableValue2PbValue(globals *model.Globals, cell *model.Cell, valueType *mod
 }
 
 func tableType2PbType(globals *model.Globals, def *model.TypeDefine, pbDesc *descriptorpb.FieldDescriptorProto) {
-	pbType := model.LanguagePrimitive(def.FieldType, "go")
-
-	// go类型转pb
-	switch pbType {
-	case "int16", "int8":
-		pbType = "int32"
-	case "uint16", "uint8":
-		pbType = "uint32"
-	case "float32":
-		pbType = "float"
-	case "float64":
-		pbType = "double"
-	}
+	pbType := model.LanguagePrimitive(def.FieldType, "pb")
 
 	switch pbType {
 	case "int32":

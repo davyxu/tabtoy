@@ -83,11 +83,9 @@ func writeValue(globals *model.Globals, structWriter *BinaryWriter, fieldType *m
 		if value == "" {
 			return structWriter.WriteBool(false)
 		} else {
-			var v bool
-			switch value {
-			case "是", "yes", "YES", "1", "true", "TRUE", "True":
-				v = true
-			default:
+			v, err := model.ParseBool(value)
+			if err != nil {
+				return err
 			}
 
 			return structWriter.WriteBool(v)

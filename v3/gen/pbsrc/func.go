@@ -14,18 +14,7 @@ var UsefulFunc = template.FuncMap{}
 func init() {
 	UsefulFunc["PbType"] = func(tf *model.TypeDefine) string {
 
-		pbType := model.LanguagePrimitive(tf.FieldType, "go")
-
-		switch pbType {
-		case "int16", "int8":
-			pbType = "int32"
-		case "uint16", "uint8":
-			pbType = "uint32"
-		case "float32":
-			pbType = "float"
-		case "float64":
-			pbType = "double"
-		}
+		pbType := model.LanguagePrimitive(tf.FieldType, "pb")
 
 		if tf.IsArray() {
 			return "repeated " + pbType
