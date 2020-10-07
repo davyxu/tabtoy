@@ -4,7 +4,6 @@
 
 ![tabtoylogo](doc/logo.png)
 
-
 # 特性
 * 支持Xlsx/CSV作为表格数据混合输入
 
@@ -19,7 +18,6 @@
 * 支持KV配置表, 方便将表格作为配置文件
 
 * 多核并发导出, 缓存加速, 上百文件秒级导出
-
 
 # 迭代历程
 
@@ -86,7 +84,6 @@ ID | 名称
 
 注意 数据表的表类型需要与类型表里的对象类型对应
 
-
 ## 编写导出shell
 
 
@@ -97,7 +94,6 @@ tabtoy.exe -mode=v3 -index=Index.xlsx -json_out=table_gen.json
 ```
 
 [完整例子文件](https://github.com/davyxu/tabtoy/tree/master/v3/example/tutorial)
-
 
 # 导出数据/源码/类型
 
@@ -111,7 +107,6 @@ tabtoy.exe -mode=v3 -index=Index.xlsx -package=main -go_out=table_gen.json -json
 读取数据源码:
 
 ```go
-
 	var Tab = NewTable()
 
 	// 表加载前清除之前的手动索引和表关联数据
@@ -277,8 +272,41 @@ tabtoy.exe -mode=v3 -index=Index.xlsx -lua_out=table_gen.lua
 
 导出命令行:
 ```bash
-tabtoy.exe -mode=v3 -index=Index.xlsx -jsontype_out=type_gen.json 
+tabtoy -mode=v3 -index=Index.xlsx -jsontype_out=type_gen.json 
 ```
+
+## 导出为Protobuf格式
+tabtoy可以将表类型及结构输出为Google Protobuf的proto格式, 同时输出与之对应的二进制格式(*.pbb)
+
+使用Protobuf的SDK即可方便的将表数据提供给所有Protobuf支持的语言
+
+以下例子展示Golang使用Protobuf读取表格输出文件
+
+* 导出proto文件:
+```bash
+tabtoy -mode=v3 -index=Index.xlsx -proto_out=table.proto 
+```
+
+* 导出proto二进制数据文件:
+```bash
+tabtoy -mode=v3 -index=Index.xlsx -pbbin_out=all.pbb
+```
+
+* Protobuf编译器protoc下载
+
+下载地址: https://github.com/protocolbuffers/protobuf/releases
+
+* 安装Golang的Protobuf生成插件
+```bash
+go install google.golang.org/protobuf/cmd/protoc-gen-go
+```
+
+* 将proto文件生成代码
+```bash
+protoc --go_out=. ./table.proto -I .
+```
+
+[完整Golang使用Protobuf例子](https://github.com/davyxu/tabtoy/tree/master/v3/example/protobuf/golang)
 
 # 按表导出
 
@@ -290,11 +318,11 @@ tabtoy默认情况下, 均是将数据, 源码一次性导出.出于以下原因
 
 * 按需更新数据, 减少模块耦合
 
-## Golang按需读取JSON数据(测试中)
+## Golang按需读取JSON数据
 
 导出命令行:
 ```bash
-tabtoy.exe -mode=v3 -index=Index.xlsx -package=main -go_out=table_gen.json -json_dir=.
+tabtoy -mode=v3 -index=Index.xlsx -package=main -go_out=table_gen.json -json_dir=.
 ```
 
 读取数据源码:
@@ -327,11 +355,11 @@ tabtoy.exe -mode=v3 -index=Index.xlsx -package=main -go_out=table_gen.json -json
 ```
 [完整Golang例子](https://github.com/davyxu/tabtoy/tree/master/v3/example/golang)
 
-## Lua按需读取Lua数据(测试中)
+## Lua按需读取Lua数据
 
 导出命令行:
 ```bash
-tabtoy.exe -mode=v3 -index=Index.xlsx -lua_dir=.
+tabtoy -mode=v3 -index=Index.xlsx -lua_dir=.
 ```
 
 读取数据源码:
@@ -366,10 +394,10 @@ tabtoy.exe -mode=v3 -index=Index.xlsx -lua_dir=.
 [完整Lua例子](https://github.com/davyxu/tabtoy/tree/master/v3/example/lua)
 [导出的Lua表](https://github.com/davyxu/tabtoy/tree/master/v3/example/luasrc)
 
-## C#按需读取二进制数据(测试中)
+## C#按需读取二进制数据
 导出命令行:
 ```bash
-tabtoy.exe -mode=v3 -index=Index.xlsx -package=main -csharp_out=table_gen.cs -binary_dir=.
+tabtoy -mode=v3 -index=Index.xlsx -package=main -csharp_out=table_gen.cs -binary_dir=.
    ```
 
 读取数据源码:
@@ -424,6 +452,11 @@ static void LoadSpecifiedTable()
 
 [完整C#例子](https://github.com/davyxu/tabtoy/tree/master/v3/example/csharp)
 
+## Golang使用Protobuf按需读取二进制数据
+[Golang例子](https://github.com/davyxu/tabtoy/tree/master/v3/example/protobuf/golang)
+
+
+
 # 特色功能
 
 ## 定义和使用枚举
@@ -467,7 +500,6 @@ Genji |
  
  [ 1 ]
 
-
 ## 使用多列数组
 
 种类 | 对象类型 | 标识名 | 字段名 | 字段类型 | 数组切割| 值 | 索引 | 标记
@@ -502,7 +534,6 @@ Genji |
 ExampleDataByID map[int32]*ExampleData
 ```
 
-
 ## 表拆分
 
 将ExampleData表, 拆为Data.csv, Data2.csv表
@@ -514,7 +545,6 @@ ExampleDataByID map[int32]*ExampleData
 数据表 | ExampleData | Data2.csv
 
 每个表中的字段可按需填写
-
 
 ## KV表
 
@@ -531,7 +561,6 @@ ExampleDataByID map[int32]*ExampleData
 ---|---|---|---|---|---|
 ServerIP | string | 服务器IP | 8.8.8.8
 ServerPort | uint16 | 服务器端口 | 1024  
-
 
 ## 空行分割
 
@@ -566,7 +595,6 @@ ID | 名称
 
 在任意表的首列单元格中首字符为#时，该行所有数据不会被导出
 
-
 ## 列数据注释
 
 表格数据如下:
@@ -583,7 +611,6 @@ ID | #名称
 * 3 
 
 表头中, 列字段首字符为#时，该列所有数据按默认值导出 
-
 
 ## 使用标记
 

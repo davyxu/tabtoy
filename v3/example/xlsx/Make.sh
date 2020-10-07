@@ -14,7 +14,8 @@ go build -v -o ./tabtoy github.com/davyxu/tabtoy
 -binary_out=../binary/table_gen.bin \
 -java_out=../java/src/main/java/main/Table.java \
 -proto_out=../protobuf/table.proto \
--pbbin_out=../protobuf/pb.bin \
+-pbbin_out=../protobuf/all.pbb \
+-pbbin_dir=../protobuf \
 -package=main
 
 if [ $? -ne 0 ] ; then

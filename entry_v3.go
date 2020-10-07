@@ -48,6 +48,7 @@ var (
 		{name: "jsondir", genCustom: jsondir.Output, param: paramJsonDir},
 		{name: "luadir", genCustom: luasrc.Output, param: paramLuaDir},
 		{name: "binarydir", genCustom: bindata.Output, param: paramBinaryDir},
+		{name: "pbdatadir", genCustom: pbdata.Output, param: paramPbBinaryDir},
 	}
 )
 
