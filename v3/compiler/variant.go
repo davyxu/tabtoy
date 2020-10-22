@@ -11,10 +11,6 @@ func loadVariantTables(globals *model.Globals, kvList, dataList *model.DataTable
 	// 遍历索引里的每一行配置
 	for _, pragma := range globals.IndexList {
 
-		if pragma.Kind == model.TableKind_Data && globals.MatchTag != "" && !pragma.MatchTag(globals.MatchTag) {
-			continue
-		}
-
 		report.Log.Debugf("   (%s) %s", pragma.TableType, pragma.TableFileName)
 
 		switch pragma.Kind {

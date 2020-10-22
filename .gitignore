@@ -27,3 +27,4 @@ tabtoy
 *.
 *.DS_Store
 protoc
+~*.xlsx

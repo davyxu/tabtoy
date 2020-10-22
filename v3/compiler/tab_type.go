@@ -16,8 +16,6 @@ func LoadTypeTable(typeTab *model.TypeTable, indexGetter helper.FileGetter, file
 
 	for _, tab := range tabs {
 
-		//resolveHeaderFields(tab, "TypeDefine", typeTab)
-
 		for row := 1; row < len(tab.Rows); row++ {
 
 			var objtype model.TypeDefine

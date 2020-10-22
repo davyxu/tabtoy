@@ -1,11 +1,8 @@
-package jsondir
+package jsondata
 
 import (
-	"encoding/json"
-	"fmt"
 	"github.com/davyxu/tabtoy/util"
 	"github.com/davyxu/tabtoy/v3/model"
-	"io/ioutil"
 	"strconv"
 )
 
@@ -95,52 +92,4 @@ func wrapSingleValue(globals *model.Globals, valueType *model.TypeDefine, value 
 	}
 
 	return value
-}
-
-func Output(globals *model.Globals, param string) (err error) {
-
-	for _, tab := range globals.Datas.AllTables() {
-
-		// 一个表的所有列
-		headers := globals.Types.AllFieldByName(tab.OriginalHeaderType)
-
-		fileData := map[string]interface{}{
-			"@Tool":    "github.com/davyxu/tabtoy",
-			"@Version": globals.Version,
-		}
-
-		var tabData []interface{}
-
-		// 遍历所有数据
-		for row := 1; row < len(tab.Rows); row++ {
-
-			rowData := map[string]interface{}{}
-			for col, header := range headers {
-
-				// 在单元格找到值
-				valueCell := tab.GetCell(row, col)
-
-				var value = wrapValue(globals, valueCell, header)
-
-				rowData[header.FieldName] = value
-			}
-
-			tabData = append(tabData, rowData)
-		}
-
-		fileData[tab.HeaderType] = tabData
-
-		data, err := json.MarshalIndent(&fileData, "", "\t")
-
-		if err != nil {
-			return err
-		}
-
-		err = ioutil.WriteFile(fmt.Sprintf("%s/%s.json", param, tab.HeaderType), data, 0666)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
 }

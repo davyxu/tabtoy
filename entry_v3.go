@@ -9,7 +9,6 @@ import (
 	"github.com/davyxu/tabtoy/v3/gen/gosrc"
 	"github.com/davyxu/tabtoy/v3/gen/javasrc"
 	"github.com/davyxu/tabtoy/v3/gen/jsondata"
-	"github.com/davyxu/tabtoy/v3/gen/jsondir"
 	"github.com/davyxu/tabtoy/v3/gen/jsontype"
 	"github.com/davyxu/tabtoy/v3/gen/luasrc"
 	"github.com/davyxu/tabtoy/v3/gen/pbdata"
@@ -32,7 +31,7 @@ var (
 	paramIndexFile = flag.String("index", "", "input multi-files configs")
 
 	paramUseGBKCSV = flag.Bool("use_gbkcsv", true, "use gbk format in csv file")
-	paramMatchTag  = flag.String("matchtag", "", "match data table file tags in v3 Index file")
+	paramTagAction = flag.String("tag_action", "", "do action by tag selected target, format: action1:tag1+tag2|action2:tag1+tag3")
 
 	v3GenList = []V3GenEntry{
 		{name: "gosrc", genSingleFile: gosrc.Generate, param: paramGoOut},
@@ -45,7 +44,7 @@ var (
 		{name: "pbsrc", genSingleFile: pbsrc.Generate, param: paramProtoOut},
 		{name: "pbdata", genSingleFile: pbdata.Generate, param: paramPbBinaryOut},
 
-		{name: "jsondir", genCustom: jsondir.Output, param: paramJsonDir},
+		{name: "jsondir", genCustom: jsondata.Output, param: paramJsonDir},
 		{name: "luadir", genCustom: luasrc.Output, param: paramLuaDir},
 		{name: "binarydir", genCustom: bindata.Output, param: paramBinaryDir},
 		{name: "pbdatadir", genCustom: pbdata.Output, param: paramPbBinaryDir},
@@ -117,11 +116,6 @@ func V3Entry() {
 	globals.PackageName = *paramPackageName
 	globals.CombineStructName = *paramCombineStructName
 	globals.GenBinary = *paramBinaryOut != ""
-	globals.MatchTag = *paramMatchTag
-
-	if globals.MatchTag != "" {
-		report.Log.Infof("MatchTag: %s", globals.MatchTag)
-	}
 
 	idxloader := helper.NewFileLoader(true, globals.CacheDir)
 	idxloader.UseGBKCSV = *paramUseGBKCSV
@@ -129,6 +123,12 @@ func V3Entry() {
 	globals.UseGBKCSV = *paramUseGBKCSV
 
 	var err error
+	if *paramTagAction != "" {
+		globals.TagActions, err = model.ParseTagAction(*paramTagAction)
+		if err != nil {
+			goto Exit
+		}
+	}
 
 	err = compiler.Compile(globals)
 

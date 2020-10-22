@@ -612,9 +612,55 @@ ID | #名称
 
 表头中, 列字段首字符为#时，该列所有数据按默认值导出 
 
-## 使用标记
+## 不输出指定列数据
+实现此功能需要使用到TagAction, 参考下面例子配置:
 
-在类型表标记中添加字符串, 使用|做默认分割, 将在-jsontype导出json中获得字段关联的标记
+种类 | 对象类型 | 标识名 | 字段名 | 字段类型 | 数组切割| 值 | 索引 | 标记
+---|---|---|---|---|---|---|---|---
+表头 | ExampleData | 特效ID| EffectID | int32 |  | | | client 
+表头 | ExampleData | 概率| Rate | float |  | | | server
+
+表中的特效ID, 只希望客户端导出数据中包含EffectID, 同时服务器导出数据中只包含Rate, 不希望将Rate字段导入客户端数据
+客户端导出为二进制, 服务器导出为json
+
+此时在相应字段所在的Type表中的"标记" 一列增加如表所示标记(如标记列不存在, 请新建)
+
+将原有导出流程拆分为客户端导出和服务器导出, 分两次分别导出不同需求的数据
+
+* 客户端数据导出
+导出参数中新增参数
+```shell script
+--tag_action=nogen_binary:server
+```
+表示: server标记的字段不导出到二进制
+
+* 服务器数据导出  
+导出参数中新增参数
+```shell script
+--tag_action=nogen_json:client
+```
+表示: client标记的字段不导出到json完整文件
+
+## TagAction参考说明
+
+### 格式
+```shell script
+--tag_action=action1:tag1+tag2|action2:tag1+tag3
+```
+* | 表示多个action
+* 被标记的tag, 将被对应action处理
+
+###action类型
+action | 功能
+---|---|
+nogen_json | 被标记的字段不导出到json完整文件中
+nogen_jsondir | 被标记的字段不导出到每个表文件json
+nogen_binary | 被标记的字段不导出到二进制中
+nogen_pbbin | 被标记的字段不导出到Protobuf二进制中
+
+### tag
+tag在Type表中的"标记"字段绑定
+
 
 ## 启用缓冲
 命令行中加入-usecache=true, 将启用缓存功能, 加速导出速度

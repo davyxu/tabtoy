@@ -25,6 +25,10 @@ func exportTable(globals *model.Globals, pbFile protoreflect.FileDescriptor, tab
 
 		for col, field := range headers {
 
+			if globals.CanDoAction(model.ActionNoGenPbBinary, field) {
+				continue
+			}
+
 			fd := md.Fields().ByName(protoreflect.Name(field.FieldName))
 
 			// 在单元格找到值

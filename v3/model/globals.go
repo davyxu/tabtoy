@@ -20,8 +20,7 @@ type Globals struct {
 	Datas DataTableList // 输出的字符串格式的数据表
 
 	GenBinary bool
-
-	MatchTag string
+	TagActions []TagAction // 用tag选中目标, 做action
 
 	ParaLoading bool
 	UseGBKCSV   bool

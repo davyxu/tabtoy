@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func Loadheader(sheet helper.TableSheet, tab *model.DataTable, resolveTableType string, typeTab *model.TypeTable) {
+func LoadHeader(sheet helper.TableSheet, tab *model.DataTable, resolveTableType string, typeTab *model.TypeTable) {
 	// 读取表头
 
 	for col := 0; ; col++ {

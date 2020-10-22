@@ -16,6 +16,10 @@ func writeStruct(globals *model.Globals, tab *model.DataTable, row int) (*Binary
 			continue
 		}
 
+		if globals.CanDoAction(model.ActionNoGenBinary, header) {
+			continue
+		}
+
 		cell := tab.GetCell(row, header.Cell.Col)
 
 		if cell == nil {

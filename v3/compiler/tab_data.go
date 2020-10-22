@@ -47,7 +47,7 @@ func LoadDataTable(filegetter helper.FileGetter, fileName, headerType, resolveHe
 
 		ret = append(ret, tab)
 
-		Loadheader(sheet, tab, resolveHeaderType, typeTab)
+		LoadHeader(sheet, tab, resolveHeaderType, typeTab)
 
 		// 遍历所有数据行
 		for row := 0; ; row++ {

@@ -78,6 +78,14 @@ func GetIndicesByTable(tab *model.DataTable) (ret []TableIndices) {
 	return
 }
 
+func GetIndices(globals *model.Globals) (ret []TableIndices) {
+	for _, tab := range globals.Datas.AllTables() {
+		ret = append(ret, GetIndicesByTable(tab)...)
+	}
+
+	return
+}
+
 func init() {
 	UsefulFunc["HasKeyValueTypes"] = func(globals *model.Globals) bool {
 		return len(KeyValueTypeNames(globals)) > 0
@@ -87,13 +95,5 @@ func init() {
 
 	UsefulFunc["GetIndicesByTable"] = GetIndicesByTable
 
-	UsefulFunc["GetIndices"] = func(globals *model.Globals) (ret []TableIndices) {
-
-		for _, tab := range globals.Datas.AllTables() {
-			ret = append(ret, GetIndicesByTable(tab)...)
-		}
-
-		return
-
-	}
+	UsefulFunc["GetIndices"] = GetIndices
 }

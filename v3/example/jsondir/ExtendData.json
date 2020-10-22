@@ -1,6 +1,6 @@
 {
 	"@Tool": "github.com/davyxu/tabtoy",
-	"@Version": "3.0.1",
+	"@Version": "3.1.0",
 	"ExtendData": [
 		{
 			"Additive": 1.1
