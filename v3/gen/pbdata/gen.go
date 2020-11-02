@@ -25,7 +25,7 @@ func exportTable(globals *model.Globals, pbFile protoreflect.FileDescriptor, tab
 
 		for col, field := range headers {
 
-			if globals.CanDoAction(model.ActionNoGenPbBinary, field) {
+			if globals.CanDoAction(model.ActionNoGenFieldPbBinary, field) {
 				continue
 			}
 

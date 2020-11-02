@@ -11,6 +11,11 @@ func loadVariantTables(globals *model.Globals, kvList, dataList *model.DataTable
 	// 遍历索引里的每一行配置
 	for _, pragma := range globals.IndexList {
 
+		if globals.CanDoAction(model.ActionNoGenTable, pragma) {
+			report.Log.Debugf("   (%s) %s   action=nogentable, ignored(tag: %v)", pragma.TableType, pragma.TableFileName, pragma.Tags)
+			continue
+		}
+
 		report.Log.Debugf("   (%s) %s", pragma.TableType, pragma.TableFileName)
 
 		switch pragma.Kind {

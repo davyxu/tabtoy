@@ -28,7 +28,7 @@ func Output(globals *model.Globals, param string) (err error) {
 			rowData := map[string]interface{}{}
 			for col, header := range headers {
 
-				if globals.CanDoAction(model.ActionNoGenJsonDir, header) {
+				if globals.CanDoAction(model.ActionNoGenFieldJsonDir, header) {
 					continue
 				}
 
@@ -81,7 +81,7 @@ func Generate(globals *model.Globals) (data []byte, err error) {
 			rowData := map[string]interface{}{}
 			for col, header := range headers {
 
-				if globals.CanDoAction(model.ActionNoGenJson, header) {
+				if globals.CanDoAction(model.ActionNoGenFieldJson, header) {
 					continue
 				}
 

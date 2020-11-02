@@ -16,7 +16,7 @@ func writeStruct(globals *model.Globals, tab *model.DataTable, row int) (*Binary
 			continue
 		}
 
-		if globals.CanDoAction(model.ActionNoGenBinary, header) {
+		if globals.CanDoAction(model.ActionNoGenFieldBinary, header) {
 			continue
 		}
 

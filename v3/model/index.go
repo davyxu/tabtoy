@@ -20,7 +20,7 @@ type IndexDefine struct {
 	Tags          []string  `tb_name:"标记"` // | 分割
 }
 
-func (self *IndexDefine) MatchTag(tag string) bool {
+func (self *IndexDefine) ContainTag(tag string) bool {
 	for _, s := range self.Tags {
 		if s == tag {
 			return true

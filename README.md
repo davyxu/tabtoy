@@ -612,8 +612,34 @@ ID | #名称
 
 表头中, 列字段首字符为#时，该列所有数据按默认值导出 
 
+## 不导出指定表
+实现此功能需要使用到TagAction, 参考下面例子配置:
+
+在Index表中:
+
+模式 | 表类型 | 表文件名 | 标记
+---|---|---|---|
+数据表 | Effect | Effect.csv | client
+数据表 | Password | Server.csv | server
+
+* 客户端数据导出
+导出参数中新增参数
+```shell script
+--tag_action=nogentable:server
+```
+表示, 不导出带有server标记的所有表格
+
+* 服务器数据导出
+导出参数中新增参数
+```shell script
+--tag_action=nogentable:client
+```
+表示, 不导出带有client标记的所有表格
+
 ## 不输出指定列数据
 实现此功能需要使用到TagAction, 参考下面例子配置:
+
+在Type表中:
 
 种类 | 对象类型 | 标识名 | 字段名 | 字段类型 | 数组切割| 值 | 索引 | 标记
 ---|---|---|---|---|---|---|---|---
@@ -630,14 +656,14 @@ ID | #名称
 * 客户端数据导出
 导出参数中新增参数
 ```shell script
---tag_action=nogen_binary:server
+--tag_action=nogenfield_binary:server
 ```
 表示: server标记的字段不导出到二进制
 
 * 服务器数据导出  
 导出参数中新增参数
 ```shell script
---tag_action=nogen_json:client
+--tag_action=nogenfield_json:client
 ```
 表示: client标记的字段不导出到json完整文件
 
@@ -651,16 +677,13 @@ ID | #名称
 * 被标记的tag, 将被对应action处理
 
 ###action类型
-action | 功能
----|---|
-nogen_json | 被标记的字段不导出到json完整文件中
-nogen_jsondir | 被标记的字段不导出到每个表文件json
-nogen_binary | 被标记的字段不导出到二进制中
-nogen_pbbin | 被标记的字段不导出到Protobuf二进制中
-
-### tag
-tag在Type表中的"标记"字段绑定
-
+action | 适用范围 | 功能
+---|---|---|
+nogenfield_json | Type表 | 被标记的字段不导出到json完整文件中
+nogenfield_jsondir| Type表 | 被标记的字段不导出到每个表文件json
+nogenfield_binary| Type表 | 被标记的字段不导出到二进制中
+nogenfield_pbbin| Type表 | 被标记的字段不导出到Protobuf二进制中
+nogentable| Index表 | 被标记的表不会导出到任何输出中
 
 ## 启用缓冲
 命令行中加入-usecache=true, 将启用缓存功能, 加速导出速度

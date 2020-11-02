@@ -6,10 +6,11 @@ import (
 )
 
 const (
-	ActionNoGenJson     = "nogen_json"
-	ActionNoGenJsonDir  = "nogen_jsondir"
-	ActionNoGenBinary   = "nogen_binary"
-	ActionNoGenPbBinary = "nogen_pbbin"
+	ActionNoGenFieldJson     = "nogenfield_json"
+	ActionNoGenFieldJsonDir  = "nogenfield_jsondir"
+	ActionNoGenFieldBinary   = "nogenfield_binary"
+	ActionNoGenFieldPbBinary = "nogenfield_pbbin"
+	ActionNoGenTable         = "nogentab"
 )
 
 // 用tag选中目标, 做action
@@ -52,6 +53,10 @@ func (self *Globals) CanDoAction(action string, obj interface{}) bool {
 						return true
 					}
 				case *TypeDefine:
+					if v.ContainTag(tag) {
+						return true
+					}
+				case *IndexDefine:
 					if v.ContainTag(tag) {
 						return true
 					}
