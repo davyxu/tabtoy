@@ -24,10 +24,12 @@ func LoadTypeTable(typeTab *model.TypeTable, indexGetter helper.FileGetter, file
 				continue
 			}
 
+			if objtype.Kind == model.TypeUsage_None {
+				report.ReportError("UnknownTypeKind", objtype.ObjectType, objtype.FieldName)
+			}
+
 			if typeTab.FieldByName(objtype.ObjectType, objtype.FieldName) != nil {
-
 				cell := tab.GetValueByName(row, "字段名")
-
 				if cell != nil {
 					report.ReportError("DuplicateTypeFieldName", cell.String(), objtype.ObjectType, objtype.FieldName)
 				} else {

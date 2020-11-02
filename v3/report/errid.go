@@ -22,5 +22,6 @@ var (
 		"DataMissMatchTypeDefine":        {CHS: "数据与定义类型不匹配"},
 		"ArrayMultiColumnDefineNotMatch": {CHS: "数组类型多列跨表定义不一致"},
 		"InvalidFieldName":               {CHS: "非法字段名"},
+		"UnknownTypeKind":                {CHS: "非法的类型种类"},
 	}
 )
