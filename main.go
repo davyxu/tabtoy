@@ -22,12 +22,6 @@ func main() {
 		return
 	}
 
-	if build.Version == "" {
-		fmt.Println("invalid build")
-		os.Exit(1)
-		return
-	}
-
 	switch *paramMode {
 	case "v3":
 
