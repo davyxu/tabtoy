@@ -21,6 +21,7 @@ var (
 		{"int32", "int32", "Int32", "int", "int32", "0"},
 		{"int64", "int64", "Int64", "long", "int64", "0"},
 		{"int", "int32", "Int32", "int", "int32", "0"},
+		{"uint", "uint32", "UInt32", "int", "uint32", "0"},
 		{"uint16", "uint16", "UInt16", "int", "uint32", "0"},
 		{"uint32", "uint32", "UInt32", "int", "uint32", "0"},
 		{"uint64", "uint64", "UInt64", "long", "uint64", "0"},
