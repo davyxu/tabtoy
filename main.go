@@ -4,16 +4,12 @@ import (
 	"flag"
 	"fmt"
 	"github.com/davyxu/golog"
+	"github.com/davyxu/tabtoy/build"
 	"github.com/pkg/profile"
 	"os"
 )
 
 var log = golog.New("main")
-
-const (
-	Version = "3.1.0"
-)
-
 var enableProfile = false
 
 func main() {
@@ -22,7 +18,13 @@ func main() {
 
 	// 版本
 	if *paramVersion {
-		fmt.Printf("%s", Version)
+		build.Print()
+		return
+	}
+
+	if build.Version == "" {
+		fmt.Println("invalid build")
+		os.Exit(1)
 		return
 	}
 

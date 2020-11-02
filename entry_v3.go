@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"github.com/davyxu/tabtoy/build"
 	"github.com/davyxu/tabtoy/v3/compiler"
 	"github.com/davyxu/tabtoy/v3/gen"
 	"github.com/davyxu/tabtoy/v3/gen/bindata"
@@ -106,7 +107,7 @@ func GenFileByList(globals *model.Globals) error {
 
 func V3Entry() {
 	globals := model.NewGlobals()
-	globals.Version = Version
+	globals.Version = build.Version
 	globals.ParaLoading = *paramPara
 	if *paramUseCache {
 		globals.CacheDir = *paramCacheDir
