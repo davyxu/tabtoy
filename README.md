@@ -676,7 +676,7 @@ ID | #名称
 * | 表示多个action
 * 被标记的tag, 将被对应action处理
 
-###action类型
+### action类型
 action | 适用范围 | 功能
 ---|---|---|
 nogenfield_json | Type表 | 被标记的字段不导出到json完整文件中
