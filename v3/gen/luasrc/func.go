@@ -41,10 +41,10 @@ func WrapValue(globals *model.Globals, cell *model.Cell, valueType *model.TypeDe
 
 func init() {
 	UsefulFunc["WrapTabValue"] = func(globals *model.Globals, dataTable *model.DataTable, allHeaders []*model.TypeDefine, row, col int) (ret string) {
-
 		// 找到完整的表头（按完整表头遍历）
 		header := allHeaders[col]
 
+		
 		if header == nil {
 			return ""
 		}
@@ -57,8 +57,25 @@ func init() {
 			return WrapValue(globals, valueCell, header)
 		} else {
 			// 这个表中没有这列数据
-			return WrapValue(globals, nil, header)
+			return WrapValue(globals, nil, header) 
 		}
 	}
+
+	UsefulFunc["IsWrapFieldName"] = func(globals *model.Globals, dataTable *model.DataTable, allHeaders []*model.TypeDefine, row, col int) (ret bool) {
+		// 找到完整的表头（按完整表头遍历）
+		header := allHeaders[col]
+
+		
+		if header == nil {
+			return false
+		}
+
+		if globals.CanDoAction(model.ActionNoGennFieldLua, header) {
+			return false
+		}
+
+		return true
+	}
+
 
 }
