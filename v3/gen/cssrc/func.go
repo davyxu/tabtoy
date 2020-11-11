@@ -104,4 +104,12 @@ func init() {
 
 	}
 
+	UsefulFunc["IsWarpFieldName"] = func(globals *model.Globals, tf *model.TypeDefine) bool {
+		
+		if globals.CanDoAction(model.ActionNoGennFieldCsharp, tf) {
+			return false
+		}
+		return true 
+	}
+
 }
