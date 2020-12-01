@@ -1,6 +1,6 @@
 {
 	"@Tool": "github.com/davyxu/tabtoy",
-	"@Version": "3.1.0",
+	"@Version": "",
 	"ExampleData": [
 		{
 			"Accuracy": 1.602176,
@@ -72,7 +72,7 @@
 				10,
 				20
 			],
-			"ServerIP": "8.8.8.8",
+			"ServerIP()": "8.8.8.8",
 			"ServerPort": 1024
 		}
 	],

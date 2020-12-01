@@ -1,6 +1,6 @@
 {
 	"@Tool": "github.com/davyxu/tabtoy",
-	"@Version": "3.1.0",
+	"@Version": "",
 	"ExampleData": [
 		{
 			"Accuracy": 1.602176,

@@ -73,6 +73,9 @@ func Compile(globals *model.Globals) (ret error) {
 		}
 	}
 
+	// KV转置后, 再检查一次
+	checker.CheckType(globals.Types)
+
 	report.Log.Debugln("Merge data tables...")
 
 	// 合并所有的数据表
