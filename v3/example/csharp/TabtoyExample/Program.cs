@@ -14,7 +14,6 @@ namespace TabtoyExample
 
                 var reader = new tabtoy.TableReader(stream);
 
-
                 var tab = new main.Table();
 
                 try

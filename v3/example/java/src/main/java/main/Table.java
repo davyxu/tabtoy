@@ -61,7 +61,7 @@ public class Table {
 	}
 	
 	public class ExampleKV { 	
-		public String ServerIP() = ""; // 服务器IP; 	
+		public String ServerIP = ""; // 服务器IP; 	
 		public int ServerPort = 0; // 服务器端口; 	
 		public int[] GroupID = new int[]{}; // 分组; 
 	}

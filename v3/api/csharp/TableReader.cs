@@ -33,6 +33,9 @@ namespace tabtoy
         BinaryReader _binaryReader;
         long _boundPos;
 
+        // 将字符串中的"\n"转换为\n
+        public bool ConvertNewLine { get; set; }
+
         public TableReader(Stream stream)
         {
             _binaryReader = new BinaryReader(stream);
@@ -47,6 +50,7 @@ namespace tabtoy
 
         public TableReader(TableReader reader, long boundpos)
         {
+            ConvertNewLine = reader.ConvertNewLine;
             _binaryReader = reader._binaryReader;
             _boundPos = boundpos;
         }
@@ -315,6 +319,13 @@ namespace tabtoy
             ValidateDataBound(sizeof(Byte) * len);
 
             v = encoding.GetString(_binaryReader.ReadBytes((int)len));
+
+            if (ConvertNewLine)
+            {
+
+                v = v.Replace("\\n", "\n");
+            }
+            
         }
 
         public void ReadEnum<T>(ref T v)
@@ -413,7 +424,7 @@ namespace tabtoy
 
             for (int i = 0; i < len; i++)
             {
-                T element = default(T);
+                T element = default;
                 ReadStruct<T>(ref element);
                 v.Add(element);
             }

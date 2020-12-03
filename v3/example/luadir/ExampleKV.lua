@@ -4,7 +4,7 @@
 return {
 	init = function( g )
 		g.ExampleKV = { 
-			{ ServerIP() = "8.8.8.8", ServerPort = 1024, GroupID = {10,20}, },  
+			{ ServerIP = "8.8.8.8", ServerPort = 1024, GroupID = {10,20}, },  
 		}
 		
 		return g

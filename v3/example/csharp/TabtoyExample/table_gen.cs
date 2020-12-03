@@ -123,7 +123,7 @@ namespace main
 	
 	public partial class ExampleKV : tabtoy.ITableSerializable
 	{ 
-		public string ServerIP() = string.Empty;
+		public string ServerIP = string.Empty;
 		public UInt16 ServerPort = 0;
 		public List<Int32> GroupID = new List<Int32>();
 		
@@ -137,7 +137,7 @@ namespace main
 				{ 
 					case 0x80000:
                 	{
-						reader.ReadString( ref ServerIP() );
+						reader.ReadString( ref ServerIP );
                 	}
 					break;
 					case 0x40001:
