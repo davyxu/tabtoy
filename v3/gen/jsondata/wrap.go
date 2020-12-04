@@ -1,7 +1,6 @@
 package jsondata
 
 import (
-	"github.com/davyxu/tabtoy/util"
 	"github.com/davyxu/tabtoy/v3/model"
 	"strconv"
 )
@@ -38,7 +37,7 @@ func wrapSingleValue(globals *model.Globals, valueType *model.TypeDefine, value 
 
 	switch {
 	case goType == "string": // 字符串
-		return util.StringEscape(value)
+		return value // json自己会做转义, 所以这里无需转义
 	case goType == "float32":
 
 		if value == "" {
