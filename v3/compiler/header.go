@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func LoadHeader(sheet helper.TableSheet, tab *model.DataTable, resolveTableType string, typeTab *model.TypeTable) {
+func LoadHeader(sheet helper.TableSheet, tab *model.DataTable, resolveTableType string, typeTab *model.TypeTable) (maxCol int) {
 	// 读取表头
 
 	for col := 0; ; col++ {
@@ -18,6 +18,8 @@ func LoadHeader(sheet helper.TableSheet, tab *model.DataTable, resolveTableType 
 		if headerValue == "" {
 			break
 		}
+
+		maxCol = col
 		// 列头带#时，本列忽略
 		if strings.HasPrefix(headerValue, "#") {
 			continue
@@ -36,6 +38,8 @@ func LoadHeader(sheet helper.TableSheet, tab *model.DataTable, resolveTableType 
 	resolveHeaderFields(tab, resolveTableType, typeTab)
 
 	checkHeaderTypes(tab, typeTab)
+
+	return
 }
 
 func checkHeaderTypes(tab *model.DataTable, typeTab *model.TypeTable) {

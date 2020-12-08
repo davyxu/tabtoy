@@ -130,9 +130,13 @@ func (self *CSVSheet) MaxColumn() int {
 	return self.file.MaxCol()
 }
 
-func (self *CSVSheet) IsFullRowEmpty(row int) bool {
+func (self *CSVSheet) IsRowEmpty(row, maxCol int) bool {
 
-	for col := 0; col < self.file.MaxCol(); col++ {
+	if maxCol == -1 {
+		maxCol = self.file.MaxCol()
+	}
+
+	for col := 0; col < maxCol; col++ {
 
 		data := self.GetValue(row, col, nil)
 

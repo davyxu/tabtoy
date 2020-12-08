@@ -49,7 +49,7 @@ func ConvertToCSV(inputFile TableFile) (outputFile TableFile) {
 	// 遍历所有数据行
 	for row := 0; ; row++ {
 
-		if inSheet.IsFullRowEmpty(row) {
+		if inSheet.IsRowEmpty(row, -1) {
 			break
 		}
 

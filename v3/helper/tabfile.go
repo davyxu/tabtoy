@@ -29,7 +29,7 @@ type TableSheet interface {
 	WriteRow(valueList ...string)
 
 	// 检测本行是否全空(结束)
-	IsFullRowEmpty(row int) bool
+	IsRowEmpty(row, maxCol int) bool
 }
 
 func ReadSheetRow(sheet TableSheet, row int) (ret []string) {

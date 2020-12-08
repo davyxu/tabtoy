@@ -82,9 +82,13 @@ func (self *XlsxSheet) MaxColumn() int {
 	return self.Sheet.MaxCol
 }
 
-func (self *XlsxSheet) IsFullRowEmpty(row int) bool {
+func (self *XlsxSheet) IsRowEmpty(row, maxCol int) bool {
 
-	for col := 0; col < self.Sheet.MaxCol; col++ {
+	if maxCol == -1 {
+		maxCol = self.Sheet.MaxCol
+	}
+
+	for col := 0; col < maxCol; col++ {
 
 		data := self.GetValue(row, col, nil)
 

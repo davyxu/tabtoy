@@ -47,12 +47,12 @@ func LoadDataTable(filegetter helper.FileGetter, fileName, headerType, resolveHe
 
 		ret = append(ret, tab)
 
-		LoadHeader(sheet, tab, resolveHeaderType, typeTab)
+		maxCol := LoadHeader(sheet, tab, resolveHeaderType, typeTab)
 
 		// 遍历所有数据行
 		for row := 0; ; row++ {
 
-			if sheet.IsFullRowEmpty(row) {
+			if sheet.IsRowEmpty(row, maxCol+1) {
 				break
 			}
 
