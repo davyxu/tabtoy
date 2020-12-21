@@ -625,14 +625,14 @@ ID | #名称
 * 客户端数据导出
 导出参数中新增参数
 ```shell script
---tag_action=nogentable:server
+--tag_action=nogentab:server
 ```
 表示, 不导出带有server标记的所有表格
 
 * 服务器数据导出
 导出参数中新增参数
 ```shell script
---tag_action=nogentable:client
+--tag_action=nogentab:client
 ```
 表示, 不导出带有client标记的所有表格
 
@@ -683,7 +683,7 @@ nogenfield_json | Type表 | 被标记的字段不导出到json完整文件中
 nogenfield_jsondir| Type表 | 被标记的字段不导出到每个表文件json
 nogenfield_binary| Type表 | 被标记的字段不导出到二进制中
 nogenfield_pbbin| Type表 | 被标记的字段不导出到Protobuf二进制中
-nogentable| Index表 | 被标记的表不会导出到任何输出中
+nogentab| Index表 | 被标记的表不会导出到任何输出中
 
 ## 启用缓冲
 命令行中加入-usecache=true, 将启用缓存功能, 加速导出速度
