@@ -85,7 +85,7 @@ func tableValue2PbValue(globals *model.Globals, cellValue string, valueType *mod
 		if globals.Types.IsEnumKind(pbType) {
 
 			if cellValue == "" {
-				return protoreflect.ValueOfInt32(0)
+				return protoreflect.ValueOfEnum(protoreflect.EnumNumber(0))
 			}
 			enumValue := globals.Types.ResolveEnumValue(pbType, cellValue)
 
