@@ -82,7 +82,7 @@ func resolveHeaderFields(tab *model.DataTable, tableObjectType string, typeTab *
 
 		tf := typeTab.FieldByName(tableObjectType, header.Cell.Value)
 		if tf == nil {
-			report.ReportError("HeaderFieldNotDefined", header.Cell.String())
+			report.ReportError("HeaderFieldNotDefined", header.Cell.String(), tableObjectType)
 		}
 
 		if headerValueExists(index+1, header.Cell.Value, tab.Headers) && !tf.IsArray() {
