@@ -23,3 +23,8 @@ v3/example/binary/*.bin
 *.zip
 *.gz
 tabtoy
+*.pbb
+*.
+*.DS_Store
+protoc
+~*.xlsx

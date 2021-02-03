@@ -57,6 +57,7 @@ func Compile(globals *model.Globals) (ret error) {
 
 	report.Log.Debugln("Checking types...")
 	checker.CheckType(globals.Types)
+	checker.PreCheck(&dataList)
 
 	if kvList.Count() > 0 {
 		report.Log.Debugln("Merge key-value tables...")
@@ -72,12 +73,15 @@ func Compile(globals *model.Globals) (ret error) {
 		}
 	}
 
+	// KV转置后, 再检查一次
+	checker.CheckType(globals.Types)
+
 	report.Log.Debugln("Merge data tables...")
 
 	// 合并所有的数据表
 	MergeData(&dataList, &globals.Datas, globals.Types)
 
-	checker.CheckData(globals)
+	checker.PostCheck(globals)
 
 	return nil
 }

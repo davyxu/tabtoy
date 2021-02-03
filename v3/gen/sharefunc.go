@@ -57,6 +57,35 @@ func WrapSingleValue(globals *model.Globals, valueType *model.TypeDefine, value 
 	return value
 }
 
+func GetIndicesByTable(tab *model.DataTable) (ret []TableIndices) {
+	// 遍历输入数据的每一列
+	for _, header := range tab.Headers {
+
+		// 输入的列头
+		if header.TypeInfo == nil {
+			continue
+		}
+
+		if header.TypeInfo.MakeIndex {
+
+			ret = append(ret, TableIndices{
+				Table:     tab,
+				FieldInfo: header.TypeInfo,
+			})
+		}
+	}
+
+	return
+}
+
+func GetIndices(globals *model.Globals) (ret []TableIndices) {
+	for _, tab := range globals.Datas.AllTables() {
+		ret = append(ret, GetIndicesByTable(tab)...)
+	}
+
+	return
+}
+
 func init() {
 	UsefulFunc["HasKeyValueTypes"] = func(globals *model.Globals) bool {
 		return len(KeyValueTypeNames(globals)) > 0
@@ -64,29 +93,7 @@ func init() {
 
 	UsefulFunc["GetKeyValueTypeNames"] = KeyValueTypeNames
 
-	UsefulFunc["GetIndices"] = func(globals *model.Globals) (ret []TableIndices) {
+	UsefulFunc["GetIndicesByTable"] = GetIndicesByTable
 
-		for _, tab := range globals.Datas.AllTables() {
-
-			// 遍历输入数据的每一列
-			for _, header := range tab.Headers {
-
-				// 输入的列头
-				if header.TypeInfo == nil {
-					continue
-				}
-
-				if header.TypeInfo.MakeIndex {
-
-					ret = append(ret, TableIndices{
-						Table:     tab,
-						FieldInfo: header.TypeInfo,
-					})
-				}
-			}
-		}
-
-		return
-
-	}
+	UsefulFunc["GetIndices"] = GetIndices
 }

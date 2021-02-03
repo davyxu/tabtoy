@@ -9,15 +9,14 @@ import (
 
 var UsefulFunc = template.FuncMap{}
 
-func WrapValue(globals *model.Globals, value string, valueType *model.TypeDefine) string {
+func WrapValue(globals *model.Globals, cell *model.Cell, valueType *model.TypeDefine) string {
 	if valueType.IsArray() {
 
 		var sb strings.Builder
 		sb.WriteString("{")
 
-		// 空的单元格，导出空数组，除非强制指定填充默认值
-		if value != "" {
-			for index, elementValue := range strings.Split(value, valueType.ArraySplitter) {
+		if cell != nil {
+			for index, elementValue := range cell.ValueList {
 				if index > 0 {
 					sb.WriteString(",")
 				}
@@ -30,18 +29,22 @@ func WrapValue(globals *model.Globals, value string, valueType *model.TypeDefine
 		return sb.String()
 
 	} else {
+
+		var value string
+		if cell != nil {
+			value = cell.Value
+		}
+
 		return gen.WrapSingleValue(globals, valueType, value)
 	}
-
-	return value
 }
 
 func init() {
 	UsefulFunc["WrapTabValue"] = func(globals *model.Globals, dataTable *model.DataTable, allHeaders []*model.TypeDefine, row, col int) (ret string) {
-
 		// 找到完整的表头（按完整表头遍历）
 		header := allHeaders[col]
 
+		
 		if header == nil {
 			return ""
 		}
@@ -51,11 +54,28 @@ func init() {
 
 		if valueCell != nil {
 
-			return WrapValue(globals, valueCell.Value, header)
+			return WrapValue(globals, valueCell, header)
 		} else {
 			// 这个表中没有这列数据
-			return WrapValue(globals, "", header)
+			return WrapValue(globals, nil, header) 
 		}
 	}
+
+	UsefulFunc["IsWrapFieldName"] = func(globals *model.Globals, dataTable *model.DataTable, allHeaders []*model.TypeDefine, row, col int) (ret bool) {
+		// 找到完整的表头（按完整表头遍历）
+		header := allHeaders[col]
+
+		
+		if header == nil {
+			return false
+		}
+
+		if globals.CanDoAction(model.ActionNoGennFieldLua, header) {
+			return false
+		}
+
+		return true
+	}
+
 
 }

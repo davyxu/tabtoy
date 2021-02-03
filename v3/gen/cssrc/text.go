@@ -15,25 +15,26 @@ namespace {{.PackageName}}
 	}
 	{{end}}	{{range $sn, $objName := $.Types.StructNames}}
 	public partial class {{$objName}} : tabtoy.ITableSerializable
-	{ {{range $fi,$field := $.Types.AllFieldByName $objName}}
-		public {{CSType $field}} {{$field.FieldName}} = {{CSDefaultValue $ $field}}; {{end}}
-
+	{ 
+		{{range $fi,$field := $.Types.AllFieldByName $objName}}{{if IsWarpFieldName $ $field}}public {{CSType $field}} {{$field.FieldName}} = {{CSDefaultValue $ $field}};
+		{{end}}{{end}}
 		{{if $.GenBinary}}#region Deserialize Code
 		public void Deserialize( tabtoy.TableReader reader )
 		{
-			UInt32 tag = 0;
-            while ( reader.ReadTag(ref tag) )
+			UInt32 mamaSaidTagNameShouldBeLong = 0;
+            while ( reader.ReadTag(ref mamaSaidTagNameShouldBeLong) )
             {
- 				switch (tag)
-                { {{range $fi,$field := $.Types.AllFieldByName $objName}}
-                	case {{CSTag $ $fi $field}}:
+ 				switch (mamaSaidTagNameShouldBeLong)
+				{ 
+					{{range $fi,$field := $.Types.AllFieldByName $objName}}{{if IsWarpFieldName $ $field}}case {{CSTag $ $fi $field}}:
                 	{
 						reader.Read{{CSReader $ $field}}( ref {{$field.FieldName}} );
                 	}
-                	break;{{end}}
+					break;
+					{{end}}{{end}}
                     default:
                     {
-                        reader.SkipFiled(tag);                            
+                        reader.SkipFiled(mamaSaidTagNameShouldBeLong);                            
                     }
                     break;
 				}
@@ -49,9 +50,10 @@ namespace {{.PackageName}}
 		// table: {{$tab.HeaderType}}
 		public List<{{$tab.HeaderType}}> {{$tab.HeaderType}} = new List<{{$tab.HeaderType}}>(); {{end}}
 
-		// Indices {{range $ii, $idx := GetIndices $}}
-		public Dictionary<{{CSType $idx.FieldInfo}},{{$idx.Table.HeaderType}}> {{$idx.Table.HeaderType}}By{{$idx.FieldInfo.FieldName}} = new Dictionary<{{CSType $idx.FieldInfo}},{{$idx.Table.HeaderType}}>(); {{end}}
-
+		// Indices
+		{{range $ii, $idx := GetIndices $}}{{if IsWarpFieldName $ $idx.FieldInfo}}public Dictionary<{{CSType $idx.FieldInfo}},{{$idx.Table.HeaderType}}> {{$idx.Table.HeaderType}}By{{$idx.FieldInfo.FieldName}} = new Dictionary<{{CSType $idx.FieldInfo}},{{$idx.Table.HeaderType}}>();
+		{{end}}{{end}}
+		
 		{{if HasKeyValueTypes $}}
 		//{{range $ti, $name := GetKeyValueTypeNames $}} table: {{$name}}
 		public {{$name}} GetKeyValue_{{$name}}()
@@ -61,18 +63,19 @@ namespace {{.PackageName}}
 
 		public void ResetData( )
 		{   {{range $ti, $tab := $.Datas.AllTables}}
-			{{$tab.HeaderType}}.Clear(); {{end}} {{range $ii, $idx := GetIndices $}}
-			{{$idx.Table.HeaderType}}By{{$idx.FieldInfo.FieldName}}.Clear(); {{end}}	
+			{{$tab.HeaderType}}.Clear(); {{end}} 
+			{{range $ii, $idx := GetIndices $}}{{if IsWarpFieldName $ $idx.FieldInfo}}{{$idx.Table.HeaderType}}By{{$idx.FieldInfo.FieldName}}.Clear();
+			{{end}}{{end}}	
 		}
 		{{if $.GenBinary}}
 		public void Deserialize( tabtoy.TableReader reader )
 		{	
 			reader.ReadHeader();
 
-			UInt32 tag = 0;
-            while ( reader.ReadTag(ref tag) )
+			UInt32 mamaSaidTagNameShouldBeLong = 0;
+            while ( reader.ReadTag(ref mamaSaidTagNameShouldBeLong) )
             {
-				if (tag == 0x6f0000)
+				if (mamaSaidTagNameShouldBeLong == 0x6f0000)
 				{
                     var tabName = string.Empty;
                     reader.ReadString(ref tabName);
@@ -85,18 +88,18 @@ namespace {{.PackageName}}
 						break;{{end}}
 						default:
 						{
-							reader.SkipFiled(tag);                            
+							reader.SkipFiled(mamaSaidTagNameShouldBeLong);                            
 						}
 						break;
 					}
 				}
 			}
 			{{range $ii, $idx := GetIndices $}}	
-			foreach( var kv in {{$idx.Table.HeaderType}} )
+			{{if IsWarpFieldName $ $idx.FieldInfo}}foreach( var kv in {{$idx.Table.HeaderType}} )
 			{
 				{{$idx.Table.HeaderType}}By{{$idx.FieldInfo.FieldName}}[kv.{{$idx.FieldInfo.FieldName}}] = kv;
 			}
-			{{end}}
+			{{end}}{{end}}
 		}{{end}}
 	}
 }

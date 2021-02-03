@@ -4,7 +4,6 @@ import (
 	"github.com/davyxu/tabtoy/v3/model"
 	"github.com/davyxu/tabtoy/v3/report"
 	"strconv"
-	"strings"
 )
 
 // 检查数据与定义类型是否匹配
@@ -35,18 +34,15 @@ func checkDataType(globals *model.Globals) {
 				crrCell = inputCell
 				currHeader = header
 
-				if inputCell.Value == "" {
-					continue
-				}
-
 				if header.TypeInfo.IsArray() {
-					for _, value := range strings.Split(inputCell.Value, header.TypeInfo.ArraySplitter) {
+					for _, value := range inputCell.ValueList {
+
 						err := checkSingleValue(header, value)
 						if err != nil {
 							report.ReportError("DataMissMatchTypeDefine", currHeader.TypeInfo.FieldType, crrCell.String())
 						}
 					}
-				} else {
+				} else if inputCell.Value != "" {
 					err := checkSingleValue(header, inputCell.Value)
 					if err != nil {
 						report.ReportError("DataMissMatchTypeDefine", currHeader.TypeInfo.FieldType, crrCell.String())
@@ -61,31 +57,49 @@ func checkDataType(globals *model.Globals) {
 func checkSingleValue(header *model.HeaderField, value string) error {
 	switch model.LanguagePrimitive(header.TypeInfo.FieldType, "go") {
 	case "int16":
+		if value == "" {
+			return nil
+		}
 		_, err := strconv.ParseInt(value, 10, 16)
 		if err != nil {
 			return err
 		}
 	case "int32":
+		if value == "" {
+			return nil
+		}
 		_, err := strconv.ParseInt(value, 10, 32)
 		if err != nil {
 			return err
 		}
 	case "int64":
+		if value == "" {
+			return nil
+		}
 		_, err := strconv.ParseInt(value, 10, 64)
 		if err != nil {
 			return err
 		}
 	case "uint16":
+		if value == "" {
+			return nil
+		}
 		_, err := strconv.ParseUint(value, 10, 16)
 		if err != nil {
 			return err
 		}
 	case "uint32":
+		if value == "" {
+			return nil
+		}
 		_, err := strconv.ParseUint(value, 10, 32)
 		if err != nil {
 			return err
 		}
 	case "uint64":
+		if value == "" {
+			return nil
+		}
 		_, err := strconv.ParseUint(value, 10, 64)
 		if err != nil {
 			return err
@@ -96,6 +110,9 @@ func checkSingleValue(header *model.HeaderField, value string) error {
 			return err
 		}
 	case "float64":
+		if value == "" {
+			return nil
+		}
 		_, err := strconv.ParseFloat(value, 64)
 		if err != nil {
 			return err

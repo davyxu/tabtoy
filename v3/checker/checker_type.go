@@ -4,13 +4,32 @@ import (
 	"github.com/ahmetb/go-linq"
 	"github.com/davyxu/tabtoy/v3/model"
 	"github.com/davyxu/tabtoy/v3/report"
+	"go/token"
 )
 
 func CheckType(typeTab *model.TypeTable) {
 
+	typeTable_CheckField(typeTab)
+
 	typeTable_CheckEnumValueEmpty(typeTab)
 
 	typeTable_CheckDuplicateEnumValue(typeTab)
+
+}
+
+func isValidFieldName(name string) bool {
+
+	return token.IsIdentifier(name)
+}
+
+func typeTable_CheckField(typeTab *model.TypeTable) {
+	for _, td := range typeTab.Raw() {
+
+		if !isValidFieldName(td.Define.FieldName) {
+			cell := td.Tab.GetValueByName(td.Row, "字段名")
+			report.ReportError("InvalidFieldName", cell.String())
+		}
+	}
 }
 
 func typeTable_CheckEnumValueEmpty(typeTab *model.TypeTable) {

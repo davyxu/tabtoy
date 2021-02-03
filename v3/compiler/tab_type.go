@@ -16,8 +16,6 @@ func LoadTypeTable(typeTab *model.TypeTable, indexGetter helper.FileGetter, file
 
 	for _, tab := range tabs {
 
-		//resolveHeaderFields(tab, "TypeDefine", typeTab)
-
 		for row := 1; row < len(tab.Rows); row++ {
 
 			var objtype model.TypeDefine
@@ -26,10 +24,12 @@ func LoadTypeTable(typeTab *model.TypeTable, indexGetter helper.FileGetter, file
 				continue
 			}
 
+			if objtype.Kind == model.TypeUsage_None {
+				report.ReportError("UnknownTypeKind", objtype.ObjectType, objtype.FieldName)
+			}
+
 			if typeTab.FieldByName(objtype.ObjectType, objtype.FieldName) != nil {
-
 				cell := tab.GetValueByName(row, "字段名")
-
 				if cell != nil {
 					report.ReportError("DuplicateTypeFieldName", cell.String(), objtype.ObjectType, objtype.FieldName)
 				} else {

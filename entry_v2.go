@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"github.com/davyxu/tabtoy/build"
 	"github.com/davyxu/tabtoy/v2"
 	"github.com/davyxu/tabtoy/v2/i18n"
 	"github.com/davyxu/tabtoy/v2/printer"
@@ -26,7 +27,7 @@ func V2Entry() {
 		os.Exit(1)
 	}
 
-	g.Version = Version
+	g.Version = build.Version
 
 	for _, v := range flag.Args() {
 		g.InputFileList = append(g.InputFileList, v)
@@ -76,6 +77,10 @@ func V2Entry() {
 
 	if *paramTypeOut != "" {
 		g.AddOutputType("type", *paramTypeOut)
+	}
+
+	if *paramModifyList != "" {
+		g.AddOutputType("modlist", *paramModifyList)
 	}
 
 	if !v2.Run(g) {

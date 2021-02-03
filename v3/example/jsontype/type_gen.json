@@ -1,6 +1,6 @@
 {
 	"@Tool": "github.com/davyxu/tabtoy",
-	"@Version": "3.0.0",
+	"@Version": "3.0.1",
 	"Objects": [
 		{
 			"Name": "ActorType",
@@ -16,20 +16,13 @@
 					"Name": "Pharah",
 					"Type": "int",
 					"Comment": "法鸡",
-					"Value": "1",
-					"Tags": [
-						"k",
-						"n"
-					]
+					"Value": "1"
 				},
 				{
 					"Name": "Junkrat",
 					"Type": "int",
 					"Comment": "狂鼠",
-					"Value": "2",
-					"Tags": [
-						"e"
-					]
+					"Value": "2"
 				},
 				{
 					"Name": "Genji",
@@ -58,19 +51,17 @@
 				{
 					"Name": "Name",
 					"Type": "string",
-					"Comment": "名称",
-					"Tags": [
-						"a",
-						"b"
-					]
+					"Comment": "名称"
 				},
 				{
 					"Name": "Rate",
 					"Type": "float",
-					"Comment": "比例",
-					"Tags": [
-						"c"
-					]
+					"Comment": "比例"
+				},
+				{
+					"Name": "Accuracy",
+					"Type": "double",
+					"Comment": "精度"
 				},
 				{
 					"Name": "Type",
@@ -81,6 +72,17 @@
 					"Name": "Skill",
 					"Type": "int",
 					"Comment": "技能列表",
+					"ArraySplitter": "|"
+				},
+				{
+					"Name": "Buff",
+					"Type": "int",
+					"Comment": "增益"
+				},
+				{
+					"Name": "TagList",
+					"Type": "string",
+					"Comment": "标记",
 					"ArraySplitter": "|"
 				},
 				{
@@ -103,25 +105,29 @@
 				{
 					"Name": "ServerIP",
 					"Type": "string",
-					"Comment": "服务器IP",
-					"Tags": [
-						"e",
-						"f"
-					]
+					"Comment": "服务器IP"
 				},
 				{
 					"Name": "ServerPort",
 					"Type": "uint16",
-					"Comment": "服务器端口",
-					"Tags": [
-						"g"
-					]
+					"Comment": "服务器端口"
 				},
 				{
 					"Name": "GroupID",
 					"Type": "int",
 					"Comment": "分组",
 					"ArraySplitter": ";"
+				}
+			]
+		},
+		{
+			"Name": "ExtendData",
+			"Type": "Struct",
+			"Fields": [
+				{
+					"Name": "Additive",
+					"Type": "float",
+					"Comment": "附加"
 				}
 			]
 		}

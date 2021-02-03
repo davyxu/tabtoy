@@ -31,11 +31,9 @@ func wrapSingleValue(globals *model.Globals, valueType *model.TypeDefine, value 
 		return ""
 	case valueType.FieldType == "bool":
 
-		switch value {
-		case "是", "yes", "YES", "1", "true", "TRUE", "True":
+		v, _ := model.ParseBool(value)
+		if v {
 			return "true"
-		case "否", "no", "NO", "0", "false", "FALSE", "False":
-			return "false"
 		}
 
 		return "false"
@@ -79,6 +77,8 @@ func init() {
 		switch {
 		case convertedType == "float":
 			ret = "Float"
+		case convertedType == "double":
+			ret = "Double"
 		case convertedType == "string":
 			ret = "String"
 		case convertedType == "bool":
@@ -102,6 +102,14 @@ func init() {
 			return wrapSingleValue(globals, tf, "")
 		}
 
+	}
+
+	UsefulFunc["IsWarpFieldName"] = func(globals *model.Globals, tf *model.TypeDefine) bool {
+		
+		if globals.CanDoAction(model.ActionNoGennFieldCsharp, tf) {
+			return false
+		}
+		return true 
 	}
 
 }

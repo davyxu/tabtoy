@@ -1,13 +1,87 @@
 {
 	"@Tool": "github.com/davyxu/tabtoy",
-	"@Version": "3.0.0",	
-	"ExampleData":[ 
-		{ "ID": 100, "Name": "扎克镇", "Rate": 3.14, "Type": 2, "Skill": [3,1,2], "Multi": [1,2,3] },
-		{ "ID": 200, "Name": "阿努比斯神庙", "Rate": 1.2, "Type": 3, "Skill": [100,0,90], "Multi": [4,0] },
-		{ "ID": 300, "Name": "花村", "Rate": 79.4, "Type": 3, "Skill": [0], "Multi": [] },
-		{ "ID": 400, "Name": "艾兴瓦尔德", "Rate": 0.63, "Type": 4, "Skill": [0], "Multi": [] } 
+	"@Version": "",
+	"ExampleData": [
+		{
+			"Accuracy": 1.602176,
+			"Buff": 100,
+			"ID": 100,
+			"Multi": [
+				1,
+				3
+			],
+			"Name": "扎克镇",
+			"Rate": 3.14,
+			"Skill": [
+				3,
+				1,
+				2
+			],
+			"TagList": [
+				"a",
+				"b"
+			],
+			"Type": 2
+		},
+		{
+			"Accuracy": 3.14159,
+			"Buff": 1,
+			"ID": 200,
+			"Multi": [
+				4,
+				0
+			],
+			"Name": "阿努比斯神庙",
+			"Rate": 1.2,
+			"Skill": [
+				100,
+				0,
+				90
+			],
+			"TagList": [
+				"c"
+			],
+			"Type": 1
+		},
+		{
+			"Accuracy": 0,
+			"Buff": 0,
+			"ID": 300,
+			"Multi": [],
+			"Name": "花村",
+			"Rate": 79.4,
+			"Skill": [],
+			"TagList": [],
+			"Type": 3
+		},
+		{
+			"Accuracy": 0,
+			"Buff": 0,
+			"ID": 400,
+			"Multi": [],
+			"Name": "艾兴瓦尔德",
+			"Rate": 0.63,
+			"Skill": [],
+			"TagList": [],
+			"Type": 4
+		}
 	],
-	"ExampleKV":[ 
-		{ "ServerIP": "8.8.8.8", "ServerPort": 1024, "GroupID": [10,20] } 
+	"ExampleKV": [
+		{
+			"GroupID": [
+				10,
+				20
+			],
+			"ServerIP": "8.8.8.8",
+			"ServerPort": 1024
+		}
+	],
+	"ExtendData": [
+		{
+			"Additive": 1.1
+		},
+		{
+			"Additive": 1.2
+		}
 	]
 }

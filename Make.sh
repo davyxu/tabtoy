@@ -1,32 +1,28 @@
 #!/usr/bin/env bash
-
-#export GOPROXY=https://goproxy.io
-
-if [ "$1" == "" ] 
-then
-	echo "Usage: Make.sh version"
-	exit 1
-fi
-
-Version=$1
+Version=3.1.0
 
 export GOARCH=amd64
-export GOOS=windows
+BuildSourcePackage="github.com/davyxu/tabtoy/build"
 
-go build -v -o ./tabtoy.exe github.com/davyxu/tabtoy
+BuildBinary()
+{
+  set -e
+  TargetDir=bin/"${1}"
+  mkdir -p "${TargetDir}"
+  export GOOS=${1}
+  BuildTime=$(date -R)
+  GitCommit=$(git rev-parse HEAD)
+  VersionString="-X \"${BuildSourcePackage}.BuildTime=${BuildTime}\" -X \"${BuildSourcePackage}.Version=${Version}\" -X \"${BuildSourcePackage}.GitCommit=${GitCommit}\""
 
-tar zcvf tabtoy-${Version}-win64.tar.gz ./tabtoy.exe
+  go build -v -p 4 -o "${TargetDir}"/tabtoy -ldflags "${VersionString}" github.com/davyxu/tabtoy
+  PackageDir=$(pwd)
+  cd "${TargetDir}"
+  tar zcvf "${PackageDir}"/tabtoy-${Version}-"${1}"-x86_64.tar.gz tabtoy
+  cd "${PackageDir}"
+}
 
-export GOARCH=amd64
-export GOOS=linux
 
-go build -v -o ./tabtoy github.com/davyxu/tabtoy
-	
-tar zcvf tabtoy-${Version}-linux-x86_64.tar.gz ./tabtoy
 
-export GOARCH=amd64
-export GOOS=darwin
-
-go build -v -o ./tabtoy github.com/davyxu/tabtoy
-	
-tar zcvf tabtoy-${Version}-osx-x86_64.tar.gz ./tabtoy
+BuildBinary windows
+BuildBinary linux
+BuildBinary darwin
