@@ -56,7 +56,7 @@ type {{.CombineStructName}} struct { {{range $ti, $tab := $.Datas.AllTables}}
 }
 
 {{if HasKeyValueTypes $}}
-//{{range $ti, $name := GetKeyValueTypeNames $}} table: {{$name}}
+{{range $ti, $name := GetKeyValueTypeNames $}} // table: {{$name}}
 func (self*{{$.CombineStructName}}) GetKeyValue_{{$name}}() *{{$name}}{
 	return self.{{$name}}[0]
 }
