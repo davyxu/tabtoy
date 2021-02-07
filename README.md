@@ -683,6 +683,8 @@ nogenfield_json | Type表 | 被标记的字段不导出到json完整文件中
 nogenfield_jsondir| Type表 | 被标记的字段不导出到每个表文件json
 nogenfield_binary| Type表 | 被标记的字段不导出到二进制中
 nogenfield_pbbin| Type表 | 被标记的字段不导出到Protobuf二进制中
+nogenfield_lua| Type表 | 被标记的字段不导出到Lua中
+nogenfield_csharp| Type表 | 被标记的字段不导出到C#中
 nogentab| Index表 | 被标记的表不会导出到任何输出中
 
 ## 启用缓冲
