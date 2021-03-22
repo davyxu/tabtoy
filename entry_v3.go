@@ -116,7 +116,7 @@ func V3Entry() {
 	globals.IndexFile = *paramIndexFile
 	globals.PackageName = *paramPackageName
 	globals.CombineStructName = *paramCombineStructName
-	globals.GenBinary = *paramBinaryOut != ""
+	globals.GenBinary = *paramBinaryOut != "" || *paramBinaryDir != ""
 
 	idxloader := helper.NewFileLoader(true, globals.CacheDir)
 	idxloader.UseGBKCSV = *paramUseGBKCSV
