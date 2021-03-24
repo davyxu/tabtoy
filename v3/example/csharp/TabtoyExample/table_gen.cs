@@ -229,12 +229,16 @@ namespace main
 					}
 				}
 			}
-				
+		}
+
+		public void IndexData( )
+		{ 	
 			foreach( var kv in ExampleData )
 			{
 				ExampleDataByID[kv.ID] = kv;
 			}
 			
 		}
+		
 	}
 }

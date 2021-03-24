@@ -94,13 +94,17 @@ namespace {{.PackageName}}
 					}
 				}
 			}
-			{{range $ii, $idx := GetIndices $}}	
+		}
+
+		public void IndexData( )
+		{ {{range $ii, $idx := GetIndices $}}	
 			{{if IsWarpFieldName $ $idx.FieldInfo}}foreach( var kv in {{$idx.Table.HeaderType}} )
 			{
 				{{$idx.Table.HeaderType}}By{{$idx.FieldInfo.FieldName}}[kv.{{$idx.FieldInfo.FieldName}}] = kv;
 			}
 			{{end}}{{end}}
-		}{{end}}
+		}
+		{{end}}
 	}
 }
 `
