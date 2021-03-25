@@ -18,19 +18,21 @@ enum ActorType
 message ExampleData
 { 
 	int32 ID = 1; 
-	string Name = 2; 
-	float Rate = 3; 
-	double Accuracy = 4; 
-	ActorType Type = 5; 
-	repeated int32 Skill = 6; 
-	int32 Buff = 7; 
-	repeated string TagList = 8; 
-	repeated int32 Multi = 9; 
+	int32 ID2 = 2; 
+	string Name = 3; 
+	float Rate = 4; 
+	double Accuracy = 5; 
+	ActorType Type = 6; 
+	repeated int32 Skill = 7; 
+	int32 Buff = 8; 
+	repeated string TagList = 9; 
+	repeated int32 Multi = 10; 
 }
 
 message ExtendData
 { 
 	float Additive = 1; 
+	int32 Index2 = 2; 
 }
 
 message ExampleKV

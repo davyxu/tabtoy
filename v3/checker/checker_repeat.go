@@ -31,6 +31,10 @@ func checkRepeat(globals *model.Globals) {
 						continue
 					}
 
+					if inputCell.Value == "" {
+						continue
+					}
+
 					if _, ok := checker[inputCell.Value]; ok {
 
 						report.ReportError("DuplicateValueInMakingIndex", inputCell.String())

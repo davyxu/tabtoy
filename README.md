@@ -160,6 +160,9 @@ using (var stream = new FileStream("../../../../binary/table_gen.bin", FileMode.
         Console.WriteLine(e);
         throw;
     }
+    
+    // 建立所有数据的索引
+    tab.IndexData();
 
     // 表遍历
     foreach (var kv in tab.ExampleData) 
@@ -420,6 +423,8 @@ tabtoy -mode=v3 -index=Index.xlsx -package=main -csharp_out=table_gen.cs -binary
             throw;
         }
     }
+    
+    tab.IndexData(tableName);
 }
 
 static void LoadSpecifiedTable()

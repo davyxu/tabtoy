@@ -4,9 +4,15 @@
 return {
 	init = function( g )
 		g.ExtendData = { 
-			{ Additive = 1.1, }, 
-			{ Additive = 1.2, },  
+			{ Additive = 1.1, Index2 = 0, }, 
+			{ Additive = 1.2, Index2 = 0, },  
 		}
+		
+		-- ExtendData
+		g.ExtendDataByIndex2 = {}
+		for _, rec in pairs(g.ExtendData) do
+			g.ExtendDataByIndex2[rec.Index2] = rec
+		end
 		
 		return g
 	end

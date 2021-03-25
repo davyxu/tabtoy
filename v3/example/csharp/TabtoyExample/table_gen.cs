@@ -18,6 +18,7 @@ namespace main
 	public partial class ExampleData : tabtoy.ITableSerializable
 	{ 
 		public Int32 ID = 0;
+		public Int32 ID2 = 0;
 		public string Name = string.Empty;
 		public float Rate = 0;
 		public double Accuracy = 0;
@@ -40,42 +41,47 @@ namespace main
 						reader.ReadInt32( ref ID );
                 	}
 					break;
-					case 0x80001:
+					case 0x20001:
+                	{
+						reader.ReadInt32( ref ID2 );
+                	}
+					break;
+					case 0x80002:
                 	{
 						reader.ReadString( ref Name );
                 	}
 					break;
-					case 0x70002:
+					case 0x70003:
                 	{
 						reader.ReadFloat( ref Rate );
                 	}
 					break;
-					case 0xc0003:
+					case 0xc0004:
                 	{
 						reader.ReadDouble( ref Accuracy );
                 	}
 					break;
-					case 0xa0004:
+					case 0xa0005:
                 	{
 						reader.ReadEnum( ref Type );
                 	}
 					break;
-					case 0x660005:
+					case 0x660006:
                 	{
 						reader.ReadInt32( ref Skill );
                 	}
 					break;
-					case 0x20006:
+					case 0x20007:
                 	{
 						reader.ReadInt32( ref Buff );
                 	}
 					break;
-					case 0x6c0007:
+					case 0x6c0008:
                 	{
 						reader.ReadString( ref TagList );
                 	}
 					break;
-					case 0x660008:
+					case 0x660009:
                 	{
 						reader.ReadInt32( ref Multi );
                 	}
@@ -95,6 +101,7 @@ namespace main
 	public partial class ExtendData : tabtoy.ITableSerializable
 	{ 
 		public float Additive = 0;
+		public Int32 Index2 = 0;
 		
 		#region Deserialize Code
 		public void Deserialize( tabtoy.TableReader reader )
@@ -107,6 +114,11 @@ namespace main
 					case 0x70000:
                 	{
 						reader.ReadFloat( ref Additive );
+                	}
+					break;
+					case 0x20001:
+                	{
+						reader.ReadInt32( ref Index2 );
                 	}
 					break;
 					
@@ -175,6 +187,8 @@ namespace main
 
 		// Indices
 		public Dictionary<Int32,ExampleData> ExampleDataByID = new Dictionary<Int32,ExampleData>();
+		public Dictionary<Int32,ExampleData> ExampleDataByID2 = new Dictionary<Int32,ExampleData>();
+		public Dictionary<Int32,ExtendData> ExtendDataByIndex2 = new Dictionary<Int32,ExtendData>();
 		
 		
 		
@@ -190,6 +204,8 @@ namespace main
 			ExtendData.Clear(); 
 			ExampleKV.Clear();  
 			ExampleDataByID.Clear();
+			ExampleDataByID2.Clear();
+			ExtendDataByIndex2.Clear();
 				
 		}
 		
@@ -231,11 +247,33 @@ namespace main
 			}
 		}
 
-		public void IndexData( )
+		public void IndexData( string tabName = "")
 		{ 	
-			foreach( var kv in ExampleData )
+			if (tabName == "" || tabName == "ExampleData")
 			{
-				ExampleDataByID[kv.ID] = kv;
+				foreach( var kv in ExampleData )
+				{
+					ExampleDataByID[kv.ID] = kv;
+				}
+				
+			}
+				
+			if (tabName == "" || tabName == "ExampleData")
+			{
+				foreach( var kv in ExampleData )
+				{
+					ExampleDataByID2[kv.ID2] = kv;
+				}
+				
+			}
+				
+			if (tabName == "" || tabName == "ExtendData")
+			{
+				foreach( var kv in ExtendData )
+				{
+					ExtendDataByIndex2[kv.Index2] = kv;
+				}
+				
 			}
 			
 		}

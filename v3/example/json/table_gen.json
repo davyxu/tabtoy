@@ -6,6 +6,7 @@
 			"Accuracy": 1.602176,
 			"Buff": 100,
 			"ID": 100,
+			"ID2": 0,
 			"Multi": [
 				1,
 				3
@@ -27,6 +28,7 @@
 			"Accuracy": 3.14159,
 			"Buff": 1,
 			"ID": 200,
+			"ID2": 0,
 			"Multi": [
 				4,
 				0
@@ -47,6 +49,7 @@
 			"Accuracy": 0,
 			"Buff": 0,
 			"ID": 300,
+			"ID2": 0,
 			"Multi": [],
 			"Name": "花村",
 			"Rate": 79.4,
@@ -58,6 +61,7 @@
 			"Accuracy": 0,
 			"Buff": 0,
 			"ID": 400,
+			"ID2": 0,
 			"Multi": [],
 			"Name": "艾兴瓦尔德",
 			"Rate": 0.63,
@@ -78,10 +82,12 @@
 	],
 	"ExtendData": [
 		{
-			"Additive": 1.1
+			"Additive": 1.1,
+			"Index2": 0
 		},
 		{
-			"Additive": 1.2
+			"Additive": 1.2,
+			"Index2": 0
 		}
 	]
 }

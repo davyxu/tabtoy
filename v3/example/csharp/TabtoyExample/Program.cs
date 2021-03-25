@@ -26,6 +26,9 @@ namespace TabtoyExample
                     throw;
                 }
 
+                // 建立所有数据的索引
+                tab.IndexData();
+
                 // 表遍历
                 foreach (var kv in tab.ExampleData) 
                 {
@@ -58,6 +61,8 @@ namespace TabtoyExample
                     throw;
                 }
             }
+
+            tab.IndexData(tableName);
         }
 
         // 指定表读取例子

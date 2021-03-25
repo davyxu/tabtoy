@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export GOPROXY=https://goproxy.cn,direct
+
 go build -v -o ./tabtoy github.com/davyxu/tabtoy
 
 ./tabtoy -mode=v3 \

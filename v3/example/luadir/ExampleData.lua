@@ -4,16 +4,22 @@
 return {
 	init = function( g )
 		g.ExampleData = { 
-			{ ID = 100, Name = "扎克镇", Rate = 3.14, Accuracy = 1.602176, Type = 2, Skill = {3,1,2}, Buff = 100, TagList = {"a","b"}, Multi = {1,3}, }, 
-			{ ID = 200, Name = "阿努比斯神庙", Rate = 1.2, Accuracy = 3.14159, Type = 1, Skill = {100,0,90}, Buff = 1, TagList = {"c"}, Multi = {4,0}, }, 
-			{ ID = 300, Name = "花村", Rate = 79.4, Accuracy = 0, Type = 3, Skill = {}, Buff = 0, TagList = {}, Multi = {}, }, 
-			{ ID = 400, Name = "艾兴瓦尔德", Rate = 0.63, Accuracy = 0, Type = 4, Skill = {}, Buff = 0, TagList = {}, Multi = {}, },  
+			{ ID = 100, ID2 = 0, Name = "扎克镇", Rate = 3.14, Accuracy = 1.602176, Type = 2, Skill = {3,1,2}, Buff = 100, TagList = {"a","b"}, Multi = {1,3}, }, 
+			{ ID = 200, ID2 = 0, Name = "阿努比斯神庙", Rate = 1.2, Accuracy = 3.14159, Type = 1, Skill = {100,0,90}, Buff = 1, TagList = {"c"}, Multi = {4,0}, }, 
+			{ ID = 300, ID2 = 0, Name = "花村", Rate = 79.4, Accuracy = 0, Type = 3, Skill = {}, Buff = 0, TagList = {}, Multi = {}, }, 
+			{ ID = 400, ID2 = 0, Name = "艾兴瓦尔德", Rate = 0.63, Accuracy = 0, Type = 4, Skill = {}, Buff = 0, TagList = {}, Multi = {}, },  
 		}
 		
 		-- ExampleData
 		g.ExampleDataByID = {}
 		for _, rec in pairs(g.ExampleData) do
 			g.ExampleDataByID[rec.ID] = rec
+		end
+		
+		-- ExampleData
+		g.ExampleDataByID2 = {}
+		for _, rec in pairs(g.ExampleData) do
+			g.ExampleDataByID2[rec.ID2] = rec
 		end
 		
 		return g

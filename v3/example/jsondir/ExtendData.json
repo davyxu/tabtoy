@@ -3,10 +3,12 @@
 	"@Version": "",
 	"ExtendData": [
 		{
-			"Additive": 1.1
+			"Additive": 1.1,
+			"Index2": 0
 		},
 		{
-			"Additive": 1.2
+			"Additive": 1.2,
+			"Index2": 0
 		}
 	]
 }

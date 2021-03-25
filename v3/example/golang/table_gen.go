@@ -39,6 +39,7 @@ func (self ActorType) String() string {
 
 type ExampleData struct {
 	ID       int32     `tb_name:"任务ID"`
+	ID2      int32     `tb_name:"任务ID2"`
 	Name     string    `tb_name:"名称"`
 	Rate     float32   `tb_name:"比例"`
 	Accuracy float64   `tb_name:"精度"`
@@ -51,6 +52,7 @@ type ExampleData struct {
 
 type ExtendData struct {
 	Additive float32 `tb_name:"附加"`
+	Index2   int32   `tb_name:"索引2"`
 }
 
 type ExampleKV struct {
@@ -66,7 +68,9 @@ type Table struct {
 	ExampleKV   []*ExampleKV   // table: ExampleKV
 
 	// Indices
-	ExampleDataByID map[int32]*ExampleData `json:"-"` // table: ExampleData
+	ExampleDataByID    map[int32]*ExampleData `json:"-"` // table: ExampleData
+	ExampleDataByID2   map[int32]*ExampleData `json:"-"` // table: ExampleData
+	ExtendDataByIndex2 map[int32]*ExtendData  `json:"-"` // table: ExtendData
 
 	// Handlers
 	postHandlers []func(*Table) error `json:"-"`
@@ -196,14 +200,28 @@ func NewTable() *Table {
 		}
 	}
 
+	self.indexHandler["ExampleData"] = func() {
+		for _, v := range self.ExampleData {
+			self.ExampleDataByID2[v.ID2] = v
+		}
+	}
+
+	self.indexHandler["ExtendData"] = func() {
+		for _, v := range self.ExtendData {
+			self.ExtendDataByIndex2[v.Index2] = v
+		}
+	}
+
 	self.resetHandler["ExampleData"] = func() {
 		self.ExampleData = nil
 
 		self.ExampleDataByID = map[int32]*ExampleData{}
+		self.ExampleDataByID2 = map[int32]*ExampleData{}
 	}
 	self.resetHandler["ExtendData"] = func() {
 		self.ExtendData = nil
 
+		self.ExtendDataByIndex2 = map[int32]*ExtendData{}
 	}
 	self.resetHandler["ExampleKV"] = func() {
 		self.ExampleKV = nil

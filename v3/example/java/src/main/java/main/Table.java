@@ -46,6 +46,7 @@ public class Table {
 	
 	public class ExampleData { 	
 		public int ID = 0; // 任务ID; 	
+		public int ID2 = 0; // 任务ID2; 	
 		public String Name = ""; // 名称; 	
 		public float Rate = 0; // 比例; 	
 		public double Accuracy = 0; // 精度; 	
@@ -57,7 +58,8 @@ public class Table {
 	}
 	
 	public class ExtendData { 	
-		public float Additive = 0; // 附加; 
+		public float Additive = 0; // 附加; 	
+		public int Index2 = 0; // 索引2; 
 	}
 	
 	public class ExampleKV { 	
@@ -73,6 +75,8 @@ public class Table {
 
 	// Indices 
 	public Map<Integer, ExampleData> ExampleDataByID = new HashMap<Integer, ExampleData>(); // table: ExampleData 
+	public Map<Integer, ExampleData> ExampleDataByID2 = new HashMap<Integer, ExampleData>(); // table: ExampleData 
+	public Map<Integer, ExtendData> ExtendDataByIndex2 = new HashMap<Integer, ExtendData>(); // table: ExtendData 
 	
 	// table: ExampleKV
 	public ExampleKV GetKeyValue_ExampleKV() {
@@ -102,7 +106,9 @@ public class Table {
 		ExtendData.clear(); 
 		ExampleKV.clear(); 
 		
-		ExampleDataByID.clear(); 	
+		ExampleDataByID.clear(); 
+		ExampleDataByID2.clear(); 
+		ExtendDataByIndex2.clear(); 	
 	}
 
 	// 构建索引, 需要捕获OnPostProcess可能抛出的异常
@@ -110,6 +116,12 @@ public class Table {
 		
 		for( ExampleData v:ExampleData ) {
 			ExampleDataByID.put(v.ID, v);
+		}
+		for( ExampleData v:ExampleData ) {
+			ExampleDataByID2.put(v.ID2, v);
+		}
+		for( ExtendData v:ExtendData ) {
+			ExtendDataByIndex2.put(v.Index2, v);
 		}
 
 		for( TableEvent ev : eventHandlers){
