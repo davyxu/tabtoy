@@ -20,8 +20,6 @@ func wrapSingleValue(globals *model.Globals, valueType *model.TypeDefine, value 
 		}
 
 		return util.StringWrap(util.StringEscape(value))
-	case valueType.FieldType == "float32":
-		return value
 	case globals.Types.IsEnumKind(valueType.FieldType): // 枚举
 		t := globals.Types.ResolveEnum(valueType.FieldType, value)
 		if t != nil {
@@ -105,11 +103,11 @@ func init() {
 	}
 
 	UsefulFunc["IsWarpFieldName"] = func(globals *model.Globals, tf *model.TypeDefine) bool {
-		
+
 		if globals.CanDoAction(model.ActionNoGennFieldCsharp, tf) {
 			return false
 		}
-		return true 
+		return true
 	}
 
 }
