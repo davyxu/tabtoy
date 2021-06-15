@@ -3,6 +3,7 @@ package helper
 import (
 	"bytes"
 	"encoding/csv"
+	"golang.org/x/net/html/charset"
 	"golang.org/x/text/encoding/simplifiedchinese"
 	"golang.org/x/text/transform"
 	"io/ioutil"
@@ -15,8 +16,6 @@ type CSVFile struct {
 	sheet *CSVSheet
 
 	Name string
-
-	utf8 bool
 
 	records [][]string
 }
@@ -97,6 +96,7 @@ func (self *CSVFile) Load(fileName string) error {
 		return err
 	}
 
+
 	self.Name = strings.TrimSuffix(fileName, filepath.Ext(fileName))
 
 	self.records, err = csv.NewReader(bytes.NewReader(data)).ReadAll()
@@ -104,6 +104,13 @@ func (self *CSVFile) Load(fileName string) error {
 	if err != nil {
 		return err
 	}
+
+	// 自动探测非utf-8编码, 转换
+	_, codecName, _ := charset.DetermineEncoding(data, "")
+	if codecName != "utf-8"{
+		self.Transform(ConvGBKToUTF8)
+	}
+
 
 	return nil
 }

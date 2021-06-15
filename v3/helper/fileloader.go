@@ -17,8 +17,6 @@ type FileLoader struct {
 
 	syncLoad bool
 	cacheDir string
-
-	UseGBKCSV bool
 }
 
 func (self *FileLoader) AddFile(filename string) {
@@ -35,7 +33,7 @@ func (self *FileLoader) Commit() {
 
 		go func(fileName string) {
 
-			self.fileByName.Store(fileName, loadFileByExt(fileName, self.UseGBKCSV, self.cacheDir))
+			self.fileByName.Store(fileName, loadFileByExt(fileName, self.cacheDir))
 
 			task.Done()
 
@@ -48,7 +46,7 @@ func (self *FileLoader) Commit() {
 	self.inputFile = self.inputFile[0:0]
 }
 
-func loadFileByExt(filename string, useGBKCSV bool, cacheDir string) interface{} {
+func loadFileByExt(filename string, cacheDir string) interface{} {
 
 	var tabFile TableFile
 	switch filepath.Ext(filename) {
@@ -71,11 +69,6 @@ func loadFileByExt(filename string, useGBKCSV bool, cacheDir string) interface{}
 			return err
 		}
 
-		// 输入gbk, 内部utf8
-		if useGBKCSV {
-			tabFile.(*CSVFile).Transform(ConvGBKToUTF8)
-		}
-
 	default:
 		report.ReportError("UnknownInputFileExtension", filename)
 	}
@@ -87,7 +80,7 @@ func (self *FileLoader) GetFile(filename string) (TableFile, error) {
 
 	if self.syncLoad {
 
-		result := loadFileByExt(filename, self.UseGBKCSV, self.cacheDir)
+		result := loadFileByExt(filename, self.cacheDir)
 		if err, ok := result.(error); ok {
 			return nil, err
 		}

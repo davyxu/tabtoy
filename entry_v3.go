@@ -30,8 +30,6 @@ type V3GenEntry struct {
 // v3新增
 var (
 	paramIndexFile = flag.String("index", "", "input multi-files configs")
-
-	paramUseGBKCSV = flag.Bool("use_gbkcsv", true, "use gbk format in csv file")
 	paramTagAction = flag.String("tag_action", "", "do action by tag selected target, format: action1:tag1+tag2|action2:tag1+tag3")
 
 	v3GenList = []V3GenEntry{
@@ -119,9 +117,7 @@ func V3Entry() {
 	globals.GenBinary = *paramBinaryOut != "" || *paramBinaryDir != ""
 
 	idxloader := helper.NewFileLoader(true, globals.CacheDir)
-	idxloader.UseGBKCSV = *paramUseGBKCSV
 	globals.IndexGetter = idxloader
-	globals.UseGBKCSV = *paramUseGBKCSV
 
 	var err error
 	if *paramTagAction != "" {

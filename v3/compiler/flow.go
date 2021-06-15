@@ -33,7 +33,6 @@ func Compile(globals *model.Globals) (ret error) {
 	// 测试时, 这个Getter会被提前设置为MemFile, 普通导出时, 这个Getter为空
 	if globals.TableGetter == nil {
 		tabLoader := helper.NewFileLoader(!globals.ParaLoading, globals.CacheDir)
-		tabLoader.UseGBKCSV = globals.UseGBKCSV
 
 		if globals.ParaLoading {
 			for _, pragma := range globals.IndexList {
