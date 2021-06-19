@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-Version=3.1.1
+Version=3.1.2
 
 export GOARCH=amd64
 BuildSourcePackage="github.com/davyxu/tabtoy/build"
