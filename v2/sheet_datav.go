@@ -10,7 +10,7 @@ import (
 
 const (
 	ColumnMajor_RowDataBegin = 1
-	ColumnMajor_ColumnValue  = 4
+	ColumnMajor_ColumnValue  = 5
 )
 
 // 导出适合配置格式的表格
