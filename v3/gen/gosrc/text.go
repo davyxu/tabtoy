@@ -83,7 +83,7 @@ func (self *{{.CombineStructName}}) RegisterPreEntry(h func(*{{.CombineStructNam
 }
 
 // 清除索引和数据
-func (self *Table) ResetData() error {
+func (self *{{.CombineStructName}}) ResetData() error {
 
 	err := self.InvokePreHandler()
 	if err != nil {
@@ -94,7 +94,7 @@ func (self *Table) ResetData() error {
 }
 
 // 全局表构建索引及通知回调
-func (self *Table) BuildData() error {
+func (self *{{.CombineStructName}}) BuildData() error {
 
 	err := self.IndexTable("")
 	if err != nil {
@@ -105,7 +105,7 @@ func (self *Table) BuildData() error {
 }
 
 // 调用加载前回调
-func (self *Table) InvokePreHandler() error {
+func (self *{{.CombineStructName}}) InvokePreHandler() error {
 	for _, h := range self.preHandlers {
 		if err := h(self); err != nil {
 			return err
@@ -116,7 +116,7 @@ func (self *Table) InvokePreHandler() error {
 }
 
 // 调用加载后回调
-func (self *Table) InvokePostHandler() error {
+func (self *{{.CombineStructName}}) InvokePostHandler() error {
 	for _, h := range self.postHandlers {
 		if err := h(self); err != nil {
 			return err
@@ -128,7 +128,7 @@ func (self *Table) InvokePostHandler() error {
 
 
 // 为表建立索引. 表名为空时, 构建所有表索引
-func (self *Table) IndexTable(tableName string) error {
+func (self *{{.CombineStructName}}) IndexTable(tableName string) error {
 
 	if tableName == "" {
 
@@ -147,7 +147,7 @@ func (self *Table) IndexTable(tableName string) error {
 }
 
 // 重置表格数据
-func (self *Table) ResetTable(tableName string) error {
+func (self *{{.CombineStructName}}) ResetTable(tableName string) error {
 	if tableName == "" {
 		for _, h := range self.resetHandler {
 			h()
