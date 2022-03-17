@@ -173,11 +173,12 @@ func New{{.CombineStructName}}() *{{.CombineStructName}}{
 		resetHandler: make(map[string]func()),
 	}
 
-	{{range $ii, $idx := GetIndices $}}
-	self.indexHandler["{{$idx.Table.HeaderType}}"] = func() {
+	{{range $ti, $tab := $.Datas.AllTables}}
+	self.indexHandler["{{$tab.HeaderType}}"] = func() {
+		{{range $ii, $idx := GetIndicesByTable $tab}}
 		for _, v := range self.{{$idx.Table.HeaderType}} {
 			self.{{$idx.Table.HeaderType}}By{{$idx.FieldInfo.FieldName}}[v.{{$idx.FieldInfo.FieldName}}] = v
-		}
+		}{{end}}
 	}
 	{{end}}
 

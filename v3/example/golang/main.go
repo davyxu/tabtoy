@@ -44,8 +44,13 @@ func LoadSpecifiedTable() {
 		os.Exit(1)
 	}
 
-	fmt.Println("load specified table: ExampleData")
+	fmt.Println("specified table: ExampleData, ExampleDataByID")
 	for k, v := range TabData.ExampleDataByID {
+		fmt.Println(k, v)
+	}
+
+	fmt.Println("specified table: ExampleData, ExampleDataByID2")
+	for k, v := range TabData.ExampleDataByID2 {
 		fmt.Println(k, v)
 	}
 

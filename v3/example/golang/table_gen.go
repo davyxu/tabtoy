@@ -195,21 +195,24 @@ func NewTable() *Table {
 	}
 
 	self.indexHandler["ExampleData"] = func() {
+
 		for _, v := range self.ExampleData {
 			self.ExampleDataByID[v.ID] = v
 		}
-	}
-
-	self.indexHandler["ExampleData"] = func() {
 		for _, v := range self.ExampleData {
 			self.ExampleDataByID2[v.ID2] = v
 		}
 	}
 
 	self.indexHandler["ExtendData"] = func() {
+
 		for _, v := range self.ExtendData {
 			self.ExtendDataByIndex2[v.Index2] = v
 		}
+	}
+
+	self.indexHandler["ExampleKV"] = func() {
+
 	}
 
 	self.resetHandler["ExampleData"] = func() {
