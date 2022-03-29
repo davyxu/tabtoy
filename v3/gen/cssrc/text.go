@@ -55,7 +55,8 @@ namespace {{.PackageName}}
 		{{end}}{{end}}
 		
 		{{if HasKeyValueTypes $}}
-		//{{range $ti, $name := GetKeyValueTypeNames $}} table: {{$name}}
+		{{range $ti, $name := GetKeyValueTypeNames $}}
+		// table: {{$name}}
 		public {{$name}} GetKeyValue_{{$name}}()
 		{
 			return {{$name}}[0];
