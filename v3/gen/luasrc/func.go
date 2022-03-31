@@ -1,17 +1,20 @@
 package luasrc
 
 import (
-	"github.com/davyxu/tabtoy/v3/gen"
-	"github.com/davyxu/tabtoy/v3/model"
+	"log"
 	"strings"
 	"text/template"
+
+	"github.com/davyxu/tabtoy/v3/gen"
+	"github.com/davyxu/tabtoy/v3/model"
+	"github.com/davyxu/tabtoy/v3/report"
 )
 
 var UsefulFunc = template.FuncMap{}
 
 func WrapValue(globals *model.Globals, cell *model.Cell, valueType *model.TypeDefine) string {
+	var fields = model.HadderStructCache[valueType.FieldName]
 	if valueType.IsArray() {
-
 		var sb strings.Builder
 		sb.WriteString("{")
 
@@ -28,6 +31,37 @@ func WrapValue(globals *model.Globals, cell *model.Cell, valueType *model.TypeDe
 
 		return sb.String()
 
+	} else if fields != nil && len(fields.TypeInfo) > 0 {
+		if len(cell.ValueList) < 1 {
+			cell.ValueList = strings.Split(cell.Value, " ")
+		}
+
+		var sb strings.Builder
+		sb.WriteString("{")
+
+		if cell != nil {
+			for index, elementValue := range cell.ValueList {
+				if index > 0 {
+					sb.WriteString(",")
+				}
+				data := strings.Split(elementValue, ":")
+				if len(data) != 2 {
+					log.Println(data, cell)
+					report.ReportError("UnknownTypeKind", valueType.ObjectType, valueType.FieldName)
+				}
+				if _, ok := fields.TypeInfo[data[0]]; ok {
+					sb.WriteString(fields.TypeInfo[data[0]].FieldName + " = ")
+				} else {
+					sb.WriteString(data[0] + " = ")
+				}
+
+				sb.WriteString(gen.WrapSingleValue(globals, valueType, data[1]))
+			}
+		}
+
+		sb.WriteString("}")
+
+		return sb.String()
 	} else {
 
 		var value string
@@ -44,7 +78,6 @@ func init() {
 		// 找到完整的表头（按完整表头遍历）
 		header := allHeaders[col]
 
-		
 		if header == nil {
 			return ""
 		}
@@ -57,7 +90,7 @@ func init() {
 			return WrapValue(globals, valueCell, header)
 		} else {
 			// 这个表中没有这列数据
-			return WrapValue(globals, nil, header) 
+			return WrapValue(globals, nil, header)
 		}
 	}
 
@@ -65,7 +98,6 @@ func init() {
 		// 找到完整的表头（按完整表头遍历）
 		header := allHeaders[col]
 
-		
 		if header == nil {
 			return false
 		}
@@ -76,6 +108,5 @@ func init() {
 
 		return true
 	}
-
 
 }
