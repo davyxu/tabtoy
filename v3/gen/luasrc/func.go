@@ -1,7 +1,6 @@
 package luasrc
 
 import (
-	"log"
 	"strings"
 	"text/template"
 
@@ -46,7 +45,6 @@ func WrapValue(globals *model.Globals, cell *model.Cell, valueType *model.TypeDe
 				}
 				data := strings.Split(elementValue, ":")
 				if len(data) != 2 {
-					log.Println(data, cell)
 					report.ReportError("UnknownTypeKind", valueType.ObjectType, valueType.FieldName)
 				}
 				if _, ok := fields.TypeInfo[data[0]]; ok {
