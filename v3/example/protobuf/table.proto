@@ -17,29 +17,29 @@ enum ActorType
 
 message ExampleData
 { 
-	int32 ID = 1; 
-	int32 ID2 = 2; 
-	string Name = 3; 
-	float Rate = 4; 
-	double Accuracy = 5; 
-	ActorType Type = 6; 
-	repeated int32 Skill = 7; 
-	int32 Buff = 8; 
-	repeated string TagList = 9; 
-	repeated int32 Multi = 10; 
+	int32 ID = 1; // 任务ID 
+	int32 ID2 = 2; // 任务ID2 
+	string Name = 3; // 名称 
+	float Rate = 4; // 比例 
+	double Accuracy = 5; // 精度 
+	ActorType Type = 6; // 类型 
+	repeated int32 Skill = 7; // 技能列表 
+	int32 Buff = 8; // 增益 
+	repeated string TagList = 9; // 标记 
+	repeated int32 Multi = 10; // 多列 
 }
 
 message ExtendData
 { 
-	float Additive = 1; 
-	int32 Index2 = 2; 
+	float Additive = 1; // 附加 
+	int32 Index2 = 2; // 索引2 
 }
 
 message ExampleKV
 { 
-	string ServerIP = 1; 
-	uint32 ServerPort = 2; 
-	repeated int32 GroupID = 3; 
+	string ServerIP = 1; // 服务器IP 
+	uint32 ServerPort = 2; // 服务器端口 
+	repeated int32 GroupID = 3; // 分组 
 }
 
 

@@ -16,7 +16,7 @@ enum {{$objName}}
 {{range $sn, $objName := $.Types.StructNames}}
 message {{$objName}}
 { {{range $fi,$field := $.Types.AllFieldByName $objName}}
-	{{PbType $field}} {{$field.FieldName}} {{PbTag $fi $field}}; {{end}}
+	{{PbType $field}} {{$field.FieldName}} {{PbTag $fi $field}}; // {{$field.Name}} {{end}}
 }
 {{end}}
 
