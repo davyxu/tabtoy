@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-Version=3.1.3
+Version=3.1.4
 
 BuildSourcePackage="github.com/davyxu/tabtoy/build"
 BinaryPackage="github.com/davyxu/tabtoy"
