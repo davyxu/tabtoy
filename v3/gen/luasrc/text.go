@@ -21,7 +21,7 @@ return {
 		g.{{$objName}} =
 		{ {{range $fi,$field := $.Types.AllFieldByName $objName}}
 			{{$field.FieldName}} = {{$field.Value}}, -- {{if not $field.Note}}{{$field.Name}}{{else}}{{ $field.Note}}{{end}} {{end}} {{range $fi,$field := $.Types.AllFieldByName $objName}}
-			[{{$field.Value}}] = "{{$field.FieldName}}", -- {{if not $field.Note}}{{$field.Name}}{{else}}{{ $field.Note}}{{end}} {{end}}
+			[{{$field.Value}}] = "{{$field.FieldName}}",{{end}}
 		}{{end}}
 		return g
 	end
@@ -56,7 +56,7 @@ return {
 		g.{{$objName}} =
 		{ {{range $fi,$field := $.Types.AllFieldByName $objName}}
 			{{$field.FieldName}} = {{$field.Value}}, -- {{if not $field.Note}}{{$field.Name}}{{else}}{{ $field.Note}}{{end}} {{end}} {{range $fi,$field := $.Types.AllFieldByName $objName}}
-			[{{$field.Value}}] = "{{$field.FieldName}}", -- {{if not $field.Note}}{{$field.Name}}{{else}}{{ $field.Note}}{{end}} {{end}}
+			[{{$field.Value}}] = "{{$field.FieldName}}",{{end}}
 		}{{end}}
 		return g
 	end
