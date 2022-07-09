@@ -10,13 +10,13 @@ package {{.PackageName}};
 {{range $sn, $objName := $.Types.EnumNames}}
 enum {{$objName}}
 {	{{range $fi,$field := $.Types.AllFieldByName $objName}}
-	{{$field.FieldName}} = {{$field.Value}}; // {{$field.Name}} {{end}}
+	{{$field.FieldName}} = {{$field.Value}}; // {{if not $field.Note}}{{$field.Name}}{{else}}{{ $field.Note}}{{end}} {{end}}
 }
 {{end}}
 {{range $sn, $objName := $.Types.StructNames}}
 message {{$objName}}
 { {{range $fi,$field := $.Types.AllFieldByName $objName}}
-	{{PbType $field}} {{$field.FieldName}} {{PbTag $fi $field}}; // {{$field.Name}} {{end}}
+	{{PbType $field}} {{$field.FieldName}} {{PbTag $fi $field}}; // {{if not $field.Note}}{{$field.Name}}{{else}}{{ $field.Note}}{{end}} {{end}}
 }
 {{end}}
 
