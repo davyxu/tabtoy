@@ -19,8 +19,7 @@ return {
 		{{end}}
 		{{range $sn, $objName := $.Types.EnumNames}}
 		---@enum {{$.PackageName}}.{{$objName}}
-		g.{{$objName}} =
-		{ {{range $fi,$field := $.Types.AllFieldByName $objName}}
+		g.{{$objName}} = { {{range $fi,$field := $.Types.AllFieldByName $objName}}
 			{{$field.FieldName}} = {{$field.Value}}, -- {{$field.Name}} {{end}} {{range $fi,$field := $.Types.AllFieldByName $objName}}
 			[{{$field.Value}}] = "{{$field.FieldName}}", -- {{$field.Name}} {{end}}
 		}{{end}}
@@ -55,8 +54,7 @@ return {
 	init = function( g )
 		{{range $sn, $objName := $.Types.EnumNames}}
 		---@enum {{$.PackageName}}.{{$objName}}
-		g.{{$objName}} =
-		{ {{range $fi,$field := $.Types.AllFieldByName $objName}}
+		g.{{$objName}} = { {{range $fi,$field := $.Types.AllFieldByName $objName}}
 			{{$field.FieldName}} = {{$field.Value}}, -- {{$field.Name}} {{end}} {{range $fi,$field := $.Types.AllFieldByName $objName}}
 			[{{$field.Value}}] = "{{$field.FieldName}}", -- {{$field.Name}} {{end}}
 		}{{end}}
