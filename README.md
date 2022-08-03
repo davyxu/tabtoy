@@ -101,7 +101,7 @@ tabtoy.exe -mode=v3 -index=Index.xlsx -json_out=table_gen.json
 
 导出命令行:
 ```bash
-tabtoy.exe -mode=v3 -index=Index.xlsx -package=main -go_out=table_gen.json -json_out=table_gen.json
+tabtoy.exe -mode=v3 -index=Index.xlsx -package=main -go_out=table_gen.go -json_out=table_gen.json
 ```
 
 读取数据源码:
