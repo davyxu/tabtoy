@@ -96,6 +96,11 @@ func (self *CSVFile) Load(fileName string) error {
 		return err
 	}
 
+	if len(data) > 3 {
+		if data[0] == 0xef || data[1] == 0xbb || data[2] == 0xbf {
+			data = data[3:]
+		}
+	}
 
 	self.Name = strings.TrimSuffix(fileName, filepath.Ext(fileName))
 
