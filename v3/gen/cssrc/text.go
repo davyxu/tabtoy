@@ -11,7 +11,7 @@ namespace {{.PackageName}}
 { 	{{range $sn, $objName := $.Types.EnumNames}}
 	public enum {{$objName}}
 	{ {{range $fi,$field := $.Types.AllFieldByName $objName}}
-		{{$field.FieldName}} = {{$field.Value}}, // {{$field.Name}} {{end}}
+		{{$field.FieldName}} = {{$field.Value}}, // {{if not $field.Note}}{{$field.Name}}{{else}}{{ $field.Note}}{{end}} {{end}}
 	}
 	{{end}}	{{range $sn, $objName := $.Types.StructNames}}
 	public partial class {{$objName}} : tabtoy.ITableSerializable

@@ -16,13 +16,13 @@ type {{.CombineStructName}}EnumValue struct {
 {{range $sn, $objName := $.Types.EnumNames}}
 type {{$objName}} int32
 const (	{{range $fi,$field := $.Types.AllFieldByName $objName}}
-	{{$objName}}_{{$field.FieldName}} = {{$field.Value}} // {{$field.Name}} {{end}}
+	{{$objName}}_{{$field.FieldName}} = {{$field.Value}} // {{if not $field.Note}}{{$field.Name}}{{else}}{{ $field.Note}}{{end}} {{end}}
 )
 
 var (
 
 	{{$objName}}EnumValues = []{{$.CombineStructName}}EnumValue{ {{range $fi,$field := $.Types.AllFieldByName $objName}}
-		{ Name: "{{$field.FieldName}}", Index:{{$field.Value}} }, // {{$field.Name}} {{end}}
+		{ Name: "{{$field.FieldName}}", Index:{{$field.Value}} }, // {{if not $field.Note}}{{$field.Name}}{{else}}{{ $field.Note}}{{end}} {{end}}
 	}
 	{{$objName}}MapperValueByName = map[string]int32{}
 	{{$objName}}MapperNameByValue = map[int32]string{}
