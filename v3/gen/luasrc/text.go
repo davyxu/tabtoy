@@ -18,7 +18,6 @@ return {
 		end
 		{{end}}
 		{{range $sn, $objName := $.Types.EnumNames}}
-		---@enum {{$.PackageName}}.{{$objName}}
 		g.{{$objName}} = { {{range $fi,$field := $.Types.AllFieldByName $objName}}
 			{{$field.FieldName}} = {{$field.Value}}, -- {{if not $field.Note}}{{$field.Name}}{{else}}{{ $field.Note}}{{end}} {{end}} {{range $fi,$field := $.Types.AllFieldByName $objName}}
 			[{{$field.Value}}] = "{{$field.FieldName}}",{{end}}
