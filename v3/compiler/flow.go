@@ -1,8 +1,8 @@
 package compiler
 
 import (
+	"github.com/davyxu/tabtoy/util"
 	"github.com/davyxu/tabtoy/v3/checker"
-	"github.com/davyxu/tabtoy/v3/helper"
 	"github.com/davyxu/tabtoy/v3/model"
 	"github.com/davyxu/tabtoy/v3/report"
 )
@@ -12,7 +12,7 @@ func Compile(globals *model.Globals) (ret error) {
 	defer func() {
 
 		switch err := recover().(type) {
-		case *report.TableError:
+		case *util.TableError:
 			ret = err
 		case nil:
 		default:
@@ -32,7 +32,7 @@ func Compile(globals *model.Globals) (ret error) {
 
 	// 测试时, 这个Getter会被提前设置为MemFile, 普通导出时, 这个Getter为空
 	if globals.TableGetter == nil {
-		tabLoader := helper.NewFileLoader(!globals.ParaLoading, globals.CacheDir)
+		tabLoader := util.NewFileLoader(!globals.ParaLoading, globals.CacheDir)
 
 		if globals.ParaLoading {
 			for _, pragma := range globals.IndexList {

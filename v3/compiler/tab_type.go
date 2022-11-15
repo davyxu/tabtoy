@@ -1,12 +1,11 @@
 package compiler
 
 import (
-	"github.com/davyxu/tabtoy/v3/helper"
+	"github.com/davyxu/tabtoy/util"
 	"github.com/davyxu/tabtoy/v3/model"
-	"github.com/davyxu/tabtoy/v3/report"
 )
 
-func LoadTypeTable(typeTab *model.TypeTable, indexGetter helper.FileGetter, fileName string) error {
+func LoadTypeTable(typeTab *model.TypeTable, indexGetter util.FileGetter, fileName string) error {
 
 	tabs, err := LoadDataTable(indexGetter, fileName, "TypeDefine", "TypeDefine", typeTab)
 
@@ -25,15 +24,15 @@ func LoadTypeTable(typeTab *model.TypeTable, indexGetter helper.FileGetter, file
 			}
 
 			if objtype.Kind == model.TypeUsage_None {
-				report.ReportError("UnknownTypeKind", objtype.ObjectType, objtype.FieldName)
+				util.ReportError("UnknownTypeKind", objtype.ObjectType, objtype.FieldName)
 			}
 
 			if typeTab.FieldByName(objtype.ObjectType, objtype.FieldName) != nil {
 				cell := tab.GetValueByName(row, "字段名")
 				if cell != nil {
-					report.ReportError("DuplicateTypeFieldName", cell.String(), objtype.ObjectType, objtype.FieldName)
+					util.ReportError("DuplicateTypeFieldName", cell.String(), objtype.ObjectType, objtype.FieldName)
 				} else {
-					report.ReportError("InvalidTypeTable", objtype.ObjectType, objtype.FieldName, tab.FileName)
+					util.ReportError("InvalidTypeTable", objtype.ObjectType, objtype.FieldName, tab.FileName)
 				}
 
 			}

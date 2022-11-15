@@ -2,9 +2,9 @@ package main
 
 import (
 	"flag"
+	"github.com/davyxu/tabtoy/util"
 	"github.com/davyxu/tabtoy/v2tov3"
 	"github.com/davyxu/tabtoy/v2tov3/model"
-	"github.com/davyxu/tabtoy/v3/helper"
 	"os"
 )
 
@@ -16,7 +16,7 @@ func V2ToV3Entry() {
 
 	globals := model.NewGlobals()
 
-	globals.TableGetter = helper.NewFileLoader(true, "")
+	globals.TableGetter = util.NewFileLoader(true, "")
 
 	globals.SourceFileList = flag.Args()
 	globals.OutputDir = *paramUpgradeOut

@@ -1,8 +1,8 @@
 package checker
 
 import (
+	"github.com/davyxu/tabtoy/util"
 	"github.com/davyxu/tabtoy/v3/model"
-	"github.com/davyxu/tabtoy/v3/report"
 )
 
 func PreCheck(dataList *model.DataTableList) {
@@ -35,7 +35,7 @@ func PreCheck(dataList *model.DataTableList) {
 				if preFieldCount, ok := fieldCountByField[fieldKey]; ok {
 
 					if preFieldCount != arrayFieldCount {
-						report.ReportError("ArrayMultiColumnDefineNotMatch")
+						util.ReportError("ArrayMultiColumnDefineNotMatch")
 					}
 				} else {
 					fieldCountByField[fieldKey] = arrayFieldCount

@@ -13,9 +13,9 @@ func ExportIndexTable(globals *model.Globals) error {
 
 	helper.WriteIndexTableHeader(globals.TargetIndexSheet)
 
-	var tabList []*helper.MemFileData
+	var tabList []*util.MemFileData
 
-	globals.TargetTables.VisitAllTable(func(data *helper.MemFileData) bool {
+	globals.TargetTables.VisitAllTable(func(data *util.MemFileData) bool {
 
 		if data.FileName == "Index.xlsx" {
 			return true
@@ -59,7 +59,7 @@ func ExportIndexTable(globals *model.Globals) error {
 	return nil
 }
 
-func getMode(data *helper.MemFileData) (mode string) {
+func getMode(data *util.MemFileData) (mode string) {
 	if data.FileName == "Type.xlsx" {
 		mode = "类型表"
 	} else {

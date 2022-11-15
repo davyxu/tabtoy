@@ -1,8 +1,8 @@
 package compiler
 
 import (
+	"github.com/davyxu/tabtoy/util"
 	"github.com/davyxu/tabtoy/v3/model"
-	"github.com/davyxu/tabtoy/v3/report"
 	"strings"
 )
 
@@ -19,7 +19,7 @@ func createOutputTable(symbols *model.TypeTable, inputTab *model.DataTable) *mod
 	headerFields := symbols.AllFieldByName(inputTab.OriginalHeaderType)
 
 	if headerFields == nil {
-		report.ReportError("HeaderTypeNotFound", inputTab.OriginalHeaderType)
+		util.ReportError("HeaderTypeNotFound", inputTab.OriginalHeaderType)
 	}
 
 	// 将完整的表头添加到输出表的表头中

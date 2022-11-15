@@ -1,31 +1,31 @@
 package model
 
 import (
-	"github.com/davyxu/tabtoy/v3/helper"
+	"github.com/davyxu/tabtoy/util"
 	"github.com/davyxu/tabtoy/v3/model"
 	"github.com/tealeg/xlsx"
 	"path/filepath"
 )
 
 type Globals struct {
-	TableGetter helper.FileGetter
+	TableGetter util.FileGetter
 
 	SourceTypes []ObjectFieldType
 
 	SourceFileList []string
 
-	TargetTypesSheet helper.TableSheet
+	TargetTypesSheet util.TableSheet
 
-	TargetIndexSheet helper.TableSheet
+	TargetIndexSheet util.TableSheet
 
-	TargetTables *helper.MemFile
+	TargetTables *util.MemFile
 
 	OutputDir string
 }
 
 func (self *Globals) AddTableByFile(tableFileName, tableName string, inputFile *xlsx.File) {
 
-	file := helper.NewXlsxFile("")
+	file := util.NewXlsxFile("")
 
 	file.(interface {
 		FromXFile(file *xlsx.File)
@@ -36,7 +36,7 @@ func (self *Globals) AddTableByFile(tableFileName, tableName string, inputFile *
 	self.TargetTables.AddFile(tableFileName, file).TableName = tableName
 }
 
-func (self *Globals) AddTable(tableFileName string) helper.TableSheet {
+func (self *Globals) AddTable(tableFileName string) util.TableSheet {
 
 	return self.TargetTables.CreateXLSXFile(tableFileName)
 }
@@ -89,6 +89,6 @@ func (self *Globals) TypeIsNoneKind(objectTypeName string) bool {
 func NewGlobals() *Globals {
 
 	return &Globals{
-		TargetTables: helper.NewMemFile(),
+		TargetTables: util.NewMemFile(),
 	}
 }

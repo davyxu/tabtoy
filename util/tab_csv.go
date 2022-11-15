@@ -1,4 +1,4 @@
-package helper
+package util
 
 import (
 	"bytes"
@@ -96,7 +96,6 @@ func (self *CSVFile) Load(fileName string) error {
 		return err
 	}
 
-
 	self.Name = strings.TrimSuffix(fileName, filepath.Ext(fileName))
 
 	self.records, err = csv.NewReader(bytes.NewReader(data)).ReadAll()
@@ -107,10 +106,9 @@ func (self *CSVFile) Load(fileName string) error {
 
 	// 自动探测非utf-8编码, 转换
 	_, codecName, _ := charset.DetermineEncoding(data, "")
-	if codecName != "utf-8"{
+	if codecName != "utf-8" {
 		self.Transform(ConvGBKToUTF8)
 	}
-
 
 	return nil
 }

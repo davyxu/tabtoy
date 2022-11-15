@@ -1,9 +1,11 @@
-package helper
+package util
 
 import (
 	"io/ioutil"
 	"os"
+	"path"
 	"path/filepath"
+	"strings"
 )
 
 func WriteFile(filename string, data []byte) error {
@@ -15,4 +17,11 @@ func WriteFile(filename string, data []byte) error {
 	}
 
 	return ioutil.WriteFile(filename, data, 0666)
+}
+
+func ChangeExtension(filename, newExt string) string {
+
+	file := filepath.Base(filename)
+
+	return strings.TrimSuffix(file, path.Ext(file)) + newExt
 }

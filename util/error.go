@@ -1,4 +1,4 @@
-package report
+package util
 
 import (
 	"fmt"
@@ -9,15 +9,6 @@ type TableError struct {
 	ID string
 
 	context []interface{}
-}
-
-func getErrorDesc(id string) string {
-
-	if lan, ok := ErrorByID[id]; ok {
-		return lan.CHS
-	}
-
-	return ""
 }
 
 func (self *TableError) Error() string {
@@ -47,4 +38,27 @@ func ReportError(id string, context ...interface{}) *TableError {
 		ID:      id,
 		context: context,
 	})
+}
+
+type ErrorLanguage struct {
+	CHS string
+}
+
+var (
+	errorByID = map[string]*ErrorLanguage{}
+)
+
+func getErrorDesc(id string) string {
+
+	if lan, ok := errorByID[id]; ok {
+		return lan.CHS
+	}
+
+	return ""
+}
+func RegisterError(key string, lan *ErrorLanguage) {
+	if _, ok := errorByID[key]; ok {
+		panic("duplicate error define: " + key)
+	}
+	errorByID[key] = lan
 }

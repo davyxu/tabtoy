@@ -1,8 +1,8 @@
 package compiler
 
 import (
+	"github.com/davyxu/tabtoy/util"
 	"github.com/davyxu/tabtoy/v3/model"
-	"github.com/davyxu/tabtoy/v3/report"
 	"strings"
 )
 
@@ -38,7 +38,7 @@ func transposeKVtoData(symbols *model.TypeTable, kvtab *model.DataTable) (ret *m
 		tf.Name = name.Value
 
 		if !model.PrimitiveExists(fieldType.Value) && !symbols.ObjectExists(fieldType.Value) { // 对象检查
-			report.ReportError("UnknownFieldType", fieldType.Value, fieldType.String())
+			util.ReportError("UnknownFieldType", fieldType.Value, fieldType.String())
 		}
 
 		tf.FieldName = fieldName.Value
@@ -52,7 +52,7 @@ func transposeKVtoData(symbols *model.TypeTable, kvtab *model.DataTable) (ret *m
 		}
 
 		if symbols.FieldByName(tf.ObjectType, tf.FieldName) != nil {
-			report.ReportError("DuplicateKVField", fieldName.String())
+			util.ReportError("DuplicateKVField", fieldName.String())
 		}
 
 		symbols.AddField(&tf, kvtab, row)

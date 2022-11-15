@@ -1,8 +1,8 @@
 package checker
 
 import (
+	"github.com/davyxu/tabtoy/util"
 	"github.com/davyxu/tabtoy/v3/model"
-	"github.com/davyxu/tabtoy/v3/report"
 )
 
 func checkRepeat(globals *model.Globals) {
@@ -37,7 +37,7 @@ func checkRepeat(globals *model.Globals) {
 
 					if _, ok := checker[inputCell.Value]; ok {
 
-						report.ReportError("DuplicateValueInMakingIndex", inputCell.String())
+						util.ReportError("DuplicateValueInMakingIndex", inputCell.String())
 
 					} else {
 						checker[inputCell.Value] = inputCell

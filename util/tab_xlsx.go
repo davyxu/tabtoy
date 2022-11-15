@@ -1,7 +1,6 @@
-package helper
+package util
 
 import (
-	"github.com/davyxu/tabtoy/util"
 	"github.com/tealeg/xlsx"
 	"strings"
 )
@@ -32,7 +31,7 @@ func (self *XlsxFile) Load(filename string) (err error) {
 			return err
 		}
 	} else {
-		cache := util.NewTableCache(filename, self.cacheDir)
+		cache := NewTableCache(filename, self.cacheDir)
 
 		if err = cache.Open(); err != nil {
 			return err

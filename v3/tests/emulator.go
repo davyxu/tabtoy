@@ -2,6 +2,7 @@ package tests
 
 import (
 	"encoding/json"
+	"github.com/davyxu/tabtoy/util"
 	"github.com/davyxu/tabtoy/v3/compiler"
 	"github.com/davyxu/tabtoy/v3/gen"
 	"github.com/davyxu/tabtoy/v3/gen/gosrc"
@@ -200,7 +201,7 @@ func genFile(globals *model.Globals, filename string, genFunc gen.GenSingleFile)
 		return err
 	}
 
-	return helper.WriteFile(filename, data)
+	return util.WriteFile(filename, data)
 }
 
 func compareKVJson(a, b []byte) (bool, error) {

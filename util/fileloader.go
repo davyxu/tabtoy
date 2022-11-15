@@ -1,8 +1,7 @@
-package helper
+package util
 
 import (
 	"errors"
-	"github.com/davyxu/tabtoy/v3/report"
 	"path/filepath"
 	"sync"
 )
@@ -70,7 +69,7 @@ func loadFileByExt(filename string, cacheDir string) interface{} {
 		}
 
 	default:
-		report.ReportError("UnknownInputFileExtension", filename)
+		ReportError("UnknownInputFileExtension", filename)
 	}
 
 	return tabFile

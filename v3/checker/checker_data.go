@@ -1,8 +1,8 @@
 package checker
 
 import (
+	"github.com/davyxu/tabtoy/util"
 	"github.com/davyxu/tabtoy/v3/model"
-	"github.com/davyxu/tabtoy/v3/report"
 	"strconv"
 )
 
@@ -39,13 +39,13 @@ func checkDataType(globals *model.Globals) {
 
 						err := checkSingleValue(header, value)
 						if err != nil {
-							report.ReportError("DataMissMatchTypeDefine", currHeader.TypeInfo.FieldType, crrCell.String())
+							util.ReportError("DataMissMatchTypeDefine", currHeader.TypeInfo.FieldType, crrCell.String())
 						}
 					}
 				} else if inputCell.Value != "" {
 					err := checkSingleValue(header, inputCell.Value)
 					if err != nil {
-						report.ReportError("DataMissMatchTypeDefine", currHeader.TypeInfo.FieldType, crrCell.String())
+						util.ReportError("DataMissMatchTypeDefine", currHeader.TypeInfo.FieldType, crrCell.String())
 					}
 				}
 

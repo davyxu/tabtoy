@@ -8,16 +8,16 @@ import (
 	"os"
 )
 
-type XlsxHashFile struct {
+type xlsxHashFile struct {
 	CRC32Map map[string]uint32
 }
 
-type XlsxFileCache struct {
+type xlsxFileCache struct {
 	Name   string
-	Sheets []*XlsxSheet
+	Sheets []*xlsxSheet
 }
 
-type XlsxSheet struct {
+type xlsxSheet struct {
 	Name  string
 	Cells [][]string
 }
@@ -81,7 +81,7 @@ func writeJsonFile(filename string, m interface{}) error {
 
 func (self *TableCache) readCache() (xf *xlsx.File, err error) {
 
-	var hashFile XlsxHashFile
+	var hashFile xlsxHashFile
 	err = readJsonFile(self.hashFileName(), &hashFile)
 	if err != nil {
 		return nil, nil
@@ -97,7 +97,7 @@ func (self *TableCache) readCache() (xf *xlsx.File, err error) {
 		}
 	}
 
-	var cacheFile XlsxFileCache
+	var cacheFile xlsxFileCache
 	err = readJsonFile(self.cacheFileName(), &cacheFile)
 
 	if err != nil {
@@ -141,7 +141,7 @@ func (self *TableCache) Load() (xf *xlsx.File, err error) {
 
 func (self *TableCache) Save() error {
 
-	var hashFile XlsxHashFile
+	var hashFile xlsxHashFile
 	hashFile.CRC32Map = make(map[string]uint32)
 
 	for _, f := range self.z.File {
@@ -150,12 +150,12 @@ func (self *TableCache) Save() error {
 
 	writeJsonFile(self.hashFileName(), &hashFile)
 
-	var newFile XlsxFileCache
+	var newFile xlsxFileCache
 	newFile.Name = self.name
 
 	for _, sheet := range self.originFile.Sheets {
 
-		var newSheet XlsxSheet
+		var newSheet xlsxSheet
 		newSheet.Name = sheet.Name
 
 		newSheet.Cells = make([][]string, 0, len(sheet.Rows))

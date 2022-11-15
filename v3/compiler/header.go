@@ -1,13 +1,12 @@
 package compiler
 
 import (
-	"github.com/davyxu/tabtoy/v3/helper"
+	"github.com/davyxu/tabtoy/util"
 	"github.com/davyxu/tabtoy/v3/model"
-	"github.com/davyxu/tabtoy/v3/report"
 	"strings"
 )
 
-func LoadHeader(sheet helper.TableSheet, tab *model.DataTable, resolveTableType string, typeTab *model.TypeTable) (maxCol int) {
+func LoadHeader(sheet util.TableSheet, tab *model.DataTable, resolveTableType string, typeTab *model.TypeTable) (maxCol int) {
 	// 读取表头
 
 	for col := 0; ; col++ {
@@ -54,7 +53,7 @@ func checkHeaderTypes(tab *model.DataTable, symbols *model.TypeTable) {
 		if !model.PrimitiveExists(header.TypeInfo.FieldType) &&
 			!symbols.ObjectExists(header.TypeInfo.FieldType) { // 对象检查
 
-			report.ReportError("UnknownFieldType", header.TypeInfo.FieldType, header.Cell.String())
+			util.ReportError("UnknownFieldType", header.TypeInfo.FieldType, header.Cell.String())
 		}
 	}
 
@@ -82,11 +81,11 @@ func resolveHeaderFields(tab *model.DataTable, tableObjectType string, typeTab *
 
 		tf := typeTab.FieldByName(tableObjectType, header.Cell.Value)
 		if tf == nil {
-			report.ReportError("HeaderFieldNotDefined", header.Cell.String(), tableObjectType)
+			util.ReportError("HeaderFieldNotDefined", header.Cell.String(), tableObjectType)
 		}
 
 		if headerValueExists(index+1, header.Cell.Value, tab.Headers) && !tf.IsArray() {
-			report.ReportError("DuplicateHeaderField", header.Cell.String())
+			util.ReportError("DuplicateHeaderField", header.Cell.String())
 		}
 
 		// 解析好的类型

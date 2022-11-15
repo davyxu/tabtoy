@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"github.com/davyxu/tabtoy/build"
+	"github.com/davyxu/tabtoy/util"
 	"github.com/davyxu/tabtoy/v3/compiler"
 	"github.com/davyxu/tabtoy/v3/gen"
 	"github.com/davyxu/tabtoy/v3/gen/bindata"
@@ -14,7 +15,6 @@ import (
 	"github.com/davyxu/tabtoy/v3/gen/luasrc"
 	"github.com/davyxu/tabtoy/v3/gen/pbdata"
 	"github.com/davyxu/tabtoy/v3/gen/pbsrc"
-	"github.com/davyxu/tabtoy/v3/helper"
 	"github.com/davyxu/tabtoy/v3/model"
 	"github.com/davyxu/tabtoy/v3/report"
 	"os"
@@ -60,7 +60,7 @@ func genFile(globals *model.Globals, entry V3GenEntry, c chan error) {
 
 			report.Log.Infof("  [%s] %s", entry.name, filename)
 
-			err = helper.WriteFile(filename, data)
+			err = util.WriteFile(filename, data)
 
 			if err != nil {
 				c <- err
@@ -116,7 +116,7 @@ func V3Entry() {
 	globals.CombineStructName = *paramCombineStructName
 	globals.GenBinary = *paramBinaryOut != "" || *paramBinaryDir != ""
 
-	idxloader := helper.NewFileLoader(true, globals.CacheDir)
+	idxloader := util.NewFileLoader(true, globals.CacheDir)
 	globals.IndexGetter = idxloader
 
 	var err error

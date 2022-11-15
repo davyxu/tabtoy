@@ -2,8 +2,8 @@ package checker
 
 import (
 	"github.com/ahmetb/go-linq"
+	"github.com/davyxu/tabtoy/util"
 	"github.com/davyxu/tabtoy/v3/model"
-	"github.com/davyxu/tabtoy/v3/report"
 	"go/token"
 )
 
@@ -27,7 +27,7 @@ func typeTable_CheckField(typeTab *model.TypeTable) {
 
 		if !isValidFieldName(td.Define.FieldName) {
 			cell := td.Tab.GetValueByName(td.Row, "字段名")
-			report.ReportError("InvalidFieldName", cell.String())
+			util.ReportError("InvalidFieldName", cell.String())
 		}
 	}
 }
@@ -42,7 +42,7 @@ func typeTable_CheckEnumValueEmpty(typeTab *model.TypeTable) {
 
 		cell := td.Tab.GetValueByName(td.Row, "值")
 
-		report.ReportError("EnumValueEmpty", cell.String())
+		util.ReportError("EnumValueEmpty", cell.String())
 	})
 }
 
@@ -67,7 +67,7 @@ func typeTable_CheckDuplicateEnumValue(typeTab *model.TypeTable) {
 
 			cell := td.Tab.GetValueByName(td.Row, "值")
 
-			report.ReportError("DuplicateEnumValue", cell.String())
+			util.ReportError("DuplicateEnumValue", cell.String())
 		}
 
 		checker[key] = td

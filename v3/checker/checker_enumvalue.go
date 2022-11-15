@@ -1,8 +1,8 @@
 package checker
 
 import (
+	"github.com/davyxu/tabtoy/util"
 	"github.com/davyxu/tabtoy/v3/model"
-	"github.com/davyxu/tabtoy/v3/report"
 )
 
 // 枚举值的解析是放在输出端处理的, 例如json中, 所以在这里提前检查
@@ -55,7 +55,7 @@ func checkEnumFieldValue(globals *model.Globals, header *model.HeaderField, valu
 
 	enumValue := globals.Types.GetEnumValue(header.TypeInfo.FieldType, value)
 	if enumValue == nil {
-		report.ReportError("UnknownEnumValue", header.TypeInfo.FieldType, inputCell.String())
+		util.ReportError("UnknownEnumValue", header.TypeInfo.FieldType, inputCell.String())
 	}
 
 }

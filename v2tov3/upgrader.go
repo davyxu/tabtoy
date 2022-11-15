@@ -48,7 +48,7 @@ func Upgrade(globals *model.Globals) error {
 func WriteOutput(globals *model.Globals) (ret error) {
 	log.Debugln("输出v3表格:")
 
-	globals.TargetTables.VisitAllTable(func(data *helper.MemFileData) bool {
+	globals.TargetTables.VisitAllTable(func(data *util.MemFileData) bool {
 
 		fullFileName := filepath.Join(globals.OutputDir, util.ChangeExtension(data.FileName, ".csv"))
 
@@ -56,7 +56,7 @@ func WriteOutput(globals *model.Globals) (ret error) {
 
 		csvFile := helper.ConvertToCSV(data.File)
 
-		csvFile.(*helper.CSVFile).Transform(helper.ConvUTF8ToGBK)
+		csvFile.(*util.CSVFile).Transform(util.ConvUTF8ToGBK)
 
 		ret = csvFile.Save(fullFileName)
 		if ret != nil {
