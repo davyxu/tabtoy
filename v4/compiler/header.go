@@ -14,8 +14,11 @@ const (
 	maxHeaderRow        = 4
 )
 
-func loadHeaderToCell(sheet util.TableSheet, tab *model.DataTable) (maxCol int) {
+func loadHeader(sheet util.TableSheet, tab *model.DataTable) (maxCol int) {
 	for col := 0; ; col++ {
+
+		header := tab.MustGetHeader(col)
+		header.Col = col
 
 		for row := 0; row < maxHeaderRow; row++ {
 			headerValue := sheet.GetValue(row, col, nil)
@@ -25,14 +28,6 @@ func loadHeaderToCell(sheet util.TableSheet, tab *model.DataTable) (maxCol int) 
 			}
 
 			maxCol = col
-
-			header := tab.MustGetHeader(col)
-			header.Cell.CopyFrom(&model.Cell{
-				Value: headerValue,
-				Col:   col,
-				Row:   row,
-				Table: tab,
-			})
 
 			tinfo := header.TypeInfo
 			tinfo.Usage = model.FieldUsage_Struct
@@ -44,20 +39,20 @@ func loadHeaderToCell(sheet util.TableSheet, tab *model.DataTable) (maxCol int) 
 			case headerRow_FieldType:
 				tinfo.FieldType = headerValue
 			case headerRow_Meta:
-				parseMeta(header, headerValue)
+				if !parseMeta(header.TypeInfo, headerValue) {
+					util.ReportError("InvalidMetaFormat", headerValue, header.Location())
+				}
 			case headerRow_Comment:
 				tinfo.Comment = headerValue
 			}
 		}
 
 	}
-
-	return
 }
 
-func parseMeta(header *model.HeaderField, meta string) {
+func parseMeta(field *model.DataField, meta string) bool {
 	if meta == "" {
-		return
+		return true
 	}
 
 	features := strings.Split(meta, ";")
@@ -81,36 +76,26 @@ func parseMeta(header *model.HeaderField, meta string) {
 
 		switch key {
 		case "MakeIndex":
-			header.TypeInfo.MakeIndex = true
+			field.MakeIndex = true
 		case "Spliter":
-			header.TypeInfo.ArraySplitter = value
+			field.ArraySplitter = value
 		default:
-			util.ReportError("InvalidMetaFormat", key, header.Cell.String())
+			return false
 		}
 	}
+
+	return true
 }
 
-func loadHeader(sheet util.TableSheet, tab *model.DataTable, typeTab *model.TypeTable) (maxCol int) {
-	maxCol = loadHeaderToCell(sheet, tab)
-
-	checkHeaderTypes(tab, typeTab)
-
-	return
-}
-
-func checkHeaderTypes(tab *model.DataTable, symbols *model.TypeTable) {
+func checkHeaderTypes(tab *model.DataTable, types *model.TypeTable) {
 
 	for _, header := range tab.Headers {
 
-		if header.TypeInfo == nil {
-			continue
-		}
-
 		// 原始类型检查
 		if !util.PrimitiveExists(header.TypeInfo.FieldType) &&
-			!symbols.ObjectExists(header.TypeInfo.FieldType) { // 对象检查
+			!types.ObjectExists(header.TypeInfo.FieldType) { // 对象检查
 
-			util.ReportError("UnknownFieldType", header.TypeInfo.FieldType, header.Cell.String())
+			util.ReportError("UnknownFieldType", header.TypeInfo.FieldType, header.Location())
 		}
 	}
 

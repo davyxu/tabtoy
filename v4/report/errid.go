@@ -4,9 +4,9 @@ import "github.com/davyxu/tabtoy/util"
 
 func Init() {
 	util.RegisterError("InvalidMetaKey", &util.ErrorLanguage{CHS: "非法的字段元属性键"})
-	//util.RegisterError("DuplicateHeaderField", &util.ErrorLanguage{CHS: "表头字段重复"})
-	//util.RegisterError("DuplicateKVField", &util.ErrorLanguage{CHS: "键值表字段重复"})
-	//util.RegisterError("UnknownFieldType", &util.ErrorLanguage{CHS: "未知字段类型"})
+	util.RegisterError("InvalidKVHeader", &util.ErrorLanguage{CHS: "非法KV表头"})
+	util.RegisterError("DuplicateKVField", &util.ErrorLanguage{CHS: "键值表字段重复"})
+	util.RegisterError("UnknownFieldType", &util.ErrorLanguage{CHS: "未知字段类型"})
 	//util.RegisterError("DuplicateTypeFieldName", &util.ErrorLanguage{CHS: "类型表字段重复"})
 	//util.RegisterError("EnumValueEmpty", &util.ErrorLanguage{CHS: "枚举值空"})
 	//util.RegisterError("DuplicateEnumValue", &util.ErrorLanguage{CHS: "枚举值重复"})

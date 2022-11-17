@@ -2,34 +2,37 @@ package model
 
 import (
 	"fmt"
+	"github.com/davyxu/tabtoy/util"
 	"strings"
 )
 
 type HeaderField struct {
-	Cell     *Cell      // 表头单元格内容
+	Col      int
 	TypeInfo *DataField // 在类型表中找到对应的类型信息
+	tab      *DataTable
 }
 
 func (self *HeaderField) String() string {
 
 	var sb strings.Builder
 
-	if self.Cell != nil {
-		sb.WriteString("Cell: ")
-		sb.WriteString(self.Cell.String())
-	}
+	fmt.Fprintf(&sb, "Col: %d", self.Col)
 
 	if self.TypeInfo != nil {
-		sb.WriteString("TypeInfo: ")
-		sb.WriteString(fmt.Sprintf("%+v", self.TypeInfo))
+		fmt.Fprintf(&sb, "TypeInfo: %+v", self.TypeInfo)
 	}
 
 	return sb.String()
 }
 
-func NewHeaderField() *HeaderField {
+func (self *HeaderField) Location() string {
+	return fmt.Sprintf("@%s|%s(%s)", self.tab.FileName, self.tab.HeaderType, util.R1C1ToA1(0, self.Col))
+}
+
+func NewHeaderField(col int, tab *DataTable) *HeaderField {
 	return &HeaderField{
-		Cell:     &Cell{},
+		Col:      col,
 		TypeInfo: &DataField{},
+		tab:      tab,
 	}
 }

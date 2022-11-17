@@ -80,8 +80,7 @@ func (self *DataTable) String() string {
 func (self *DataTable) MustGetHeader(col int) (header *HeaderField) {
 
 	for len(self.Headers) <= col {
-		h := NewHeaderField()
-		h.Cell.Col = len(self.Headers)
+		h := NewHeaderField(len(self.Headers), self)
 		self.Headers = append(self.Headers, h)
 	}
 
@@ -97,21 +96,20 @@ func (self *DataTable) HeaderByColumn(col int) *HeaderField {
 	return self.Headers[col]
 }
 
-//
-//func (self *DataTable) HeaderByName(name string) *HeaderField {
-//	for _, header := range self.Headers {
-//
-//		if header.TypeInfo == nil {
-//			continue
-//		}
-//
-//		if header.TypeInfo.Name == name || header.TypeInfo.FieldName == name {
-//			return header
-//		}
-//	}
-//
-//	return nil
-//}
+func (self *DataTable) HeaderByName(name string) *HeaderField {
+	for _, header := range self.Headers {
+
+		if header.TypeInfo == nil {
+			continue
+		}
+
+		if header.TypeInfo.FieldName == name {
+			return header
+		}
+	}
+
+	return nil
+}
 
 func (self *DataTable) AddRow() (row int) {
 
@@ -163,18 +161,17 @@ func (self *DataTable) GetCell(row, col int) *Cell {
 	return rowData.Cell(col)
 }
 
-//
-//// 根据列头找到该行对应的值
-//func (self *DataTable) GetValueByName(row int, name string) *Cell {
-//
-//	header := self.HeaderByName(name)
-//
-//	if header == nil {
-//		return nil
-//	}
-//
-//	return self.GetCell(row, header.Cell.Col)
-//}
+// 根据列头找到该行对应的值
+func (self *DataTable) GetValueByName(row int, name string) *Cell {
+
+	header := self.HeaderByName(name)
+
+	if header == nil {
+		return nil
+	}
+
+	return self.GetCell(row, header.Col)
+}
 
 func NewDataTable() *DataTable {
 	return &DataTable{}

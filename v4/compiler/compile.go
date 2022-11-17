@@ -4,7 +4,6 @@ import (
 	"github.com/davyxu/tabtoy/util"
 	"github.com/davyxu/tabtoy/v4/model"
 	"github.com/pkg/errors"
-	"strings"
 )
 
 func Compile(cp *model.Compiler) (ret error) {
@@ -24,8 +23,8 @@ func Compile(cp *model.Compiler) (ret error) {
 		fileLoader := util.NewFileLoader(!cp.ParaLoading, cp.CacheDir)
 
 		if cp.ParaLoading {
-			for _, fileName := range cp.FileList {
-				fileLoader.AddFile(fileName)
+			for _, fileMeta := range cp.InputFiles {
+				fileLoader.AddFile(fileMeta.FileName)
 			}
 
 			fileLoader.Commit()
@@ -33,63 +32,24 @@ func Compile(cp *model.Compiler) (ret error) {
 		cp.DataFileGetter = fileLoader
 	}
 
-	for _, fileName := range cp.FileList {
-		file, err := cp.DataFileGetter.GetFile(fileName)
+	for _, fileMeta := range cp.InputFiles {
+		file, err := cp.DataFileGetter.GetFile(fileMeta.FileName)
 		if err != nil {
-			return errors.Wrap(err, fileName)
+			return errors.Wrap(err, fileMeta.FileName)
 		}
 
-		loadDataTable(file, fileName, cp)
+		switch fileMeta.Mode {
+		case "":
+			for _, tab := range loadDataTable(file, fileMeta.FileName, cp.Types) {
+				cp.Datas.AddDataTable(tab)
+			}
+		case "KV":
+			for _, tab := range loadKVTable(file, fileMeta.FileName, cp.Types) {
+				cp.Datas.AddDataTable(tab)
+			}
+		}
+
 	}
 
 	return
-}
-
-func loadDataTable(file util.TableFile, fileName string, cp *model.Compiler) {
-	for _, sheet := range file.Sheets() {
-
-		tab := model.NewDataTable()
-		tab.HeaderType = sheet.Name()
-		tab.FileName = fileName
-
-		cp.Datas.AddDataTable(tab)
-
-		maxCol := loadHeader(sheet, tab, cp.Types)
-
-		// 遍历所有数据行
-		for row := maxHeaderRow; ; row++ {
-
-			if sheet.IsRowEmpty(row, maxCol+1) {
-				break
-			}
-
-			// 读取每一行
-			readOneRow(sheet, tab, row)
-		}
-	}
-}
-
-func readOneRow(sheet util.TableSheet, tab *model.DataTable, row int) bool {
-
-	for _, header := range tab.Headers {
-
-		if header.TypeInfo == nil {
-			continue
-		}
-
-		// 浮点数用库取时，需要特殊处理
-		isFloat := util.LanguagePrimitive(header.TypeInfo.FieldType, "go") == "float32"
-
-		value := sheet.GetValue(row, header.Cell.Col, &util.ValueOption{ValueAsFloat: isFloat})
-
-		// 首列带#时，本行忽略
-		if header.Cell.Col == 0 && strings.HasPrefix(value, "#") {
-			return false
-		}
-
-		cell := tab.MustGetCell(row-maxHeaderRow, header.Cell.Col)
-		cell.Value = value
-	}
-
-	return true
 }

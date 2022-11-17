@@ -7,21 +7,18 @@ import (
 
 func TestMeta(t *testing.T) {
 
-	header := &model.HeaderField{
-		Cell:     &model.Cell{},
-		TypeInfo: &model.DataField{},
-	}
-	parseMeta(header, ";")
+	header := model.NewHeaderField(0, nil)
+	parseMeta(header.TypeInfo, ";")
 
-	parseMeta(header, ";;")
+	parseMeta(header.TypeInfo, ";;")
 
-	parseMeta(header, "MakeIndex;;MakeIndex")
+	parseMeta(header.TypeInfo, "MakeIndex;;MakeIndex")
 
 	if !header.TypeInfo.MakeIndex {
 		t.FailNow()
 	}
 
-	parseMeta(header, ";Spliter=|;")
+	parseMeta(header.TypeInfo, ";Spliter=|;")
 	if header.TypeInfo.ArraySplitter != "|" {
 		t.FailNow()
 	}

@@ -7,7 +7,6 @@ import (
 	"github.com/davyxu/tabtoy/v3/gen"
 	"github.com/davyxu/tabtoy/v3/gen/gosrc"
 	"github.com/davyxu/tabtoy/v3/gen/jsondata"
-	"github.com/davyxu/tabtoy/v3/helper"
 	"github.com/davyxu/tabtoy/v3/model"
 	"io/ioutil"
 	"path/filepath"
@@ -20,7 +19,7 @@ type TableEmulator struct {
 	G *model.Globals
 	T *testing.T
 
-	*helper.MemFile
+	*util.MemFile
 }
 
 func NewTableEmulator(t *testing.T) *TableEmulator {
@@ -31,7 +30,7 @@ func NewTableEmulator(t *testing.T) *TableEmulator {
 	globals.PackageName = "main"
 	globals.CombineStructName = "Table"
 
-	memfile := helper.NewMemFile()
+	memfile := util.NewMemFile()
 
 	globals.TableGetter = memfile
 	globals.IndexGetter = memfile
