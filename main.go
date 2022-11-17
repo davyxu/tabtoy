@@ -23,6 +23,8 @@ func main() {
 	}
 
 	switch *paramMode {
+	case "v4":
+		V4Entry()
 	case "v3":
 
 		type stopper interface {

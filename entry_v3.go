@@ -104,6 +104,7 @@ func GenFileByList(globals *model.Globals) error {
 }
 
 func V3Entry() {
+	report.Init()
 	globals := model.NewGlobals()
 	globals.Version = build.Version
 	globals.ParaLoading = *paramPara

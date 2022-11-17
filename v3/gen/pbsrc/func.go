@@ -2,6 +2,7 @@ package pbsrc
 
 import (
 	"fmt"
+	"github.com/davyxu/tabtoy/util"
 	"github.com/davyxu/tabtoy/v3/model"
 	"strings"
 	"text/template"
@@ -14,7 +15,7 @@ var UsefulFunc = template.FuncMap{}
 func init() {
 	UsefulFunc["PbType"] = func(tf *model.TypeDefine) string {
 
-		pbType := model.LanguagePrimitive(tf.FieldType, "pb")
+		pbType := util.LanguagePrimitive(tf.FieldType, "pb")
 
 		if tf.IsArray() {
 			return "repeated " + pbType

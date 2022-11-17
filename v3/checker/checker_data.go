@@ -55,7 +55,7 @@ func checkDataType(globals *model.Globals) {
 }
 
 func checkSingleValue(header *model.HeaderField, value string) error {
-	switch model.LanguagePrimitive(header.TypeInfo.FieldType, "go") {
+	switch util.LanguagePrimitive(header.TypeInfo.FieldType, "go") {
 	case "int16":
 		if value == "" {
 			return nil
@@ -118,7 +118,7 @@ func checkSingleValue(header *model.HeaderField, value string) error {
 			return err
 		}
 	case "bool":
-		_, err := model.ParseBool(value)
+		_, err := util.ParseBool(value)
 		if err != nil {
 			return err
 		}

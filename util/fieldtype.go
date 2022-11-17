@@ -1,16 +1,16 @@
-package model
+package util
 
 import (
 	"github.com/pkg/errors"
 )
 
 type FieldType struct {
-	InputFieldName string `tb_name:"输入字段"` // 表中输入的类型
-	GoFieldName    string `tb_name:"Go字段"` //  转换为go的类型
-	CSFieldName    string `tb_name:"C#字段"`
-	JavaFieldName  string `tb_name:"Java字段"`
-	PBFieldName    string `tb_name:"Protobuf字段"`
-	DefaultValue   string `tb_name:"默认值"`
+	InputFieldName string // 表中输入的类型
+	GoFieldName    string //  转换为go的类型
+	CSFieldName    string
+	JavaFieldName  string
+	PBFieldName    string
+	DefaultValue   string
 }
 
 // 将表中输入的字段类型转换为各种语言类型

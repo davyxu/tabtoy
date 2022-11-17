@@ -1,11 +1,12 @@
 package bindata
 
 import (
+	"github.com/davyxu/tabtoy/util"
 	"github.com/davyxu/tabtoy/v3/model"
 )
 
 func MakeTag(globals *model.Globals, tf *model.TypeDefine, fieldIndex int) uint32 {
-	convertedType := model.LanguagePrimitive(tf.FieldType, "go")
+	convertedType := util.LanguagePrimitive(tf.FieldType, "go")
 
 	var t int
 	switch {

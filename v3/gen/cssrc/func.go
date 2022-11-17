@@ -29,7 +29,7 @@ func wrapSingleValue(globals *model.Globals, valueType *model.TypeDefine, value 
 		return ""
 	case valueType.FieldType == "bool":
 
-		v, _ := model.ParseBool(value)
+		v, _ := util.ParseBool(value)
 		if v {
 			return "true"
 		}
@@ -38,7 +38,7 @@ func wrapSingleValue(globals *model.Globals, valueType *model.TypeDefine, value 
 	}
 
 	if value == "" {
-		return model.FetchDefaultValue(valueType.FieldType)
+		return util.FetchDefaultValue(valueType.FieldType)
 	}
 
 	return value
@@ -47,7 +47,7 @@ func wrapSingleValue(globals *model.Globals, valueType *model.TypeDefine, value 
 func init() {
 	UsefulFunc["CSType"] = func(tf *model.TypeDefine) string {
 
-		convertedType := model.LanguagePrimitive(tf.FieldType, "cs")
+		convertedType := util.LanguagePrimitive(tf.FieldType, "cs")
 
 		if tf.IsArray() {
 			return fmt.Sprintf("List<%s>", convertedType)
@@ -70,7 +70,7 @@ func init() {
 
 	UsefulFunc["CSReader"] = func(globals *model.Globals, tf *model.TypeDefine) (ret string) {
 
-		convertedType := model.LanguagePrimitive(tf.FieldType, "cs")
+		convertedType := util.LanguagePrimitive(tf.FieldType, "cs")
 
 		switch {
 		case convertedType == "float":
@@ -92,7 +92,7 @@ func init() {
 
 	UsefulFunc["CSDefaultValue"] = func(globals *model.Globals, tf *model.TypeDefine) string {
 
-		convertedType := model.LanguagePrimitive(tf.FieldType, "cs")
+		convertedType := util.LanguagePrimitive(tf.FieldType, "cs")
 
 		if tf.IsArray() {
 			return fmt.Sprintf("new List<%s>()", convertedType)

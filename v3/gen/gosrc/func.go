@@ -2,6 +2,7 @@ package gosrc
 
 import (
 	"fmt"
+	"github.com/davyxu/tabtoy/util"
 	"github.com/davyxu/tabtoy/v3/model"
 	"strings"
 	"text/template"
@@ -14,7 +15,7 @@ var UsefulFunc = template.FuncMap{}
 func init() {
 	UsefulFunc["GoType"] = func(tf *model.TypeDefine) string {
 
-		convertedType := model.LanguagePrimitive(tf.FieldType, "go")
+		convertedType := util.LanguagePrimitive(tf.FieldType, "go")
 
 		if tf.IsArray() {
 			return "[]" + convertedType

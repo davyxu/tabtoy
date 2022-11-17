@@ -37,7 +37,7 @@ func transposeKVtoData(symbols *model.TypeTable, kvtab *model.DataTable) (ret *m
 
 		tf.Name = name.Value
 
-		if !model.PrimitiveExists(fieldType.Value) && !symbols.ObjectExists(fieldType.Value) { // 对象检查
+		if !util.PrimitiveExists(fieldType.Value) && !symbols.ObjectExists(fieldType.Value) { // 对象检查
 			util.ReportError("UnknownFieldType", fieldType.Value, fieldType.String())
 		}
 

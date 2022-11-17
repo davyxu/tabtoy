@@ -50,7 +50,7 @@ func checkHeaderTypes(tab *model.DataTable, symbols *model.TypeTable) {
 		}
 
 		// 原始类型检查
-		if !model.PrimitiveExists(header.TypeInfo.FieldType) &&
+		if !util.PrimitiveExists(header.TypeInfo.FieldType) &&
 			!symbols.ObjectExists(header.TypeInfo.FieldType) { // 对象检查
 
 			util.ReportError("UnknownFieldType", header.TypeInfo.FieldType, header.Cell.String())

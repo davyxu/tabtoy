@@ -1,6 +1,7 @@
 package bindata
 
 import (
+	"github.com/davyxu/tabtoy/util"
 	"github.com/davyxu/tabtoy/v3/model"
 	"strconv"
 )
@@ -83,7 +84,7 @@ func writeValue(globals *model.Globals, structWriter *BinaryWriter, fieldType *m
 		if value == "" {
 			return structWriter.WriteBool(false)
 		} else {
-			v, err := model.ParseBool(value)
+			v, err := util.ParseBool(value)
 			if err != nil {
 				return err
 			}

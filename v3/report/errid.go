@@ -2,7 +2,7 @@ package report
 
 import "github.com/davyxu/tabtoy/util"
 
-func init() {
+func Init() {
 	util.RegisterError("HeaderNotMatchFieldName", &util.ErrorLanguage{CHS: "表头与字段不匹配"})
 	util.RegisterError("HeaderFieldNotDefined", &util.ErrorLanguage{CHS: "表头字段未定义"})
 	util.RegisterError("DuplicateHeaderField", &util.ErrorLanguage{CHS: "表头字段重复"})

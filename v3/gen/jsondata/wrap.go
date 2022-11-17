@@ -1,6 +1,7 @@
 package jsondata
 
 import (
+	"github.com/davyxu/tabtoy/util"
 	"github.com/davyxu/tabtoy/v3/model"
 	"strconv"
 )
@@ -33,7 +34,7 @@ func wrapValue(globals *model.Globals, valueCell *model.Cell, valueType *model.T
 
 func wrapSingleValue(globals *model.Globals, valueType *model.TypeDefine, value string) interface{} {
 
-	goType := model.LanguagePrimitive(valueType.FieldType, "go")
+	goType := util.LanguagePrimitive(valueType.FieldType, "go")
 
 	switch {
 	case goType == "string": // 字符串
@@ -60,7 +61,7 @@ func wrapSingleValue(globals *model.Globals, valueType *model.TypeDefine, value 
 		return int32(i)
 	case goType == "bool":
 
-		v, _ := model.ParseBool(value)
+		v, _ := util.ParseBool(value)
 		if v {
 			return true
 		}
@@ -87,7 +88,7 @@ func wrapSingleValue(globals *model.Globals, valueType *model.TypeDefine, value 
 	}
 
 	if value == "" {
-		return model.FetchDefaultValue(valueType.FieldType)
+		return util.FetchDefaultValue(valueType.FieldType)
 	}
 
 	return value

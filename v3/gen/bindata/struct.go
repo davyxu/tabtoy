@@ -1,6 +1,7 @@
 package bindata
 
 import (
+	"github.com/davyxu/tabtoy/util"
 	"github.com/davyxu/tabtoy/v3/model"
 )
 
@@ -26,7 +27,7 @@ func writeStruct(globals *model.Globals, tab *model.DataTable, row int) (*Binary
 			continue
 		}
 
-		goType := model.LanguagePrimitive(header.TypeInfo.FieldType, "go")
+		goType := util.LanguagePrimitive(header.TypeInfo.FieldType, "go")
 
 		// 写入字段
 		if header.TypeInfo.IsArray() {

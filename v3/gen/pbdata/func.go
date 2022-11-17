@@ -1,6 +1,7 @@
 package pbdata
 
 import (
+	"github.com/davyxu/tabtoy/util"
 	"github.com/davyxu/tabtoy/v3/model"
 	"github.com/golang/protobuf/proto"
 	descriptorpb "github.com/golang/protobuf/protoc-gen-go/descriptor"
@@ -10,7 +11,7 @@ import (
 
 func tableValue2PbValueList(globals *model.Globals, cell *model.Cell, valueType *model.TypeDefine, list protoreflect.List) {
 
-	pbType := model.LanguagePrimitive(valueType.FieldType, "pb")
+	pbType := util.LanguagePrimitive(valueType.FieldType, "pb")
 
 	if globals.Types.IsEnumKind(pbType) {
 
@@ -32,7 +33,7 @@ func tableValue2PbValueList(globals *model.Globals, cell *model.Cell, valueType 
 
 func tableValue2PbValue(globals *model.Globals, cellValue string, valueType *model.TypeDefine) protoreflect.Value {
 
-	pbType := model.LanguagePrimitive(valueType.FieldType, "pb")
+	pbType := util.LanguagePrimitive(valueType.FieldType, "pb")
 
 	switch pbType {
 	case "int32":
@@ -76,7 +77,7 @@ func tableValue2PbValue(globals *model.Globals, cellValue string, valueType *mod
 			return protoreflect.ValueOfBool(false)
 		}
 
-		v, _ := model.ParseBool(cellValue)
+		v, _ := util.ParseBool(cellValue)
 		return protoreflect.ValueOfBool(v)
 	case "string":
 		return protoreflect.ValueOfString(cellValue)
@@ -99,7 +100,7 @@ func tableValue2PbValue(globals *model.Globals, cellValue string, valueType *mod
 }
 
 func tableType2PbType(globals *model.Globals, def *model.TypeDefine, pbDesc *descriptorpb.FieldDescriptorProto) {
-	pbType := model.LanguagePrimitive(def.FieldType, "pb")
+	pbType := util.LanguagePrimitive(def.FieldType, "pb")
 
 	switch pbType {
 	case "int32":

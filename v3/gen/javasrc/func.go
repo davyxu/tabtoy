@@ -26,7 +26,7 @@ func wrapSingleValue(globals *model.Globals, valueType *model.TypeDefine, value 
 		return ""
 	case valueType.FieldType == "bool":
 
-		v, _ := model.ParseBool(value)
+		v, _ := util.ParseBool(value)
 		if v {
 			return "true"
 		}
@@ -35,7 +35,7 @@ func wrapSingleValue(globals *model.Globals, valueType *model.TypeDefine, value 
 	}
 
 	if value == "" {
-		return model.FetchDefaultValue(valueType.FieldType)
+		return util.FetchDefaultValue(valueType.FieldType)
 	}
 
 	return value
@@ -44,7 +44,7 @@ func wrapSingleValue(globals *model.Globals, valueType *model.TypeDefine, value 
 func init() {
 	UsefulFunc["JavaType"] = func(tf *model.TypeDefine, requireRef bool) string {
 
-		convertedType := model.LanguagePrimitive(tf.FieldType, "java")
+		convertedType := util.LanguagePrimitive(tf.FieldType, "java")
 
 		if requireRef {
 			// https://www.geeksforgeeks.org/difference-between-an-integer-and-int-in-java/
@@ -73,7 +73,7 @@ func init() {
 
 	UsefulFunc["JavaDefaultValue"] = func(globals *model.Globals, tf *model.TypeDefine) string {
 
-		convertedType := model.LanguagePrimitive(tf.FieldType, "java")
+		convertedType := util.LanguagePrimitive(tf.FieldType, "java")
 
 		if tf.IsArray() {
 			return fmt.Sprintf("new %s[]{}", convertedType)

@@ -34,7 +34,7 @@ func WrapSingleValue(globals *model.Globals, valueType *model.TypeDefine, value 
 	case valueType.FieldType == "float":
 
 		if value == "" {
-			return model.FetchDefaultValue(valueType.FieldType)
+			return util.FetchDefaultValue(valueType.FieldType)
 		}
 
 		return value
@@ -42,7 +42,7 @@ func WrapSingleValue(globals *model.Globals, valueType *model.TypeDefine, value 
 		return globals.Types.ResolveEnumValue(valueType.FieldType, value)
 	case valueType.FieldType == "bool":
 
-		v, _ := model.ParseBool(value)
+		v, _ := util.ParseBool(value)
 		if v {
 			return "true"
 		}
@@ -51,7 +51,7 @@ func WrapSingleValue(globals *model.Globals, valueType *model.TypeDefine, value 
 	}
 
 	if value == "" {
-		return model.FetchDefaultValue(valueType.FieldType)
+		return util.FetchDefaultValue(valueType.FieldType)
 	}
 
 	return value
