@@ -12,24 +12,28 @@ type TypeData struct {
 	Row    int        // 类型引用的原始数据(DataTable)中的行
 }
 
-type TypeTable struct {
+type TypeManager struct {
 	fields []*TypeData
 }
 
-func (self *TypeTable) ToJSON() []byte {
+func NewTypeManager() *TypeManager {
+	return new(TypeManager)
+}
+
+func (self *TypeManager) ToJSON() []byte {
 
 	data, _ := json.MarshalIndent(self.AllFields(), "", "\t")
 
 	return data
 }
 
-func (self *TypeTable) Print() {
+func (self *TypeManager) Print() {
 
 	fmt.Println(string(self.ToJSON()))
 }
 
 // refData，类型表对应源表的位置信息
-func (self *TypeTable) AddField(tf *DataField, data *DataTable, row int) {
+func (self *TypeManager) AddField(tf *DataField, data *DataTable, refRow int) {
 
 	if self.FieldByName(tf.ObjectType, tf.FieldName) != nil {
 		panic("Duplicate table field: " + tf.FieldName)
@@ -38,15 +42,15 @@ func (self *TypeTable) AddField(tf *DataField, data *DataTable, row int) {
 	self.fields = append(self.fields, &TypeData{
 		Tab:    data,
 		Define: tf,
-		Row:    row,
+		Row:    refRow,
 	})
 }
 
-func (self *TypeTable) Raw() []*TypeData {
+func (self *TypeManager) Raw() []*TypeData {
 	return self.fields
 }
 
-func (self *TypeTable) AllFields() (ret []*DataField) {
+func (self *TypeManager) AllFields() (ret []*DataField) {
 
 	linq.From(self.fields).Where(func(raw interface{}) bool {
 		return true
@@ -59,7 +63,7 @@ func (self *TypeTable) AllFields() (ret []*DataField) {
 }
 
 // 类型是枚举
-func (self *TypeTable) IsEnumKind(objectType string) bool {
+func (self *TypeManager) IsEnumKind(objectType string) bool {
 
 	for _, tf := range self.fields {
 		if tf.Define.Usage == FieldUsage_Enum && objectType == tf.Define.ObjectType {
@@ -70,7 +74,7 @@ func (self *TypeTable) IsEnumKind(objectType string) bool {
 	return false
 }
 
-func (self *TypeTable) ResolveEnum(objectType, value string) *TypeData {
+func (self *TypeManager) ResolveEnum(objectType, value string) *TypeData {
 
 	t := self.GetEnumValue(objectType, value)
 
@@ -88,7 +92,7 @@ func (self *TypeTable) ResolveEnum(objectType, value string) *TypeData {
 	return enumFields[0]
 }
 
-func (self *TypeTable) GetEnumValue(objectType, value string) *TypeData {
+func (self *TypeManager) GetEnumValue(objectType, value string) *TypeData {
 	enumFields := self.getEnumFields(objectType)
 
 	if len(enumFields) == 0 {
@@ -107,7 +111,7 @@ func (self *TypeTable) GetEnumValue(objectType, value string) *TypeData {
 }
 
 // 匹配枚举值
-func (self *TypeTable) ResolveEnumValue(objectType, value string) string {
+func (self *TypeManager) ResolveEnumValue(objectType, value string) string {
 
 	t := self.ResolveEnum(objectType, value)
 	if t == nil {
@@ -117,7 +121,7 @@ func (self *TypeTable) ResolveEnumValue(objectType, value string) string {
 	return t.Define.Value
 }
 
-func (self *TypeTable) getEnumFields(objectType string) (ret []*TypeData) {
+func (self *TypeManager) getEnumFields(objectType string) (ret []*TypeData) {
 
 	for _, td := range self.fields {
 
@@ -130,18 +134,18 @@ func (self *TypeTable) getEnumFields(objectType string) (ret []*TypeData) {
 	return
 }
 
-func (self *TypeTable) EnumNames() (ret []string) {
+func (self *TypeManager) EnumNames() (ret []string) {
 
 	return self.rawEnumNames(true)
 }
 
-func (self *TypeTable) StructNames() (ret []string) {
+func (self *TypeManager) StructNames() (ret []string) {
 
 	return self.rawStructNames(true)
 }
 
 // 获取所有的结构体名
-func (self *TypeTable) rawStructNames(all bool) (ret []string) {
+func (self *TypeManager) rawStructNames(all bool) (ret []string) {
 
 	linq.From(self.fields).Where(func(raw interface{}) bool {
 		td := raw.(*TypeData)
@@ -161,7 +165,7 @@ func (self *TypeTable) rawStructNames(all bool) (ret []string) {
 }
 
 // 获取所有的枚举名
-func (self *TypeTable) rawEnumNames(all bool) (ret []string) {
+func (self *TypeManager) rawEnumNames(all bool) (ret []string) {
 
 	linq.From(self.fields).Where(func(raw interface{}) bool {
 		td := raw.(*TypeData)
@@ -182,7 +186,7 @@ func (self *TypeTable) rawEnumNames(all bool) (ret []string) {
 }
 
 // 对象的所有字段
-func (self *TypeTable) AllFieldByName(objectType string) (ret []*DataField) {
+func (self *TypeManager) AllFieldByName(objectType string) (ret []*DataField) {
 
 	linq.From(self.fields).Where(func(raw interface{}) bool {
 		td := raw.(*TypeData)
@@ -196,7 +200,7 @@ func (self *TypeTable) AllFieldByName(objectType string) (ret []*DataField) {
 }
 
 // 数据表中表头对应类型表
-func (self *TypeTable) FieldByName(objectType, name string) (ret *DataField) {
+func (self *TypeManager) FieldByName(objectType, name string) (ret *DataField) {
 
 	linq.From(self.fields).Where(func(raw interface{}) bool {
 		td := raw.(*TypeData)
@@ -211,14 +215,10 @@ func (self *TypeTable) FieldByName(objectType, name string) (ret *DataField) {
 	return
 }
 
-func (self *TypeTable) ObjectExists(objectType string) bool {
+func (self *TypeManager) ObjectExists(objectType string) bool {
 
 	return linq.From(self.fields).Where(func(raw interface{}) bool {
 		td := raw.(*TypeData)
 		return td.Define.ObjectType == objectType
 	}).Count() > 0
-}
-
-func NewTypeTable() *TypeTable {
-	return new(TypeTable)
 }

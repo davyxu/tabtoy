@@ -77,14 +77,9 @@ func (self *DataTable) String() string {
 	return sb.String()
 }
 
-func (self *DataTable) MustGetHeader(col int) (header *HeaderField) {
-
-	for len(self.Headers) <= col {
-		h := NewHeaderField(len(self.Headers), self)
-		self.Headers = append(self.Headers, h)
-	}
-
-	return self.HeaderByColumn(col)
+func (self *DataTable) AddHeader(header *HeaderField) {
+	header.tab = self
+	self.Headers = append(self.Headers, header)
 }
 
 func (self *DataTable) HeaderByColumn(col int) *HeaderField {
@@ -111,11 +106,11 @@ func (self *DataTable) HeaderByName(name string) *HeaderField {
 	return nil
 }
 
-func (self *DataTable) AddRow() (row int) {
+func (self *DataTable) AddRow() (newRow *DataRow) {
 
-	row = len(self.Rows)
+	newRow = newDataRow(len(self.Rows), self)
 
-	self.Rows = append(self.Rows, newDataRow(row, self))
+	self.Rows = append(self.Rows, newRow)
 
 	return
 }

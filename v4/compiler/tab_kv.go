@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/davyxu/tabtoy/util"
 	"github.com/davyxu/tabtoy/v4/model"
+	"path/filepath"
 	"strings"
 )
 
@@ -45,7 +46,7 @@ func loadKVHeader(sheet util.TableSheet) (colByHeaderType [maxKVHeaderCol]int, o
 	return
 }
 
-func loadKVTable(file util.TableFile, fileName string, types *model.TypeTable) (ret []*model.DataTable) {
+func loadKVTable(file util.TableFile, fileName string, types *model.TypeManager) (ret []*model.DataTable) {
 	for _, sheet := range file.Sheets() {
 
 		colByHeaderType, ok := loadKVHeader(sheet)
@@ -56,7 +57,11 @@ func loadKVTable(file util.TableFile, fileName string, types *model.TypeTable) (
 		}
 
 		tab := model.NewDataTable()
-		tab.HeaderType = sheet.Name()
+		if sheet.Name() == "" {
+			tab.HeaderType = strings.TrimSuffix(fileName, filepath.Ext(fileName))
+		} else {
+			tab.HeaderType = sheet.Name()
+		}
 		tab.FileName = fileName
 
 		ret = append(ret, tab)
@@ -76,7 +81,8 @@ func loadKVTable(file util.TableFile, fileName string, types *model.TypeTable) (
 				continue
 			}
 
-			header := tab.MustGetHeader(row - 1)
+			header := model.NewHeaderField(row - 1)
+			tab.AddHeader(header)
 
 			field := header.TypeInfo
 			field.Usage = model.FieldUsage_Struct
@@ -84,29 +90,41 @@ func loadKVTable(file util.TableFile, fileName string, types *model.TypeTable) (
 			field.FieldName = sheet.GetValue(row, colByHeaderType[kvHeaderCol_Key], nil)
 			field.FieldType = sheet.GetValue(row, colByHeaderType[kvHeaderCol_Type], nil)
 
-			cellLocation := kvCellToString(row, colByHeaderType[kvHeaderCol_Type], field.FieldType, fileName, sheet.Name())
-
 			// 原始类型检查
-			if !util.PrimitiveExists(field.FieldType) &&
-				!types.ObjectExists(field.FieldType) { // 对象检查
-
+			if !util.PrimitiveExists(field.FieldType) && !types.ObjectExists(field.FieldType) { // 对象检查
+				cellLocation := kvCellToString(row, colByHeaderType[kvHeaderCol_Type], field.FieldType, fileName, sheet.Name())
 				util.ReportError("UnknownFieldType", field.FieldType, cellLocation)
 			}
 			field.Comment = sheet.GetValue(row, colByHeaderType[kvHeaderCol_Comment], nil)
 			fieldMeta := sheet.GetValue(row, colByHeaderType[kvHeaderCol_Meta], nil)
-			if !parseMeta(field, fieldMeta) {
-				util.ReportError("InvalidMetaFormat", fieldMeta, cellLocation)
+			if errStr := parseMeta(field, fieldMeta); errStr != "" {
+				cellLocation := kvCellToString(row, colByHeaderType[kvHeaderCol_Meta], fieldMeta, fileName, sheet.Name())
+				util.ReportError(errStr, fieldMeta, cellLocation)
+			}
+
+			if field.FieldName == "" {
+				cellLocation := kvCellToString(row, colByHeaderType[kvHeaderCol_Key], field.FieldName, fileName, sheet.Name())
+				util.ReportError("UnknownFieldName", cellLocation)
 			}
 
 			if types.FieldByName(field.ObjectType, field.FieldName) != nil {
+				cellLocation := kvCellToString(row, colByHeaderType[kvHeaderCol_Key], field.FieldName, fileName, sheet.Name())
 				util.ReportError("DuplicateKVField", cellLocation)
 			}
 
-			// 浮点数用库取时，需要特殊处理
+			types.AddField(field, tab, row)
+
+			// 数据
 			isFloat := util.LanguagePrimitive(field.FieldType, "go") == "float32"
 			fieldValue := sheet.GetValue(row, colByHeaderType[kvHeaderCol_Value], &util.ValueOption{ValueAsFloat: isFloat})
 			cell := tab.AddCell(0)
 			cell.Value = fieldValue
+
+			if field.IsArray() {
+				for _, element := range strings.Split(fieldValue, field.ArraySplitter) {
+					cell.ValueList = append(cell.ValueList, element)
+				}
+			}
 		}
 	}
 

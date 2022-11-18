@@ -3,7 +3,6 @@ package model
 import (
 	"fmt"
 	"github.com/davyxu/tabtoy/util"
-	"strings"
 )
 
 type HeaderField struct {
@@ -13,26 +12,12 @@ type HeaderField struct {
 }
 
 func (self *HeaderField) String() string {
-
-	var sb strings.Builder
-
-	fmt.Fprintf(&sb, "Col: %d", self.Col)
-
-	if self.TypeInfo != nil {
-		fmt.Fprintf(&sb, "TypeInfo: %+v", self.TypeInfo)
-	}
-
-	return sb.String()
+	return fmt.Sprintf("%s %s %s @%s|%s(%s)", self.TypeInfo.FieldName, self.TypeInfo.FieldType, self.TypeInfo.Comment, self.tab.FileName, self.tab.HeaderType, util.R1C1ToA1(1, self.Col+1))
 }
 
-func (self *HeaderField) Location() string {
-	return fmt.Sprintf("@%s|%s(%s)", self.tab.FileName, self.tab.HeaderType, util.R1C1ToA1(0, self.Col))
-}
-
-func NewHeaderField(col int, tab *DataTable) *HeaderField {
+func NewHeaderField(col int) *HeaderField {
 	return &HeaderField{
 		Col:      col,
 		TypeInfo: &DataField{},
-		tab:      tab,
 	}
 }

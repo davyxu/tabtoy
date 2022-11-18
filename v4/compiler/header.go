@@ -14,48 +14,52 @@ const (
 	maxHeaderRow        = 4
 )
 
-func loadHeader(sheet util.TableSheet, tab *model.DataTable) (maxCol int) {
+func parseHeader(sheet util.TableSheet, tab *model.DataTable, types *model.TypeManager) (maxCol int) {
 	for col := 0; ; col++ {
 
-		header := tab.MustGetHeader(col)
-		header.Col = col
+		fieldName := sheet.GetValue(headerRow_FieldName, col, nil)
+		fieldType := sheet.GetValue(headerRow_FieldType, col, nil)
 
-		for row := 0; row < maxHeaderRow; row++ {
-			headerValue := sheet.GetValue(row, col, nil)
-			// 空列，终止
-			if headerValue == "" {
-				return
-			}
-
-			maxCol = col
-
-			tinfo := header.TypeInfo
-			tinfo.Usage = model.FieldUsage_Struct
-			tinfo.ObjectType = tab.HeaderType
-
-			switch row {
-			case headerRow_FieldName:
-				tinfo.FieldName = headerValue
-			case headerRow_FieldType:
-				tinfo.FieldType = headerValue
-			case headerRow_Meta:
-				if !parseMeta(header.TypeInfo, headerValue) {
-					util.ReportError("InvalidMetaFormat", headerValue, header.Location())
-				}
-			case headerRow_Comment:
-				tinfo.Comment = headerValue
-			}
+		if fieldName == "" && fieldType == "" {
+			break
 		}
 
+		if strings.HasPrefix(fieldName, "#") {
+			continue
+		}
+
+		maxCol = col
+
+		header := model.NewHeaderField(col)
+		tab.AddHeader(header)
+		types.AddField(header.TypeInfo, tab, 0)
+		tinfo := header.TypeInfo
+		tinfo.Usage = model.FieldUsage_Struct
+		tinfo.ObjectType = tab.HeaderType
+
+		if fieldName == "" {
+			util.ReportError("UnknownFieldName", header.String())
+		}
+
+		tinfo.FieldName = fieldName
+		tinfo.FieldType = fieldType
+		fieldMeta := sheet.GetValue(headerRow_Meta, col, nil)
+		if errStr := parseMeta(tinfo, fieldMeta); errStr != "" {
+			util.ReportError(errStr, fieldMeta, header.String())
+		}
+
+		tinfo.Comment = sheet.GetValue(headerRow_Comment, col, nil)
 	}
+
+	return
 }
 
-func parseMeta(field *model.DataField, meta string) bool {
+func parseMeta(field *model.DataField, meta string) string {
 	if meta == "" {
-		return true
+		return ""
 	}
 
-	features := strings.Split(meta, ";")
+	features := strings.Split(meta, " ")
 
 	for _, kvStr := range features {
 		if kvStr == "" {
@@ -77,26 +81,45 @@ func parseMeta(field *model.DataField, meta string) bool {
 		switch key {
 		case "MakeIndex":
 			field.MakeIndex = true
-		case "Spliter":
+		case "ArraySpliter":
+			if value == "" {
+				return "EmptyArraySpliter"
+			}
 			field.ArraySplitter = value
 		default:
-			return false
+			return "UnknownMetaKey"
 		}
 	}
 
-	return true
+	return ""
 }
 
-func checkHeaderTypes(tab *model.DataTable, types *model.TypeTable) {
+func headerValueExists(offset int, name string, headers []*model.HeaderField) bool {
 
-	for _, header := range tab.Headers {
+	for i := offset; i < len(headers); i++ {
+		if headers[i].TypeInfo.FieldName == name {
+			return true
+		}
+	}
+
+	return false
+}
+
+func checkHeaderTypes(tab *model.DataTable, types *model.TypeManager) {
+
+	for index, header := range tab.Headers {
 
 		// 原始类型检查
 		if !util.PrimitiveExists(header.TypeInfo.FieldType) &&
 			!types.ObjectExists(header.TypeInfo.FieldType) { // 对象检查
 
-			util.ReportError("UnknownFieldType", header.TypeInfo.FieldType, header.Location())
+			util.ReportError("UnknownFieldType", header.TypeInfo.FieldType, header.String())
 		}
+
+		if headerValueExists(index+1, header.TypeInfo.FieldName, tab.Headers) && !header.TypeInfo.IsArray() {
+			util.ReportError("DuplicateHeaderField", header.String())
+		}
+
 	}
 
 }

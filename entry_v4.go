@@ -9,36 +9,30 @@ import (
 	"strings"
 )
 
-func parseInputFiles(cp *model.Compiler) {
+func parseInputFiles(g *model.Globals) {
 	for _, name := range flag.Args() {
 		raw := strings.Split(name, ":")
-
-		var fileMeta model.FileMeta
-
 		if len(raw) == 2 {
-			fileMeta.FileName = raw[1]
-			fileMeta.Mode = raw[0]
+			g.AddFile(raw[0], raw[1])
 		} else {
-			fileMeta.FileName = name
+			g.AddFile("", name)
 		}
-
-		cp.InputFiles = append(cp.InputFiles, fileMeta)
 	}
 }
 
 func V4Entry() {
 	report.Init()
-	cp := model.NewCompiler()
-	cp.ParaLoading = *paramPara
+	g := model.NewGlobals()
+	g.ParaLoading = *paramPara
 
-	parseInputFiles(cp)
+	parseInputFiles(g)
 
 	if *paramUseCache {
-		cp.CacheDir = *paramCacheDir
-		os.Mkdir(cp.CacheDir, 0666)
+		g.CacheDir = *paramCacheDir
+		os.Mkdir(g.CacheDir, 0666)
 	}
 
-	err := compiler.Compile(cp)
+	err := compiler.Compile(g)
 	if err != nil {
 		goto Exit
 	}

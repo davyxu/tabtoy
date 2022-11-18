@@ -6,7 +6,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func Compile(cp *model.Compiler) (ret error) {
+func Compile(g *model.Globals) (ret error) {
 	defer func() {
 
 		switch err := recover().(type) {
@@ -19,33 +19,33 @@ func Compile(cp *model.Compiler) (ret error) {
 
 	}()
 
-	if cp.DataFileGetter == nil {
-		fileLoader := util.NewFileLoader(!cp.ParaLoading, cp.CacheDir)
+	if g.DataFileGetter == nil {
+		fileLoader := util.NewFileLoader(!g.ParaLoading, g.CacheDir)
 
-		if cp.ParaLoading {
-			for _, fileMeta := range cp.InputFiles {
+		if g.ParaLoading {
+			for _, fileMeta := range g.InputFiles {
 				fileLoader.AddFile(fileMeta.FileName)
 			}
 
 			fileLoader.Commit()
 		}
-		cp.DataFileGetter = fileLoader
+		g.DataFileGetter = fileLoader
 	}
 
-	for _, fileMeta := range cp.InputFiles {
-		file, err := cp.DataFileGetter.GetFile(fileMeta.FileName)
+	for _, fileMeta := range g.InputFiles {
+		file, err := g.DataFileGetter.GetFile(fileMeta.FileName)
 		if err != nil {
 			return errors.Wrap(err, fileMeta.FileName)
 		}
 
 		switch fileMeta.Mode {
 		case "":
-			for _, tab := range loadDataTable(file, fileMeta.FileName, cp.Types) {
-				cp.Datas.AddDataTable(tab)
+			for _, tab := range loadDataTable(file, fileMeta.FileName, g.Types) {
+				g.Datas.AddDataTable(tab)
 			}
 		case "KV":
-			for _, tab := range loadKVTable(file, fileMeta.FileName, cp.Types) {
-				cp.Datas.AddDataTable(tab)
+			for _, tab := range loadKVTable(file, fileMeta.FileName, g.Types) {
+				g.Datas.AddDataTable(tab)
 			}
 		}
 
