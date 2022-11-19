@@ -48,16 +48,16 @@ type {{.CombineStructName}} struct { {{range $ti, $tab := $.Datas.AllTables}}
 	{{$idx.Table.HeaderType}}By{{$idx.FieldInfo.FieldName}} map[{{GoType $idx.FieldInfo}}]*{{$idx.Table.HeaderType}}	{{JsonTabOmit}} // table: {{$idx.Table.HeaderType}} {{end}}
 
 	// Handlers
-	postHandlers []func(*{{.CombineStructName}}) error {{JsonTabOmit}}
-	preHandlers  []func(*{{.CombineStructName}}) error {{JsonTabOmit}}
+	postHandlers []func(*{{.CombineStructName}}) error
+	preHandlers  []func(*{{.CombineStructName}}) error
 	
-	indexHandler map[string]func() {{JsonTabOmit}}
-	resetHandler map[string]func() {{JsonTabOmit}}
+	indexHandler map[string]func()
+	resetHandler map[string]func()
 }
 
 {{if HasKeyValueTypes $}}
 {{range $ti, $name := GetKeyValueTypeNames $}} // table: {{$name}}
-func (self*{{$.CombineStructName}}) GetKeyValue_{{$name}}() *{{$name}}{
+func (self*{{$.CombineStructName}}) KV_{{$name}}() *{{$name}}{
 	return self.{{$name}}[0]
 }
 {{end}}{{end}}

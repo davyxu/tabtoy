@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"github.com/davyxu/tabtoy/util"
 	"github.com/davyxu/tabtoy/v4/compiler"
-	"github.com/davyxu/tabtoy/v4/gen"
 	"github.com/davyxu/tabtoy/v4/gen/gosrc"
 	"github.com/davyxu/tabtoy/v4/gen/jsondata"
 	"github.com/davyxu/tabtoy/v4/model"
@@ -39,6 +38,12 @@ func NewTableEmulator(t *testing.T) *TableEmulator {
 		T:       t,
 		G:       g,
 		memFile: memFile,
+	}
+}
+
+func (self *TableEmulator) SetSheetName(sheet util.TableSheet, name string) {
+	if csvSheet, ok := sheet.(*util.CSVSheet); ok {
+		csvSheet.SetName(name)
 	}
 }
 
@@ -115,7 +120,7 @@ func (self *TableEmulator) VerifyData(expectJson string) {
 
 	self.run(true)
 
-	appJson, err := jsondata.Generate(self.G)
+	appJson, err := jsondata.OutputData(self.G)
 
 	if err != nil {
 		return
@@ -142,13 +147,13 @@ func (self *TableEmulator) VerifyGoTypeAndJson(expectJson string) {
 
 	configFileName := filepath.Join(dir, "config.json")
 
-	if err = genFile(self.G, configFileName, jsondata.Generate); err != nil {
+	if err = jsondata.OutputFile(self.G, configFileName); err != nil {
 		return
 	}
 
 	tableFileName := filepath.Join(dir, "table.go")
 
-	if err = genFile(self.G, tableFileName, gosrc.Generate); err != nil {
+	if err = gosrc.OutputFile(self.G, tableFileName); err != nil {
 		return
 	}
 
@@ -168,17 +173,6 @@ func (self *TableEmulator) VerifyGoTypeAndJson(expectJson string) {
 	if !result {
 		self.T.Fatalf("Expect '%s' got '%s'", expectJson, appJson)
 	}
-}
-
-func genFile(compiler *model.Globals, filename string, genFunc gen.GenSingleFile) error {
-
-	data, err := genFunc(compiler)
-
-	if err != nil {
-		return err
-	}
-
-	return util.WriteFile(filename, data)
 }
 
 func compareKVJson(a, b []byte) (bool, error) {

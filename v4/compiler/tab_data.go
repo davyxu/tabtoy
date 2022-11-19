@@ -19,6 +19,10 @@ func loadDataTable(file util.TableFile, fileName string, types *model.TypeManage
 			tab.HeaderType = sheet.Name()
 		}
 
+		if types.ObjectExists(tab.HeaderType) {
+			util.ReportError("DuplicateHeaderType", tab.HeaderType)
+		}
+
 		tab.FileName = fileName
 
 		ret = append(ret, tab)

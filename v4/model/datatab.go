@@ -7,12 +7,11 @@ import (
 
 // 表格的完整数据，表头有屏蔽时，对应行值为空
 type DataTable struct {
+	Mode       string
 	HeaderType string // Sheet名称, 表名, 结构体名
+	FileName   string
 
-	FileName string
-
-	Rows []*DataRow // 0下标为表头数据
-
+	Rows    []*DataRow // 0下标为表头数据
 	Headers []*HeaderField
 }
 

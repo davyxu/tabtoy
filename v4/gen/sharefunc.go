@@ -1,9 +1,8 @@
 package gen
 
 import (
-	"github.com/ahmetb/go-linq"
 	"github.com/davyxu/tabtoy/util"
-	"github.com/davyxu/tabtoy/v3/model"
+	"github.com/davyxu/tabtoy/v4/model"
 	"text/template"
 )
 
@@ -11,23 +10,21 @@ var UsefulFunc = template.FuncMap{}
 
 type TableIndices struct {
 	Table     *model.DataTable
-	FieldInfo *model.TypeDefine
+	FieldInfo *model.DataField
 }
 
 func KeyValueTypeNames(globals *model.Globals) (ret []string) {
-	linq.From(globals.IndexList).Where(func(raw interface{}) bool {
-		pragma := raw.(*model.IndexDefine)
-		return pragma.Kind == model.TableKind_KeyValue
-	}).Select(func(raw interface{}) interface{} {
-		pragma := raw.(*model.IndexDefine)
 
-		return pragma.TableType
-	}).Distinct().ToSlice(&ret)
+	for _, tab := range globals.Datas.AllTables() {
+		if tab.Mode == "KV" {
+			ret = append(ret, tab.HeaderType)
+		}
+	}
 
 	return
 }
 
-func WrapSingleValue(globals *model.Globals, valueType *model.TypeDefine, value string) string {
+func WrapSingleValue(globals *model.Globals, valueType *model.DataField, value string) string {
 	switch {
 	case valueType.FieldType == "string": // 字符串
 		return util.StringWrap(util.StringEscape(value))

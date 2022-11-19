@@ -2,12 +2,13 @@ package gosrc
 
 import (
 	"github.com/davyxu/protoplus/codegen"
+	"github.com/davyxu/tabtoy/util"
 	"github.com/davyxu/tabtoy/v4/gen"
 	"github.com/davyxu/tabtoy/v4/model"
 	"github.com/davyxu/tabtoy/v4/report"
 )
 
-func Generate(globals *model.Globals) (data []byte, err error) {
+func OutputFile(globals *model.Globals, outFile string) (err error) {
 
 	cg := codegen.NewCodeGen("gosrc").
 		RegisterTemplateFunc(codegen.UsefulFunc).
@@ -21,11 +22,9 @@ func Generate(globals *model.Globals) (data []byte, err error) {
 
 	err = cg.FormatGoCode().Error()
 	if err != nil {
-		report.Log.Infoln(string(cg.Code()))
+		report.Log.Infoln(cg.Code())
 		return
 	}
 
-	err = cg.WriteBytes(&data).Error()
-
-	return
+	return util.WriteFile(outFile, cg.Data())
 }

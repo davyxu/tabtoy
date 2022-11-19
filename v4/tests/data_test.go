@@ -194,3 +194,24 @@ func TestMakeIndex(t *testing.T) {
 
 	emu.MustGotError("TableError.DuplicateValueInMakingIndex 创建索引时发现重复值 | '1' @TestData|TestData(A2)")
 }
+
+// 表头类型重复
+func TestDuplicateHeaderType(t *testing.T) {
+
+	emu := NewTableEmulator(t)
+
+	dataSheet1 := emu.CreateDataSheet("data1")
+	dataSheet1.WriteRow("Id")    // field name
+	dataSheet1.WriteRow("int32") // field type
+	dataSheet1.WriteRow()        // meta
+	dataSheet1.WriteRow()        // comment
+
+	dataSheet2 := emu.CreateDataSheet("data2")
+	emu.SetSheetName(dataSheet2, "data1")
+	dataSheet2.WriteRow("Id")    // field name
+	dataSheet2.WriteRow("int32") // field type
+	dataSheet2.WriteRow()        // meta
+	dataSheet2.WriteRow()        // comment
+
+	emu.MustGotError("TableError.DuplicateHeaderType 表头类型重复 | data1")
+}

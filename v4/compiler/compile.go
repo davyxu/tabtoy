@@ -45,6 +45,7 @@ func Compile(g *model.Globals) (ret error) {
 			}
 		case "KV":
 			for _, tab := range loadKVTable(file, fileMeta.FileName, g.Types) {
+				tab.Mode = "KV"
 				g.Datas.AddDataTable(tab)
 			}
 		}

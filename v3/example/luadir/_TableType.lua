@@ -4,8 +4,8 @@
 return {
 	init = function( g )
 		
-		g.ActorType =
-		{ 
+		---@enum main.ActorType
+		g.ActorType = { 
 			None = 0, --  
 			Pharah = 1, -- 法鸡 
 			Junkrat = 2, -- 狂鼠 

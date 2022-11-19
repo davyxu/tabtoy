@@ -12,4 +12,5 @@ func Init() {
 	util.RegisterError("DuplicateHeaderField", &util.ErrorLanguage{CHS: "表头字段重复"})
 	util.RegisterError("InvalidMetaFormat", &util.ErrorLanguage{CHS: "非法的元格式"})
 	util.RegisterError("DuplicateValueInMakingIndex", &util.ErrorLanguage{CHS: "创建索引时发现重复值"})
+	util.RegisterError("DuplicateHeaderType", &util.ErrorLanguage{CHS: "表头类型重复"})
 }

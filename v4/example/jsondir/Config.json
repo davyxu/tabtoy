@@ -1,0 +1,15 @@
+{
+	"@Tool": "github.com/davyxu/tabtoy",
+	"@Version": "",
+	"Config": [
+		{
+			"BattleServer": [
+				"192.168.1.1",
+				"192.168.1.2",
+				"192.168.1.3"
+			],
+			"LocalIP": "127.0.0.1",
+			"ServerPort": 7001
+		}
+	]
+}

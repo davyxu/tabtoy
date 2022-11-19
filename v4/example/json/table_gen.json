@@ -1,0 +1,59 @@
+{
+	"@Tool": "github.com/davyxu/tabtoy",
+	"@Version": "",
+	"Config": [
+		{
+			"BattleServer": [
+				"192.168.1.1",
+				"192.168.1.2",
+				"192.168.1.3"
+			],
+			"LocalIP": "127.0.0.1",
+			"ServerPort": 7001
+		}
+	],
+	"Item": [
+		{
+			"Desc": "金币",
+			"Id": 5001,
+			"ShowInBag": false,
+			"Type": 0
+		},
+		{
+			"Desc": "钻石",
+			"Id": 5002,
+			"ShowInBag": false,
+			"Type": 0
+		},
+		{
+			"Desc": "体力药剂",
+			"Id": 5003,
+			"ShowInBag": true,
+			"Type": 0
+		}
+	],
+	"Skill": [
+		{
+			"CD": 1000,
+			"Condition1": 7000,
+			"Condition2": 8000,
+			"Desc": "技能1",
+			"Effect1": 100,
+			"Effect2": 200,
+			"Id": 1101,
+			"Param1": 1,
+			"Param3": 2
+		},
+		{
+			"CD": 2000,
+			"Condition1": 9000,
+			"Condition2": 7000,
+			"Desc": "技能2",
+			"Effect1": 400,
+			"Effect2": 300,
+			"Id": 1102,
+			"Param1": 5,
+			"Param3": 3
+		}
+	]
+}

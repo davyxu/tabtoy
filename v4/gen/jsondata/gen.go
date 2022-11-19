@@ -3,11 +3,11 @@ package jsondata
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/davyxu/tabtoy/util"
 	"github.com/davyxu/tabtoy/v4/model"
-	"io/ioutil"
 )
 
-func Output(globals *model.Globals, param string) (err error) {
+func OutputDir(globals *model.Globals, outputDir string) (err error) {
 
 	for _, tab := range globals.Datas.AllTables() {
 
@@ -22,7 +22,7 @@ func Output(globals *model.Globals, param string) (err error) {
 		var tabData []interface{}
 
 		// 遍历所有行
-		for row := 1; row < len(tab.Rows); row++ {
+		for row := 0; row < len(tab.Rows); row++ {
 
 			// 遍历每一列
 			rowData := map[string]interface{}{}
@@ -41,13 +41,14 @@ func Output(globals *model.Globals, param string) (err error) {
 
 		fileData[tab.HeaderType] = tabData
 
-		data, err := json.MarshalIndent(&fileData, "", "\t")
+		var data []byte
+		data, err = json.MarshalIndent(&fileData, "", "\t")
 
 		if err != nil {
 			return err
 		}
 
-		err = ioutil.WriteFile(fmt.Sprintf("%s/%s.json", param, tab.HeaderType), data, 0666)
+		err = util.WriteFile(fmt.Sprintf("%s/%s.json", outputDir, tab.HeaderType), data)
 		if err != nil {
 			return err
 		}
@@ -55,8 +56,17 @@ func Output(globals *model.Globals, param string) (err error) {
 
 	return nil
 }
+func OutputFile(globals *model.Globals, outFile string) (err error) {
 
-func Generate(globals *model.Globals) (data []byte, err error) {
+	data, err := OutputData(globals)
+	if err != nil {
+		return err
+	}
+
+	return util.WriteFile(outFile, data)
+}
+
+func OutputData(globals *model.Globals) (data []byte, err error) {
 
 	fileData := map[string]interface{}{
 		"@Tool":    "github.com/davyxu/tabtoy",

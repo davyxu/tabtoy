@@ -125,9 +125,18 @@ func NewCSVFile() *CSVFile {
 
 type CSVSheet struct {
 	file *CSVFile
+	name string
+}
+
+func (self *CSVSheet) SetName(name string) {
+	self.name = name
 }
 
 func (self *CSVSheet) Name() string {
+	if self.name != "" {
+		return self.name
+	}
+
 	return self.file.Name
 }
 

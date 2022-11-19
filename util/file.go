@@ -1,7 +1,6 @@
 package util
 
 import (
-	"io/ioutil"
 	"os"
 	"path"
 	"path/filepath"
@@ -16,7 +15,7 @@ func WriteFile(filename string, data []byte) error {
 		return err
 	}
 
-	return ioutil.WriteFile(filename, data, 0666)
+	return os.WriteFile(filename, data, 0666)
 }
 
 func ChangeExtension(filename, newExt string) string {

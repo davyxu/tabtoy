@@ -1,0 +1,28 @@
+{
+	"@Tool": "github.com/davyxu/tabtoy",
+	"@Version": "",
+	"Skill": [
+		{
+			"CD": 1000,
+			"Condition1": 7000,
+			"Condition2": 8000,
+			"Desc": "技能1",
+			"Effect1": 100,
+			"Effect2": 200,
+			"Id": 1101,
+			"Param1": 1,
+			"Param3": 2
+		},
+		{
+			"CD": 2000,
+			"Condition1": 9000,
+			"Condition2": 7000,
+			"Desc": "技能2",
+			"Effect1": 400,
+			"Effect2": 300,
+			"Id": 1102,
+			"Param1": 5,
+			"Param3": 3
+		}
+	]
+}

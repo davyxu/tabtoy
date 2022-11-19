@@ -57,12 +57,16 @@ func loadKVTable(file util.TableFile, fileName string, types *model.TypeManager)
 		}
 
 		tab := model.NewDataTable()
+		tab.FileName = fileName
 		if sheet.Name() == "" {
 			tab.HeaderType = strings.TrimSuffix(fileName, filepath.Ext(fileName))
 		} else {
 			tab.HeaderType = sheet.Name()
 		}
-		tab.FileName = fileName
+
+		if types.ObjectExists(tab.HeaderType) {
+			util.ReportError("DuplicateHeaderType", tab.HeaderType)
+		}
 
 		ret = append(ret, tab)
 

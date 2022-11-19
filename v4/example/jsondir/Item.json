@@ -1,0 +1,24 @@
+{
+	"@Tool": "github.com/davyxu/tabtoy",
+	"@Version": "",
+	"Item": [
+		{
+			"Desc": "金币",
+			"Id": 5001,
+			"ShowInBag": false,
+			"Type": 0
+		},
+		{
+			"Desc": "钻石",
+			"Id": 5002,
+			"ShowInBag": false,
+			"Type": 0
+		},
+		{
+			"Desc": "体力药剂",
+			"Id": 5003,
+			"ShowInBag": true,
+			"Type": 0
+		}
+	]
+}

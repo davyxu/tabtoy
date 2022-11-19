@@ -113,3 +113,22 @@ func TestKVArraySpliter(t *testing.T) {
         	]
         }`)
 }
+
+// 表头类型重复
+func TestDuplicateKVHeaderType(t *testing.T) {
+
+	emu := NewTableEmulator(t)
+
+	dataSheet1 := emu.CreateDataSheet("data1")
+	dataSheet1.WriteRow("Id")    // field name
+	dataSheet1.WriteRow("int32") // field type
+	dataSheet1.WriteRow()        // meta
+	dataSheet1.WriteRow()        // comment
+
+	// Key	Type	Value	Comment	Meta
+	dataSheet2 := emu.CreateKVSheet("data2")
+	emu.SetSheetName(dataSheet2, "data1")
+	dataSheet2.WriteRow("Id", "int32", "1", "", "")
+
+	emu.MustGotError("TableError.DuplicateHeaderType 表头类型重复 | data1")
+}
