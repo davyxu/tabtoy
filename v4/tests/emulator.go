@@ -12,6 +12,7 @@ import (
 	"path/filepath"
 	"reflect"
 	"runtime"
+	"strings"
 	"testing"
 )
 
@@ -41,26 +42,41 @@ func NewTableEmulator(t *testing.T) *TableEmulator {
 	}
 }
 
-func (self *TableEmulator) SetSheetName(sheet util.TableSheet, name string) {
-	if csvSheet, ok := sheet.(*util.CSVSheet); ok {
-		csvSheet.SetName(name)
+func (self *TableEmulator) createSheet(meta *model.FileMeta) util.TableSheet {
+
+	sheet := self.memFile.CreateCSVFile(meta.FileName)
+	if meta.HeaderType == "" {
+		meta.HeaderType = strings.TrimSuffix(meta.FileName, filepath.Ext(meta.FileName))
 	}
-}
-
-func (self *TableEmulator) createSheet(mode, fileName string) util.TableSheet {
-
-	sheet := self.memFile.CreateCSVFile(fileName)
-	self.G.AddFile(mode, fileName)
+	self.G.AddFile(meta)
 	return sheet
 }
 
-func (self *TableEmulator) CreateDataSheet(fileName string) util.TableSheet {
-	return self.createSheet("", fileName)
+func (self *TableEmulator) CreateDataSheet(fileName, sheetName string) util.TableSheet {
+	var meta model.FileMeta
+	meta.FileName = fileName
+	meta.HeaderType = sheetName
+	meta.Mode = "Data"
+
+	return self.createSheet(&meta)
 }
 
-func (self *TableEmulator) CreateKVSheet(fileName string) util.TableSheet {
-	sheet := self.createSheet("KV", fileName)
+func (self *TableEmulator) CreateKVSheet(fileName, sheetName string) util.TableSheet {
+	var meta model.FileMeta
+	meta.FileName = fileName
+	meta.HeaderType = sheetName
+	meta.Mode = "KV"
+	sheet := self.createSheet(&meta)
 	sheet.WriteRow("Key", "Type", "Value", "Comment", "Meta")
+	return sheet
+}
+
+func (self *TableEmulator) CreateTypeSheet(fileName string) util.TableSheet {
+	var meta model.FileMeta
+	meta.FileName = fileName
+	meta.Mode = "Type"
+	sheet := self.createSheet(&meta)
+	sheet.WriteRow("ObjectType", "FieldName", "Value", "Comment")
 	return sheet
 }
 

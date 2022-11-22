@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"github.com/davyxu/tabtoy/v4/compiler"
 	"github.com/davyxu/tabtoy/v4/gen"
 	"github.com/davyxu/tabtoy/v4/gen/gosrc"
@@ -9,7 +8,6 @@ import (
 	"github.com/davyxu/tabtoy/v4/model"
 	"github.com/davyxu/tabtoy/v4/report"
 	"os"
-	"strings"
 )
 
 type V4Generator struct {
@@ -26,17 +24,6 @@ var (
 		{name: "jsondir", genFunc: jsondata.OutputDir, param: paramJsonDir},
 	}
 )
-
-func v4ParseInputFiles(g *model.Globals) {
-	for _, name := range flag.Args() {
-		raw := strings.Split(name, ":")
-		if len(raw) == 2 {
-			g.AddFile(raw[0], raw[1])
-		} else {
-			g.AddFile("", name)
-		}
-	}
-}
 
 func v4GenFile(globals *model.Globals, gen *V4Generator, c chan error) {
 	err := gen.genFunc(globals, *gen.param)
@@ -79,14 +66,17 @@ func V4Entry() {
 	g.PackageName = *paramPackageName
 	g.CombineStructName = *paramCombineStructName
 
-	v4ParseInputFiles(g)
+	err := compiler.ParseIndexFile(g, *paramIndexFile)
+	if err != nil {
+		goto Exit
+	}
 
 	if *paramUseCache {
 		g.CacheDir = *paramCacheDir
 		os.Mkdir(g.CacheDir, 0666)
 	}
 
-	err := compiler.Compile(g)
+	err = compiler.Compile(g)
 	if err != nil {
 		goto Exit
 	}

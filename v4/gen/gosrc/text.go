@@ -16,13 +16,13 @@ type {{.CombineStructName}}EnumValue struct {
 {{range $sn, $objName := $.Types.EnumNames}}
 type {{$objName}} int32
 const (	{{range $fi,$field := $.Types.AllFieldByName $objName}}
-	{{$objName}}_{{$field.FieldName}} = {{$field.Value}} // {{$field.Name}} {{end}}
+	{{$objName}}_{{$field.FieldName}} = {{$field.Value}} // {{$field.Comment}} {{end}}
 )
 
 var (
 
 	{{$objName}}EnumValues = []{{$.CombineStructName}}EnumValue{ {{range $fi,$field := $.Types.AllFieldByName $objName}}
-		{ Name: "{{$field.FieldName}}", Index:{{$field.Value}} }, // {{$field.Name}} {{end}}
+		{ Name: "{{$field.FieldName}}", Index:{{$field.Value}} }, // {{$field.Comment}} {{end}}
 	}
 	{{$objName}}MapperValueByName = map[string]int32{}
 	{{$objName}}MapperNameByValue = map[int32]string{}
@@ -36,7 +36,7 @@ func (self {{$objName}}) String() string {
 
 {{range $sn, $objName := $.Types.StructNames}}
 type {{$objName}} struct{ {{range $fi,$field := $.Types.AllFieldByName $objName}}
-	{{$field.FieldName}} {{GoType $field}} {{GoTabTag $field}} {{end}}
+	{{$field.FieldName}} {{GoType $field}} {{GoTabTag $field}} // {{$field.Comment}} {{end}}
 }
 {{end}}
 

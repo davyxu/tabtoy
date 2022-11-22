@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/davyxu/tabtoy/util"
 	"github.com/davyxu/tabtoy/v4/model"
-	"path/filepath"
 	"strings"
 )
 
@@ -46,23 +45,19 @@ func loadKVHeader(sheet util.TableSheet) (colByHeaderType [maxKVHeaderCol]int, o
 	return
 }
 
-func loadKVTable(file util.TableFile, fileName string, types *model.TypeManager) (ret []*model.DataTable) {
+func loadKVTable(file util.TableFile, meta *model.FileMeta, types *model.TypeManager) (ret []*model.DataTable) {
 	for _, sheet := range file.Sheets() {
 
 		colByHeaderType, ok := loadKVHeader(sheet)
 
 		if !ok {
-			util.ReportError("InvalidKVHeader", fileName)
+			util.ReportError("InvalidKVHeader", meta.FileName)
 			return
 		}
 
 		tab := model.NewDataTable()
-		tab.FileName = fileName
-		if sheet.Name() == "" {
-			tab.HeaderType = strings.TrimSuffix(fileName, filepath.Ext(fileName))
-		} else {
-			tab.HeaderType = sheet.Name()
-		}
+		tab.HeaderType = meta.HeaderType
+		tab.FileName = meta.FileName
 
 		if types.ObjectExists(tab.HeaderType) {
 			util.ReportError("DuplicateHeaderType", tab.HeaderType)
@@ -95,24 +90,24 @@ func loadKVTable(file util.TableFile, fileName string, types *model.TypeManager)
 			field.FieldType = sheet.GetValue(row, colByHeaderType[kvHeaderCol_Type], nil)
 
 			// 原始类型检查
-			if !util.PrimitiveExists(field.FieldType) && !types.ObjectExists(field.FieldType) { // 对象检查
-				cellLocation := kvCellToString(row, colByHeaderType[kvHeaderCol_Type], field.FieldType, fileName, sheet.Name())
+			if !util.PrimitiveExists(field.FieldType) && !types.ObjectExists(field.ObjectType) { // 对象检查
+				cellLocation := cellToString(row, colByHeaderType[kvHeaderCol_Type], field.FieldType, meta.FileName, sheet.Name())
 				util.ReportError("UnknownFieldType", field.FieldType, cellLocation)
 			}
 			field.Comment = sheet.GetValue(row, colByHeaderType[kvHeaderCol_Comment], nil)
 			fieldMeta := sheet.GetValue(row, colByHeaderType[kvHeaderCol_Meta], nil)
 			if errStr := parseMeta(field, fieldMeta); errStr != "" {
-				cellLocation := kvCellToString(row, colByHeaderType[kvHeaderCol_Meta], fieldMeta, fileName, sheet.Name())
+				cellLocation := cellToString(row, colByHeaderType[kvHeaderCol_Meta], fieldMeta, meta.FileName, sheet.Name())
 				util.ReportError(errStr, fieldMeta, cellLocation)
 			}
 
 			if field.FieldName == "" {
-				cellLocation := kvCellToString(row, colByHeaderType[kvHeaderCol_Key], field.FieldName, fileName, sheet.Name())
+				cellLocation := cellToString(row, colByHeaderType[kvHeaderCol_Key], field.FieldName, meta.FileName, sheet.Name())
 				util.ReportError("UnknownFieldName", cellLocation)
 			}
 
 			if types.FieldByName(field.ObjectType, field.FieldName) != nil {
-				cellLocation := kvCellToString(row, colByHeaderType[kvHeaderCol_Key], field.FieldName, fileName, sheet.Name())
+				cellLocation := cellToString(row, colByHeaderType[kvHeaderCol_Key], field.FieldName, meta.FileName, sheet.Name())
 				util.ReportError("DuplicateKVField", cellLocation)
 			}
 
@@ -130,11 +125,14 @@ func loadKVTable(file util.TableFile, fileName string, types *model.TypeManager)
 				}
 			}
 		}
+
+		//只支持导出第一个sheet
+		break
 	}
 
 	return
 }
 
-func kvCellToString(row, col int, value, file, sheet string) string {
+func cellToString(row, col int, value, file, sheet string) string {
 	return fmt.Sprintf("'%s' @%s|%s(%s)", value, file, sheet, util.R1C1ToA1(row+1, col+1))
 }

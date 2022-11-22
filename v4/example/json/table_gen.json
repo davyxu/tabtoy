@@ -35,25 +35,25 @@
 	"Skill": [
 		{
 			"CD": 1000,
-			"Condition1": 7000,
-			"Condition2": 8000,
+			"Condition1": 1,
+			"Condition2": 2,
 			"Desc": "技能1",
-			"Effect1": 100,
-			"Effect2": 200,
+			"Effect1": 2,
+			"Effect2": 3,
 			"Id": 1101,
-			"Param1": 1,
-			"Param3": 2
+			"Param1": 1001,
+			"Param3": 100
 		},
 		{
 			"CD": 2000,
-			"Condition1": 9000,
-			"Condition2": 7000,
+			"Condition1": 2,
+			"Condition2": 0,
 			"Desc": "技能2",
-			"Effect1": 400,
-			"Effect2": 300,
+			"Effect1": 4,
+			"Effect2": 0,
 			"Id": 1102,
-			"Param1": 5,
-			"Param3": 3
+			"Param1": 200,
+			"Param3": 0
 		}
 	]
 }

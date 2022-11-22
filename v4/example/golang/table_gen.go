@@ -10,36 +10,86 @@ type TableEnumValue struct {
 	Index int32
 }
 
-type Item struct {
-	Id        int32
-	Desc      string
-	Type      int32
-	ShowInBag bool
+type SkillCondition int32
+
+const (
+	SkillCondition_None  = 0 //
+	SkillCondition_Begin = 1 // 技能开始
+	SkillCondition_Tick  = 2 // 技能更新
+)
+
+var (
+	SkillConditionEnumValues = []TableEnumValue{
+		{Name: "None", Index: 0},  //
+		{Name: "Begin", Index: 1}, // 技能开始
+		{Name: "Tick", Index: 2},  // 技能更新
+	}
+	SkillConditionMapperValueByName = map[string]int32{}
+	SkillConditionMapperNameByValue = map[int32]string{}
+)
+
+func (self SkillCondition) String() string {
+	name, _ := SkillConditionMapperNameByValue[int32(self)]
+	return name
 }
 
-type Skill struct {
-	Id         int32
-	Desc       string
-	CD         int32
-	Condition1 int32
-	Effect1    int32
-	Param1     int32
-	Condition2 int32
-	Effect2    int32
-	Param3     int32
+type SkillEffect int32
+
+const (
+	SkillEffect_None      = 0 //
+	SkillEffect_CastSkill = 1 // 释放技能
+	SkillEffect_AddBuff   = 2 // 添加Buff
+	SkillEffect_DoDamage  = 3 // 输出伤害
+	SkillEffect_DoHeal    = 4 // 输出治疗
+)
+
+var (
+	SkillEffectEnumValues = []TableEnumValue{
+		{Name: "None", Index: 0},      //
+		{Name: "CastSkill", Index: 1}, // 释放技能
+		{Name: "AddBuff", Index: 2},   // 添加Buff
+		{Name: "DoDamage", Index: 3},  // 输出伤害
+		{Name: "DoHeal", Index: 4},    // 输出治疗
+	}
+	SkillEffectMapperValueByName = map[string]int32{}
+	SkillEffectMapperNameByValue = map[int32]string{}
+)
+
+func (self SkillEffect) String() string {
+	name, _ := SkillEffectMapperNameByValue[int32(self)]
+	return name
 }
 
 type Config struct {
-	LocalIP      string
-	ServerPort   int32
-	BattleServer []string
+	LocalIP      string   // 本地ip
+	ServerPort   int32    // 服务器端口
+	BattleServer []string // 战斗服ip
+}
+
+type Item struct {
+	Id        int32  // Id
+	Desc      string // 描述
+	Type      int32  // 类型
+	ShowInBag bool   // 背包显示
+}
+
+type Skill struct {
+	Id         int32          // Id
+	Desc       string         // 描述
+	CD         int32          // 技能cd
+	Condition1 SkillCondition // 触发条件1
+	Effect1    SkillEffect    // 效果1
+	Param1     int32          // 参数1
+	Condition2 SkillCondition // 触发条件2
+	Effect2    SkillEffect    // 效果2
+	Param3     int32          // 参数2
 }
 
 // Combine struct
 type Table struct {
+	Config []*Config // table: Config
 	Item   []*Item   // table: Item
 	Skill  []*Skill  // table: Skill
-	Config []*Config // table: Config
 
 	// Indices
 	ItemById  map[int32]*Item  `json:"-"` // table: Item
@@ -167,6 +217,10 @@ func NewTable() *Table {
 		resetHandler: make(map[string]func()),
 	}
 
+	self.indexHandler["Config"] = func() {
+
+	}
+
 	self.indexHandler["Item"] = func() {
 
 		for _, v := range self.Item {
@@ -181,10 +235,10 @@ func NewTable() *Table {
 		}
 	}
 
-	self.indexHandler["Config"] = func() {
+	self.resetHandler["Config"] = func() {
+		self.Config = nil
 
 	}
-
 	self.resetHandler["Item"] = func() {
 		self.Item = nil
 
@@ -195,10 +249,6 @@ func NewTable() *Table {
 
 		self.SkillById = map[int32]*Skill{}
 	}
-	self.resetHandler["Config"] = func() {
-		self.Config = nil
-
-	}
 
 	self.ResetData()
 
@@ -206,5 +256,15 @@ func NewTable() *Table {
 }
 
 func init() {
+
+	for _, v := range SkillConditionEnumValues {
+		SkillConditionMapperValueByName[v.Name] = v.Index
+		SkillConditionMapperNameByValue[v.Index] = v.Name
+	}
+
+	for _, v := range SkillEffectEnumValues {
+		SkillEffectMapperValueByName[v.Name] = v.Index
+		SkillEffectMapperNameByValue[v.Index] = v.Name
+	}
 
 }

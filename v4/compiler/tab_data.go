@@ -3,27 +3,20 @@ package compiler
 import (
 	"github.com/davyxu/tabtoy/util"
 	"github.com/davyxu/tabtoy/v4/model"
-	"path/filepath"
 	"strings"
 )
 
-func loadDataTable(file util.TableFile, fileName string, types *model.TypeManager) (ret []*model.DataTable) {
+func loadDataTable(file util.TableFile, meta *model.FileMeta, types *model.TypeManager) (ret []*model.DataTable) {
+
 	for _, sheet := range file.Sheets() {
 
 		tab := model.NewDataTable()
-
-		// 单元测试或者某些特殊情况, Sheet名为空, 默认用文件名填充
-		if sheet.Name() == "" {
-			tab.HeaderType = strings.TrimSuffix(fileName, filepath.Ext(fileName))
-		} else {
-			tab.HeaderType = sheet.Name()
-		}
+		tab.HeaderType = meta.HeaderType
+		tab.FileName = meta.FileName
 
 		if types.ObjectExists(tab.HeaderType) {
 			util.ReportError("DuplicateHeaderType", tab.HeaderType)
 		}
-
-		tab.FileName = fileName
 
 		ret = append(ret, tab)
 
@@ -47,10 +40,14 @@ func loadDataTable(file util.TableFile, fileName string, types *model.TypeManage
 			// 读取每一行
 			readOneRow(sheet, tab, row, tgtRow)
 		}
+
+		//只支持导出第一个sheet
+		break
 	}
 
 	for _, tab := range ret {
 		checkRepeat(tab)
+		checkEnumValue(tab, types)
 	}
 
 	return
@@ -77,6 +74,36 @@ func checkRepeat(tab *model.DataTable) {
 				}
 			}
 		}
+	}
+}
+
+func checkEnumValue(tab *model.DataTable, types *model.TypeManager) {
+	for _, header := range tab.Headers {
+		if !types.IsEnumKind(header.TypeInfo.FieldType) {
+			continue
+		}
+
+		for row := 0; row < len(tab.Rows); row++ {
+			cell := tab.GetCell(row, header.Col)
+			if cell == nil {
+				continue
+			}
+
+			if header.TypeInfo.IsArray() {
+				for _, v := range cell.ValueList {
+					checkEnumFieldValue(header, types, v, cell)
+				}
+			} else {
+				checkEnumFieldValue(header, types, cell.Value, cell)
+			}
+		}
+	}
+}
+
+func checkEnumFieldValue(header *model.HeaderField, types *model.TypeManager, value string, cell *model.Cell) {
+	enumValue := types.GetEnum(header.TypeInfo.FieldType, value)
+	if enumValue == nil {
+		util.ReportError("UnknownEnumValue", header.TypeInfo.FieldType, cell.String())
 	}
 }
 

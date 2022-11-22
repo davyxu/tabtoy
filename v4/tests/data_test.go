@@ -13,7 +13,7 @@ func TestEmptyFieldType(t *testing.T) {
 
 	emu := NewTableEmulator(t)
 
-	dataSheet := emu.CreateDataSheet(TestCSVName)
+	dataSheet := emu.CreateDataSheet(TestCSVName, "")
 	dataSheet.WriteRow("Id") // field name
 	dataSheet.WriteRow("")   // field type
 	dataSheet.WriteRow()     // meta
@@ -27,7 +27,7 @@ func TestInvalidMeta(t *testing.T) {
 
 	emu := NewTableEmulator(t)
 
-	dataSheet := emu.CreateDataSheet(TestCSVName)
+	dataSheet := emu.CreateDataSheet(TestCSVName, "")
 	dataSheet.WriteRow("Id")    // field name
 	dataSheet.WriteRow("int32") // field type
 	dataSheet.WriteRow("Drive") // meta
@@ -41,7 +41,7 @@ func TestEmptyFieldName(t *testing.T) {
 
 	emu := NewTableEmulator(t)
 
-	dataSheet := emu.CreateDataSheet(TestCSVName)
+	dataSheet := emu.CreateDataSheet(TestCSVName, "")
 	dataSheet.WriteRow("Id", "", "Id2")           // field name
 	dataSheet.WriteRow("int32", "int32", "int32") // field type
 	dataSheet.WriteRow()                          // meta
@@ -55,7 +55,7 @@ func TestDuplicateHeaderField(t *testing.T) {
 
 	emu := NewTableEmulator(t)
 
-	dataSheet := emu.CreateDataSheet(TestCSVName)
+	dataSheet := emu.CreateDataSheet(TestCSVName, "")
 	dataSheet.WriteRow("Id", "Id")       // field name
 	dataSheet.WriteRow("int32", "int32") // field type
 	dataSheet.WriteRow()                 // meta
@@ -69,7 +69,7 @@ func TestRowComment(t *testing.T) {
 
 	emu := NewTableEmulator(t)
 
-	dataSheet := emu.CreateDataSheet(TestCSVName)
+	dataSheet := emu.CreateDataSheet(TestCSVName, "")
 	dataSheet.WriteRow("Id", "Str")       // field name
 	dataSheet.WriteRow("int32", "string") // field type
 	dataSheet.WriteRow()                  // meta
@@ -101,7 +101,7 @@ func TestColComment(t *testing.T) {
 
 	emu := NewTableEmulator(t)
 
-	dataSheet := emu.CreateDataSheet(TestCSVName)
+	dataSheet := emu.CreateDataSheet(TestCSVName, "")
 	dataSheet.WriteRow("Id", "#Id2", "Id3")       // field name
 	dataSheet.WriteRow("int32", "int32", "int32") // field type
 	dataSheet.WriteRow()                          // meta
@@ -141,7 +141,7 @@ func TestArraySpliter(t *testing.T) {
 
 	emu := NewTableEmulator(t)
 
-	dataSheet := emu.CreateDataSheet(TestCSVName)
+	dataSheet := emu.CreateDataSheet(TestCSVName, "")
 	dataSheet.WriteRow("Id", "Str")                        // field name
 	dataSheet.WriteRow("int32", "string")                  // field type
 	dataSheet.WriteRow("ArraySpliter=|", "ArraySpliter=;") // meta
@@ -183,7 +183,7 @@ func TestMakeIndex(t *testing.T) {
 
 	emu := NewTableEmulator(t)
 
-	dataSheet := emu.CreateDataSheet(TestCSVName)
+	dataSheet := emu.CreateDataSheet(TestCSVName, "")
 	dataSheet.WriteRow("Id")        // field name
 	dataSheet.WriteRow("int32")     // field type
 	dataSheet.WriteRow("MakeIndex") // meta
@@ -200,14 +200,13 @@ func TestDuplicateHeaderType(t *testing.T) {
 
 	emu := NewTableEmulator(t)
 
-	dataSheet1 := emu.CreateDataSheet("data1")
+	dataSheet1 := emu.CreateDataSheet("data1", "")
 	dataSheet1.WriteRow("Id")    // field name
 	dataSheet1.WriteRow("int32") // field type
 	dataSheet1.WriteRow()        // meta
 	dataSheet1.WriteRow()        // comment
 
-	dataSheet2 := emu.CreateDataSheet("data2")
-	emu.SetSheetName(dataSheet2, "data1")
+	dataSheet2 := emu.CreateDataSheet("data2", "data1")
 	dataSheet2.WriteRow("Id")    // field name
 	dataSheet2.WriteRow("int32") // field type
 	dataSheet2.WriteRow()        // meta

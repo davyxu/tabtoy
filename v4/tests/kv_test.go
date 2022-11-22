@@ -7,7 +7,7 @@ func TestKVEmptyFieldType(t *testing.T) {
 
 	emu := NewTableEmulator(t)
 
-	dataSheet := emu.CreateKVSheet(TestCSVName)
+	dataSheet := emu.CreateKVSheet(TestCSVName, "")
 	// Key	Type	Value	Comment	Meta
 	dataSheet.WriteRow("Id", "", "", "", "")
 
@@ -19,7 +19,7 @@ func TestKVInvalidMeta(t *testing.T) {
 
 	emu := NewTableEmulator(t)
 
-	dataSheet := emu.CreateKVSheet(TestCSVName)
+	dataSheet := emu.CreateKVSheet(TestCSVName, "")
 	// Key	Type	Value	Comment	Meta
 	dataSheet.WriteRow("Id", "int32", "", "", "Drive")
 
@@ -31,7 +31,7 @@ func TestKVEmptyFieldName(t *testing.T) {
 
 	emu := NewTableEmulator(t)
 
-	dataSheet := emu.CreateKVSheet(TestCSVName)
+	dataSheet := emu.CreateKVSheet(TestCSVName, "")
 	// Key	Type	Value	Comment	Meta
 	dataSheet.WriteRow("", "int32", "", "", "")
 
@@ -43,12 +43,12 @@ func TestKVDuplicatFieldName(t *testing.T) {
 
 	emu := NewTableEmulator(t)
 
-	dataSheet := emu.CreateKVSheet(TestCSVName)
+	dataSheet := emu.CreateKVSheet(TestCSVName, "")
 	// Key	Type	Value	Comment	Meta
 	dataSheet.WriteRow("Id", "int32", "", "", "")
 	dataSheet.WriteRow("Id", "int32", "", "", "")
 
-	emu.MustGotError("TableError.DuplicateKVField 键值表字段重复 | 'Id' @TestData|(A3)")
+	emu.MustGotError("TableError.DuplicateKVField KV表字段重复 | 'Id' @TestData|(A3)")
 }
 
 // KV表行注释
@@ -56,7 +56,7 @@ func TestKVRowComment(t *testing.T) {
 
 	emu := NewTableEmulator(t)
 
-	dataSheet := emu.CreateKVSheet(TestCSVName)
+	dataSheet := emu.CreateKVSheet(TestCSVName, "")
 	// Key	Type	Value	Comment	Meta
 	dataSheet.WriteRow("Id", "int32", "1", "", "")
 	dataSheet.WriteRow("#Id2", "int32", "2", "", "")
@@ -95,7 +95,7 @@ func TestKVArraySpliter(t *testing.T) {
 
 	emu := NewTableEmulator(t)
 
-	dataSheet := emu.CreateKVSheet(TestCSVName)
+	dataSheet := emu.CreateKVSheet(TestCSVName, "")
 	// Key	Type	Value	Comment	Meta
 	dataSheet.WriteRow("Id", "int32", "1|2|3", "", "ArraySpliter=|")
 
@@ -119,15 +119,14 @@ func TestDuplicateKVHeaderType(t *testing.T) {
 
 	emu := NewTableEmulator(t)
 
-	dataSheet1 := emu.CreateDataSheet("data1")
+	dataSheet1 := emu.CreateDataSheet("data1", "")
 	dataSheet1.WriteRow("Id")    // field name
 	dataSheet1.WriteRow("int32") // field type
 	dataSheet1.WriteRow()        // meta
 	dataSheet1.WriteRow()        // comment
 
 	// Key	Type	Value	Comment	Meta
-	dataSheet2 := emu.CreateKVSheet("data2")
-	emu.SetSheetName(dataSheet2, "data1")
+	dataSheet2 := emu.CreateKVSheet("data2", "data1")
 	dataSheet2.WriteRow("Id", "int32", "1", "", "")
 
 	emu.MustGotError("TableError.DuplicateHeaderType 表头类型重复 | data1")

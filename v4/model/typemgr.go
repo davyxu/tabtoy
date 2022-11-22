@@ -74,9 +74,9 @@ func (self *TypeManager) IsEnumKind(objectType string) bool {
 	return false
 }
 
-func (self *TypeManager) ResolveEnum(objectType, value string) *TypeData {
+func (self *TypeManager) ResolveEnum(objectType, field string) *TypeData {
 
-	t := self.GetEnumValue(objectType, value)
+	t := self.GetEnum(objectType, field)
 
 	if t != nil {
 		return t
@@ -92,7 +92,7 @@ func (self *TypeManager) ResolveEnum(objectType, value string) *TypeData {
 	return enumFields[0]
 }
 
-func (self *TypeManager) GetEnumValue(objectType, value string) *TypeData {
+func (self *TypeManager) GetEnum(objectType, field string) *TypeData {
 	enumFields := self.getEnumFields(objectType)
 
 	if len(enumFields) == 0 {
@@ -101,7 +101,25 @@ func (self *TypeManager) GetEnumValue(objectType, value string) *TypeData {
 
 	for _, td := range enumFields {
 
-		if td.Define.FieldName == value {
+		if td.Define.FieldName == field {
+			return td
+		}
+
+	}
+
+	return nil
+}
+
+func (self *TypeManager) GetEnumByValue(objectType, value string) *TypeData {
+	enumFields := self.getEnumFields(objectType)
+
+	if len(enumFields) == 0 {
+		return nil
+	}
+
+	for _, td := range enumFields {
+
+		if td.Define.Value == value {
 			return td
 		}
 

@@ -3,8 +3,37 @@ package compiler
 import (
 	"github.com/davyxu/tabtoy/util"
 	"github.com/davyxu/tabtoy/v4/model"
+	"github.com/davyxu/tabtoy/v4/report"
 	"github.com/pkg/errors"
 )
+
+func ParseIndexFile(g *model.Globals, indexFile string) (ret error) {
+
+	report.Log.Debugf("Loading Index file: '%s'... ", indexFile)
+
+	indexLoader := util.NewFileLoader(true, "")
+	indexLoader.AddFile(indexFile)
+	tab, err := indexLoader.GetFile(indexFile)
+	if err != nil {
+		return err
+	}
+
+	defer func() {
+
+		switch err1 := recover().(type) {
+		case *util.TableError:
+			ret = err1
+		case nil:
+		default:
+			panic(err1)
+		}
+
+	}()
+
+	g.InputFiles = loadIndexTable(tab, indexFile)
+
+	return
+}
 
 func Compile(g *model.Globals) (ret error) {
 	defer func() {
@@ -33,24 +62,44 @@ func Compile(g *model.Globals) (ret error) {
 	}
 
 	for _, fileMeta := range g.InputFiles {
-		file, err := g.DataFileGetter.GetFile(fileMeta.FileName)
-		if err != nil {
-			return errors.Wrap(err, fileMeta.FileName)
+		if fileMeta.Mode == "Type" {
+			processTable(g, fileMeta)
+			break
 		}
+	}
 
-		switch fileMeta.Mode {
-		case "":
-			for _, tab := range loadDataTable(file, fileMeta.FileName, g.Types) {
-				g.Datas.AddDataTable(tab)
-			}
-		case "KV":
-			for _, tab := range loadKVTable(file, fileMeta.FileName, g.Types) {
-				tab.Mode = "KV"
-				g.Datas.AddDataTable(tab)
-			}
+	for _, fileMeta := range g.InputFiles {
+		if fileMeta.Mode != "Type" {
+			processTable(g, fileMeta)
 		}
-
 	}
 
 	return
+}
+
+func processTable(g *model.Globals, fileMeta *model.FileMeta) error {
+
+	file, err := g.DataFileGetter.GetFile(fileMeta.FileName)
+	if err != nil {
+		return errors.Wrap(err, fileMeta.FileName)
+	}
+
+	switch fileMeta.Mode {
+	case "Data":
+		report.Log.Infof("   (%s) %s", fileMeta.HeaderType, fileMeta.FileName)
+		for _, tab := range loadDataTable(file, fileMeta, g.Types) {
+			g.Datas.AddDataTable(tab)
+		}
+	case "KV":
+		report.Log.Infof("   (%s) %s", fileMeta.HeaderType, fileMeta.FileName)
+		for _, tab := range loadKVTable(file, fileMeta, g.Types) {
+			tab.Mode = "KV"
+			g.Datas.AddDataTable(tab)
+		}
+	case "Type":
+		report.Log.Infof("   %s", fileMeta.FileName)
+		loadTypeTable(file, fileMeta, g.Types)
+	}
+
+	return nil
 }

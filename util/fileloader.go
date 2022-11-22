@@ -19,7 +19,6 @@ type FileLoader struct {
 }
 
 func (self *FileLoader) AddFile(filename string) {
-
 	self.inputFile = append(self.inputFile, filename)
 }
 
