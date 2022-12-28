@@ -11,13 +11,6 @@ func ParseIndexFile(g *model.Globals, indexFile string) (ret error) {
 
 	report.Log.Debugf("Loading Index file: '%s'... ", indexFile)
 
-	indexLoader := util.NewFileLoader(true, "")
-	indexLoader.AddFile(indexFile)
-	tab, err := indexLoader.GetFile(indexFile)
-	if err != nil {
-		return err
-	}
-
 	defer func() {
 
 		switch err1 := recover().(type) {
@@ -29,6 +22,13 @@ func ParseIndexFile(g *model.Globals, indexFile string) (ret error) {
 		}
 
 	}()
+
+	indexLoader := util.NewFileLoader(true, "")
+	indexLoader.AddFile(indexFile)
+	tab, err := indexLoader.GetFile(indexFile)
+	if err != nil {
+		return err
+	}
 
 	g.InputFiles = loadIndexTable(tab, indexFile)
 
@@ -63,14 +63,18 @@ func Compile(g *model.Globals) (ret error) {
 
 	for _, fileMeta := range g.InputFiles {
 		if fileMeta.Mode == "Type" {
-			processTable(g, fileMeta)
+			if err := processTable(g, fileMeta); err != nil {
+				return err
+			}
 			break
 		}
 	}
 
 	for _, fileMeta := range g.InputFiles {
 		if fileMeta.Mode != "Type" {
-			processTable(g, fileMeta)
+			if err := processTable(g, fileMeta); err != nil {
+				return err
+			}
 		}
 	}
 
