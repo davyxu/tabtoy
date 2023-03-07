@@ -12,8 +12,8 @@ require (
 	github.com/pkg/errors v0.8.1
 	github.com/pkg/profile v1.4.0
 	github.com/tealeg/xlsx v1.0.5
-	golang.org/x/net v0.0.0-20210614182718-04defd469f4e
-	golang.org/x/text v0.3.6
+	golang.org/x/net v0.7.0
+	golang.org/x/text v0.7.0
 	google.golang.org/protobuf v1.23.0
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 )
