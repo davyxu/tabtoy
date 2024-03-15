@@ -28,3 +28,6 @@ tabtoy
 *.DS_Store
 protoc
 ~*.xlsx
+/v4/example/csharp/.vs/csharp/FileContentIndex/
+/v4/example/csharp/TabtoyExample/obj/Debug/
+v4/example/csharp/TabtoyExample/bin/

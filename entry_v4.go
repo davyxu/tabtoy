@@ -3,6 +3,8 @@ package main
 import (
 	"github.com/davyxu/tabtoy/v4/compiler"
 	"github.com/davyxu/tabtoy/v4/gen"
+	"github.com/davyxu/tabtoy/v4/gen/bindata"
+	"github.com/davyxu/tabtoy/v4/gen/cssrc"
 	"github.com/davyxu/tabtoy/v4/gen/gosrc"
 	"github.com/davyxu/tabtoy/v4/gen/jsondata"
 	"github.com/davyxu/tabtoy/v4/model"
@@ -19,9 +21,12 @@ type V4Generator struct {
 var (
 	v4Generator = []*V4Generator{
 		{name: "gosrc", genFunc: gosrc.OutputFile, param: paramGoOut},
+		{name: "cssrc", genFunc: cssrc.OutputFile, param: paramCSharpOut},
 		{name: "jsondata", genFunc: jsondata.OutputFile, param: paramJsonOut},
+		{name: "bindata", genFunc: bindata.OutputFile, param: paramBinaryOut},
 
 		{name: "jsondir", genFunc: jsondata.OutputDir, param: paramJsonDir},
+		{name: "bindir", genFunc: bindata.OutputDir, param: paramBinaryDir},
 	}
 )
 
@@ -65,6 +70,7 @@ func V4Entry() {
 	g.ParaLoading = *paramPara
 	g.PackageName = *paramPackageName
 	g.CombineStructName = *paramCombineStructName
+	g.GenBinary = *paramBinaryOut != "" || *paramBinaryDir != ""
 
 	err := compiler.ParseIndexFile(g, *paramIndexFile)
 	if err != nil {

@@ -23,6 +23,8 @@ type Globals struct {
 	Version           string // 工具版本号
 	PackageName       string // 文件生成时的包名
 	CombineStructName string // 包含最终表所有数据的根结构
+
+	GenBinary bool
 }
 
 func (self *Globals) AddFile(meta *FileMeta) {
