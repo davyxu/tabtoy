@@ -31,7 +31,7 @@ func WriteIndexTableHeader(sheet TableSheet) {
 }
 
 func WriteTypeTableHeader(sheet TableSheet) {
-	sheet.WriteRow("种类", "对象类型", "标识名", "字段名", "字段类型", "数组切割", "值", "索引")
+	sheet.WriteRow("种类", "对象类型", "标识名", "字段名", "字段类型", "数组切割", "值", "索引", "备注")
 }
 
 func WriteRowValues(sheet TableSheet, valueList ...string) {

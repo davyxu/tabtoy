@@ -1,9 +1,10 @@
 package compiler
 
 import (
+	"strings"
+
 	"github.com/davyxu/tabtoy/v3/model"
 	"github.com/davyxu/tabtoy/v3/report"
-	"strings"
 )
 
 func transposeKVtoData(symbols *model.TypeTable, kvtab *model.DataTable) (ret *model.DataTable) {
@@ -26,6 +27,7 @@ func transposeKVtoData(symbols *model.TypeTable, kvtab *model.DataTable) (ret *m
 		fieldName := kvtab.GetValueByName(row, "字段名")
 		fieldType := kvtab.GetValueByName(row, "字段类型")
 		name := kvtab.GetValueByName(row, "标识名")
+		note := kvtab.GetValueByName(row, "备注")
 
 		arraySplitter := kvtab.GetValueByName(row, "数组切割")
 
@@ -44,6 +46,9 @@ func transposeKVtoData(symbols *model.TypeTable, kvtab *model.DataTable) (ret *m
 		tf.FieldName = fieldName.Value
 		tf.FieldType = fieldType.Value
 		tf.ArraySplitter = arraySplitter.Value
+		if note != nil {
+			tf.Note = note.Value
+		}
 
 		// 将KV表的Tags转换过去
 		if tags != nil && tags.Value != "" {

@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class {{.CombineStructName}} {	{{range $sn, $objName := $.Types.EnumNames}}
 	 public enum {{$objName}} { {{range $fi,$field := $.Types.AllFieldByName $objName}}
-			{{$field.FieldName}}({{$field.Value}}), // {{$field.Name}} {{end}}
+			{{$field.FieldName}}({{$field.Value}}), // {{if not $field.Note}}{{$field.Name}}{{else}}{{ $field.Note}}{{end}} {{end}}
 		;
 		{{$objName}}(int v) {
 		   this.{{$objName}} = v;
@@ -36,7 +36,7 @@ public class {{.CombineStructName}} {	{{range $sn, $objName := $.Types.EnumNames
 	{{end}}
 	{{range $sn, $objName := $.Types.StructNames}}
 	public class {{$objName}} { {{range $fi,$field := $.Types.AllFieldByName $objName}}	
-		public {{JavaType $field false}} {{$field.FieldName}} = {{JavaDefaultValue $ $field}}; // {{$field.Name}}; {{end}}
+		public {{JavaType $field false}} {{$field.FieldName}} = {{JavaDefaultValue $ $field}}; // {{if not $field.Note}}{{$field.Name}}{{else}}{{ $field.Note}}{{end}}; {{end}}
 	}
 	{{end}}
 	{{range $ti, $tab := $.Datas.AllTables}}
