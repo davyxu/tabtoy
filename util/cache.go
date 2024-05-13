@@ -75,6 +75,7 @@ func writeJsonFile(filename string, m interface{}) error {
 	if err != nil {
 		return err
 	}
+	defer f.Close()
 
 	return json.NewEncoder(f).Encode(m)
 }
